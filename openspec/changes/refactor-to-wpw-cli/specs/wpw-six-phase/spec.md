@@ -51,12 +51,17 @@ PRD SHALL 基于 BRD 生成，包含功能清单、优先级、验收标准、�
 
 ### Requirement: Explore 阶段（技术方案探索）
 
-Explore SHALL 基于 PRD 产出多个候选方案、方案对比、风险识别、推荐方向，不拍板。标记为 `skippable`，用户可跳过。
+Explore SHALL 基于 PRD 产出多个候选方案、方案对比、风险识别、推荐方向，不拍板。标记为 `skippable`，用户可跳过。Explore 文档 SHALL 以"探索轮次"组织，每轮只记录涉及文件与结论，不记录讨论/推导过程。
 
 #### Scenario: 产出候选方案
 
 - **WHEN** `prd.done` 且执行 `wpw:explore`
 - **THEN** 生成 Explore 文档含多方案对比与推荐方向
+
+#### Scenario: 只记录每轮文件与结论
+
+- **WHEN** 生成 Explore 文档
+- **THEN** 每个候选方案作为一个轮次，记录涉及文件与结论，不记录讨论过程
 
 #### Scenario: 用户跳过
 
@@ -93,31 +98,46 @@ Design SHALL 基于 PRD（强依赖）与 Explore（弱依赖，有则读）生�
 
 ### Requirement: Plan 与 Test 阶段
 
-Plan SHALL 基于 Design 生成开发计划（含任务清单）。Test SHALL 基于 Design 与 Plan 生成测试方案。
+Plan SHALL 基于 Design 生成开发计划（含任务清单），完成后 SHALL 推荐 `/wpw:test`（apply 以测试用例驱动）。Test SHALL 基于 Design 与 Plan 生成测试方案，标记为 `skippable`，但 SHALL 告知用户跳过可能影响代码质量、推荐不跳过。
 
 #### Scenario: 生成 Plan
 
 - **WHEN** `design.done` 且执行 `wpw:plan`
-- **THEN** 生成 Plan 含可执行任务清单
+- **THEN** 生成 Plan 含可执行任务清单，提示推荐 `/wpw:test`
 
 #### Scenario: 生成 Test
 
 - **WHEN** `design.done` 且 `plan.done`
 - **THEN** 生成 Test 方案
 
+#### Scenario: 跳过 Test
+
+- **WHEN** 用户执行 `wpw skip testplan`
+- **THEN** 标记 `status.testplan = skipped`，后续 apply 不阻断，但 SHALL 告知跳过影响质量、推荐不跳过
+
 ### Requirement: Apply 阶段（编码实施）
 
-Apply SHALL 基于 Plan 逐任务实施编码，任务状态流转 `[ ]`→`[🔄]`→`[x]`，支持 `--from <任务编号>` 断点恢复。
+Apply SHALL 基于 Plan 逐任务实施编码，任务状态流转 `[ ]`→`[🔄]`→`[x]`，支持 `--from <任务编号>` 断点恢复。Apply SHALL 测试用例驱动：若 TestPlan 已 done，按用例先写/补测试再实施代码。交付前 SHALL 通过双门禁——代码审查（`/wpw:cr` 调 `@code-reviewer`）无 BLOCKER 且测试用例全通过，二者合格方可交用户验证功能。若 TestPlan 跳过，SHALL 告知用户未做测试验证、可能影响质量。`wpw apply --json` SHALL 在 testplan 未 done 时返回 `warnings`。
 
-#### Scenario: 逐任务编码
+#### Scenario: 逐任务编码（测试驱动）
 
-- **WHEN** 执行 `wpw:apply`
-- **THEN** 按 Plan 任务逐个实施，每任务完成后立即标记
+- **WHEN** 执行 `wpw:apply` 且 TestPlan 已 done
+- **THEN** 按任务先写/补相关测试再实施代码，每任务完成即标记
 
 #### Scenario: 断点恢复
 
 - **WHEN** 执行 `wpw:apply --from 5`
 - **THEN** 从任务 5 继续实施
+
+#### Scenario: 交付双门禁
+
+- **WHEN** 所有任务完成
+- **THEN** 代码审查无 BLOCKER 且测试用例全通过，方告知用户可功能验证
+
+#### Scenario: testplan 跳过告警
+
+- **WHEN** TestPlan 跳过或未完成且执行 `wpw:apply`
+- **THEN** 返回 `warnings` 告知跳过/未做测试可能影响质量，推荐先 `/wpw:test`
 
 ### Requirement: 大纲确认机制
 

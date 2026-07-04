@@ -16,10 +16,10 @@
       "description": "交付前代码审查（源自 requesting-code-review）"
     },
     {
-      "name": "Humanizer-zh",
+      "name": "humanizer-zh",
       "repo": "op7418/Humanizer-zh",
       "subpath": ".",
-      "installAs": "Humanizer-zh",
+      "installAs": "humanizer-zh",
       "description": "中文文档人性化/去机器腔"
     }
   ]

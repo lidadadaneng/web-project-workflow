@@ -44,6 +44,17 @@ export function registerApply(program: Command): void {
         process.exit(1);
       }
 
+      // 测试用例驱动提示：testplan 未完成则警告（apply 以测试用例驱动，跳过影响质量）
+      const warnings: string[] = [];
+      const testplanStatus = state.status['testplan'];
+      if (testplanStatus !== 'done') {
+        warnings.push(
+          testplanStatus === 'skipped'
+            ? 'testplan 已跳过：apply 无法以测试用例驱动，开发后也无法验证用例通过，可能影响代码质量。推荐不跳过（重新 /wpw:test）'
+            : 'testplan 未完成：推荐先执行 /wpw:test 生成测试用例，apply 以测试用例驱动开发，开发后验证用例全通过',
+        );
+      }
+
       // contextFiles：已 done 阶段的文档路径
       const contextFiles: Record<string, string> = {};
       for (const art of schema.artifacts) {
@@ -76,6 +87,7 @@ export function registerApply(program: Command): void {
         contextFiles,
         tasks,
         progress: { total, completed, remaining: total - completed },
+        warnings,
       };
 
       if (opts.json) {
@@ -87,6 +99,7 @@ export function registerApply(program: Command): void {
             t.state === 'done' ? '[x]' : t.state === 'in-progress' ? '[🔄]' : '[ ]';
           console.log(`  ${mark} ${t.id}. ${t.text}`);
         }
+        for (const w of warnings) console.log(`⚠️  ${w}`);
       }
     });
 }

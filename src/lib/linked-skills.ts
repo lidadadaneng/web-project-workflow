@@ -111,6 +111,10 @@ async function fetchOne(
   } catch (e) {
     throw new Error(`${skill.name}: ${(e as Error).message}`);
   }
+  // 统一 skill 的 name 字段为 installAs，确保 @<installAs> 引用可解析
+  // （上游 name 可能大小写或命名不同，如 requesting-code-review → code-reviewer）
+  const skillMd = path.join(dest, 'SKILL.md');
+  if (fs.existsSync(skillMd)) rewriteSkillName(skillMd, installAs);
 
   return {
     name: skill.name,
@@ -209,4 +213,21 @@ function extractTarSubpath(buf: Buffer, subpath: string, destDir: string): void 
   if (extracted === 0) {
     throw new Error(`子路径 ${subpath || '.'} 下未抽取到任何文件`);
   }
+}
+
+/**
+ * 将 SKILL.md frontmatter 的 name 字段重写为指定值，
+ * 使 @<name> 引用能解析（目录名、name 字段、@ 引用三者一致）。
+ */
+function rewriteSkillName(skillMdPath: string, name: string): void {
+  let content = fs.readFileSync(skillMdPath, 'utf8');
+  const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+  if (!m) return; // 无 frontmatter，跳过
+  let fm = m[1];
+  if (/^name:/m.test(fm)) {
+    fm = fm.replace(/^name:.*$/m, `name: ${name}`);
+  } else {
+    fm = `name: ${name}\n${fm}`;
+  }
+  fs.writeFileSync(skillMdPath, `---\n${fm}\n---\n${m[2]}`);
 }

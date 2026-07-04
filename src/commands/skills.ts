@@ -5,7 +5,7 @@ import { fetchLinkedSkills, loadLinkedSkillsManifest, MANIFEST_NAME } from '../l
 export function registerSkills(program: Command): void {
   const skills = program
     .command('skills')
-    .description('联动 Skill 管理（brainstorming / code-reviewer / Humanizer-zh）');
+    .description('联动 Skill 管理（brainstorming / code-reviewer / humanizer-zh）');
 
   skills
     .command('update')

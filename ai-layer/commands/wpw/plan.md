@@ -40,6 +40,6 @@ wpw done plan -c <需求名>
 
 ### 阶段五：AI 后处理
 
-用 `@Humanizer-zh` 去机器腔。
+用 `@humanizer-zh` 去机器腔。
 
-提示下一步：`/wpw:test` 生成测试方案，或 `/wpw:apply` 直接实施。
+提示下一步：推荐 `/wpw:test` 生成测试用例（apply 以测试用例驱动开发，开发后验证用例通过）。可跳过 test 直接 `/wpw:apply`，但跳过测试可能影响代码质量。

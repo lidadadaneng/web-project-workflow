@@ -31,4 +31,4 @@ tags: [workflow, sync]
 
 ### 4. 自检
 
-用 `@Humanizer-zh` 去机器腔。
+用 `@humanizer-zh` 去机器腔。

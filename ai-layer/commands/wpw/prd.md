@@ -41,6 +41,6 @@ wpw done prd -c <需求名>
 
 ### 阶段五：AI 后处理
 
-执行 `after_prd` hook，用 `@Humanizer-zh` 去机器腔。
+执行 `after_prd` hook，用 `@humanizer-zh` 去机器腔。
 
 提示下一步：`/wpw:explore`（技术探索，可跳过）或直接 `/wpw:design`。

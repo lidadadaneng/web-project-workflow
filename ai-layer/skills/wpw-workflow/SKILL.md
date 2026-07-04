@@ -32,19 +32,19 @@ description: AI 驱动的六阶段 Web 项目开发工作流 - BRD→PRD→Explo
 ## 六阶段流程
 
 ```
-BRD → PRD → Explore(可选) → Design → Plan → Test → Apply
-业务   产品   探索        设计     计划   验证   实施
+BRD → PRD → Explore(可选) → Design → Plan → Test(可选) → Apply
+业务   产品   探索        设计     计划   验证           实施
 ```
 
 | 阶段 | 产物 | 强依赖 | 弱依赖 | 联动 Skill | 特殊 |
 |------|------|--------|--------|-----------|------|
-| BRD | 业务需求文档 | - | - | @brainstorming · @Humanizer-zh | hybrid 输入，附成本评估 |
-| PRD | 产品需求文档 | BRD | - | @Humanizer-zh | |
-| Explore | 技术方案探索 | PRD | - | @brainstorming · @Humanizer-zh | skippable，产出候选不拍板 |
-| Design | 技术方案设计 | PRD | Explore | @Humanizer-zh | 需 Explore 拍板（若存在） |
-| Plan | 开发计划 | Design | - | @Humanizer-zh | |
-| Test | 测试方案 | Design, Plan | - | @Humanizer-zh | |
-| Apply | 代码 | - | - | @code-reviewer（收尾） | `apply.requires: [plan]` |
+| BRD | 业务需求文档 | - | - | @brainstorming · @humanizer-zh | hybrid 输入，附成本评估 |
+| PRD | 产品需求文档 | BRD | - | @humanizer-zh | |
+| Explore | 技术方案探索 | PRD | - | @brainstorming · @humanizer-zh | skippable，产出候选不拍板 |
+| Design | 技术方案设计 | PRD | Explore | @humanizer-zh | 需 Explore 拍板（若存在） |
+| Plan | 开发计划 | Design | - | @humanizer-zh | |
+| Test | 测试方案 | Design, Plan | - | @humanizer-zh | skippable，推荐不跳过 |
+| Apply | 代码 | - | - | @code-reviewer（+testplan 驱动） | `apply.requires: [plan]`，test-driven + CR/测试双门禁 |
 
 ## 命令映射
 
@@ -106,6 +106,6 @@ commands:
 
 - `@brainstorming` — 需求澄清与方案探索 · 引用于 `/wpw:brd`（澄清需求）、`/wpw:explore`（探索方案） · 源 `obra/superpowers`
 - `@code-reviewer` — 交付前代码审查 · 引用于 `/wpw:cr`（核心）、`/wpw:apply` 收尾 · 源 `obra/superpowers`（`requesting-code-review`）
-- `@Humanizer-zh` — 文档人性化/去机器腔 · 引用于各文档阶段 `after_*` hook（brd/prd/explore/design/plan/test/sync/exp） · 源 `op7418/Humanizer-zh`
+- `@humanizer-zh` — 文档人性化/去机器腔 · 引用于各文档阶段 `after_*` hook（brd/prd/explore/design/plan/test/sync/exp） · 源 `op7418/Humanizer-zh`
 
 > 来源清单见仓库根 `linked-skills.json`；`wpw skills list` 查看已装版本。

@@ -7,7 +7,7 @@ tags: [workflow, skills]
 
 # /wpw:skills <update|list>
 
-管理联动 Skill（`brainstorming` / `code-reviewer` / `Humanizer-zh`）。这些 Skill 在各阶段 hook 中被引用（如 `@Humanizer-zh` 用于去机器腔），需安装到 `.claude/skills/` 才能解析。
+管理联动 Skill（`brainstorming` / `code-reviewer` / `humanizer-zh`）。这些 Skill 在各阶段 hook 中被引用（如 `@humanizer-zh` 用于去机器腔），需安装到 `.claude/skills/` 才能解析。
 
 ## update
 

@@ -10,7 +10,7 @@ tags: [workflow, brd, requirement]
 接收客户需求，生成 BRD（业务需求文档）。这是六阶段流程的入口。
 **hybrid 输入**：有客户需求描述则结构化整理，无则交互问答。
 
-> **联动 Skill**：`@brainstorming`（需求模糊时辅助澄清，可选）· `@Humanizer-zh`（落盘后去机器腔）
+> **联动 Skill**：`@brainstorming`（需求模糊时辅助澄清，可选）· `@humanizer-zh`（落盘后去机器腔）
 
 ## 角色定位（重要）
 
@@ -67,6 +67,6 @@ wpw done brd -c <需求名>
 
 ### 阶段六：AI 后处理
 
-执行 `after_brd` hook，用 `@Humanizer-zh` 去机器腔。
+执行 `after_brd` hook，用 `@humanizer-zh` 去机器腔。
 
 输出「已落盘 → [文件路径]」，提示下一步可执行 `/wpw:prd <需求名>`。

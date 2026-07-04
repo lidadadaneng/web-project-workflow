@@ -71,7 +71,7 @@
 
 ## 11. 联动 Skill 打包与实时更新
 
-- [x] 11.1 新增 `linked-skills.json`（声明 brainstorming / code-reviewer / Humanizer-zh 来源）
+- [x] 11.1 新增 `linked-skills.json`（声明 brainstorming / code-reviewer / humanizer-zh 来源）
 - [x] 11.2 新增 `src/lib/linked-skills.ts`（git clone 抓取 + manifest + copyDir）
 - [x] 11.3 新增 `scripts/update-linked-skills.js` + `npm run update-skills`（维护者刷新打包快照）
 - [x] 11.4 新增 `wpw skills update` / `wpw skills list` 命令（用户侧实时更新）

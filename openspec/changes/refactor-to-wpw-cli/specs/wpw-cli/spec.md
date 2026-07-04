@@ -142,12 +142,17 @@ wpw CLI SHALL 提供以下子命令：`init`、`new`、`list`、`status`、`chec
 
 ### Requirement: 联动 Skill 管理
 
-`wpw` SHALL 通过 `linked-skills.json` 声明联动 Skill 来源（`brainstorming`←`obra/superpowers` 的 `skills/brainstorming`、`code-reviewer`←`obra/superpowers` 的 `skills/requesting-code-review`、`Humanizer-zh`←`op7418/Humanizer-zh` 根）。`wpw init` SHALL 释放打包快照到 `.claude/skills/<installAs>/`。`wpw skills update` SHALL 用 `git clone --depth 1` 从各源仓库默认分支实时拉取最新版到当前项目 `.claude/skills/`，并写 `.linked-skills-manifest.json` 记录 commit。`wpw skills list` SHALL 读取 manifest 显示来源与版本。
+`wpw` SHALL 通过 `linked-skills.json` 声明联动 Skill 来源（`brainstorming`←`obra/superpowers` 的 `skills/brainstorming`、`code-reviewer`←`obra/superpowers` 的 `skills/requesting-code-review`、`humanizer-zh`←`op7418/Humanizer-zh` 根）。抓取 SHALL 将各 skill 的 `name:` 字段重写为 `installAs`，确保 `@<installAs>` 引用可解析（目录名、`name` 字段、`@` 引用三者一致）。`wpw init` SHALL 释放打包快照到 `.claude/skills/<installAs>/`。`wpw skills update` SHALL 用 codeload tarball（纯 Node https+zlib，不依赖 git）从各源仓库默认分支实时拉取最新版到当前项目 `.claude/skills/`，并写 `.linked-skills-manifest.json` 记录 commit。`wpw skills list` SHALL 读取 manifest 显示来源与版本。
 
 #### Scenario: init 释放快照
 
 - **WHEN** 执行 `wpw init` 且存在打包快照
-- **THEN** 联动 Skill 释放到 `.claude/skills/{brainstorming,code-reviewer,Humanizer-zh}/`
+- **THEN** 联动 Skill 释放到 `.claude/skills/{brainstorming,code-reviewer,humanizer-zh}/`
+
+#### Scenario: name 字段对齐 installAs
+
+- **WHEN** 抓取联动 Skill
+- **THEN** 将 SKILL.md 的 `name:` 重写为 `installAs`，使 `@<installAs>` 引用可解析（如 `requesting-code-review`→`code-reviewer`、`Humanizer-zh`→`humanizer-zh`）
 
 #### Scenario: 不残留快照目录
 
@@ -172,7 +177,7 @@ wpw CLI SHALL 提供以下子命令：`init`、`new`、`list`、`status`、`chec
 #### Scenario: 引用节点明示
 
 - **WHEN** 查看 SKILL.md 或各阶段命令文件
-- **THEN** 每个联动 Skill 标注其引用阶段：`@brainstorming`→`/wpw:brd`、`/wpw:explore`；`@code-reviewer`→`/wpw:cr`、`/wpw:apply` 收尾；`@Humanizer-zh`→各文档阶段 `after_*` hook
+- **THEN** 每个联动 Skill 标注其引用阶段：`@brainstorming`→`/wpw:brd`、`/wpw:explore`；`@code-reviewer`→`/wpw:cr`、`/wpw:apply` 收尾；`@humanizer-zh`→各文档阶段 `after_*` hook
 
 #### Scenario: 维护者更新快照
 

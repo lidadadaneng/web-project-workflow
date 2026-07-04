@@ -21,7 +21,7 @@ export function registerInit(program: Command): void {
       // 3. 释放 AI 层（SKILL.md + commands/wpw + hooks）到 .claude/
       const released = releaseAiLayer(root);
 
-      // 4. 释放联动 Skill 快照（brainstorming/code-reviewer/Humanizer-zh）到 .claude/skills/
+      // 4. 释放联动 Skill 快照（brainstorming/code-reviewer/humanizer-zh）到 .claude/skills/
       releaseLinkedSkills(root);
 
       console.log(`已初始化 wpw 项目: ${root}`);

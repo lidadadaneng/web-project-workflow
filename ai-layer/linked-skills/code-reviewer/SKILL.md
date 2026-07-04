@@ -1,5 +1,5 @@
 ---
-name: requesting-code-review
+name: code-reviewer
 description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
 ---
 

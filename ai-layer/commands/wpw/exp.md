@@ -40,4 +40,4 @@ tags: [workflow, exp, experience]
 
 ### 4. 自检
 
-用 `@Humanizer-zh` 去机器腔，输出落盘确认。
+用 `@humanizer-zh` 去机器腔，输出落盘确认。

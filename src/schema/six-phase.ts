@@ -31,7 +31,7 @@ export interface ArtifactDef {
   optionalDeps: ArtifactId[]; // 弱依赖
   file: string; // 文件名模板，{name} 替换为需求名
   phase: string; // 阶段层标识
-  skippable?: boolean; // 可跳过（explore）
+  skippable?: boolean; // 可跳过（explore/testplan）
   inputMode?: 'hybrid'; // BRD 特有：有输入整理/无输入问答
   output?: 'options'; // Explore 特有：产出候选方案不拍板
   requiresConfirmation?: boolean; // Design 特有：需用户拍板后进入
@@ -106,6 +106,7 @@ export const sixPhaseSchema: SchemaDef = {
       optionalDeps: [],
       file: 'TestPlan-{name}.md',
       phase: 'test',
+      skippable: true, // 可跳过，但推荐不跳过（apply 以测试用例驱动，跳过影响代码质量）
     },
   ],
   apply: {

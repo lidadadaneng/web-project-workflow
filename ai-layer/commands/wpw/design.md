@@ -47,6 +47,6 @@ wpw done design -c <需求名>
 
 ### 阶段六：AI 后处理
 
-执行 `after_design` hook，用 `@Humanizer-zh` 去机器腔。
+执行 `after_design` hook，用 `@humanizer-zh` 去机器腔。
 
 提示下一步：`/wpw:plan <需求名>`。

@@ -9,6 +9,8 @@ tags: [workflow, test]
 
 基于 Design 与 Plan 生成测试方案。强依赖 Design + Plan。
 
+> **可跳过**：`wpw skip testplan`，但跳过会导致 apply 无测试用例驱动、开发后无法验证用例通过，**可能影响代码质量——推荐不跳过**。
+
 ## 执行流程
 
 ### 阶段一：CLI 准备
@@ -39,6 +41,6 @@ wpw done testplan -c <需求名>
 
 ### 阶段五：AI 后处理
 
-用 `@Humanizer-zh` 去机器腔。
+用 `@humanizer-zh` 去机器腔。
 
-提示下一步：`/wpw:apply <需求名>` 实施编码。
+提示下一步：`/wpw:apply <需求名>` 以本测试方案驱动开发。

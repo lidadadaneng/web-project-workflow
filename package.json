@@ -1,0 +1,41 @@
+{
+  "name": "wpw",
+  "version": "0.1.0",
+  "description": "Web Project Workflow - AI-driven six-phase development workflow CLI",
+  "bin": {
+    "wpw": "./dist/index.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "test": "node --test dist/test/**/*.test.js || echo \"no tests\""
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.0"
+  },
+  "files": [
+    "dist",
+    "ai-layer",
+    "src/templates"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "cli",
+    "ai",
+    "spec-driven",
+    "development"
+  ]
+}

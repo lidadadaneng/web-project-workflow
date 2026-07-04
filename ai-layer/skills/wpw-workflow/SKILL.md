@@ -36,15 +36,15 @@ BRD → PRD → Explore(可选) → Design → Plan → Test → Apply
 业务   产品   探索        设计     计划   验证   实施
 ```
 
-| 阶段 | 产物 | 强依赖 | 弱依赖 | 特殊 |
-|------|------|--------|--------|------|
-| BRD | 业务需求文档 | - | - | hybrid 输入，附成本评估 |
-| PRD | 产品需求文档 | BRD | - | |
-| Explore | 技术方案探索 | PRD | - | skippable，产出候选不拍板 |
-| Design | 技术方案设计 | PRD | Explore | 需 Explore 拍板（若存在） |
-| Plan | 开发计划 | Design | - | |
-| Test | 测试方案 | Design, Plan | - | |
-| Apply | 代码 | - | - | `apply.requires: [plan]` |
+| 阶段 | 产物 | 强依赖 | 弱依赖 | 联动 Skill | 特殊 |
+|------|------|--------|--------|-----------|------|
+| BRD | 业务需求文档 | - | - | @brainstorming · @Humanizer-zh | hybrid 输入，附成本评估 |
+| PRD | 产品需求文档 | BRD | - | @Humanizer-zh | |
+| Explore | 技术方案探索 | PRD | - | @brainstorming · @Humanizer-zh | skippable，产出候选不拍板 |
+| Design | 技术方案设计 | PRD | Explore | @Humanizer-zh | 需 Explore 拍板（若存在） |
+| Plan | 开发计划 | Design | - | @Humanizer-zh | |
+| Test | 测试方案 | Design, Plan | - | @Humanizer-zh | |
+| Apply | 代码 | - | - | @code-reviewer（收尾） | `apply.requires: [plan]` |
 
 ## 命令映射
 
@@ -102,10 +102,10 @@ commands:
 
 ## 联动 Skill
 
-下列联动 Skill 由 `wpw init` 自动安装到 `.claude/skills/`，`wpw skills update` 实时拉取 GitHub 最新版：
+下列联动 Skill 由 `wpw init` 自动安装到 `.claude/skills/`，`wpw skills update` 实时拉取 GitHub 最新版。各 Skill 在工作流中的引用节点：
 
-- `@brainstorming` — 需求澄清（可选） · 源 `obra/superpowers`
-- `@code-reviewer` — 交付前代码审查 · 源 `obra/superpowers`（`requesting-code-review`）
-- `@Humanizer-zh` — 文档人性化处理 · 源 `op7418/Humanizer-zh`
+- `@brainstorming` — 需求澄清与方案探索 · 引用于 `/wpw:brd`（澄清需求）、`/wpw:explore`（探索方案） · 源 `obra/superpowers`
+- `@code-reviewer` — 交付前代码审查 · 引用于 `/wpw:cr`（核心）、`/wpw:apply` 收尾 · 源 `obra/superpowers`（`requesting-code-review`）
+- `@Humanizer-zh` — 文档人性化/去机器腔 · 引用于各文档阶段 `after_*` hook（brd/prd/explore/design/plan/test/sync/exp） · 源 `op7418/Humanizer-zh`
 
 > 来源清单见仓库根 `linked-skills.json`；`wpw skills list` 查看已装版本。

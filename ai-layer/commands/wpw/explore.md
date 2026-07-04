@@ -10,6 +10,8 @@ tags: [workflow, explore, design]
 技术方案探索，产出多个候选方案、对比、风险、推荐方向，**不拍板**。
 **skippable**：用户可跳过（`wpw skip explore`）。强依赖 PRD。
 
+> **联动 Skill**：`@brainstorming`（方案发散与探索，可选）· `@Humanizer-zh`（落盘后去机器腔）
+
 ## 执行流程
 
 ### 阶段一：CLI 准备

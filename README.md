@@ -69,7 +69,7 @@ AI 层（Skill + /wpw:xxx）  →  CLI 层（wpw 命令）  →  文件系统（
 理解/生成/交互              状态/依赖/路径/模板      工作区
 ```
 
-详见 `SKILL.md`。
+详见 `ai-layer/skills/wpw-workflow/SKILL.md`。
 
 ## 配置（workflow.config.yaml）
 

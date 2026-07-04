@@ -43,16 +43,18 @@ function releaseAiLayer(root: string): boolean {
   const src = srcCandidates.find((p) => fs.existsSync(p));
   if (!src) return false;
   const dest = path.join(root, '.claude');
-  copyDir(src, dest);
+  // 跳过 linked-skills 快照目录——联动 Skill 由 releaseLinkedSkills 单独释放到 .claude/skills/
+  copyDir(src, dest, ['linked-skills']);
   return true;
 }
 
-function copyDir(src: string, dest: string): void {
+function copyDir(src: string, dest: string, skipDirs: string[] = []): void {
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    if (entry.isDirectory() && skipDirs.includes(entry.name)) continue;
     const s = path.join(src, entry.name);
     const d = path.join(dest, entry.name);
-    if (entry.isDirectory()) copyDir(s, d);
+    if (entry.isDirectory()) copyDir(s, d, skipDirs);
     else if (entry.isFile() && entry.name !== '.gitkeep') fs.copyFileSync(s, d);
   }
 }

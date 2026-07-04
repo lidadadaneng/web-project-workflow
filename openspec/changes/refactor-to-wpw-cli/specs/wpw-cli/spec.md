@@ -149,6 +149,11 @@ wpw CLI SHALL 提供以下子命令：`init`、`new`、`list`、`status`、`chec
 - **WHEN** 执行 `wpw init` 且存在打包快照
 - **THEN** 联动 Skill 释放到 `.claude/skills/{brainstorming,code-reviewer,Humanizer-zh}/`
 
+#### Scenario: 不残留快照目录
+
+- **WHEN** `wpw init` 释放 AI 层与联动 Skill
+- **THEN** 仅在 `.claude/skills/<installAs>/` 安装联动 Skill，不在项目内残留 `.claude/linked-skills/` 快照目录
+
 #### Scenario: 快照缺失提示
 
 - **WHEN** 执行 `wpw init` 但无打包快照
@@ -163,6 +168,11 @@ wpw CLI SHALL 提供以下子命令：`init`、`new`、`list`、`status`、`chec
 
 - **WHEN** 执行 `wpw skills list`
 - **THEN** 读取 manifest 显示每个联动 Skill 的来源仓库、分支、commit 与抓取时间
+
+#### Scenario: 引用节点明示
+
+- **WHEN** 查看 SKILL.md 或各阶段命令文件
+- **THEN** 每个联动 Skill 标注其引用阶段：`@brainstorming`→`/wpw:brd`、`/wpw:explore`；`@code-reviewer`→`/wpw:cr`、`/wpw:apply` 收尾；`@Humanizer-zh`→各文档阶段 `after_*` hook
 
 #### Scenario: 维护者更新快照
 

@@ -9,6 +9,8 @@ tags: [workflow, apply, implementation]
 
 按 Plan 逐任务实施编码。`apply.requires: [plan]`。
 
+> **联动 Skill**：`@code-reviewer`（全部任务完成后建议跑 `/wpw:cr` 做交付前审查）
+
 ## 执行流程
 
 ### 阶段一：CLI 准备

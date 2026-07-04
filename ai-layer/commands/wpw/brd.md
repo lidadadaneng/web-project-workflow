@@ -10,6 +10,8 @@ tags: [workflow, brd, requirement]
 接收客户需求，生成 BRD（业务需求文档）。这是六阶段流程的入口。
 **hybrid 输入**：有客户需求描述则结构化整理，无则交互问答。
 
+> **联动 Skill**：`@brainstorming`（需求模糊时辅助澄清，可选）· `@Humanizer-zh`（落盘后去机器腔）
+
 ## 角色定位（重要）
 
 BRD 面向**业务方**（通常非技术背景）。AI 在本阶段：

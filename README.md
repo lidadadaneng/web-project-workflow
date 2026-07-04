@@ -85,10 +85,6 @@ commands:
 
 模板选择优先级：`commands.<cmd>.output` → `project.type` 默认 → 文件嗅探。
 
-## 从 soda 迁移
-
-参见 `MIGRATION.md`，运行 `node scripts/migrate-from-soda.js`。
-
 ## License
 
 MIT

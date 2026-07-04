@@ -48,21 +48,21 @@ BRD → PRD → Explore(可选) → Design → Plan → Test(可选) → Apply
 
 ## 命令映射
 
-| 命令 | 功能 | 对应原 soda |
-|------|------|-------------|
-| `/wpw:brd` | 接收客户需求 | 新增 |
-| `/wpw:prd` | 生成产品需求文档 | soda:ard |
-| `/wpw:explore` | 技术方案探索 | 新增 |
-| `/wpw:design` | 技术方案设计 | soda:design |
-| `/wpw:plan` | 开发计划 | soda:plan |
-| `/wpw:test` | 测试方案 | soda:test |
-| `/wpw:apply` | 编码实施 | soda:impl |
-| `/wpw:cr` | 代码审查 | soda:cr |
-| `/wpw:map` | 知识图谱 | soda:map |
-| `/wpw:archive` | 归档 | soda:archive |
-| `/wpw:exp` | 经验沉淀 | soda:exp |
-| `/wpw:sync` | 代码+文档联动 | soda:sync |
-| `/wpw:init` | 初始化 | soda:init |
+| 命令 | 功能 |
+|------|------|
+| `/wpw:brd` | 接收客户需求 |
+| `/wpw:prd` | 生成产品需求文档 |
+| `/wpw:explore` | 技术方案探索 |
+| `/wpw:design` | 技术方案设计 |
+| `/wpw:plan` | 开发计划 |
+| `/wpw:test` | 测试方案 |
+| `/wpw:apply` | 编码实施 |
+| `/wpw:cr` | 代码审查 |
+| `/wpw:map` | 知识图谱 |
+| `/wpw:archive` | 归档 |
+| `/wpw:exp` | 经验沉淀 |
+| `/wpw:sync` | 代码+文档联动 |
+| `/wpw:init` | 初始化 |
 
 ## 三段式契约
 

@@ -59,7 +59,7 @@ export function sniffProjectType(root: string): ProjectType {
 
 /**
  * 解析最终项目类型：配置非 auto 则用配置值，否则嗅探。
- * 一旦配置存在且 type 有效，禁止再次嗅探（与原 soda 规则一致）。
+ * 一旦配置存在且 type 有效，禁止再次嗅探。
  */
 export function resolveProjectType(
   root: string,

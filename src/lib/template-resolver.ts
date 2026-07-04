@@ -50,17 +50,18 @@ function defaultTemplateNames(id: ArtifactId, type: ProjectType): string[] {
 
   const suffix = isFrontend(type) ? 'Fe' : isBackend(type) ? 'Server' : null;
 
+  // fullstack 或 auto（嗅探失败）：返回 Fe + Server 两套，由 AI/用户选择
   if (id === 'design') {
     if (suffix) return [`Design-${suffix}.md`];
-    if (type === 'fullstack') return ['Design-Fe.md', 'Design-Server.md'];
+    return ['Design-Fe.md', 'Design-Server.md'];
   }
   if (id === 'plan') {
     if (suffix) return [`Plan-${suffix}.md`];
-    if (type === 'fullstack') return ['Plan-Fe.md', 'Plan-Server.md'];
+    return ['Plan-Fe.md', 'Plan-Server.md'];
   }
   if (id === 'testplan') {
     if (suffix) return [`Test-${suffix}.md`];
-    if (type === 'fullstack') return ['Test-Fe.md', 'Test-Server.md'];
+    return ['Test-Fe.md', 'Test-Server.md'];
   }
   return [];
 }

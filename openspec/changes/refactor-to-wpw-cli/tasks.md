@@ -24,7 +24,7 @@
 
 ## 5. CLI 核心命令实现
 
-- [x] 5.1 实现 `wpw init`（生成 `workflow.config.yaml` + 创建 `wpw/`、`docs/knowledge/` 目录 + 释放 AI 层到 `.claude/`）
+- [x] 5.1 实现 `wpw init`（生成 `workflow.config.yaml` + 创建 `wpw/` 目录结构（active/archived/knowledge）+ 释放 AI 层到 `.claude/`）
 - [x] 5.2 实现 `wpw new <需求名>`（创建需求目录 + `.wpw.yaml`，幂等）
 - [x] 5.3 实现 `wpw status [需求名] --json`（返回 schemaName/artifacts/decisions/progress）
 - [x] 5.4 实现 `wpw done` / `wpw skip` / `wpw decision` 命令（更新 `.wpw.yaml`）
@@ -68,3 +68,13 @@
 - [x] 10.1 编写 migration 指南（`docs/features/active/` → `wpw/active/`，ARD 文件改名 PRD）
 - [x] 10.2 编写 `README.md`（npm 安装、`wpw init`、六阶段使用说明）
 - [x] 10.3 编写旧项目迁移脚本（自动迁移目录与文档命名）
+
+## 11. 联动 Skill 打包与实时更新
+
+- [x] 11.1 新增 `linked-skills.json`（声明 brainstorming / code-reviewer / Humanizer-zh 来源）
+- [x] 11.2 新增 `src/lib/linked-skills.ts`（git clone 抓取 + manifest + copyDir）
+- [x] 11.3 新增 `scripts/update-linked-skills.js` + `npm run update-skills`（维护者刷新打包快照）
+- [x] 11.4 新增 `wpw skills update` / `wpw skills list` 命令（用户侧实时更新）
+- [x] 11.5 `wpw init` 释放联动 Skill 快照到 `.claude/skills/`（缺失则提示）
+- [x] 11.6 更新 SKILL.md 联动节 + 新增 `ai-layer/commands/wpw/skills.md`
+- [x] 11.7 spec 补充"联动 Skill 管理"需求与场景

@@ -70,6 +70,11 @@ wpw CLI SHALL 提供以下子命令：`init`、`new`、`list`、`status`、`chec
 - **WHEN** `output` 为空且 `project.type=frontend-h5`
 - **THEN** 返回 `Design-Fe` 模板路径
 
+#### Scenario: auto 嗅探失败返回两套
+
+- **WHEN** `output` 为空且 `project.type=auto` 且嗅探不到任何项目文件（package.json/pom.xml/go.mod 均无）
+- **THEN** 返回 Fe + Server 两套模板路径，由 AI/用户选择合适的模板
+
 ### Requirement: 阶段状态标记
 
 `wpw done`、`wpw skip`、`wpw decision` SHALL 更新 `.wpw.yaml` 对应阶段 status 与 decisions。
@@ -123,7 +128,7 @@ wpw CLI SHALL 提供以下子命令：`init`、`new`、`list`、`status`、`chec
 
 ### Requirement: 项目初始化
 
-`wpw init` SHALL 生成 `workflow.config.yaml`（已存在则只更新路径字段）、创建 `wpw/` 与 `docs/knowledge/` 目录结构、释放 AI 层（SKILL.md + 命令文件 + hooks）到 `.claude/`。
+`wpw init` SHALL 生成 `workflow.config.yaml`（已存在则只更新路径字段）、创建 `wpw/` 目录结构（`active`/`archived`/`knowledge`，知识库统一纳入 `wpw/`，不再保留 `docs/`）、释放 AI 层（SKILL.md + 命令文件 + hooks）到 `.claude/`、释放联动 Skill 快照到 `.claude/skills/`。
 
 #### Scenario: 首次初始化
 
@@ -134,6 +139,35 @@ wpw CLI SHALL 提供以下子命令：`init`、`new`、`list`、`status`、`chec
 
 - **WHEN** `workflow.config.yaml` 已存在
 - **THEN** 只更新路径字段，保留用户自定义配置
+
+### Requirement: 联动 Skill 管理
+
+`wpw` SHALL 通过 `linked-skills.json` 声明联动 Skill 来源（`brainstorming`←`obra/superpowers` 的 `skills/brainstorming`、`code-reviewer`←`obra/superpowers` 的 `skills/requesting-code-review`、`Humanizer-zh`←`op7418/Humanizer-zh` 根）。`wpw init` SHALL 释放打包快照到 `.claude/skills/<installAs>/`。`wpw skills update` SHALL 用 `git clone --depth 1` 从各源仓库默认分支实时拉取最新版到当前项目 `.claude/skills/`，并写 `.linked-skills-manifest.json` 记录 commit。`wpw skills list` SHALL 读取 manifest 显示来源与版本。
+
+#### Scenario: init 释放快照
+
+- **WHEN** 执行 `wpw init` 且存在打包快照
+- **THEN** 联动 Skill 释放到 `.claude/skills/{brainstorming,code-reviewer,Humanizer-zh}/`
+
+#### Scenario: 快照缺失提示
+
+- **WHEN** 执行 `wpw init` 但无打包快照
+- **THEN** 提示运行 `wpw skills update` 实时拉取，不中断初始化
+
+#### Scenario: 实时更新
+
+- **WHEN** 执行 `wpw skills update`
+- **THEN** 从各源仓库默认分支克隆最新版到 `.claude/skills/`，manifest 记录 repo/ref/commit/抓取时间
+
+#### Scenario: 版本列表
+
+- **WHEN** 执行 `wpw skills list`
+- **THEN** 读取 manifest 显示每个联动 Skill 的来源仓库、分支、commit 与抓取时间
+
+#### Scenario: 维护者更新快照
+
+- **WHEN** 维护者执行 `npm run update-skills`
+- **THEN** 抓取最新版到 `ai-layer/linked-skills/` 作为打包快照，供 `wpw init` 释放
 
 ### Requirement: 无内网依赖
 

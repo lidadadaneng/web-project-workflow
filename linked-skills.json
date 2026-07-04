@@ -1,0 +1,26 @@
+{
+  "$comment": "联动 Skill 来源清单。wpw init 释放打包快照到 .claude/skills/；wpw skills update 从 GitHub 实时拉取默认分支最新版。installAs 即 @ 引用名（目录名）。",
+  "skills": [
+    {
+      "name": "brainstorming",
+      "repo": "obra/superpowers",
+      "subpath": "skills/brainstorming",
+      "installAs": "brainstorming",
+      "description": "需求澄清与设计探索"
+    },
+    {
+      "name": "code-reviewer",
+      "repo": "obra/superpowers",
+      "subpath": "skills/requesting-code-review",
+      "installAs": "code-reviewer",
+      "description": "交付前代码审查（源自 requesting-code-review）"
+    },
+    {
+      "name": "Humanizer-zh",
+      "repo": "op7418/Humanizer-zh",
+      "subpath": ".",
+      "installAs": "Humanizer-zh",
+      "description": "中文文档人性化/去机器腔"
+    }
+  ]
+}

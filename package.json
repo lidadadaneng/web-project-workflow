@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/index.ts",
-    "test": "node --test dist/test/**/*.test.js || echo \"no tests\""
+    "test": "node --test dist/test/**/*.test.js || echo \"no tests\"",
+    "update-skills": "npm run build && node scripts/update-linked-skills.js"
   },
   "dependencies": {
     "commander": "^12.1.0",
@@ -25,7 +26,8 @@
   "files": [
     "dist",
     "ai-layer",
-    "src/templates"
+    "src/templates",
+    "linked-skills.json"
   ],
   "engines": {
     "node": ">=18"

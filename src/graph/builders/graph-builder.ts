@@ -42,6 +42,7 @@ import {
 import { loadGraphConfig } from '../config';
 import { JsonlGraphStore } from '../storage/graph-store';
 import { BinaryVectorStore } from '../storage/vector-store';
+import { VectorMappingStore } from '../storage/mapping-store';
 import { JsonMetaStore, createEmptyMeta, SCHEMA_VERSION } from '../storage/meta-store';
 import { parseAllRequirements, ParsedRequirement } from '../parsers/requirement-parser';
 import { parseModules, ParsedModule } from '../parsers/module-parser';
@@ -51,6 +52,7 @@ import { sniffProjectType } from '../../lib/project-type';
 import { EdgeBuilder, aggregateWeights, MappingEvidence } from './edge-builder';
 import { buildGraphIndex } from '../storage/graph-store';
 import { generateNodeId } from './node-builder';
+import { buildNodeVectors } from './vector-builder';
 
 const WPF_DIR = '.wpf';
 
@@ -139,7 +141,36 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   const graphStore = new JsonlGraphStore(wpfPath);
   graphStore.save(graphData);
 
-  // 元数据
+  // 8. 向量索引（可选）
+  let vectorCount = 0;
+  if (config.embedding.enabled) {
+    try {
+      const tVec = Date.now();
+      const { vectors, dimensions, mapping } = await buildNodeVectors(
+        allNodes,
+        config.embedding.model,
+        config.embedding.mirror,
+      );
+
+      if (vectors.length > 0) {
+        const vectorStore = new BinaryVectorStore(wpfPath);
+        vectorStore.save(vectors, dimensions);
+
+        const mappingStore = new VectorMappingStore(wpfPath);
+        mappingStore.save(mapping);
+
+        vectorCount = mapping.indexToNodeId.length;
+      }
+      mark('vectors', tVec);
+    } catch (e) {
+      console.warn(
+        `[graph-builder] 向量构建失败，跳过（语义检索将不可用）: ${(e as Error).message}`,
+      );
+      // 失败不影响主流程，向量数为 0
+    }
+  }
+
+  // 9. 元数据
   const metaStore = new JsonMetaStore(wpfPath);
   const fileHashes = buildFileHashSnapshot(parseResults);
   const meta: GraphMeta = {
@@ -147,7 +178,7 @@ export async function buildGraph(root: string): Promise<BuildResult> {
     builtAt: Date.now(),
     totalNodes: allNodes.length,
     totalEdges: edgeBuilder.size(),
-    totalVectors: 0, // 向量后面单独处理
+    totalVectors: vectorCount,
     fileHashes,
     configVersion: configHash(config),
   };
@@ -159,7 +190,7 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   const stats: BuildStats = {
     nodesByLevel: countNodesByLevel(allNodes),
     edgesByType: countEdgesByType(edgeBuilder.getEdges()),
-    vectorCount: 0,
+    vectorCount,
     totalTimeMs: totalTime,
     phaseTimes,
     validation,
@@ -727,16 +758,45 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
   const validation = validateGraph(finalData);
   mark('validate', t4);
 
-  // 6. 保存
+  // 6. 保存图谱
   const t5 = Date.now();
   graphStore.save(finalData);
 
+  // 7. 重建向量索引（首版简化：增量更新也全量重建向量）
+  let vectorCount = meta.totalVectors;
+  if (config.embedding.enabled) {
+    try {
+      const tVec = Date.now();
+      const { vectors, dimensions, mapping } = await buildNodeVectors(
+        newNodes,
+        config.embedding.model,
+        config.embedding.mirror,
+      );
+
+      if (vectors.length > 0) {
+        const vectorStore = new BinaryVectorStore(wpfPath);
+        vectorStore.save(vectors, dimensions);
+
+        const mappingStore = new VectorMappingStore(wpfPath);
+        mappingStore.save(mapping);
+
+        vectorCount = mapping.indexToNodeId.length;
+      }
+      mark('vectors', tVec);
+    } catch (e) {
+      console.warn(
+        `[graph-builder] 向量构建失败，跳过: ${(e as Error).message}`,
+      );
+    }
+  }
+
+  // 8. 元数据
   const newMeta: GraphMeta = {
     schemaVersion: SCHEMA_VERSION,
     builtAt: Date.now(),
     totalNodes: newNodes.length,
     totalEdges: edgeBuilder.size(),
-    totalVectors: meta.totalVectors, // 向量更新单独处理
+    totalVectors: vectorCount,
     fileHashes: Object.fromEntries(currentHashes),
     configVersion: configHash(config),
   };
@@ -748,7 +808,7 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
   const stats: BuildStats = {
     nodesByLevel: countNodesByLevel(newNodes),
     edgesByType: countEdgesByType(edgeBuilder.getEdges()),
-    vectorCount: meta.totalVectors,
+    vectorCount,
     totalTimeMs: totalTime,
     phaseTimes,
     validation,

@@ -335,14 +335,22 @@ function registerSearch(graph: Command): void {
         process.exit(1);
       }
 
+      const config = loadGraphConfig(root);
       const data = graphStore.load();
       const vectors = vectorStore.load();
-      const dimensions = vectorStore.getDimensions() ?? 384;
+      const dimensions = vectorStore.getDimensions() ?? config.embedding.dimensions;
       const mapping = mappingStore.load();
 
       if (!vectors || !mapping) {
         console.error('向量索引或映射加载失败');
         process.exit(1);
+      }
+
+      // 设置查询向量的模型和镜像，确保和构建时一致
+      const { setEmbeddingModel, setEmbeddingMirror } = await import('../builders/vector-builder');
+      setEmbeddingModel(config.embedding.model);
+      if (config.embedding.mirror) {
+        setEmbeddingMirror(config.embedding.mirror);
       }
 
       const querier = new GraphQuerier(data);
@@ -394,6 +402,7 @@ function registerContext(graph: Command): void {
     .option('--type <types>', '按节点类型过滤')
     .option('--include-archived', '包含归档需求')
     .option('--anchor-limit <n>', '每个查询召回的锚点数量', '5')
+    .option('--threshold <f>', '语义检索相似度阈值', '0.6')
     .option('--json', 'JSON 输出完整结果')
     .action(async (query: string | undefined, opts) => {
       const root = process.cwd();
@@ -449,6 +458,7 @@ function registerContext(graph: Command): void {
         type: typeOpt,
         includeArchived: !!opts.includeArchived,
         anchorLimit: Number(opts.anchorLimit),
+        threshold: opts.threshold ? Number(opts.threshold) : undefined,
       });
 
       if (opts.json) {

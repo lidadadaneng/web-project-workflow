@@ -103,11 +103,40 @@ export function prepareVectorTexts(nodes: GraphNode[]): {
 
 let pipelinePromise: Promise<any> | null = null;
 let modelName = 'Xenova/all-MiniLM-L6-v2';
+let configuredMirror: 'huggingface' | 'modelscope' | undefined;
 
 /** 设置模型名称（必须在第一次调用前设置） */
 export function setEmbeddingModel(name: string): void {
   modelName = name;
   pipelinePromise = null;
+}
+
+/**
+ * 设置模型下载镜像源
+ *
+ * 支持：
+ *   - huggingface（默认）
+ *   - modelscope（国内镜像，速度更快）
+ *
+ * 必须在第一次调用 pipeline 前设置。
+ */
+export function setEmbeddingMirror(mirror: 'huggingface' | 'modelscope'): void {
+  configuredMirror = mirror;
+  pipelinePromise = null;
+}
+
+/**
+ * 配置 transformers 的远程源
+ */
+async function configureTransformersEnv(): Promise<void> {
+  const { env } = await import('@xenova/transformers');
+
+  if (configuredMirror === 'modelscope') {
+    // ModelScope 镜像
+    env.remoteHost = 'https://www.modelscope.cn';
+    env.remotePathTemplate = 'models/{model}/resolve/master/';
+  }
+  // 默认就是 huggingface，不用改
 }
 
 /**
@@ -119,6 +148,10 @@ async function getPipeline(): Promise<any> {
   pipelinePromise = (async () => {
     // 动态导入，避免打包时体积过大
     const { pipeline } = await import('@xenova/transformers');
+
+    // 配置镜像源（如果设置了）
+    await configureTransformersEnv();
+
     return await pipeline('feature-extraction', modelName, {
       quantized: true,
     });
@@ -185,11 +218,19 @@ export async function buildVectors(
 
 /**
  * 为图谱节点生成向量并构建映射
+ *
+ * @param nodes 节点列表
+ * @param modelName 模型名称（可选，覆盖默认值）
+ * @param mirror 镜像源（可选，huggingface / modelscope）
  */
 export async function buildNodeVectors(
   nodes: GraphNode[],
   modelName?: string,
+  mirror?: 'huggingface' | 'modelscope',
 ): Promise<VectorBuildResult> {
+  if (mirror) {
+    setEmbeddingMirror(mirror);
+  }
   const { nodeIds, texts } = prepareVectorTexts(nodes);
   const { vectors, dimensions } = await buildVectors(texts, modelName);
 

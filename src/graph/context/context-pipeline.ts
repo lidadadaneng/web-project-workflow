@@ -24,6 +24,7 @@ import type {
 import { GraphQuerier } from '../search/graph-query';
 import { SemanticSearcher } from '../search/semantic-search';
 import { SubgraphTrimmer } from '../trimming/subgraph-trimmer';
+import { setEmbeddingModel, setEmbeddingMirror } from '../builders/vector-builder';
 import {
   HierarchicalSerializer,
   type CompressionLevel,
@@ -57,6 +58,8 @@ export interface ContextOptions {
   includeArchived?: boolean;
   /** 每个查询召回的锚点数量 */
   anchorLimit?: number;
+  /** 语义检索相似度阈值（覆盖配置） */
+  threshold?: number;
 }
 
 /**
@@ -82,6 +85,12 @@ export class ContextPipeline {
     this.data = data;
     this.querier = new GraphQuerier(data);
     this.config = config;
+
+    // 设置 embedding 模型和镜像，确保查询向量和构建时使用同一个模型
+    setEmbeddingModel(config.embedding.model);
+    if (config.embedding.mirror) {
+      setEmbeddingMirror(config.embedding.mirror);
+    }
 
     if (vectors && mapping && mapping.indexToNodeId.length > 0) {
       this.searcher = new SemanticSearcher(this.querier, vectors, dimensions, mapping);
@@ -140,7 +149,7 @@ export class ContextPipeline {
       for (const q of queries) {
         const results = await this.searcher.search(q, {
           limit,
-          threshold: this.config.search.threshold,
+          threshold: options.threshold ?? this.config.search.threshold,
           excludeArchived: !options.includeArchived,
           level: options.level,
           type: options.type,

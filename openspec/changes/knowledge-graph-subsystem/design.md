@@ -268,6 +268,84 @@ wpw graph context   # 端到端上下文生成（检索+裁剪+压缩，--json �
 - 对于 AI 编码场景（一次对话调用几次）完全可接受
 - 后续如性能不足，再加常驻进程优化
 
+### 11. 多语言与框架支持
+
+**决策**：以 tree-sitter 为核心扩展前端主流语言，首版覆盖 TS/TSX/JS/JSX/Vue。
+
+**支持矩阵**：
+
+| 语言/框架 | 扩展名 | 解析方式 | 支持元素 |
+|----------|--------|---------|---------|
+| TypeScript | `.ts` | tree-sitter-typescript | 函数/类/接口/常量/类型别名 |
+| TSX | `.tsx` | tree-sitter-tsx | 函数/组件/类/接口/常量 |
+| JavaScript | `.js` `.mjs` `.cjs` | tree-sitter-javascript | 函数/类/常量 |
+| JSX | `.jsx` | tree-sitter-javascript | 函数/组件/类/常量 |
+| Vue SFC | `.vue` | 提取 `<script>` 块 + JS/TS 解析 | 函数/组件/导入导出 |
+
+**Vue SFC 处理策略**：
+- 用正则提取 `<script setup>` 和 `<script>` 块的文本内容
+- 根据 `lang` 属性选择解析器（默认 javascript，`lang="ts"` 用 typescript）
+- 模板（`<template>`）和样式（`<style>`）首版不解析
+- 文件节点标记为 `language: vue`，组件名从文件名推断
+
+**组件识别规则**：
+- `.tsx` / `.jsx` 文件中，首字母大写的函数 = React 组件
+- `.vue` 文件中，默认导出的对象 = Vue 组件（从文件名生成组件名）
+
+**理由**：
+- TSX 需要单独的 WASM（tree-sitter-tsx.wasm），因为 TS 语法包不包含 JSX
+- JSX 在 tree-sitter-javascript 中原生支持
+- Vue SFC 无法用单一 tree-sitter 语法解析，提取 script 块是性价比最高的方案
+- 模板解析收益较低（主要是 UI 结构），首版聚焦 script 中的逻辑代码
+
+**后续可扩展**：
+- Svelte、Astro 等同理（提取 script 块）
+- 模板解析（Vue template / JSX 中的组件调用关系）
+
+### 12. 向量索引构建与 buildGraph 集成
+
+**决策**：向量构建作为 buildGraph 的一个可选阶段，默认开启，首次运行自动下载模型，失败降级为无向量模式。
+
+**构建流程**：
+```
+buildGraph:
+  1. 解析需求/模块/源码
+  2. 构建边
+  3. 完整性校验
+  4. 保存图谱 JSONL
+  5. [可选] 构建向量索引 → 保存 vector.index + vector-mapping.json
+  6. 更新 meta.json（含 totalVectors）
+```
+
+**向量构建触发条件**：
+- 全量构建（build）：默认生成向量
+- 增量更新（update）：全量重建向量（实现简单，节点数不大时可接受）
+- 强制重建（rebuild）：重新生成向量
+
+**配置开关**：
+```yaml
+graph:
+  embedding:
+    enabled: true           # 是否生成向量（默认 true）
+    model: Xenova/all-MiniLM-L6-v2
+    dimensions: 384
+```
+
+**降级策略**：
+- 模型下载失败 → 跳过向量生成，输出警告
+- 后续执行 `wpw graph rebuild` 可重试
+- 无向量时 `wpw graph search` 给出明确提示
+- `wpw graph context` 的语义检索模式不可用，但 `--anchors` 模式正常
+
+**性能预期**：
+- 500 个节点向量生成：约 2~5s（CPU 推理）
+- 全量构建在有向量时总耗时：5~10s（可接受，build 不是高频操作）
+- 查询时加载向量：约 10~50ms（二进制文件直接读入）
+
+**缓存策略**：
+- 模型文件由 @xenova/transformers 自动缓存到 `~/.cache/huggingface/`
+- 向量索引每次构建全量重写（原子写入）
+
 ## 与现有需求体系的对接规范
 
 知识图谱子系统不是孤立运行的，它深度依赖 WPW 已有的需求目录规范、`.wpw.yaml` 状态体系、`workflow.config.yaml` 配置体系。本节明确定义所有对接接口。

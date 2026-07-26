@@ -2,6 +2,13 @@
  * 源码文件解析调度器
  *
  * 根据文件类型分发到对应语言的解析器，生成文件节点和元素节点。
+ *
+ * 支持的格式：
+ *   .ts         → typescript
+ *   .tsx        → tsx（独立 WASM，支持 JSX 语法）
+ *   .js/.mjs/.cjs → javascript
+ *   .jsx        → javascript（tree-sitter-javascript 原生支持 JSX）
+ *   .vue        → vue（提取 script 块后分发到 JS/TS）
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -11,12 +18,16 @@ import {
   parseTypeScriptFile,
   ParseResult,
 } from './ts-parser';
+import { parseVueFile } from './vue-parser';
 
 /** 支持的语言 */
-export type SupportedLanguage = 'typescript' | 'javascript';
+export type SupportedLanguage = 'typescript' | 'tsx' | 'javascript' | 'vue';
 
 /**
  * 判断文件是否为支持的源码文件
+ *
+ * 注意：语言配置中的 'typescript' 同时包含 .ts 和 .tsx，
+ * 'javascript' 同时包含 .js/.jsx/.mjs/.cjs，'vue' 对应 .vue。
  */
 export function isSupportedFile(
   filePath: string,
@@ -24,7 +35,15 @@ export function isSupportedFile(
 ): boolean {
   const ext = path.extname(filePath).toLowerCase();
   const lang = extToLanguage(ext);
-  return lang !== null && languages.includes(lang);
+  if (!lang) return false;
+
+  // 配置语言 → 实际解析语言的映射
+  // typescript 配置包含 .ts 和 .tsx
+  // javascript 配置包含 .js/.jsx/.mjs/.cjs
+  if (lang === 'tsx') return languages.includes('typescript');
+  if (lang === 'vue') return languages.includes('vue');
+  // typescript 和 javascript 直接匹配
+  return languages.includes(lang);
 }
 
 /**
@@ -49,8 +68,12 @@ export async function parseSourceFile(
 
   switch (lang) {
     case 'typescript':
+    case 'tsx':
     case 'javascript':
       return parseTypeScriptFile(filePath, root, source, lang);
+
+    case 'vue':
+      return parseVueFile(filePath, root, source);
 
     default:
       return { fileNode: createFileNode(filePath, root, lang), elements: [], imports: [] };
@@ -87,13 +110,16 @@ export async function parseSourceFiles(
 function extToLanguage(ext: string): SupportedLanguage | null {
   switch (ext) {
     case '.ts':
-    case '.tsx':
       return 'typescript';
+    case '.tsx':
+      return 'tsx';
     case '.js':
     case '.jsx':
     case '.mjs':
     case '.cjs':
       return 'javascript';
+    case '.vue':
+      return 'vue';
     default:
       return null;
   }

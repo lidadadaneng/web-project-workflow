@@ -242,10 +242,14 @@ export interface GraphCompressionConfig {
 
 /** Embedding 配置 */
 export interface GraphEmbeddingConfig {
+  /** 是否启用向量生成 */
+  enabled: boolean;
   /** 本地模型名称 */
   model: string;
   /** 向量维度 */
   dimensions: number;
+  /** 模型下载镜像源（默认 huggingface，国内可选 modelscope） */
+  mirror?: 'huggingface' | 'modelscope';
 }
 
 /** 手动模块定义 */

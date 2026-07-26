@@ -51,11 +51,11 @@ export async function getParser(): Promise<Parser> {
 /**
  * 加载语言包并返回 Language 实例
  *
- * @param lang 语言名（typescript / javascript）
+ * @param lang 语言名（typescript / tsx / javascript）
  * @param wasmPath WASM 文件路径（可选，默认从 node_modules 查找）
  */
 export async function loadLanguage(
-  lang: 'typescript' | 'javascript',
+  lang: 'typescript' | 'tsx' | 'javascript',
   wasmPath?: string,
 ): Promise<Parser.Language> {
   if (languages[lang]) return languages[lang];
@@ -82,6 +82,13 @@ export async function loadLanguage(
           wasm = fs.readFileSync(tsPkg);
           break;
         }
+        case 'tsx': {
+          const tsxPkg = require.resolve(
+            'tree-sitter-typescript/tree-sitter-tsx.wasm',
+          );
+          wasm = fs.readFileSync(tsxPkg);
+          break;
+        }
         case 'javascript': {
           const jsPkg = require.resolve(
             'tree-sitter-javascript/tree-sitter-javascript.wasm',
@@ -94,9 +101,10 @@ export async function loadLanguage(
       }
     } catch (e) {
       // 语言包未安装，抛出友好提示
+      const pkgName = lang === 'tsx' ? 'tree-sitter-typescript' : `tree-sitter-${lang}`;
       throw new Error(
         `加载 ${lang} 语言包失败。请安装对应依赖：` +
-          `\`npm i tree-sitter-${lang}\`。\n` +
+          `\`npm i ${pkgName}\`。\n` +
           `原始错误: ${(e as Error).message}`,
       );
     }
@@ -111,7 +119,7 @@ export async function loadLanguage(
  * 设置 Parser 的语言
  */
 export async function setParserLanguage(
-  lang: 'typescript' | 'javascript',
+  lang: 'typescript' | 'tsx' | 'javascript',
 ): Promise<Parser> {
   const parser = await getParser();
   const language = await loadLanguage(lang);

@@ -128,6 +128,67 @@ commands:
 
 模板选择优先级：`commands.<cmd>.output` → `project.type` 默认 → 文件嗅探。
 
+## 本地开发
+
+### 编译与全局链接
+
+```bash
+# 编译 TypeScript 到 dist/
+npm run build
+
+# 编译并链接到全局（开发时使用本地版本）
+npm run dev:link
+
+# 验证
+wpw --version
+```
+
+### 测试知识图谱
+
+```bash
+# 1. 构建图谱
+wpw graph build
+
+# 2. 查看统计
+wpw graph stat
+
+# 3. 结构化查询
+wpw graph query --level L2
+wpw graph query --downstream <moduleId> --depth 2
+
+# 4. 上下文生成（核心功能）
+# 4.1 直接指定锚点
+wpw graph context --anchors <moduleId> --compression standard
+
+# 4.2 三档压缩对比
+wpw graph context --anchors <moduleId> --compression loose
+wpw graph context --anchors <moduleId> --compression standard
+wpw graph context --anchors <moduleId> --compression extreme
+
+# 4.3 Token 预算约束
+wpw graph context --anchors <moduleId> --token-budget 500
+
+# 5. 语义检索（首次运行会下载 embedding 模型，约 80MB）
+wpw graph search "命令注册" --limit 5
+
+# 6. 端到端上下文（语义检索 + 子图裁剪 + 压缩）
+wpw graph context "CLI 命令注册" --token-budget 2000
+
+# 7. JSON 输出（供程序调用）
+wpw graph stat --json
+wpw graph query --level L3 --json
+wpw graph context "登录" --json
+```
+
+### 综合验证脚本
+
+```bash
+# 运行覆盖所有模块的端到端验证
+npx ts-node src/graph/__verify__.ts
+```
+
+输出 12 个阶段，全部 ✅ 通过即为正常。
+
 ## License
 
 MIT

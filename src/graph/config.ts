@@ -28,7 +28,7 @@ const DEFAULT_BUILD: GraphBuildConfig = {
     '.nuxt',
     'coverage',
   ],
-  languages: ['typescript', 'javascript'],
+  languages: ['typescript', 'javascript', 'vue'],
   moduleRoots: ['src/modules', 'src/pages', 'src/views'],
   commonDirs: [
     // 通用工具
@@ -102,7 +102,7 @@ const DEFAULT_MAPPING: GraphMappingConfig = {
 
 const DEFAULT_SEARCH: GraphSearchConfig = {
   defaultLimit: 10,
-  threshold: 0.6,
+  threshold: 0.5,
   excludeArchived: true,
 };
 
@@ -119,8 +119,10 @@ const DEFAULT_COMPRESSION: GraphCompressionConfig = {
 };
 
 const DEFAULT_EMBEDDING: GraphEmbeddingConfig = {
-  model: 'Xenova/all-MiniLM-L6-v2',
-  dimensions: 384,
+  enabled: true,
+  model: 'Xenova/bge-small-zh-v1.5',
+  dimensions: 512,
+  mirror: 'huggingface',
 };
 
 const DEFAULT_CONFIG: GraphConfig = {
@@ -174,6 +176,8 @@ export function loadGraphConfig(root: string): GraphConfig {
     embedding: {
       ...DEFAULT_EMBEDDING,
       ...(userGraph.embedding || {}),
+      enabled: userGraph.embedding?.enabled ?? DEFAULT_EMBEDDING.enabled,
+      mirror: userGraph.embedding?.mirror ?? DEFAULT_EMBEDDING.mirror,
     },
     modules: userGraph.modules ?? [],
   };

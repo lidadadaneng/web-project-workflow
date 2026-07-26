@@ -28,12 +28,12 @@ export interface ParseResult {
   imports: string[];
 }
 
-/** 解析 TypeScript / JavaScript 文件 */
+/** 解析 TypeScript / TSX / JavaScript / JSX 文件 */
 export async function parseTypeScriptFile(
   filePath: string,
   root: string,
   source: string,
-  language: 'typescript' | 'javascript',
+  language: 'typescript' | 'tsx' | 'javascript',
 ): Promise<ParseResult> {
   const parser = await setParserLanguage(language);
   const tree = parser.parse(source);

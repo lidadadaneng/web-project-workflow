@@ -58,7 +58,7 @@ BRD → PRD → Explore(可选) → Design → Plan → Test(可选) → Apply
 | `/wpw:test` | 测试方案 |
 | `/wpw:apply` | 编码实施 |
 | `/wpw:cr` | 代码审查 |
-| `/wpw:map` | 知识图谱 |
+| `/wpw:map` | 知识图谱构建与上下文生成 |
 | `/wpw:archive` | 归档 |
 | `/wpw:exp` | 经验沉淀 |
 | `/wpw:sync` | 代码+文档联动 |

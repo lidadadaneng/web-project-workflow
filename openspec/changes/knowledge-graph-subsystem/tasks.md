@@ -31,6 +31,11 @@
 - [x] 3.12 实现 TypeScript 解析器（`parsers/ts-parser.ts`）：生成 L3 文件节点与 L4 元素节点（函数、类、接口、常量）
 - [x] 3.13 实现 JavaScript 解析器（`parsers/js-parser.ts`）：复用 TS 解析器逻辑
 - [x] 3.14 实现元素节点签名生成逻辑
+- [x] 3.15 支持 TSX 语法：加载 tree-sitter-tsx WASM，.tsx 文件用 tsx 解析器
+- [x] 3.16 支持 JSX 语法验证：确认 tree-sitter-javascript 原生支持 JSX，补充组件识别
+- [x] 3.17 实现 Vue SFC 解析器（`parsers/vue-parser.ts`）：提取 script 块，分发到 JS/TS 解析器
+- [x] 3.18 组件节点识别：TSX/JSX/Vue 中首字母大写函数标记为 component 类型
+- [x] 3.19 解析器 tree-sitter 版本兼容：升级 web-tree-sitter 至 0.24.7，语言 WASM 使用兼容版本
 
 ## 4. 图谱构建引擎
 
@@ -41,6 +46,10 @@
 - [ ] 4.5 实现可选 LLM 校准模块（`builders/ai-refiner.ts`）：对候选结果精排去伪，每需求调用一次（首版延后，纯本地模式优先）
 - [ ] 4.6 实现模块划分 LLM 校准：全项目一次调用，补充模块职责与前后端校正（首版延后）
 - [x] 4.7 实现向量生成与索引构建（`builders/vector-builder.ts`）：基于 @xenova/transformers 本地生成语义向量
+- [x] 4.7a 向量构建接入 buildGraph：构建完成后生成向量索引 + mapping，写入 meta
+- [x] 4.7b 向量构建接入 updateGraph / rebuildGraph：增量更新时全量重建向量
+- [x] 4.7c 向量构建失败降级：模型加载/下载失败时跳过向量，输出警告，不影响主流程
+- [x] 4.7d 配置项 embedding.enabled：控制是否生成向量（默认 true）
 - [x] 4.8 实现全量构建调度器（`builders/graph-builder.ts`）：build 流程编排
 - [x] 4.9 实现增量更新逻辑：哈希快照对比、变更文件识别、内存修改、全量重写
 - [x] 4.10 实现需求状态变更检测：active/archived 目录移动、.wpw.yaml 状态变化

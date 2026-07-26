@@ -61,6 +61,49 @@ BRD → PRD → Explore(可选) → Design → Plan → Test → Apply
 | `wpw task <name> --mark <id> --state <state>` | 任务标记 |
 | `wpw archive <name>` | 归档到 `wpw/archived/YYYY-MM/` |
 | `wpw map [--json]` | 扫描项目生成知识图谱骨架 |
+| `wpw graph build` | 全量构建知识图谱 |
+| `wpw graph update` | 增量更新知识图谱 |
+| `wpw graph rebuild` | 强制重建知识图谱 |
+| `wpw graph stat` | 查看图谱统计 |
+| `wpw graph query [options]` | 结构化查询（节点/依赖/路径） |
+| `wpw graph search <query>` | 语义检索图谱节点 |
+| `wpw graph context [query]` | 端到端上下文生成（直接喂给 LLM） |
+
+## 知识图谱子系统
+
+四层图谱模型，零手动配置，纯本地运行：
+
+```
+L1 业务需求 → L2 业务模块 → L3 文件 → L4 代码元素
+```
+
+**核心特性**：
+- 五层混合映射：文档提取 → 语义匹配 → Git 历史 → 命名匹配 → 可选 AI 校准
+- 加权双向 BFS 子图裁剪，支持节点上限与 Token 预算约束
+- 三档压缩（loose / standard / extreme），层级符号化序列化输出
+- 端到端 context pipeline：检索 → 裁剪 → 骨架抽取 → 序列化
+- 纯 JSONL + 二进制向量索引，零数据库依赖
+
+**快速使用**：
+
+```bash
+# 构建图谱
+wpw graph build
+
+# 查看统计
+wpw graph stat
+
+# 生成上下文（直接喂给 LLM）
+wpw graph context "用户登录认证"
+
+# 指定 Token 预算
+wpw graph context "登录" --token-budget 8000
+
+# JSON 输出（供上层 AI 层调用）
+wpw graph context "登录" --json
+```
+
+详见 `src/graph/` 源码。
 
 ## 架构
 

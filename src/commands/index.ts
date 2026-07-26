@@ -11,6 +11,7 @@ import { registerTask } from './task';
 import { registerArchive } from './archive';
 import { registerMap } from './map';
 import { registerSkills } from './skills';
+import { registerGraph } from '../graph/commands/graph';
 
 /**
  * 注册所有子命令。
@@ -32,4 +33,5 @@ export function registerCommands(program: Command): void {
   registerArchive(program);
   registerMap(program);
   registerSkills(program);
+  registerGraph(program);
 }

@@ -12,4 +12,5 @@
 /dist
 /node_modules
 /.idea
-/.wpf
+# 知识图谱构建产物（不入库，本地构建）
+/wpw/knowledge/graph/

@@ -10,7 +10,7 @@
 #### Scenario: 全量构建生成向量
 - **WHEN** 执行 `wpw graph build` 且 embedding.enabled 为 true
 - **THEN** 系统在构建完图谱结构后，自动为 L1/L2/L3/L4 节点生成向量
-- **AND** 向量索引与 mapping 持久化到 `.wpf/index/` 目录
+- **AND** 向量索引与 mapping 持久化到 `wpw/knowledge/graph/index/` 目录
 - **AND** meta.json 中 totalVectors 字段正确更新
 
 #### Scenario: 向量构建失败降级
@@ -29,6 +29,24 @@
 - **WHEN** 配置 `graph.embedding.enabled: false`
 - **THEN** 构建流程跳过向量生成阶段
 - **AND** 构建速度更快
+
+### Requirement: Embedding 模型镜像源配置
+系统 SHALL 支持配置 Embedding 模型下载镜像源，以适配不同网络环境（如国内无法访问 HuggingFace）。
+
+#### Scenario: 默认 HuggingFace 源
+- **WHEN** 未配置 `graph.embedding.mirror` 或配置为 `huggingface`
+- **THEN** 系统从 HuggingFace（huggingface.co）下载模型
+
+#### Scenario: 切换 ModelScope 镜像
+- **WHEN** 配置 `graph.embedding.mirror: modelscope`
+- **THEN** 系统从 ModelScope（modelscope.cn）下载模型
+- **AND** 下载的模型与 HuggingFace 源等价
+- **AND** 模型缓存后后续构建无需重复下载
+
+#### Scenario: 查询与构建使用同一模型
+- **WHEN** 执行 `wpw graph search` 或 `wpw graph context` 语义检索
+- **THEN** 查询向量生成使用与构建时相同的模型名与镜像源
+- **AND** 从配置中读取，确保查询向量与索引向量维度一致
 
 ### Requirement: 多前端语言支持
 源码解析器 SHALL 支持 TypeScript、TSX、JavaScript、JSX、Vue SFC 五种前端主流文件格式。

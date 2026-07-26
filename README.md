@@ -60,7 +60,6 @@ BRD → PRD → Explore(可选) → Design → Plan → Test → Apply
 | `wpw apply <name> --json` | 实施准备（返回 contextFiles/tasks） |
 | `wpw task <name> --mark <id> --state <state>` | 任务标记 |
 | `wpw archive <name>` | 归档到 `wpw/archived/YYYY-MM/` |
-| `wpw map [--json]` | 扫描项目生成知识图谱骨架 |
 | `wpw graph build` | 全量构建知识图谱 |
 | `wpw graph update` | 增量更新知识图谱 |
 | `wpw graph rebuild` | 强制重建知识图谱 |

@@ -13,20 +13,24 @@ export function registerInit(program: Command): void {
       // 1. 生成/更新 config（已存在则只补全路径字段）
       const config = ensureConfig(root);
 
-      // 2. 创建工作区目录（知识库统一纳入 wpw/，不再单独保留 docs/）
+      // 2. 创建工作区目录
       fs.mkdirSync(path.join(root, 'wpw', 'active'), { recursive: true });
       fs.mkdirSync(path.join(root, 'wpw', 'archived'), { recursive: true });
       fs.mkdirSync(path.join(root, 'wpw', 'knowledge', 'experiences'), { recursive: true });
 
-      // 3. 释放 AI 层（SKILL.md + commands/wpw + hooks）到 .claude/
+      // 3. 确保 .gitignore 忽略图谱构建产物
+      ensureGitignore(root);
+
+      // 4. 释放 AI 层（SKILL.md + commands/wpw + hooks）到 .claude/
       const released = releaseAiLayer(root);
 
-      // 4. 释放联动 Skill 快照（brainstorming/code-reviewer/humanizer-zh）到 .claude/skills/
+      // 5. 释放联动 Skill 快照（brainstorming/code-reviewer/humanizer-zh）到 .claude/skills/
       releaseLinkedSkills(root);
 
       console.log(`已初始化 wpw 项目: ${root}`);
       console.log(`  project.type: ${config.project?.type ?? 'auto'}`);
-      console.log(`  目录: wpw/active, wpw/archived, wpw/knowledge`);
+      console.log(`  目录: wpw/active, wpw/archived, wpw/knowledge/experiences`);
+      console.log(`  知识图谱: 执行 wpw graph build 构建（详见 wpw graph --help）`);
       console.log(
         released
           ? `  AI 层: .claude/skills/wpw-workflow/, .claude/commands/wpw/, .claude/skills/wpw-workflow/hooks/`
@@ -88,3 +92,28 @@ function releaseLinkedSkills(root: string): void {
   }
   console.log(`  联动 Skill: ${count} 个已释放到 .claude/skills/（wpw skills update 可更新到最新）`);
 }
+
+/**
+ * 确保 .gitignore 忽略知识图谱构建产物（wpw/knowledge/graph/）。
+ *
+ * 图谱是本地构建产物，不应纳入版本控制。
+ * 若 .gitignore 已存在则追加（幂等），不存在则创建。
+ */
+function ensureGitignore(root: string): void {
+  const gitignorePath = path.join(root, '.gitignore');
+  const entry = '/wpw/knowledge/graph/';
+  const header = '# 知识图谱构建产物（wpw graph build 生成，不入库）';
+
+  let content = '';
+  if (fs.existsSync(gitignorePath)) {
+    content = fs.readFileSync(gitignorePath, 'utf-8');
+    if (content.includes(entry)) return; // 已存在，幂等
+  }
+
+  const addition = content.length > 0 && !content.endsWith('\n')
+    ? `\n${header}\n${entry}\n`
+    : `${header}\n${entry}\n`;
+
+  fs.writeFileSync(gitignorePath, content + addition, 'utf-8');
+}
+

@@ -15,7 +15,7 @@ import { sniffProjectType } from '../lib/project-type';
 import type { GraphNode, GraphEdge } from './types';
 
 const ROOT = process.cwd();
-const WPF_DIR = path.join(ROOT, '.wpf-verify');
+const WPF_DIR = path.join(ROOT, 'wpw', 'knowledge', 'graph-verify');
 
 // 清理
 if (fs.existsSync(WPF_DIR)) {

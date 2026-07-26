@@ -32,7 +32,7 @@ WPW 是一个 AI 驱动的六阶段开发工作流 CLI 工具，基于 TypeScrip
 
 **存储结构**：
 ```
-.wpf/
+wpw/knowledge/graph/      # 图谱构建产物（gitignore，不入库）
 ├── graph.jsonl          # 结构化图谱数据（节点 + 边，JSON Lines 格式）
 ├── index/
 │   └── vector.index     # 语义向量索引（二进制，float32 连续存储）
@@ -573,8 +573,8 @@ graph:
 知识图谱为纯新增功能，无数据迁移需求：
 
 1. **部署方式**：随 WPW 版本升级自然获得，用户执行 `wpw graph build` 即可生成图谱
-2. **回滚方案**：删除 `.wpf/` 目录即清除所有图谱产物，不影响项目源文件
-3. **兼容性**：`.wpf/` 加入 `.gitignore`，不影响现有 Git 工作流
+2. **回滚方案**：删除 `wpw/knowledge/graph/` 目录即清除所有图谱产物，不影响项目源文件
+3. **兼容性**：`wpw/knowledge/graph/` 加入 `.gitignore`（`wpw init` 自动写入），不影响现有 Git 工作流
 4. **版本迭代**：`meta.json` 中记录 schema 版本，未来结构变更时可自动迁移
 5. **存储升级路径**：GraphStore 接口抽象，JSONL → 二进制 → SQLite 可平滑升级
 

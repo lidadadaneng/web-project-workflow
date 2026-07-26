@@ -54,7 +54,7 @@ import { buildGraphIndex } from '../storage/graph-store';
 import { generateNodeId } from './node-builder';
 import { buildNodeVectors } from './vector-builder';
 
-const WPF_DIR = '.wpf';
+const WPF_DIR = path.join('wpw', 'knowledge', 'graph');
 
 /** 构建结果 */
 export interface BuildResult {
@@ -521,7 +521,7 @@ function configHash(config: GraphConfig): string {
     .slice(0, 16);
 }
 
-/** 获取 .wpf 目录路径 */
+/** 获取图谱产物目录路径（wpw/knowledge/graph/） */
 export function getWpfDir(root: string): string {
   return path.join(root, WPF_DIR);
 }

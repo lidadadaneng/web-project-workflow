@@ -33,4 +33,12 @@ AI 提炼本次需求中的经验/踩坑，写入 `wpw/knowledge/experiences/`�
 
 ### 4. 知识图谱更新
 
-增量更新 `wpw/knowledge/`（接口 / 数据表 / 架构变更），可调用 `/wpw:map`。
+归档后需求从 `wpw/active/` 迁至 `wpw/archived/`，需同步更新图谱使 L1 需求节点正确反映归档状态：
+
+```bash
+wpw graph update
+```
+
+- 增量更新图谱，L1 需求节点的 `archived` 标记随之更新
+- 归档需求默认从语义检索结果中过滤（可通过 `--include-archived` 重新纳入）
+- 若改动较大，可 `wpw graph rebuild` 全量重建

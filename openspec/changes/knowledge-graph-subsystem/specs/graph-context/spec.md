@@ -49,6 +49,11 @@
 - **WHEN** 执行 `wpw graph context "登录" --depth 2 --min-weight 0.8`
 - **THEN** 子图扩展深度不超过 2，仅使用权重 ≥ 0.8 的边
 
+#### Scenario: 语义检索阈值控制
+- **WHEN** 执行 `wpw graph context "登录" --threshold 0.4`
+- **THEN** 语义检索仅召回相似度 ≥ 0.4 的节点作为锚点
+- **AND** 覆盖配置中的默认阈值，适配中文模型较低的相似度分布
+
 #### Scenario: 压缩等级控制
 - **WHEN** 执行 `wpw graph context "登录" --compression extreme`
 - **THEN** 输出使用极致压缩等级

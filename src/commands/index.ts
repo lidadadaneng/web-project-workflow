@@ -9,7 +9,6 @@ import { registerDone, registerSkip, registerDecision } from './phase-state';
 import { registerApply } from './apply';
 import { registerTask } from './task';
 import { registerArchive } from './archive';
-import { registerMap } from './map';
 import { registerSkills } from './skills';
 import { registerGraph } from '../graph/commands/graph';
 
@@ -31,7 +30,6 @@ export function registerCommands(program: Command): void {
   registerApply(program);
   registerTask(program);
   registerArchive(program);
-  registerMap(program);
   registerSkills(program);
   registerGraph(program);
 }

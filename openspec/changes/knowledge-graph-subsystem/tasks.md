@@ -4,7 +4,7 @@
 - [x] 1.2 添加依赖：`web-tree-sitter`、`@xenova/transformers` 至 package.json
 - [x] 1.3 定义核心类型：节点类型、边类型、图谱配置、子图、上下文输出等（`types.ts`）
 - [x] 1.4 实现图谱配置读取与默认值（`config.ts`），扩展 `workflow.config.yaml` 的 graph 配置段
-- [x] 1.5 更新 `.gitignore`，添加 `.wpf/` 目录
+- [x] 1.5 更新 `.gitignore`，添加 `wpw/knowledge/graph/` 目录（`wpw init` 自动写入）
 
 ## 2. 存储层实现（JSONL + 内存）
 

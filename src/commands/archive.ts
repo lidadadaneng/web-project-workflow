@@ -6,8 +6,9 @@ import { getChangeDir, getArchivedDir } from '../lib/state';
 export function registerArchive(program: Command): void {
   program
     .command('archive <name>')
-    .description('归档需求到 wpw/archived/YYYY-MM/')
-    .action((name: string) => {
+    .description('归档需求到 wpw/archived/YYYY-MM/，并同步更新知识图谱')
+    .option('--no-graph', '跳过归档后的知识图谱更新')
+    .action(async (name: string, opts: { graph?: boolean }) => {
       const root = process.cwd();
       const src = getChangeDir(root, name);
       if (!fs.existsSync(src)) {
@@ -19,6 +20,29 @@ export function registerArchive(program: Command): void {
       const dest = path.join(destDir, name);
       fs.mkdirSync(destDir, { recursive: true });
       fs.renameSync(src, dest);
-      console.log(`已归档: ${name} → ${path.relative(root, dest)}`);
+      console.log(`已归档: ${name} -> ${path.relative(root, dest)}`);
+
+      // 归档后同步更新知识图谱，使 L1 需求节点正确反映归档状态
+      if (opts.graph !== false) {
+        const graphDir = path.join(root, 'wpw', 'knowledge', 'graph');
+        if (fs.existsSync(path.join(graphDir, 'graph.jsonl'))) {
+          console.log('正在更新知识图谱...');
+          try {
+            const { updateGraph } = await import('../graph/builders/graph-builder');
+            const result = await updateGraph(root);
+            if (result) {
+              console.log(
+                `  图谱已更新: ${result.data.nodes.length} 节点, ${result.data.edges.length} 边`,
+              );
+            } else {
+              console.log('  图谱已是最新');
+            }
+          } catch (e) {
+            console.warn(`  图谱更新失败（不影响归档）: ${(e as Error).message}`);
+          }
+        } else {
+          console.log('  知识图谱未构建，跳过更新（如需构建请执行 wpw graph build）');
+        }
+      }
     });
 }

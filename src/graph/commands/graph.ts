@@ -25,7 +25,7 @@ import { ContextPipeline } from '../context/context-pipeline';
 import type { BuildStats } from '../types';
 
 function getWpfDir(root: string): string {
-  return path.join(root, '.wpf');
+  return path.join(root, 'wpw', 'knowledge', 'graph');
 }
 
 /**

@@ -23,7 +23,7 @@ const DEFAULT_BUILD: GraphBuildConfig = {
     'dist',
     'build',
     '.git',
-    '.wpf',
+    'wpw/knowledge/graph',
     '.next',
     '.nuxt',
     'coverage',

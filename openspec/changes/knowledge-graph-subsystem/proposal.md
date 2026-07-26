@@ -13,7 +13,7 @@
 - 新增 `wpw graph context` 命令：端到端上下文生成（检索 + 子图裁剪 + 结构化压缩，直接输出给 AI 使用）
 - 新增最小连通子图裁剪能力：基于加权双向 BFS 的多锚点子图生成，支持 Token 预算约束
 - 新增结构感知层级化提示压缩：语法骨架抽取 + 层级符号化序列化 + 分级粒度控制
-- 新增 `.wpf/` 本地存储目录：图谱数据文件 + 向量索引 + 本地缓存（不纳入 Git）
+- 新增 `wpw/knowledge/graph/` 本地存储目录：图谱数据文件 + 向量索引 + 本地缓存（不纳入 Git，`wpw init` 自动写入 .gitignore）
 - 新增 `workflow.config.yaml` 图谱构建配置项：忽略目录、支持语言、相似度阈值、压缩等级、Embedding 配置等
 
 ## Capabilities
@@ -35,7 +35,7 @@
 ## Impact
 
 - **新增依赖**：`web-tree-sitter`（WASM 语法解析）、`@xenova/transformers`（本地 Embedding，纯 JS 无原生依赖）
-- **新增目录**：`src/graph/`（图谱子系统源码）、`.wpf/`（本地图谱产物，加入 .gitignore）
+- **新增目录**：`src/graph/`（图谱子系统源码）、`wpw/knowledge/graph/`（本地图谱产物，`wpw init` 自动加入 .gitignore）
 - **新增命令**：`wpw graph` 命令组（build / update / rebuild / stat / query / search / context 子命令）
 - **配置扩展**：`workflow.config.yaml` 新增 `graph` 配置段，含构建规则、检索参数、压缩等级、Embedding 配置
 - **对外接口**：通过 CLI 命令 + JSON 输出供上层 AI 层 Skill 调用，零付费 Token 运行（默认本地 Embedding）

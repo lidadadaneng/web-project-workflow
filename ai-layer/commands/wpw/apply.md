@@ -27,6 +27,15 @@ wpw apply <需求名> --json   # 返回 { state, contextFiles, tasks, progress, 
 读取 `contextFiles`（PRD/Design/Plan；若 TestPlan 已 done 则含之，作为驱动输入）。
 若 `--from <编号>`，从该任务继续（断点恢复）。
 
+**知识图谱上下文准备**（推荐）：
+
+```bash
+wpw graph update   # 增量更新图谱，保证代码上下文最新（约 100ms）
+```
+
+- 图谱不存在 -> 强提示「⚠️ 未构建知识图谱，建议先执行 `wpw graph build` 以获得精准代码上下文」，但仍可回退手动读文件继续
+- 向量索引缺失 -> 后续 context 自动降级为 `--anchors` 模式，并提示「向量索引缺失，语义检索不可用，建议 `wpw graph rebuild`」
+
 ### 阶段二：逐任务编码（测试用例驱动）
 
 对每个 pending 任务：
@@ -35,13 +44,24 @@ wpw apply <需求名> --json   # 返回 { state, contextFiles, tasks, progress, 
    ```bash
    wpw task <需求名> --mark <编号> --state in-progress
    ```
-2. **若 TestPlan 存在**：先按 TestPlan 中与本任务相关的用例写/补测试，再实施代码改动（最小化、聚焦该任务），使相关测试通过
-3. **若 TestPlan 跳过/不存在**：直接实施代码改动（无测试驱动，质量风险自担）
-4. 标记完成：
+
+2. **获取代码上下文**（替代手动逐文件读取，大幅降低 Token）：
+   ```bash
+   wpw graph context "<任务描述 + 相关需求关键词>" --token-budget 4000 --depth 2 --json
+   ```
+   - 将返回的结构化子图（相关模块/文件/函数 + 依赖关系）作为本任务的代码上下文
+   - 0 锚点 -> 回退手动读文件，提示「图谱未匹配到相关节点」
+   - 需求文档关键词 + 任务描述组合查询，命中率更高
+
+3. **若 TestPlan 存在**：先按 TestPlan 中与本任务相关的用例写/补测试，再实施代码改动（最小化、聚焦该任务），使相关测试通过
+
+4. **若 TestPlan 跳过/不存在**：直接实施代码改动（无测试驱动，质量风险自担）
+
+5. 标记完成：
    ```bash
    wpw task <需求名> --mark <编号> --state done
    ```
-5. 继续下一任务
+6. 继续下一任务
 
 ### 暂停条件
 

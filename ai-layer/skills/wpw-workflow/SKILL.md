@@ -100,6 +100,40 @@ commands:
     output: ['Design-Fe.md']  # 覆盖默认模板
 ```
 
+## 知识图谱上下文（降 Token、提准）
+
+各阶段命令在需要理解代码时，优先调用 `wpw graph` 获取结构化上下文，替代手动 grep/读文件。
+
+**统一前置**：相关命令开始时先增量更新图谱
+```bash
+wpw graph update   # 约 100ms，保证代码上下文最新
+```
+
+**核心能力**：
+- `wpw graph context "<关键词>" --token-budget N` - 生成压缩后的结构化代码上下文（检索+裁剪+压缩，直接喂给 LLM）
+- `wpw graph query --upstream/--downstream <节点ID>` - 查依赖关系（影响面/回归范围）
+- `wpw graph query --level L2` - 查模块/文件节点 ID
+
+**降级策略**（所有命令统一）：
+- 图谱不存在 -> 强提示「建议先 `wpw graph build`」，但仍可回退手动读文件继续，不硬阻断
+- 向量索引缺失 -> context 自动降级 `--anchors` 模式，依赖查询仍可用
+- 0 锚点 -> 回退手动读文件，提示「图谱未匹配到相关节点」
+
+**各阶段集成点**：
+
+| 阶段 | 集成方式 | 收益 |
+|------|---------|------|
+| `/wpw:apply` | 每任务前 `context` 取代码上下文 | Token 降 60-80% |
+| `/wpw:cr` | `query --upstream` 分析影响面 | 审查更全面 |
+| `/wpw:explore` | `context` + `query` 了解现有架构 | 探索更快更准 |
+| `/wpw:design` | `context --level L2,L3,L4` 了解模块边界 | 设计不脱节 |
+| `/wpw:test` | `query --upstream/--downstream` 定回归范围 | 不遗漏不扩大 |
+| `/wpw:sync` | `query --upstream` 沿 business_map 找关联文档 | 不漏同步 |
+| `/wpw:plan` | `context --level L2,L3` 了解模块边界 | 任务切分更合理 |
+| `/wpw:brd` | `context --level L2` 参考模块规模估成本 | 估算更准（仅 AI 内部参考） |
+
+> 详见 `/wpw:map` 命令文档。
+
 ## 联动 Skill
 
 下列联动 Skill 由 `wpw init` 自动安装到 `.claude/skills/`，`wpw skills update` 实时拉取 GitHub 最新版。各 Skill 在工作流中的引用节点：

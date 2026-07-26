@@ -53,21 +53,42 @@ export function getNodeVectorText(node: GraphNode): string | null {
     }
 
     case 'function':
-    case 'component': {
-      // 函数/组件：名称 + 签名 + JSDoc
+    case 'component':
+    case 'pinia-action':
+    case 'pinia-getter': {
+      // 函数/组件/Pinia action & getter：名称 + 签名 + JSDoc + 所属文件路径（提升同名义函数区分度）
       const parts = [node.name];
       if (node.attrs.signature) parts.push(node.attrs.signature);
       if (node.attrs.jsDoc) parts.push(node.attrs.jsDoc);
       if (node.attrs.parentName) parts.push(`属于: ${node.attrs.parentName}`);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
       return parts.join('\n');
     }
 
     case 'class':
     case 'interface': {
-      // 类/接口：名称 + 签名 + JSDoc
+      // 类/接口：名称 + 签名 + JSDoc + 所属文件
       const parts = [node.name];
       if (node.attrs.signature) parts.push(node.attrs.signature);
       if (node.attrs.jsDoc) parts.push(node.attrs.jsDoc);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    case 'pinia-store': {
+      // Pinia Store：名称 + 描述 + 路径
+      const parts = [node.name, 'Pinia 状态管理'];
+      if (node.attrs.description) parts.push(node.attrs.description);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    case 'pinia-state': {
+      // Pinia state：名称 + 所属 store + 路径
+      const parts = [node.name];
+      if (node.attrs.parentName) parts.push(`store: ${node.attrs.parentName}`);
+      if (node.attrs.jsDoc) parts.push(node.attrs.jsDoc);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
       return parts.join('\n');
     }
 

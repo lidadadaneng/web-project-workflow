@@ -377,8 +377,14 @@ function registerSearch(graph: Command): void {
         console.log(`语义检索「${query}」(${results.length} 条结果):`);
         for (let i = 0; i < results.length; i++) {
           const r = results[i];
+          const displayName = r.node.attrs.parentName
+            ? `${r.node.attrs.parentName}/${r.node.name}`
+            : r.node.name;
+          const fileInfo = r.node.attrs.filePath
+            ? ` [${r.node.attrs.filePath}]`
+            : '';
           console.log(
-            `  ${i + 1}. [${r.node.level}] ${r.node.name} (${r.node.type}) — 相似度: ${(r.score * 100).toFixed(1)}%`,
+            `  ${i + 1}. [${r.node.level}] ${displayName} (${r.node.type})${fileInfo} — 相似度: ${(r.score * 100).toFixed(1)}%`,
           );
         }
       }

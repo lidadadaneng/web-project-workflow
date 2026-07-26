@@ -17,7 +17,7 @@ tags: [workflow, cr, review]
 
 读取 `git diff` 与 `git status`，确定本次改动文件列表。
 
-**知识图谱影响面分析**（推荐）：
+**知识图谱影响面分析**（必做）：
 
 ```bash
 wpw graph update   # 增量更新图谱，保证依赖关系最新

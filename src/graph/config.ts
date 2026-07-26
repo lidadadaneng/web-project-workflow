@@ -95,9 +95,10 @@ const DEFAULT_BUILD: GraphBuildConfig = {
 
 const DEFAULT_MAPPING: GraphMappingConfig = {
   mode: 'local',
-  semanticThreshold: 0.5,
+  semanticTopK: 5,
   gitHistory: true,
   gitMaxCommits: 1000,
+  gitMinFreq: 2,
 };
 
 const DEFAULT_SEARCH: GraphSearchConfig = {

@@ -24,7 +24,7 @@ wpw template explore -c <需求名>       # 取 Explore 模板
 
 读取 `PRD-<需求名>.md` 作为输入。
 
-**知识图谱上下文准备**（推荐）：
+**知识图谱上下文准备**（必做）：
 
 ```bash
 wpw graph update   # 增量更新图谱，保证代码上下文最新

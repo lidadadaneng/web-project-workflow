@@ -25,6 +25,14 @@ export const NODE_TYPE_INTERFACE = 'interface';
 export const NODE_TYPE_CONSTANT = 'constant';
 /** L4 组件节点类型 */
 export const NODE_TYPE_COMPONENT = 'component';
+/** L3 Pinia Store 节点类型 */
+export const NODE_TYPE_PINIA_STORE = 'pinia-store';
+/** L4 Pinia Action 节点类型 */
+export const NODE_TYPE_PINIA_ACTION = 'pinia-action';
+/** L4 Pinia Getter 节点类型 */
+export const NODE_TYPE_PINIA_GETTER = 'pinia-getter';
+/** L4 Pinia State 节点类型 */
+export const NODE_TYPE_PINIA_STATE = 'pinia-state';
 
 /** 所有节点类型 */
 export type NodeType =
@@ -35,7 +43,11 @@ export type NodeType =
   | typeof NODE_TYPE_CLASS
   | typeof NODE_TYPE_INTERFACE
   | typeof NODE_TYPE_CONSTANT
-  | typeof NODE_TYPE_COMPONENT;
+  | typeof NODE_TYPE_COMPONENT
+  | typeof NODE_TYPE_PINIA_STORE
+  | typeof NODE_TYPE_PINIA_ACTION
+  | typeof NODE_TYPE_PINIA_GETTER
+  | typeof NODE_TYPE_PINIA_STATE;
 
 /** 模块所属端 */
 export type ModuleSide = 'frontend' | 'backend' | 'shared' | 'unknown';
@@ -202,12 +214,16 @@ export interface GraphMappingConfig {
   aiApiKey?: string;
   /** AI API Base URL */
   aiApiBase?: string;
-  /** 语义匹配最小阈值 */
-  semanticThreshold: number;
+  /** 语义匹配最小阈值（未设置时运行时回退 search.threshold） */
+  semanticThreshold?: number;
+  /** 语义匹配每个需求召回的 Top-K 候选目标（默认 5） */
+  semanticTopK?: number;
   /** 是否启用 Git 历史追溯 */
   gitHistory: boolean;
   /** Git 最大回溯 commit 数 */
   gitMaxCommits: number;
+  /** Git 历史文件频次下限，低于此频次不作为证据（默认 2，过滤单次修改噪声） */
+  gitMinFreq?: number;
 }
 
 /** 检索配置 */

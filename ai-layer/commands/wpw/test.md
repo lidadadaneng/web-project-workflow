@@ -23,7 +23,7 @@ wpw template testplan -c <需求名>       # 取 Test 模板（Fe/Server）
 
 读取 `Design-<需求名>.md` 与 `Plan-<需求名>.md` 作为输入。
 
-**知识图谱上下文准备**（推荐）：
+**知识图谱上下文准备**（必做）：
 
 ```bash
 wpw graph update   # 增量更新图谱，保证依赖关系最新

@@ -159,6 +159,22 @@ wpw graph context "认证" --level L2        # 只看模块级
 wpw graph context "登录" --depth 2 --min-weight 0.8
 ```
 
+## 映射配置（workflow.config.yaml）
+
+`graph.mapping` 段控制业务-代码映射（business_map 边）的多源证据融合：
+
+```yaml
+graph:
+  mapping:
+    semanticThreshold: 0.5   # 语义匹配相似度阈值（未设置则回退 search.threshold）
+    semanticTopK: 5          # 每个需求语义召回的 Top-K 候选
+    gitHistory: true         # 是否启用 Git 历史追溯源
+    gitMaxCommits: 1000      # Git 回溯最大 commit 数
+    gitMinFreq: 2            # Git 文件频次下限，低于此不作为证据（过滤单次修改噪声）
+```
+
+四源证据（doc-extract / semantic / git-history / name-match）按 noisy-OR 聚合权重，边的 `source` 取最权威源。AI 校准（ai-refine）为可选未来工作。
+
 ## 在 Apply 阶段的使用流程
 
 ```

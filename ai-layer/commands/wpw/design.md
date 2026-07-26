@@ -29,7 +29,7 @@ wpw template design -c <需求名>       # 取 Design 模板（按 project.type 
 - 若 `explore` 已 done：读 `Explore-<需求名>.md` + `decisions.explore.chosenOption`，**基于拍板方案深化**
 - 若 `explore` skipped：仅基于 PRD 设计
 
-**知识图谱上下文准备**（推荐）：
+**知识图谱上下文准备**（必做）：
 
 ```bash
 wpw graph update   # 增量更新图谱，保证代码上下文最新

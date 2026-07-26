@@ -19,6 +19,7 @@ import {
   ParseResult,
 } from './ts-parser';
 import { parseVueFile } from './vue-parser';
+import { isPiniaStoreFile, parsePiniaStores } from './pinia-parser';
 
 /** 支持的语言 */
 export type SupportedLanguage = 'typescript' | 'tsx' | 'javascript' | 'vue';
@@ -66,18 +67,46 @@ export async function parseSourceFile(
 
   const source = fs.readFileSync(filePath, 'utf-8');
 
+  let result: ParseResult;
+
   switch (lang) {
     case 'typescript':
     case 'tsx':
     case 'javascript':
-      return parseTypeScriptFile(filePath, root, source, lang);
+      result = await parseTypeScriptFile(filePath, root, source, lang);
+      break;
 
     case 'vue':
-      return parseVueFile(filePath, root, source);
+      result = await parseVueFile(filePath, root, source);
+      break;
 
     default:
       return { fileNode: createFileNode(filePath, root, lang), elements: [], imports: [] };
   }
+
+  // Pinia store 解析（仅当文件疑似 store 时）
+  if (isPiniaStoreFile(filePath, source)) {
+    try {
+      const piniaLang = lang === 'vue' ? 'javascript' : lang;
+      const piniaResult = await parsePiniaStores(
+        filePath,
+        root,
+        source,
+        piniaLang as 'typescript' | 'javascript',
+      );
+      if (piniaResult.stores.length > 0) {
+        result.piniaStores = piniaResult.stores;
+        // Pinia 的 L4 元素（action/getter/state）并入 elements
+        result.elements.push(...piniaResult.elements);
+      }
+    } catch (e) {
+      console.warn(
+        `[source-parser] Pinia 解析失败: ${path.relative(root, filePath)} - ${(e as Error).message}`,
+      );
+    }
+  }
+
+  return result;
 }
 
 /**

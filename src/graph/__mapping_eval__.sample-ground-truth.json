@@ -1,0 +1,12 @@
+[
+  { "requirement": "用户认证", "targets": ["auth", "login.ts", "session.ts"] },
+  { "requirement": "用户注册", "targets": ["auth", "register.ts"] },
+  { "requirement": "订单管理", "targets": ["order", "list.ts", "detail.ts"] },
+  { "requirement": "订单支付", "targets": ["pay", "order", "payment.ts"] },
+  { "requirement": "商品展示", "targets": ["product", "goods.ts", "sku.ts"] },
+  { "requirement": "购物车", "targets": ["cart", "cart.ts"] },
+  { "requirement": "消息通知", "targets": ["message", "notification.ts"] },
+  { "requirement": "权限管理", "targets": ["role", "permission.ts", "auth"] },
+  { "requirement": "数据统计", "targets": ["stats", "analytics.ts"] },
+  { "requirement": "文件上传", "targets": ["upload", "oss.ts", "file.ts"] }
+]

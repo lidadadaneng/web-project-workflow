@@ -9,7 +9,7 @@ import type { GraphMeta } from '../types';
 
 const META_FILE = 'meta.json';
 
-const SCHEMA_VERSION = '1.0.0';
+const SCHEMA_VERSION = '1.1.0';
 
 export interface MetaStore {
   /** 读取元数据 */

@@ -27,7 +27,7 @@ wpw apply <需求名> --json   # 返回 { state, contextFiles, tasks, progress, 
 读取 `contextFiles`（PRD/Design/Plan；若 TestPlan 已 done 则含之，作为驱动输入）。
 若 `--from <编号>`，从该任务继续（断点恢复）。
 
-**知识图谱上下文准备**（推荐）：
+**知识图谱上下文准备**（必做）：
 
 ```bash
 wpw graph update   # 增量更新图谱，保证代码上下文最新（约 100ms）

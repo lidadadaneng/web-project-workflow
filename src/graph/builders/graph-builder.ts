@@ -32,6 +32,7 @@ import type {
   BuildStats,
   NodeLevel,
   EdgeType,
+  VectorMapping,
 } from '../types';
 import {
   NODE_TYPE_FILE,
@@ -49,7 +50,8 @@ import { parseModules, ParsedModule } from '../parsers/module-parser';
 import { parseSourceFiles, isSupportedFile } from '../parsers/source-parser';
 import { ParseResult } from '../parsers/ts-parser';
 import { sniffProjectType } from '../../lib/project-type';
-import { EdgeBuilder, aggregateWeights, MappingEvidence } from './edge-builder';
+import { EdgeBuilder } from './edge-builder';
+import { buildBusinessMapEdges } from './business-mapper';
 import { buildGraphIndex } from '../storage/graph-store';
 import { generateNodeId } from './node-builder';
 import { buildNodeVectors } from './vector-builder';
@@ -107,26 +109,84 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   }
   const fileNodes: Map<string, GraphNode> = new Map(); // 路径 → 文件节点
   const elemNodes: Map<string, GraphNode[]> = new Map(); // 文件路径 → 元素节点列表
+  const piniaStoreNodes: Map<string, GraphNode> = new Map(); // store id → store 节点
+  const piniaElemByStore: Map<string, GraphNode[]> = new Map(); // store id → 子元素列表
   for (const pr of parseResults) {
     allNodes.push(pr.fileNode);
     const filePath = pr.fileNode.attrs.filePath!;
     fileNodes.set(filePath, pr.fileNode);
     elemNodes.set(filePath, pr.elements);
     allNodes.push(...pr.elements);
+
+    // Pinia store 节点（L3）
+    if (pr.piniaStores && pr.piniaStores.length > 0) {
+      for (const store of pr.piniaStores) {
+        allNodes.push(store);
+        piniaStoreNodes.set(store.name, store);
+        // 收集该 store 的子元素（从 elements 中筛选 parentName === storeId 的）
+        const storeElems = pr.elements.filter(
+          (el) => el.attrs.parentName === store.name &&
+            (el.type === 'pinia-action' || el.type === 'pinia-getter' || el.type === 'pinia-state'),
+        );
+        piniaElemByStore.set(store.name, storeElems);
+      }
+    }
   }
 
   // --- contain 边 ---
   buildContainEdges(edgeBuilder, parsedReqs, parsedModules, fileNodes, elemNodes);
+  // Pinia 从属边：file → store (defined_in/contain) 和 store → action/getter/state (contain)
+  buildPiniaContainEdges(edgeBuilder, parseResults, fileNodes, piniaStoreNodes, piniaElemByStore);
 
   // --- import 边 ---
   buildImportEdges(edgeBuilder, parseResults, fileNodes, root);
 
-  // --- business_map 边（文档提取 + 命名匹配，语义匹配和 Git 后面单独处理）---
-  buildBusinessMapEdges(edgeBuilder, parsedReqs, parsedModules, fileNodes, root, config);
-
+  // --- Pinia call 边（组件 → action 调用） ---
+  buildPiniaCallEdges(edgeBuilder, parseResults, root, piniaStoreNodes, piniaElemByStore);
   mark('edges', t3);
 
-  // 6. 完整性校验
+  // 6. 向量索引（在 business_map 之前构建，供语义回填使用；先在内存中保留，稍后持久化）
+  const tVec = Date.now();
+  let vectors: Float32Array | null = null;
+  let vectorDimensions = 0;
+  let vectorMapping: VectorMapping | null = null;
+  let vectorCount = 0;
+  if (config.embedding.enabled) {
+    try {
+      const result = await buildNodeVectors(
+        allNodes,
+        config.embedding.model,
+        config.embedding.mirror,
+      );
+      vectors = result.vectors;
+      vectorDimensions = result.dimensions;
+      vectorMapping = result.mapping;
+      vectorCount = result.mapping.indexToNodeId.length;
+    } catch (e) {
+      console.warn(
+        `[graph-builder] 向量构建失败，跳过（语义检索/语义映射将不可用）: ${(e as Error).message}`,
+      );
+      vectors = null;
+    }
+  }
+  mark('vectors', tVec);
+
+  // 7. business_map 边（四源证据融合：doc / semantic / git / name）
+  //    语义回填依赖向量索引，故必须在向量构建之后
+  const tBiz = Date.now();
+  buildBusinessMapEdges(edgeBuilder, {
+    reqs: parsedReqs,
+    modules: parsedModules,
+    fileNodes,
+    root,
+    config,
+    vectors,
+    dimensions: vectorDimensions,
+    mapping: vectorMapping,
+  });
+  mark('business-map', tBiz);
+
+  // 8. 完整性校验
   const t4 = Date.now();
   const graphData: GraphData = {
     nodes: allNodes,
@@ -135,42 +195,21 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   const validation = validateGraph(graphData);
   mark('validation', t4);
 
-  // 7. 持久化
+  // 9. 持久化（图谱 + 向量索引 + 元数据）
   const t5 = Date.now();
   const wpfPath = path.join(root, WPF_DIR);
   const graphStore = new JsonlGraphStore(wpfPath);
   graphStore.save(graphData);
 
-  // 8. 向量索引（可选）
-  let vectorCount = 0;
-  if (config.embedding.enabled) {
-    try {
-      const tVec = Date.now();
-      const { vectors, dimensions, mapping } = await buildNodeVectors(
-        allNodes,
-        config.embedding.model,
-        config.embedding.mirror,
-      );
+  if (vectors && vectorMapping && vectors.length > 0) {
+    const vectorStore = new BinaryVectorStore(wpfPath);
+    vectorStore.save(vectors, vectorDimensions);
 
-      if (vectors.length > 0) {
-        const vectorStore = new BinaryVectorStore(wpfPath);
-        vectorStore.save(vectors, dimensions);
-
-        const mappingStore = new VectorMappingStore(wpfPath);
-        mappingStore.save(mapping);
-
-        vectorCount = mapping.indexToNodeId.length;
-      }
-      mark('vectors', tVec);
-    } catch (e) {
-      console.warn(
-        `[graph-builder] 向量构建失败，跳过（语义检索将不可用）: ${(e as Error).message}`,
-      );
-      // 失败不影响主流程，向量数为 0
-    }
+    const mappingStore = new VectorMappingStore(wpfPath);
+    mappingStore.save(vectorMapping);
   }
 
-  // 9. 元数据
+  // 10. 元数据
   const metaStore = new JsonMetaStore(wpfPath);
   const fileHashes = buildFileHashSnapshot(parseResults);
   const meta: GraphMeta = {
@@ -234,6 +273,175 @@ function buildContainEdges(
   // 需求和模块之间是业务映射关系，不是包含关系
 }
 
+// ==================== Pinia contain 边 ====================
+
+/**
+ * 构建 Pinia 相关的 contain 边：
+ *   file → pinia-store（文件包含 store 定义）
+ *   pinia-store → action/getter/state（store 包含子元素）
+ */
+function buildPiniaContainEdges(
+  eb: EdgeBuilder,
+  parseResults: ParseResult[],
+  fileNodes: Map<string, GraphNode>,
+  piniaStores: Map<string, GraphNode>,
+  piniaElemByStore: Map<string, GraphNode[]>,
+): void {
+  // 建立 file → store 的 contain 边
+  for (const pr of parseResults) {
+    if (!pr.piniaStores || pr.piniaStores.length === 0) continue;
+    const fileNode = pr.fileNode;
+    for (const store of pr.piniaStores) {
+      eb.addContain(fileNode.id, store.id);
+    }
+  }
+
+  // 建立 store → action/getter/state 的 contain 边
+  for (const [storeId, elems] of piniaElemByStore) {
+    const storeNode = piniaStores.get(storeId);
+    if (!storeNode) continue;
+    for (const elem of elems) {
+      eb.addContain(storeNode.id, elem.id);
+    }
+  }
+}
+
+// ==================== Pinia call 边 ====================
+
+/**
+ * 构建组件/文件 → Pinia action 的调用边。
+ *
+ * 识别模式（启发式）：
+ *   1. import { useXxxStore } from '@/stores/xxx' → 识别 store hook
+ *   2. const xxx = useXxxStore() → 识别 store 变量名
+ *   3. xxx.someAction( → 识别 action 调用
+ *
+ * 只在能关联到已知 pinia action 节点时才建边。
+ */
+function buildPiniaCallEdges(
+  eb: EdgeBuilder,
+  parseResults: ParseResult[],
+  root: string,
+  piniaStores: Map<string, GraphNode>,
+  piniaElemByStore: Map<string, GraphNode[]>,
+): void {
+  // 构建 store hook 名 → store id 的映射
+  // 例如 useAuthStore → useAuthStore（通常和 store id 相同）
+  // 也处理 import { useAuthStore as xxx } 的情况
+
+  for (const pr of parseResults) {
+    const fileNode = pr.fileNode;
+    const filePath = fileNode.attrs.filePath;
+    if (!filePath) continue;
+
+    // 读取源码（parseResults 里没有存 source，从文件读）
+    let source: string;
+    try {
+      source = require('fs').readFileSync(path.join(root, filePath), 'utf-8');
+    } catch {
+      continue;
+    }
+
+    // 从 import 语句中识别引入了哪些 store hook
+    // 模式：import { useXxxStore } from '.../stores/xxx'
+    const storeHookNames: string[] = [];
+    const importRegex = /import\s*\{([^}]+)\}\s*from\s*['"][^'"]*stores?\/[^'"]+['"]/g;
+    let match;
+    while ((match = importRegex.exec(source)) !== null) {
+      const specifiers = match[1].split(',').map((s: string) => s.trim());
+      for (const spec of specifiers) {
+        // 处理 alias: useXxxStore as xxx
+        const aliasMatch = spec.match(/^(\w+)\s+as\s+(\w+)$/);
+        if (aliasMatch) {
+          storeHookNames.push(aliasMatch[2]); // alias 名
+        } else if (/^use\w+Store$/.test(spec)) {
+          storeHookNames.push(spec);
+        }
+      }
+    }
+
+    if (storeHookNames.length === 0) continue;
+
+    // 查找 useXxxStore() 调用后赋值的变量名
+    const storeVarToHook = new Map<string, string>(); // 变量名 → hook名
+    for (const hookName of storeHookNames) {
+      // 模式：const xxx = useXxxStore()
+      const varRegex = new RegExp(
+        `(?:const|let|var)\\s+(\\w+)\\s*=\\s*${hookName}\\s*\\(`,
+        'g',
+      );
+      let varMatch;
+      while ((varMatch = varRegex.exec(source)) !== null) {
+        storeVarToHook.set(varMatch[1], hookName);
+      }
+    }
+
+    // 检测 storeVar.action() 调用
+    for (const [storeVar, hookName] of storeVarToHook) {
+      // hookName 通常就是 store id（useAuthStore 的 id 就是 useAuthStore）
+      const storeId = hookName;
+      const storeNode = piniaStores.get(storeId);
+      if (!storeNode) continue;
+
+      const storeElems = piniaElemByStore.get(storeId) || [];
+      const actionNames = new Set(
+        storeElems.filter((e) => e.type === 'pinia-action').map((e) => e.name),
+      );
+      if (actionNames.size === 0) continue;
+
+      // 匹配 storeVar.actionName(
+      const callRegex = new RegExp(
+        `${storeVar}\\.(${Array.from(actionNames).join('|')})\\s*\\(`,
+        'g',
+      );
+      const calledActions = new Set<string>();
+      let callMatch;
+      while ((callMatch = callRegex.exec(source)) !== null) {
+        calledActions.add(callMatch[1]);
+      }
+
+      // 建边：从文件节点 → action 节点（也可以从组件节点，这里用文件节点简化）
+      for (const actionName of calledActions) {
+        const actionNode = storeElems.find(
+          (e) => e.type === 'pinia-action' && e.name === actionName,
+        );
+        if (actionNode) {
+          eb.addCall(fileNode.id, actionNode.id);
+        }
+      }
+    }
+
+    // 同时处理 mapActions 模式
+    const mapActionsRegex = /mapActions\s*\(\s*['"](\w+)['"]\s*,\s*\[([^\]]+)\]/g;
+    let mapMatch;
+    while ((mapMatch = mapActionsRegex.exec(source)) !== null) {
+      const storeId = mapMatch[1];
+      const actionsStr = mapMatch[2];
+      const actionNames = actionsStr
+        .split(',')
+        .map((s: string) => s.trim().replace(/['"]/g, ''))
+        .filter(Boolean);
+
+      const storeNode = piniaStores.get(storeId) || piniaStores.get(`use${capitalize(storeId)}Store`);
+      if (!storeNode) continue;
+
+      const storeElems = piniaElemByStore.get(storeNode.name) || [];
+      for (const actionName of actionNames) {
+        const actionNode = storeElems.find(
+          (e) => e.type === 'pinia-action' && e.name === actionName,
+        );
+        if (actionNode) {
+          eb.addCall(fileNode.id, actionNode.id);
+        }
+      }
+    }
+  }
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 // ==================== import 边 ====================
 
 function buildImportEdges(
@@ -289,108 +497,6 @@ function resolveImportTarget(
   }
 
   return null;
-}
-
-// ==================== business_map 边 ====================
-
-function buildBusinessMapEdges(
-  eb: EdgeBuilder,
-  reqs: ParsedRequirement[],
-  modules: ParsedModule[],
-  fileNodes: Map<string, GraphNode>,
-  root: string,
-  config: GraphConfig,
-): void {
-  // 模块名 → 模块节点映射
-  const moduleByName = new Map<string, ParsedModule>();
-  for (const m of modules) {
-    moduleByName.set(m.node.name.toLowerCase(), m);
-  }
-
-  for (const req of reqs) {
-    const evidences: MappingEvidence[] = [];
-
-    // Layer 1: 文档提取（高权重）
-    for (const modName of req.extractedModules) {
-      const mod = moduleByName.get(modName.toLowerCase());
-      if (mod) {
-        evidences.push({
-          targetId: mod.node.id,
-          source: 'doc-extract',
-          baseWeight: 0.85,
-        });
-      }
-    }
-
-    // Layer 4: 命名匹配（低权重兜底）
-    const nameMatchResult = matchRequirementToModules(req.node.name, modules);
-    for (const [modId, weight] of nameMatchResult) {
-      evidences.push({
-        targetId: modId,
-        source: 'name-match',
-        baseWeight: weight * 0.5, // 命名匹配权重打个折
-      });
-    }
-
-    // 权重叠加
-    const weights = aggregateWeights(evidences);
-
-    // 生成边
-    for (const [targetId, weight] of weights) {
-      if (weight >= 0.3) {
-        // 找到最权威的来源
-        const ev = evidences.find((e) => e.targetId === targetId);
-        eb.addBusinessMap(req.node.id, targetId, weight, ev?.source ?? 'name-match');
-      }
-    }
-  }
-
-  // 注：语义匹配（Layer 2）和 Git 追溯（Layer 3）在向量构建后单独处理
-  // 因为语义匹配需要向量，Git 追溯需要逐个需求调用 git
-}
-
-/** 需求名与模块名的简单匹配（用 mapping-sources 里的逻辑，这里简化实现） */
-function matchRequirementToModules(
-  reqName: string,
-  modules: ParsedModule[],
-): Map<string, number> {
-  const result = new Map<string, number>();
-  const nameLower = reqName.toLowerCase();
-
-  for (const mod of modules) {
-    const modLower = mod.node.name.toLowerCase();
-    let score = 0;
-
-    // 直接包含
-    if (modLower.includes(nameLower) || nameLower.includes(modLower)) {
-      score = Math.max(score, 0.6);
-    }
-
-    // 英文关键词简单匹配（小词典）
-    const keywords: Record<string, string[]> = {
-      用户: ['user', 'account', 'member'],
-      认证: ['auth', 'authentication', 'login'],
-      登录: ['login', 'signin', 'auth'],
-      订单: ['order'],
-      支付: ['pay', 'payment'],
-      商品: ['product', 'goods', 'item'],
-    };
-    for (const [cn, ens] of Object.entries(keywords)) {
-      if (reqName.includes(cn)) {
-        for (const en of ens) {
-          if (modLower.includes(en)) {
-            score = Math.max(score, 0.5);
-          }
-        }
-      }
-    }
-
-    if (score > 0) {
-      result.set(mod.node.id, Math.min(score, 0.7));
-    }
-  }
-
-  return result;
 }
 
 // ==================== 扫描源码文件 ====================
@@ -667,12 +773,27 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
   // 添加新解析的文件节点和元素节点
   const fileNodes = new Map<string, GraphNode>();
   const elemNodes = new Map<string, GraphNode[]>();
+  const piniaStoreMap = new Map<string, GraphNode>(); // storeId → store 节点
+  const piniaElemByStore = new Map<string, GraphNode[]>();
   for (const pr of newParseResults) {
     newNodes.push(pr.fileNode);
     const fp = pr.fileNode.attrs.filePath!;
     fileNodes.set(fp, pr.fileNode);
     elemNodes.set(fp, pr.elements);
     newNodes.push(...pr.elements);
+
+    // Pinia store 节点
+    if (pr.piniaStores && pr.piniaStores.length > 0) {
+      for (const store of pr.piniaStores) {
+        newNodes.push(store);
+        piniaStoreMap.set(store.name, store);
+        const storeElems = pr.elements.filter(
+          (el) => el.attrs.parentName === store.name &&
+            (el.type === 'pinia-action' || el.type === 'pinia-getter' || el.type === 'pinia-state'),
+        );
+        piniaElemByStore.set(store.name, storeElems);
+      }
+    }
   }
 
   // 重建变更文件的 contain 边（文件⊃元素）
@@ -681,6 +802,22 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     if (!fNode) continue;
     for (const elem of elems) {
       edgeBuilder.addContain(fNode.id, elem.id);
+    }
+  }
+
+  // 重建 Pinia contain 边（文件⊃store, store⊃action/getter/state）
+  for (const pr of newParseResults) {
+    if (!pr.piniaStores || pr.piniaStores.length === 0) continue;
+    const fNode = pr.fileNode;
+    for (const store of pr.piniaStores) {
+      edgeBuilder.addContain(fNode.id, store.id);
+    }
+  }
+  for (const [storeId, elems] of piniaElemByStore) {
+    const storeNode = piniaStoreMap.get(storeId);
+    if (!storeNode) continue;
+    for (const elem of elems) {
+      edgeBuilder.addContain(storeNode.id, elem.id);
     }
   }
 

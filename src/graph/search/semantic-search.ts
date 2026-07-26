@@ -5,6 +5,7 @@
  */
 import type { GraphNode, VectorMapping } from '../types';
 import { buildVectors, cosineSimilarity, setEmbeddingModel } from '../builders/vector-builder';
+import { expandQueryToEnglish } from '../parsers/mapping-sources';
 import { GraphQuerier } from './graph-query';
 
 /** 检索结果项 */
@@ -26,6 +27,70 @@ export interface SearchOptions {
   type?: string | string[];
   /** 是否排除归档需求 */
   excludeArchived?: boolean;
+}
+
+/** 词汇加分分级（取最大值，不累加） */
+const LEX_BOOST_EXACT = 0.35; // 查询词与节点名精确/互含匹配
+const LEX_BOOST_PREFIX = 0.25; // 英文等价词为节点名前缀
+const LEX_BOOST_CONTAINS = 0.15; // 英文等价词包含于节点名
+const LEX_BOOST_PARENT_FILE = 0.10; // 英文等价词命中 parentName/filePath
+const LEX_BOOST_COMMENT = 0.08; // 英文等价词命中 JSDoc/注释/描述
+
+/**
+ * 计算词汇加分（lexBoost）：跨语言桥接"中文查询 ↔ 英文代码标识符"
+ *
+ * 分级（取最大值）：
+ *   - 查询词与节点名精确/互含 +0.35
+ *   - 英文等价词为节点名前缀 +0.25
+ *   - 英文等价词包含于节点名 +0.15
+ *   - 英文等价词命中 parentName/filePath +0.10
+ *
+ * 无命中返回 0（纯语义场景不受影响）。
+ */
+export function computeLexBoost(query: string, enEquivalents: string[], node: GraphNode): number {
+  const queryLower = query.toLowerCase();
+  if (!queryLower) return 0;
+
+  const nameLower = node.name.toLowerCase();
+  const parentName = (node.attrs.parentName ?? '').toLowerCase();
+  const filePath = (node.attrs.filePath ?? '').toLowerCase();
+  const jsDoc = (node.attrs.jsDoc ?? '').toLowerCase();
+  const description = (node.attrs.description ?? '').toLowerCase();
+
+  let boost = 0;
+
+  // 精确/互含名称匹配（查询词本身）
+  if (
+    nameLower === queryLower ||
+    (nameLower && queryLower.includes(nameLower)) ||
+    nameLower.includes(queryLower)
+  ) {
+    boost = Math.max(boost, LEX_BOOST_EXACT);
+  }
+
+  // 查询词本身命中注释/JSDoc/描述
+  if (jsDoc.includes(queryLower) || description.includes(queryLower)) {
+    boost = Math.max(boost, LEX_BOOST_COMMENT);
+  }
+
+  // 英文等价词分级匹配（跳过原词，原词已在精确匹配处理）
+  for (const en of enEquivalents) {
+    if (!en || en === query) continue;
+    const enLower = en.toLowerCase();
+    if (!enLower || !nameLower) continue;
+
+    if (nameLower.startsWith(enLower)) {
+      boost = Math.max(boost, LEX_BOOST_PREFIX);
+    } else if (nameLower.includes(enLower)) {
+      boost = Math.max(boost, LEX_BOOST_CONTAINS);
+    } else if (parentName.includes(enLower) || filePath.includes(enLower)) {
+      boost = Math.max(boost, LEX_BOOST_PARENT_FILE);
+    } else if (jsDoc.includes(enLower) || description.includes(enLower)) {
+      boost = Math.max(boost, LEX_BOOST_COMMENT);
+    }
+  }
+
+  return boost;
 }
 
 /**
@@ -64,22 +129,30 @@ export class SemanticSearcher {
     // 生成查询向量
     const queryVec = await this.getQueryVector(query);
 
-    // 计算所有向量的相似度
+    // 跨语言词汇等价词（供 lexBoost 桥接中文查询 <-> 英文标识符）
+    const enEquivalents = expandQueryToEnglish(query);
+
+    // 计算所有向量的相似度 + 词汇加分
     const totalVectors = this.mapping.indexToNodeId.length;
-    const scores: Array<{ nodeId: string; score: number }> = [];
+    const scores: Array<{ node: GraphNode; score: number }> = [];
 
     for (let i = 0; i < totalVectors; i++) {
+      const nodeId = this.mapping.indexToNodeId[i];
+      const node = this.querier.getNode(nodeId);
+      if (!node) continue;
+
       const vecOffset = i * this.dimensions;
       const vec = this.vectors.subarray(vecOffset, vecOffset + this.dimensions);
       const sim = cosineSimilarity(queryVec, vec);
+      const lexBoost = computeLexBoost(query, enEquivalents, node);
+      const finalScore = Math.min(1.0, sim + lexBoost);
 
-      if (sim >= threshold) {
-        const nodeId = this.mapping.indexToNodeId[i];
-        scores.push({ nodeId, score: sim });
+      if (finalScore >= threshold) {
+        scores.push({ node, score: finalScore });
       }
     }
 
-    // 按相似度降序排序
+    // 按最终得分降序排序
     scores.sort((a, b) => b.score - a.score);
 
     // 应用过滤条件
@@ -88,10 +161,7 @@ export class SemanticSearcher {
     const typeFilter = this.toArray(options.type);
     const excludeArchived = options.excludeArchived ?? true;
 
-    for (const { nodeId, score } of scores) {
-      const node = this.querier.getNode(nodeId);
-      if (!node) continue;
-
+    for (const { node, score } of scores) {
       // 层级过滤
       if (levelFilter.length > 0 && !levelFilter.includes(node.level)) continue;
 

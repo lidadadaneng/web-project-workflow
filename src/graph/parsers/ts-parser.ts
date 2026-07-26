@@ -22,8 +22,10 @@ import { setParserLanguage } from './tree-sitter-loader';
 export interface ParseResult {
   /** 文件节点 */
   fileNode: GraphNode;
-  /** 元素节点列表 */
+  /** 元素节点列表（L4） */
   elements: GraphNode[];
+  /** Pinia store 节点列表（L3，可选） */
+  piniaStores?: GraphNode[];
   /** import 目标（相对路径或模块名），用于生成 import 边 */
   imports: string[];
 }
@@ -69,6 +71,16 @@ export async function parseTypeScriptFile(
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
+
+  // 元素节点继承所属文件路径（供语义检索 embedding 富化与词汇加权区分同名义函数）
+  const fileBaseName = path.basename(fileName, path.extname(fileName));
+  for (const el of elements) {
+    el.attrs.filePath = relPath;
+    // 顶层元素的 parentName 设为文件名（去重名歧义）；类方法等已在提取时设置了 parentName
+    if (!el.attrs.parentName) {
+      el.attrs.parentName = fileBaseName;
+    }
+  }
 
   return { fileNode, elements, imports };
 }

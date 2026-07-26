@@ -7,15 +7,14 @@
  */
 import { program } from 'commander';
 import { registerCommands } from './commands';
-
-const VERSION = '0.1.0';
+import packageJson from '../package.json';
 
 registerCommands(program);
 
 program
   .name('wpw')
   .description('Web Project Workflow - AI-driven six-phase development workflow CLI')
-  .version(VERSION);
+  .version(packageJson.version);
 
 program.parseAsync(process.argv).catch((err: Error) => {
   console.error(err.message);

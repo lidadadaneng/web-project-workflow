@@ -62,6 +62,18 @@ export interface RequirementStatus {
   schema: string;
 }
 
+/** 需求功能条目（从 PRD 结构化提取） */
+export interface RequirementFeature {
+  /** 功能编号，如 F1、F2 */
+  id: string;
+  /** 功能名称 */
+  name: string;
+  /** 优先级，如 P0、P1 */
+  priority?: string;
+  /** 功能描述（含验收标准） */
+  description?: string;
+}
+
 /** 节点扩展属性（JSON 存储，不同节点类型有不同字段） */
 export interface NodeAttributes {
   // 通用
@@ -72,6 +84,7 @@ export interface NodeAttributes {
   status?: RequirementStatus;
   docPath?: string;          // 需求文档目录路径
   projectType?: string;
+  features?: RequirementFeature[];  // 结构化功能条目（从 PRD 提取）
 
   // L2 模块
   side?: ModuleSide;

@@ -658,6 +658,15 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     return buildGraph(root);
   }
 
+  // Schema 版本检查：主版本号不同视为不兼容，降级为全量构建
+  if (!isSchemaCompatible(meta.schemaVersion, SCHEMA_VERSION)) {
+    console.warn(
+      `[graph-builder] 图谱 schema 版本不兼容（当前: ${meta.schemaVersion}, 需要: ${SCHEMA_VERSION}），正在全量重建...`,
+    );
+    console.warn('[graph-builder] 原因：需求节点 ID 生成规则变更，需重建以保证数据一致性。');
+    return buildGraph(root);
+  }
+
   const startTime = Date.now();
   const phaseTimes: Record<string, number> = {};
   const mark = (name: string, t: number) => {
@@ -700,12 +709,7 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
   }
   mark('scan', t0);
 
-  // 如果没有变更，直接返回
-  if (changedFiles.length === 0 && deletedFiles.length === 0) {
-    // 检查需求文件变更（简单起见，这里先只处理源码文件变更）
-    // 需求变更在另外的流程里处理
-    return null; // 无变更
-  }
+  const hasFileChanges = changedFiles.length > 0 || deletedFiles.length > 0;
 
   // 2. 加载旧图谱
   const t1 = Date.now();
@@ -714,7 +718,18 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
   const oldIdx = buildGraphIndex(oldData);
   mark('load', t1);
 
-  // 3. 删除变更文件相关的节点和边
+  // 3. 检测需求变更
+  const tReq = Date.now();
+  const reqChanges = detectRequirementChanges(root, oldData.nodes);
+  const hasReqChanges = reqChanges.length > 0;
+  mark('req-detect', tReq);
+
+  // 如果既没有文件变更，也没有需求变更，直接返回
+  if (!hasFileChanges && !hasReqChanges) {
+    return null;
+  }
+
+  // 4. 删除变更文件相关的节点和边
   const t2 = Date.now();
   const nodesToRemove = new Set<string>();
   const edgesToRemove = new Set<string>();
@@ -743,6 +758,26 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
+  // 删除变更的需求节点及其所有关联边
+  // added 类型不用删（本来就没有），modified 先删后重建，deleted 直接删
+  const reqsToRebuild = reqChanges.filter(
+    (c) => c.type === 'added' || c.type === 'modified' || c.type === 'deleted',
+  );
+  for (const rc of reqsToRebuild) {
+    const reqNode = oldData.nodes.find(
+      (n) => n.type === NODE_TYPE_REQUIREMENT && n.name === rc.name,
+    );
+    if (reqNode) {
+      nodesToRemove.add(reqNode.id);
+      // 删除所有与该需求相关的边
+      const outE = oldIdx.outEdges.get(reqNode.id) ?? [];
+      const inE = oldIdx.inEdges.get(reqNode.id) ?? [];
+      for (const e of [...outE, ...inE]) {
+        edgesToRemove.add(e.id);
+      }
+    }
+  }
+
   // 构建新节点列表（保留未删除的）
   const newNodes = oldData.nodes.filter((n) => !nodesToRemove.has(n.id));
   const newEdges = oldData.edges.filter((e) => !edgesToRemove.has(e.id));
@@ -768,6 +803,18 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
       weight: e.weight,
       source: e.source,
     });
+  }
+
+  // 处理需求变更：添加新增/修改的需求节点
+  // 注意：需求节点的 business_map 边暂不在增量更新中重建
+  // （与文件变更的 business_map 边处理一致，首版简化：需求有变更建议全量 rebuild）
+  const addedOrModifiedReqs = reqChanges.filter(
+    (c) => (c.type === 'added' || c.type === 'modified') && c.parsed,
+  );
+  for (const rc of addedOrModifiedReqs) {
+    if (rc.parsed) {
+      newNodes.push(rc.parsed.node);
+    }
   }
 
   // 添加新解析的文件节点和元素节点
@@ -982,38 +1029,84 @@ export async function rebuildGraph(root: string): Promise<BuildResult> {
   return buildGraph(root);
 }
 
-// ==================== 需求变更检测 ====================
+// ==================== 工具函数 ====================
 
 /**
- * 检测需求目录是否有变更（新增/删除/归档/状态变更）
+ * 判断两个 schema 版本是否兼容
  *
- * 注意：增量更新主要处理源码文件变更。
- * 需求变更相对低频，一般建议直接 rebuild。
- * 这里提供检测函数供调用方判断是否需要全量重建。
+ * 规则：主版本号不同视为不兼容（破坏性变更）。
+ * 次版本号和修订号不同都视为兼容，可以增量更新。
  */
-export function detectRequirementChanges(
+function isSchemaCompatible(oldVersion: string, newVersion: string): boolean {
+  const oldMajor = parseInt(oldVersion.split('.')[0], 10);
+  const newMajor = parseInt(newVersion.split('.')[0], 10);
+  return oldMajor === newMajor;
+}
+
+// ==================== 需求变更检测 ====================
+
+/** 需求变更类型 */
+interface RequirementChange {
+  name: string;
+  type: 'added' | 'archived' | 'modified' | 'deleted';
+  parsed?: ParsedRequirement;
+}
+
+/**
+ * 检测需求层面的变更（新增、归档、状态/内容变更）
+ *
+ * 通过全量重解析当前所有需求，与旧图谱中的需求节点对比，
+ * 识别出新增、归档、属性变更的需求。
+ *
+ * @returns 变更列表
+ */
+function detectRequirementChanges(
   root: string,
-  oldMeta: GraphMeta,
-): { changed: boolean; reason?: string } {
-  // 简单实现：对比需求目录数量
-  const activeDir = path.join(root, 'wpw', 'active');
-  const archivedDir = path.join(root, 'wpw', 'archived');
+  oldNodes: GraphNode[],
+): RequirementChange[] {
+  const changes: RequirementChange[] = [];
 
-  let totalReqDirs = 0;
-  if (fs.existsSync(activeDir)) {
-    totalReqDirs += fs.readdirSync(activeDir, { withFileTypes: true })
-      .filter((e) => e.isDirectory()).length;
+  // 全量重解析当前所有需求（active + archived）
+  const currentReqs = parseAllRequirements(root);
+  const currentMap = new Map(currentReqs.map((r) => [r.node.name, r]));
+
+  // 旧图谱中的需求节点
+  const oldReqNodes = oldNodes.filter((n) => n.type === NODE_TYPE_REQUIREMENT);
+  const oldMap = new Map(oldReqNodes.map((n) => [n.name, n]));
+
+  // 检测新增和修改
+  for (const [name, current] of currentMap) {
+    const old = oldMap.get(name);
+    if (!old) {
+      changes.push({ name, type: 'added', parsed: current });
+    } else {
+      // 检查是否有属性变更（archived 状态、docPath、status）
+      const oldStatus = old.attrs.status;
+      const newStatus = current.node.attrs.status;
+      const oldDocPath = old.attrs.docPath;
+      const newDocPath = current.node.attrs.docPath;
+      const oldFeatures = JSON.stringify(old.attrs.features || []);
+      const newFeatures = JSON.stringify(current.node.attrs.features || []);
+
+      const statusChanged =
+        oldStatus?.archived !== newStatus?.archived ||
+        JSON.stringify(oldStatus?.artifacts || {}) !==
+          JSON.stringify(newStatus?.artifacts || {});
+      const docPathChanged = oldDocPath !== newDocPath;
+      const featuresChanged = oldFeatures !== newFeatures;
+
+      if (statusChanged || docPathChanged || featuresChanged) {
+        changes.push({ name, type: 'modified', parsed: current });
+      }
+    }
   }
-  if (fs.existsSync(archivedDir)) {
-    totalReqDirs += fs.readdirSync(archivedDir, { withFileTypes: true })
-      .filter((e) => e.isDirectory()).length;
+
+  // 检测删除（需求被彻底删除，不是归档）
+  for (const [name] of oldMap) {
+    if (!currentMap.has(name)) {
+      changes.push({ name, type: 'deleted' });
+    }
   }
 
-  // 用旧 meta 里的节点数粗略判断
-  // 更精确的做法是保存需求目录列表和哈希，这里先简化
-  const oldReqCount = Math.floor((oldMeta.totalNodes / 238) * 0); // 占位，简化处理
-  // 如果需求数量变化较大，标记为需要重建
-  // （首版简化处理：需求变更提示用户手动 rebuild）
-
-  return { changed: false };
+  return changes;
 }

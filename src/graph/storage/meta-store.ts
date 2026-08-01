@@ -9,7 +9,8 @@ import type { GraphMeta } from '../types';
 
 const META_FILE = 'meta.json';
 
-const SCHEMA_VERSION = '1.1.0';
+// 2.0.0: 需求节点 ID 生成规则变更（path-based → name-based），为破坏性变更
+const SCHEMA_VERSION = '2.0.0';
 
 export interface MetaStore {
   /** 读取元数据 */

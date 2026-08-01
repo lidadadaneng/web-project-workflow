@@ -148,3 +148,105 @@ export function listChanges(root: string): string[] {
     .map((e) => e.name)
     .sort();
 }
+
+/**
+ * 检查需求名是否全局存在（active 和 archived 都检查）
+ *
+ * 需求名是全局唯一标识，无论活跃还是归档，都不能重名。
+ * 归档需求按月份分子目录存储，但名字在全局范围内仍需唯一。
+ */
+export function changeNameExists(root: string, name: string): boolean {
+  // 检查 active
+  if (fs.existsSync(path.join(getActiveDir(root), name))) {
+    return true;
+  }
+
+  // 检查 archived 下所有月份目录
+  const archivedDir = getArchivedDir(root);
+  if (fs.existsSync(archivedDir)) {
+    const monthDirs = fs
+      .readdirSync(archivedDir, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name);
+    for (const month of monthDirs) {
+      if (fs.existsSync(path.join(archivedDir, month, name))) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * 列出所有归档需求名（遍历 archived 下所有月份子目录）
+ *
+ * 返回需求名列表（不含月份目录名，只取最终的需求目录名）。
+ */
+export function listArchivedChanges(root: string): string[] {
+  const archivedDir = getArchivedDir(root);
+  if (!fs.existsSync(archivedDir)) return [];
+
+  const names: string[] = [];
+  const monthDirs = fs
+    .readdirSync(archivedDir, { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name);
+
+  for (const month of monthDirs) {
+    const monthPath = path.join(archivedDir, month);
+    const entries = fs.readdirSync(monthPath, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        names.push(entry.name);
+      }
+    }
+  }
+
+  return names.sort();
+}
+
+/**
+ * 查找归档需求的目录路径
+ *
+ * 归档需求按月份分子目录存储，需要遍历查找。
+ * 返回绝对路径，找不到返回 null。
+ */
+export function findArchivedChangeDir(root: string, name: string): string | null {
+  const archivedDir = getArchivedDir(root);
+  if (!fs.existsSync(archivedDir)) return null;
+
+  const monthDirs = fs
+    .readdirSync(archivedDir, { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name);
+
+  for (const month of monthDirs) {
+    const candidate = path.join(archivedDir, month, name);
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * 读取归档需求的状态
+ *
+ * 从 archived 目录下的月份子目录中查找并读取 .wpw.yaml。
+ */
+export function loadArchivedState(root: string, name: string): ChangeState | null {
+  const dir = findArchivedChangeDir(root, name);
+  if (!dir) return null;
+
+  const statePath = path.join(dir, '.wpw.yaml');
+  if (!fs.existsSync(statePath)) return null;
+
+  try {
+    const content = fs.readFileSync(statePath, 'utf8');
+    return yaml.load(content) as ChangeState;
+  } catch {
+    return null;
+  }
+}

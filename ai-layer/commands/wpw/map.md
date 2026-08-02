@@ -40,7 +40,7 @@ L1 业务模块（module）
 ```
 
 - **C 层（能力层）**：来自 `wpw/specs/` 目录下的 OpenSpec 规范，稳态业务能力
-- **L1 层（模块层）**：源码目录结构识别的业务模块
+- **L1 层（模块层）**：业务模块。CLI 默认按目录结构自动推断，AI 在 map 阶段可通过配置 `graph.modules` 手动纠正（优先级更高）
 - **L2 层（文件层）**：源码文件
 - **L3 层（元素层）**：函数、类、接口、组件等代码元素
 
@@ -194,6 +194,28 @@ wpw graph context "login" --depth 2 --min-weight 0.8
 
 ## 映射配置（workflow.config.yaml）
 
+### 模块划分（L1 纠正）
+
+CLI 会根据目录结构自动推断 L1 模块，但默认推断不一定符合实际业务语义（如模块嵌套在 `modules/` 子目录下、或多个目录同属一个业务模块等）。AI 在 map 阶段应主动检查并纠正模块划分，通过 `graph.modules` 手动指定：
+
+```yaml
+graph:
+  modules:
+    - name: user-auth          # 模块名（业务语义）
+      side: frontend           # frontend | backend | shared
+      dir: src/views/modules/users   # 对应源码目录
+      description: 用户登录与权限管理
+    - name: order-management
+      side: frontend
+      dir: src/views/modules/orders
+      description: 订单创建、查询、支付流程
+```
+
+> **CLI 的自动推断只是兜底**。AI 执行 /wpw:map 时应使用 `wpw graph query --level L1` 检查当前模块划分是否合理，
+> 不合理则通过 `graph.modules` 写入纠正后重新 `wpw graph rebuild`。
+
+### 业务映射（business_map 融合）
+
 `graph.mapping` 段控制业务-代码映射（business_map 边）的多源证据融合：
 
 ```yaml
@@ -209,6 +231,25 @@ graph:
 ```
 
 四源证据（doc-extract / semantic / git-history / name-match）按 noisy-OR 聚合权重，边的 `source` 取最权威源。AI 校准（ai-refine）为可选未来工作。
+
+## Map 阶段的 AI 工作流
+
+/wpw:map 的核心是 **AI 主导、CLI 执行**。AI 负责判断业务语义上的模块划分，CLI 只负责解析和构建。
+
+标准流程：
+
+```
+1. wpw graph build / update               # CLI 先自动构建一版（兜底）
+2. wpw graph query --level L1             # 检查自动推断的 L1 模块是否合理
+3. 若不合理，在 workflow.config.yaml 中写入 graph.modules
+4. wpw graph rebuild                      # 按纠正后的模块定义重建
+5. wpw graph context "<keywords>"         # 验证上下文质量
+```
+
+判断 L1 是否合理的标准：
+- 每个 L1 模块是否对应一个独立的业务领域（如用户、订单、商品）
+- 是否存在"容器型"模块（名叫 modules / biz，本身没有业务语义）
+- 模块粒度是否均匀（不要一个模块 50 个文件，另一个只有 2 个）
 
 ## 在 Apply 阶段的使用流程
 

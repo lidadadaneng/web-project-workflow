@@ -73,6 +73,16 @@ function buildManualModules(
   return result;
 }
 
+/** 常见的模块容器目录名——本身不是业务模块，只是用来组织模块的壳目录 */
+const MODULE_CONTAINER_DIRS = new Set([
+  'modules', 'module',
+  'biz', 'business',
+  'pages', 'page',
+  'views', 'view',
+  'features', 'feature',
+  'domains', 'domain',
+]);
+
 // ==================== 自动推断模块 ====================
 
 function autoDetectModules(
@@ -88,38 +98,7 @@ function autoDetectModules(
     const absDir = path.join(root, rootDir);
     if (!fs.existsSync(absDir)) continue;
 
-    const entries = fs.readdirSync(absDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isDirectory()) continue;
-      if (commonDirs.has(entry.name.toLowerCase())) continue;
-      if (entry.name.startsWith('_') || entry.name.startsWith('.')) continue;
-
-      const key = `${rootDir}/${entry.name}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-
-      const relDir = path.join(rootDir, entry.name);
-      const side = detectModuleSide(
-        path.join(root, relDir),
-        entry.name,
-        projectType,
-      );
-
-      const node: GraphNode = {
-        id: generateNodeId('mod', [entry.name, side]),
-        level: 'L1',
-        type: NODE_TYPE_MODULE,
-        name: entry.name,
-        attrs: {
-          side,
-          dir: relDir,
-        },
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      };
-
-      result.push({ node, dir: relDir });
-    }
+    scanModuleDir(result, seen, root, rootDir, absDir, commonDirs, projectType);
   }
 
   // 如果模块根目录没找到，试试 src 下的一级目录
@@ -128,6 +107,62 @@ function autoDetectModules(
   }
 
   return result;
+}
+
+/**
+ * 扫描目录下的子目录，将非通用目录识别为模块。
+ * 如果某个子目录是「模块容器目录」（如 modules / biz），则下钻一层继续扫描。
+ */
+function scanModuleDir(
+  result: ParsedModule[],
+  seen: Set<string>,
+  root: string,
+  parentRel: string,
+  parentAbs: string,
+  commonDirs: Set<string>,
+  projectType: ProjectType,
+): void {
+  const entries = fs.readdirSync(parentAbs, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    if (commonDirs.has(entry.name.toLowerCase())) continue;
+    if (entry.name.startsWith('_') || entry.name.startsWith('.')) continue;
+
+    const entryLower = entry.name.toLowerCase();
+    const relDir = path.join(parentRel, entry.name);
+    const key = relDir.replace(/\\/g, '/');
+    if (seen.has(key)) continue;
+
+    // 如果是模块容器目录（如 modules / biz），下钻一层，把里面的子目录当作模块
+    if (MODULE_CONTAINER_DIRS.has(entryLower)) {
+      const absEntry = path.join(parentAbs, entry.name);
+      scanModuleDir(result, seen, root, relDir, absEntry, commonDirs, projectType);
+      continue;
+    }
+
+    seen.add(key);
+    const side = detectModuleSide(
+      path.join(root, relDir),
+      entry.name,
+      projectType,
+    );
+
+    const node: GraphNode = {
+      id: generateNodeId('mod', [entry.name, side]),
+      level: 'L1',
+      type: NODE_TYPE_MODULE,
+      name: entry.name,
+      attrs: {
+        side,
+        dir: relDir,
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    result.push({ node, dir: relDir });
+  }
 }
 
 function detectFromSrcRoot(

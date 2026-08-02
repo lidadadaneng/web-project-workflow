@@ -15,5 +15,5 @@
     "moduleResolution": "node"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "test", "ai-layer"]
+  "exclude": ["node_modules", "dist", "test", "ai-layer", "src/test"]
 }

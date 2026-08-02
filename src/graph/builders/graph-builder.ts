@@ -1035,6 +1035,10 @@ function scanSourceFiles(root: string, config: GraphConfig): string[] {
   const srcDir = path.join(root, 'src');
   if (fs.existsSync(srcDir)) {
     walk(srcDir);
+  } else {
+    // 没有 src/ 目录的项目（如微信小程序、HBuilderX 风格 uni-app），
+    // 从根目录扫描（通过 ignore 列表过滤无关目录）
+    walk(root);
   }
 
   return result;

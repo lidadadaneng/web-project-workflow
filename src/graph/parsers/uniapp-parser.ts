@@ -38,15 +38,28 @@ export interface UniappParseResult {
 export function isUniappProject(root: string): boolean {
   const pagesJson = path.join(root, 'pages.json');
   const manifestJson = path.join(root, 'manifest.json');
-  const appVue = path.join(root, 'src', 'App.vue');
+  const srcAppVue = path.join(root, 'src', 'App.vue');
+  const rootAppVue = path.join(root, 'App.vue');
   const packageJsonPath = path.join(root, 'package.json');
+  const mainJs = path.join(root, 'main.js');
+  const uniScss = path.join(root, 'uni.scss');
 
-  // 方式1：检查 pages.json + manifest.json（uni-app 经典结构）
-  if (fs.existsSync(pagesJson) && fs.existsSync(manifestJson)) {
+  if (!fs.existsSync(pagesJson)) return false;
+
+  // 方式1：pages.json + manifest.json（uni-app 标准结构，CLI 或 HBuilderX）
+  if (fs.existsSync(manifestJson)) {
     try {
       const manifest = JSON.parse(fs.readFileSync(manifestJson, 'utf-8'));
       // manifest.json 中有 uni-app 特有的字段
-      if (manifest.name || manifest.appid || manifest['mp-weixin'] || manifest.h5) {
+      if (
+        manifest.name ||
+        manifest.appid ||
+        manifest['mp-weixin'] ||
+        manifest['mp-alipay'] ||
+        manifest.h5 ||
+        manifest['app-plus'] ||
+        manifest.quickapp
+      ) {
         return true;
       }
     } catch {
@@ -54,7 +67,7 @@ export function isUniappProject(root: string): boolean {
     }
   }
 
-  // 方式2：检查 package.json 中的 @dcloudio 依赖
+  // 方式2：检查 package.json 中的 @dcloudio 依赖（CLI 项目）
   if (fs.existsSync(packageJsonPath)) {
     try {
       const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
@@ -67,8 +80,17 @@ export function isUniappProject(root: string): boolean {
     }
   }
 
-  // 方式3：uni-app x 或 CLI 项目结构
-  if (fs.existsSync(pagesJson) && fs.existsSync(appVue)) {
+  // 方式3：HBuilderX 风格：pages.json + App.vue + main.js + uni.scss（根目录）
+  if (
+    fs.existsSync(rootAppVue) &&
+    fs.existsSync(mainJs) &&
+    fs.existsSync(uniScss)
+  ) {
+    return true;
+  }
+
+  // 方式4：CLI 项目：pages.json + src/App.vue
+  if (fs.existsSync(srcAppVue)) {
     return true;
   }
 

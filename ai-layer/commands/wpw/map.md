@@ -232,24 +232,67 @@ graph:
 
 四源证据（doc-extract / semantic / git-history / name-match）按 noisy-OR 聚合权重，边的 `source` 取最权威源。AI 校准（ai-refine）为可选未来工作。
 
-## Map 阶段的 AI 工作流
+## Map 阶段工作流（CLI 输出 → AI 判断 → 构造最终图谱）
 
-/wpw:map 的核心是 **AI 主导、CLI 执行**。AI 负责判断业务语义上的模块划分，CLI 只负责解析和构建。
+/wpw:map 的核心是 **CLI 提供入口候选，AI 做业务语义判断，最终写入配置**。
 
-标准流程：
+### 步骤一：CLI 自动构建（输出候选）
 
-```
-1. wpw graph build / update               # CLI 先自动构建一版（兜底）
-2. wpw graph query --level L1             # 检查自动推断的 L1 模块是否合理
-3. 若不合理，在 workflow.config.yaml 中写入 graph.modules
-4. wpw graph rebuild                      # 按纠正后的模块定义重建
-5. wpw graph context "<keywords>"         # 验证上下文质量
+```bash
+wpw graph build    # 首次构建；已有图谱则用 wpw graph update
 ```
 
-判断 L1 是否合理的标准：
-- 每个 L1 模块是否对应一个独立的业务领域（如用户、订单、商品）
-- 是否存在"容器型"模块（名叫 modules / biz，本身没有业务语义）
-- 模块粒度是否均匀（不要一个模块 50 个文件，另一个只有 2 个）
+CLI 根据目录结构自动推断 L1 模块，生成初版图谱。这一步的结果是**候选值**，不保证业务语义正确。
+
+### 步骤二：查看 L1 候选，AI 判断是否合理
+
+```bash
+wpw graph query --level L1 --json
+```
+
+AI 根据输出判断模块划分是否合理，判断标准：
+
+| 检查项 | 不合理的信号 |
+|--------|-------------|
+| 业务语义 | 模块名不是业务领域（如叫 `modules`、`biz`、`pages` 等容器名） |
+| 粒度均匀 | 一个模块包含几十个文件，另一个只有一两个 |
+| 职责单一 | 一个模块混杂了多个不相关的业务 |
+| 缺失模块 | 明显的业务模块没有被识别（如被 commonDirs 误排除） |
+
+### 步骤三：AI 构造正确的模块定义
+
+如果步骤二判断不合理，AI 在 `workflow.config.yaml` 中写入 `graph.modules`：
+
+```yaml
+graph:
+  modules:
+    - name: user-auth
+      side: frontend
+      dir: src/views/modules/users
+      description: 用户登录、注册、个人中心
+    - name: order-mgmt
+      side: frontend
+      dir: src/views/modules/orders
+      description: 订单列表、详情、支付
+    # ... 其余模块
+```
+
+> `name` 用业务语义命名（kebab-case），`dir` 指向对应源码目录，`side` 标明前后端。
+
+### 步骤四：按纠正后的定义重建图谱
+
+```bash
+wpw graph rebuild
+```
+
+CLI 读取 `graph.modules`，以 AI 指定的模块划分为准重建图谱（手动配置优先级高于自动推断）。
+
+### 步骤五：验证
+
+```bash
+wpw graph query --level L1          # 确认模块列表正确
+wpw graph context "<keywords>"      # 抽查上下文质量
+```
 
 ## 在 Apply 阶段的使用流程
 

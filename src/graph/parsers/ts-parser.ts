@@ -59,7 +59,7 @@ export async function parseTypeScriptFile(
   // 文件节点
   const fileNode: GraphNode = {
     id: generateNodeId('file', [relPath]),
-    level: 'L3',
+    level: 'L2',
     type: 'file',
     name: fileName,
     attrs: {

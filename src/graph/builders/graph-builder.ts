@@ -116,7 +116,11 @@ export async function buildGraph(root: string): Promise<BuildResult> {
     allNodes.push(pr.fileNode);
     const filePath = pr.fileNode.attrs.filePath!;
     fileNodes.set(filePath, pr.fileNode);
-    elemNodes.set(filePath, pr.elements);
+    // 过滤掉 pinia 元素——它们由 pinia-store contain，不直接挂在 file 下
+    const nonPiniaElems = pr.elements.filter(
+      (el) => el.type !== 'pinia-action' && el.type !== 'pinia-getter' && el.type !== 'pinia-state',
+    );
+    elemNodes.set(filePath, nonPiniaElems);
     allNodes.push(...pr.elements);
 
     // Pinia store 节点（L2）
@@ -781,7 +785,11 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     newNodes.push(pr.fileNode);
     const fp = pr.fileNode.attrs.filePath!;
     fileNodes.set(fp, pr.fileNode);
-    elemNodes.set(fp, pr.elements);
+    // 过滤掉 pinia 元素——它们由 pinia-store contain，不直接挂在 file 下
+    const nonPiniaElems = pr.elements.filter(
+      (el) => el.type !== 'pinia-action' && el.type !== 'pinia-getter' && el.type !== 'pinia-state',
+    );
+    elemNodes.set(fp, nonPiniaElems);
     newNodes.push(...pr.elements);
 
     if (pr.piniaStores && pr.piniaStores.length > 0) {

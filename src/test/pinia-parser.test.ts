@@ -56,7 +56,7 @@ export const useAuthStore = defineStore('useAuthStore', {
   const store = result.stores[0];
   assert.equal(store.name, 'useAuthStore');
   assert.equal(store.type, 'pinia-store');
-  assert.equal(store.level, 'L3');
+  assert.equal(store.level, 'L2');
   assert.equal(store.attrs.filePath, 'src/stores/auth.js');
 
   // action 节点
@@ -86,7 +86,7 @@ export const useAuthStore = defineStore('useAuthStore', {
   // 所有元素都有 parentName
   for (const el of result.elements) {
     assert.equal(el.attrs.parentName, 'useAuthStore', `${el.name} 的 parentName 应为 useAuthStore`);
-    assert.equal(el.level, 'L4');
+    assert.equal(el.level, 'L3');
   }
 });
 

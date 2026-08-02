@@ -24,6 +24,7 @@ import { SemanticSearcher } from '../search/semantic-search';
 import { ContextPipeline } from '../context/context-pipeline';
 import type { BuildStats, NodeLevel } from '../types';
 import { LEGACY_LEVEL_MAP } from '../types';
+import type { BuildProgress } from '../builders/graph-builder';
 
 function getWpfDir(root: string): string {
   return path.join(root, 'wpw', 'knowledge', 'graph');
@@ -84,11 +85,19 @@ function registerBuild(graph: Command): void {
     .command('build')
     .description('全量构建知识图谱')
     .option('--json', 'JSON 输出')
-    .action(async (opts: { json?: boolean }) => {
+    .option('--no-progress', '禁用进度条')
+    .action(async (opts: { json?: boolean; progress: boolean }) => {
       const root = process.cwd();
       const { buildGraph } = await import('../builders/graph-builder');
 
-      const result = await buildGraph(root);
+      const useProgress = opts.progress && !opts.json && process.stderr.isTTY;
+      const bar = useProgress ? createProgressBar() : null;
+
+      const result = await buildGraph(root, (p) => {
+        bar?.update(p);
+      });
+
+      bar?.finish();
 
       if (opts.json) {
         console.log(JSON.stringify(formatBuildOutput(result.stats), null, 2));
@@ -96,6 +105,43 @@ function registerBuild(graph: Command): void {
         printBuildStats(result.stats);
       }
     });
+}
+
+// ==================== 进度条 ====================
+
+interface ProgressBar {
+  update(progress: BuildProgress): void;
+  finish(): void;
+}
+
+function createProgressBar(): ProgressBar {
+  const width = 30;
+  let lastPhase = '';
+
+  function render(p: BuildProgress) {
+    const pct = Math.round(p.overall * 100);
+    const filled = Math.round(p.overall * width);
+    const bar = '█'.repeat(filled) + '░'.repeat(width - filled);
+    const detail = p.detail ? `  ${p.detail}` : '';
+
+    // 当阶段变化时，换行显示新阶段
+    if (lastPhase && lastPhase !== p.phase) {
+      process.stderr.write('\n');
+    }
+    lastPhase = p.phase;
+
+    const line = `\r${bar} ${pct.toString().padStart(3)}%  ${p.phaseLabel}${detail}`;
+    process.stderr.write(line.padEnd(100).slice(0, 100));
+  }
+
+  return {
+    update(p) {
+      render(p);
+    },
+    finish() {
+      process.stderr.write('\n\n');
+    },
+  };
 }
 
 // ==================== update ====================
@@ -142,11 +188,19 @@ function registerRebuild(graph: Command): void {
     .command('rebuild')
     .description('强制重建知识图谱（清空后全量构建）')
     .option('--json', 'JSON 输出')
-    .action(async (opts: { json?: boolean }) => {
+    .option('--no-progress', '禁用进度条')
+    .action(async (opts: { json?: boolean; progress: boolean }) => {
       const root = process.cwd();
       const { rebuildGraph } = await import('../builders/graph-builder');
 
-      const result = await rebuildGraph(root);
+      const useProgress = opts.progress && !opts.json && process.stderr.isTTY;
+      const bar = useProgress ? createProgressBar() : null;
+
+      const result = await rebuildGraph(root, (p) => {
+        bar?.update(p);
+      });
+
+      bar?.finish();
 
       if (opts.json) {
         console.log(JSON.stringify(formatBuildOutput(result.stats), null, 2));

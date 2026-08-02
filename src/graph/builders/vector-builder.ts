@@ -215,9 +215,16 @@ export function cosineSimilarity(a: Float32Array, b: Float32Array): number {
  * @param modelName 模型名称
  * @returns 向量矩阵（一维数组，按行存储）+ 维度数
  */
+/** 向量构建进度回调 */
+export type VectorProgressCallback = (done: number, total: number) => void;
+
+/** 向量构建批次大小 */
+const VECTOR_BATCH_SIZE = 32;
+
 export async function buildVectors(
   texts: string[],
   modelName?: string,
+  onProgress?: VectorProgressCallback,
 ): Promise<{ vectors: Float32Array; dimensions: number }> {
   if (texts.length === 0) {
     return { vectors: new Float32Array(), dimensions: 384 };
@@ -229,17 +236,35 @@ export async function buildVectors(
 
   const extractor = await getPipeline();
 
-  // 批量生成
-  const output = await extractor(texts, {
-    pooling: 'mean',
-    normalize: true,
-  });
+  // 分批生成，便于汇报进度
+  const total = texts.length;
+  let allData: Float32Array | null = null;
+  let dimensions = 384;
+  let offset = 0;
 
-  // 输出是 Tensor，转成 Float32Array
-  const data: Float32Array = output.data;
-  const dimensions = output.dims[output.dims.length - 1];
+  for (let i = 0; i < total; i += VECTOR_BATCH_SIZE) {
+    const batch = texts.slice(i, i + VECTOR_BATCH_SIZE);
+    const output = await extractor(batch, {
+      pooling: 'mean',
+      normalize: true,
+    });
 
-  return { vectors: data, dimensions };
+    const batchData: Float32Array = output.data;
+    const batchDim = output.dims[output.dims.length - 1];
+    dimensions = batchDim;
+
+    if (!allData) {
+      allData = new Float32Array(total * dimensions);
+    }
+    allData.set(batchData, offset);
+    offset += batchData.length;
+
+    if (onProgress) {
+      onProgress(Math.min(i + VECTOR_BATCH_SIZE, total), total);
+    }
+  }
+
+  return { vectors: allData ?? new Float32Array(), dimensions };
 }
 
 /**
@@ -248,17 +273,19 @@ export async function buildVectors(
  * @param nodes 节点列表
  * @param modelName 模型名称（可选，覆盖默认值）
  * @param mirror 镜像源（可选，huggingface / modelscope）
+ * @param onProgress 进度回调
  */
 export async function buildNodeVectors(
   nodes: GraphNode[],
   modelName?: string,
   mirror?: 'huggingface' | 'modelscope',
+  onProgress?: VectorProgressCallback,
 ): Promise<VectorBuildResult> {
   if (mirror) {
     setEmbeddingMirror(mirror);
   }
   const { nodeIds, texts } = prepareVectorTexts(nodes);
-  const { vectors, dimensions } = await buildVectors(texts, modelName);
+  const { vectors, dimensions } = await buildVectors(texts, modelName, onProgress);
 
   const indexToNodeId = nodeIds;
   const nodeIdToIndex = new Map<string, number>();

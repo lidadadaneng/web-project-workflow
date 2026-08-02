@@ -109,15 +109,23 @@ export async function parseSourceFile(
   return result;
 }
 
+/** 源码解析进度回调 */
+export type ParseProgressCallback = (done: number, total: number, fileName: string) => void;
+
 /**
  * 批量解析文件
  */
 export async function parseSourceFiles(
   filePaths: string[],
   root: string,
+  onProgress?: ParseProgressCallback,
 ): Promise<ParseResult[]> {
   const results: ParseResult[] = [];
-  for (const fp of filePaths) {
+  const total = filePaths.length;
+  for (let i = 0; i < filePaths.length; i++) {
+    const fp = filePaths[i];
+    const fileName = path.basename(fp);
+    if (onProgress) onProgress(i, total, fileName);
     try {
       const result = await parseSourceFile(fp, root);
       results.push(result);

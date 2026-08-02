@@ -66,14 +66,100 @@ export interface BuildResult {
   stats: BuildStats;
 }
 
+/** 构建阶段 */
+export type BuildPhase =
+  | 'capabilities'
+  | 'modules'
+  | 'source-scan'
+  | 'source-parse'
+  | 'edges'
+  | 'vectors'
+  | 'business-map'
+  | 'validation'
+  | 'save';
+
+/** 构建进度回调信息 */
+export interface BuildProgress {
+  /** 当前阶段 */
+  phase: BuildPhase;
+  /** 阶段显示名 */
+  phaseLabel: string;
+  /** 总体进度（0-1） */
+  overall: number;
+  /** 当前阶段内进度（0-1，没有细粒度则为 undefined） */
+  phaseProgress?: number;
+  /** 当前阶段详情文本（如正在解析的文件名） */
+  detail?: string;
+}
+
+/** 构建进度回调 */
+export type BuildProgressCallback = (progress: BuildProgress) => void;
+
+/** 各阶段权重（占总进度比例） */
+const PHASE_WEIGHTS: Record<BuildPhase, number> = {
+  'capabilities': 2,
+  'modules': 3,
+  'source-scan': 5,
+  'source-parse': 35,
+  'edges': 10,
+  'vectors': 30,
+  'business-map': 8,
+  'validation': 2,
+  'save': 5,
+};
+
+const PHASE_LABELS: Record<BuildPhase, string> = {
+  'capabilities': '解析能力规范',
+  'modules': '解析模块结构',
+  'source-scan': '扫描源码文件',
+  'source-parse': '解析源码文件',
+  'edges': '构建关系边',
+  'vectors': '生成向量索引',
+  'business-map': '构建业务映射',
+  'validation': '完整性校验',
+  'save': '持久化存储',
+};
+
+const ALL_PHASES: BuildPhase[] = [
+  'capabilities', 'modules', 'source-scan', 'source-parse',
+  'edges', 'vectors', 'business-map', 'validation', 'save',
+];
+
+const TOTAL_WEIGHT = ALL_PHASES.reduce((s, p) => s + PHASE_WEIGHTS[p], 0);
+
+/** 计算累计到某阶段（不含该阶段）的权重 */
+function weightBefore(phase: BuildPhase): number {
+  let w = 0;
+  for (const p of ALL_PHASES) {
+    if (p === phase) break;
+    w += PHASE_WEIGHTS[p];
+  }
+  return w;
+}
+
 /**
  * 全量构建图谱
  */
-export async function buildGraph(root: string): Promise<BuildResult> {
+export async function buildGraph(root: string, onProgress?: BuildProgressCallback): Promise<BuildResult> {
   const startTime = Date.now();
   const phaseTimes: Record<string, number> = {};
   const mark = (name: string, start: number) => {
     phaseTimes[name] = Date.now() - start;
+  };
+
+  /** 汇报阶段进度 */
+  const report = (phase: BuildPhase, phaseProgress?: number, detail?: string) => {
+    if (!onProgress) return;
+    const before = weightBefore(phase);
+    const phaseW = PHASE_WEIGHTS[phase];
+    const overall = (before + (phaseProgress ?? 0) * phaseW) / TOTAL_WEIGHT;
+    onProgress({
+      phase,
+      phaseLabel: PHASE_LABELS[phase],
+      overall,
+      phaseProgress,
+      detail,
+    });
   };
 
   // 1. 配置
@@ -81,22 +167,34 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   const projectType = sniffProjectType(root);
 
   // 2. 解析能力 specs → C 层节点
+  report('capabilities', 0);
   const t0 = Date.now();
   const parsedCaps = parseAllCapabilities(root);
   mark('capabilities', t0);
+  report('capabilities', 1, `${parsedCaps.length} 个能力`);
 
   // 3. 解析模块 → L1 节点
+  report('modules', 0);
   const t1 = Date.now();
   const parsedModules = parseModules(root, config, projectType);
   mark('modules', t1);
+  report('modules', 1, `${parsedModules.length} 个模块`);
 
   // 4. 扫描并解析源码文件 → L2/L3 节点
+  report('source-scan', 0);
   const t2 = Date.now();
   const sourceFiles = scanSourceFiles(root, config);
-  const parseResults = await parseSourceFiles(sourceFiles, root);
+  report('source-scan', 1, `${sourceFiles.length} 个文件`);
+
+  report('source-parse', 0, `0/${sourceFiles.length}`);
+  const parseResults = await parseSourceFiles(sourceFiles, root, (done, total, fileName) => {
+    report('source-parse', done / total, `${done}/${total}  ${fileName}`);
+  });
   mark('source-parse', t2);
+  report('source-parse', 1, `${sourceFiles.length} 个文件`);
 
   // 5. 生成边
+  report('edges', 0);
   const t3 = Date.now();
   const edgeBuilder = new EdgeBuilder();
   const allNodes: GraphNode[] = [];
@@ -148,8 +246,10 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   // --- Pinia call 边（组件 → action 调用） ---
   buildPiniaCallEdges(edgeBuilder, parseResults, root, piniaStoreNodes, piniaElemByStore);
   mark('edges', t3);
+  report('edges', 1, `${edgeBuilder.size()} 条边`);
 
   // 6. 向量索引（在 business_map 之前构建，供语义回填使用）
+  report('vectors', 0);
   const tVec = Date.now();
   let vectors: Float32Array | null = null;
   let vectorDimensions = 0;
@@ -161,21 +261,29 @@ export async function buildGraph(root: string): Promise<BuildResult> {
         allNodes,
         config.embedding.model,
         config.embedding.mirror,
+        (done, total) => {
+          report('vectors', done / total, `${done}/${total} 个节点`);
+        },
       );
       vectors = result.vectors;
       vectorDimensions = result.dimensions;
       vectorMapping = result.mapping;
       vectorCount = result.mapping.indexToNodeId.length;
+      report('vectors', 1, `${vectorCount} 个向量`);
     } catch (e) {
       console.warn(
         `[graph-builder] 向量构建失败，跳过（语义检索/语义映射将不可用）: ${(e as Error).message}`,
       );
       vectors = null;
+      report('vectors', 1, '已跳过');
     }
+  } else {
+    report('vectors', 1, '未启用');
   }
   mark('vectors', tVec);
 
   // 7. business_map 边（C → L1/L2/L3，四源证据融合：doc / semantic / git / name）
+  report('business-map', 0);
   const tBiz = Date.now();
   buildBusinessMapEdges(edgeBuilder, {
     caps: parsedCaps,
@@ -188,8 +296,10 @@ export async function buildGraph(root: string): Promise<BuildResult> {
     mapping: vectorMapping,
   });
   mark('business-map', tBiz);
+  report('business-map', 1);
 
   // 8. 完整性校验
+  report('validation', 0);
   const t4 = Date.now();
   const graphData: GraphData = {
     nodes: allNodes,
@@ -197,22 +307,26 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   };
   const validation = validateGraph(graphData);
   mark('validation', t4);
+  report('validation', 1, validation.passed ? '通过' : `${validation.errors.length} 个错误`);
 
   // 9. 持久化（图谱 + 向量索引 + 元数据）
+  report('save', 0, '保存图谱...');
   const t5 = Date.now();
   const wpfPath = path.join(root, WPF_DIR);
   const graphStore = new JsonlGraphStore(wpfPath);
   graphStore.save(graphData);
 
   if (vectors && vectorMapping && vectors.length > 0) {
+    report('save', 0.4, '保存向量索引...');
     const vectorStore = new BinaryVectorStore(wpfPath);
     vectorStore.save(vectors, vectorDimensions);
 
+    report('save', 0.7, '保存向量映射...');
     const mappingStore = new VectorMappingStore(wpfPath);
     mappingStore.save(vectorMapping);
   }
 
-  // 10. 元数据
+  report('save', 0.9, '保存元数据...');
   const metaStore = new JsonMetaStore(wpfPath);
   const fileHashes = buildFileHashSnapshot(parseResults);
   const meta: GraphMeta = {
@@ -226,6 +340,7 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   };
   metaStore.save(meta);
   mark('save', t5);
+  report('save', 1);
 
   // 统计
   const totalTime = Date.now() - startTime;
@@ -967,14 +1082,14 @@ function findFileNodeByPath(nodes: GraphNode[], filePath: string): string | null
 /**
  * 强制重建图谱（清空 + 全量构建）
  */
-export async function rebuildGraph(root: string): Promise<BuildResult> {
+export async function rebuildGraph(root: string, onProgress?: BuildProgressCallback): Promise<BuildResult> {
   const wpfPath = path.join(root, WPF_DIR);
 
   if (fs.existsSync(wpfPath)) {
     fs.rmSync(wpfPath, { recursive: true, force: true });
   }
 
-  return buildGraph(root);
+  return buildGraph(root, onProgress);
 }
 
 // ==================== 工具函数 ====================

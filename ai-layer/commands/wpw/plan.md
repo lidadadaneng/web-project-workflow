@@ -29,17 +29,32 @@ wpw graph update   # 增量更新图谱，保证代码上下文最新
 
 - 图谱不存在 -> 强提示「⚠️ 未构建知识图谱，建议先执行 `wpw graph build` 以了解模块边界」，但仍可回退继续
 
-了解现有模块边界，辅助任务粒度切分：
+了解现有模块边界与文件结构，辅助任务粒度切分。
+
+**检索策略：L1/L2 分层检索 — 先定位模块，再看文件级结构，确保任务拆解贴合实际代码组织。**
 
 ```bash
-# 检索词必须为英文，从需求描述翻译而来
-wpw graph context "<english-keywords-from-requirement>" --token-budget 2000 --level L1,L2 --json
+# ==================== 第一步：L1 模块定位 ====================
+# 用业务概念搜 L1 模块层，确认涉及哪些模块
+# 检索词必须为英文，4-6 个（核心概念 + 同义词）
+wpw graph search "<biz-kw-1>,<biz-kw-2>,<synonym-1>,<synonym-2>" --level L1 --limit 10 --threshold 0.45 --json
+
+# 命中少时执行低召回降级（降阈值 → 多词扩展 → L3 反推 L1）
+
+# ==================== 第二步：L2 文件级扩展 ====================
+# 以模块为锚点，向下扩展到文件级，了解目录结构和文件分布
+wpw graph context --anchors "<module-id-1>,<module-id-2>" --depth 1 --token-budget 2000 --level L1,L2 --json
+
+# 如果模块锚点覆盖不全，补充多词语义检索
+wpw graph context "<kw-1>,<kw-2>,<kw-3>,<kw-4>" --multi --token-budget 1500 --level L1,L2 --json
 ```
 
 > ⚠️ **强制规范**：`wpw graph context` 和 `wpw graph search` 的检索词必须为英文。
 
 - 0 锚点 -> 回退仅凭 Design 拆分，提示「图谱未匹配到相关节点」
 - 向量索引缺失 -> context 降级为 `--anchors` 模式
+
+**任务拆解要求**：任务应落到**文件级**粒度，明确每个任务涉及的文件路径。这样 Apply 阶段可以直接使用 `--anchors` 锚点模式，跳过语义检索，既快又准。
 
 ### 阶段二：AI 生成
 

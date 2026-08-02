@@ -32,12 +32,32 @@ wpw graph update   # 增量更新图谱，保证代码上下文最新
 
 - 图谱不存在 -> 强提示「⚠️ 未构建知识图谱，建议先执行 `wpw graph build` 以了解现有架构」，但仍可回退手动 grep 继续
 
-了解现有相关模块与依赖关系（替代逐文件扫描，大幅降低 Token）：
+了解现有相关模块与依赖关系（替代逐文件扫描，大幅降低 Token）。
+
+**检索策略：L1 优先 + 多词扩展，广撒网找方向。**
 
 ```bash
-# 语义检索相关模块（检索词必须为英文，从需求描述翻译而来）
-wpw graph context "<english-keywords-from-requirement>" --token-budget 3000 --depth 2 --json
+# ==================== 第一步：L1 模块定位 ====================
+# 用业务概念搜 L1 模块层（阈值调低，宁滥勿缺）
+# 检索词必须为英文，从需求描述中的业务概念翻译而来
+# 生成 4-6 个不同角度的检索词（核心概念 + 同义词 + 相关领域术语）
+wpw graph search "<biz-keyword-1>,<biz-keyword-2>,<synonym-1>,<synonym-2>" --level L1 --limit 10 --threshold 0.45 --json
+# 例: wpw graph search "user auth,authentication,login,account,member" --level L1 --limit 10 --threshold 0.45 --json
 
+# 从结果中筛选相关的 L1 模块（AI 判断业务相关性）
+# 命中 ≥2 个相关模块 → 进入第二步
+# 命中 1 个 → 直接用该模块做锚点
+# 命中 <1 → 执行低召回降级（见下方）
+
+# ==================== 第二步：模块下钻 + 多词扩展 ====================
+# 用 --multi 并行查询多个角度的检索词，生成综合上下文
+# 检索词构成：核心业务概念 + 同义词 + 技术术语
+wpw graph context "<keyword-1>,<keyword-2>,<keyword-3>,<keyword-4>,<keyword-5>" --multi --token-budget 3000 --depth 2 --json
+
+# 也可以直接用模块 ID 做锚点扩展（更准更快）
+wpw graph context --anchors "<module-id-1>,<module-id-2>" --depth 2 --token-budget 3000 --json
+
+# ==================== 第三步：上下游依赖 ====================
 # 了解特定模块的上下游依赖
 wpw graph query --downstream <模块节点ID> --depth 3 --json
 wpw graph query --upstream <模块节点ID> --depth 2 --json
@@ -45,7 +65,13 @@ wpw graph query --upstream <模块节点ID> --depth 2 --json
 
 > ⚠️ **强制规范**：`wpw graph context` 和 `wpw graph search` 的检索词必须为英文。中文需求描述需先翻译为英文关键词再检索。
 
-- 0 锚点 -> 回退手动 grep，提示「图谱未匹配到相关节点」
+**低召回降级流程（L1 查不到时）**：
+
+1. **Level 1 — 降阈值**：将 threshold 从 0.45 降到 0.4，再搜一次
+2. **Level 2 — 多词扩展**：补充更多同义词/相关词，最多 6-8 个查询，用 `--multi`
+3. **Level 3 — L3 反推 L1**：搜 L3 找到相关函数 → 看它们属于哪个模块 → 同模块有 ≥2 个相关函数则整个模块算相关
+
+- 0 锚点 / 三级降级后仍无有效结果 -> 回退手动 grep，提示「图谱未匹配到相关节点」
 - 向量索引缺失 -> context 降级为 `--anchors` 模式，依赖查询仍可用
 
 ### 阶段二：AI 生成候选方案

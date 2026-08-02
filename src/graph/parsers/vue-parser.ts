@@ -161,7 +161,7 @@ function createVueFileNode(
 
   return {
     id: generateNodeId('file', [relPath]),
-    level: 'L3',
+    level: 'L2',
     type: NODE_TYPE_FILE,
     name: fileName,
     attrs,

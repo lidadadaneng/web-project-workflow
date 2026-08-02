@@ -36,6 +36,54 @@ export const NODE_TYPE_PINIA_GETTER = 'pinia-getter';
 /** L3 Pinia State 节点类型 */
 export const NODE_TYPE_PINIA_STATE = 'pinia-state';
 
+// ==================== Vuex 节点类型 ====================
+
+/** L2 Vuex Store 节点类型 */
+export const NODE_TYPE_VUEX_STORE = 'vuex-store';
+/** L3 Vuex State 节点类型 */
+export const NODE_TYPE_VUEX_STATE = 'vuex-state';
+/** L3 Vuex Mutation 节点类型 */
+export const NODE_TYPE_VUEX_MUTATION = 'vuex-mutation';
+/** L3 Vuex Action 节点类型 */
+export const NODE_TYPE_VUEX_ACTION = 'vuex-action';
+/** L3 Vuex Getter 节点类型 */
+export const NODE_TYPE_VUEX_GETTER = 'vuex-getter';
+
+// ==================== Redux 节点类型 ====================
+
+/** L2 Redux Slice 节点类型 */
+export const NODE_TYPE_REDUX_SLICE = 'redux-slice';
+/** L3 Redux State 节点类型 */
+export const NODE_TYPE_REDUX_STATE = 'redux-state';
+/** L3 Redux Reducer 节点类型 */
+export const NODE_TYPE_REDUX_REDUCER = 'redux-reducer';
+/** L3 Redux Action 节点类型 */
+export const NODE_TYPE_REDUX_ACTION = 'redux-action';
+/** L3 Redux Selector 节点类型 */
+export const NODE_TYPE_REDUX_SELECTOR = 'redux-selector';
+
+// ==================== 微信小程序节点类型 ====================
+
+/** L1 小程序 App 节点类型 */
+export const NODE_TYPE_MP_APP = 'mp-app';
+/** L2 小程序页面节点类型 */
+export const NODE_TYPE_MP_PAGE = 'mp-page';
+/** L2 小程序自定义组件节点类型 */
+export const NODE_TYPE_MP_COMPONENT = 'mp-component';
+/** L3 小程序方法节点类型 */
+export const NODE_TYPE_MP_METHOD = 'mp-method';
+/** L3 小程序生命周期节点类型 */
+export const NODE_TYPE_MP_LIFECYCLE = 'mp-lifecycle';
+/** L3 小程序 data 属性节点类型 */
+export const NODE_TYPE_MP_DATA = 'mp-data';
+/** L3 小程序组件 property 节点类型 */
+export const NODE_TYPE_MP_PROPERTY = 'mp-property';
+
+// ==================== uni-app 节点类型 ====================
+
+/** L2 uni-app 页面节点类型 */
+export const NODE_TYPE_UNI_PAGE = 'uni-page';
+
 /** 所有节点类型 */
 export type NodeType =
   | typeof NODE_TYPE_CAPABILITY
@@ -49,7 +97,25 @@ export type NodeType =
   | typeof NODE_TYPE_PINIA_STORE
   | typeof NODE_TYPE_PINIA_ACTION
   | typeof NODE_TYPE_PINIA_GETTER
-  | typeof NODE_TYPE_PINIA_STATE;
+  | typeof NODE_TYPE_PINIA_STATE
+  | typeof NODE_TYPE_VUEX_STORE
+  | typeof NODE_TYPE_VUEX_STATE
+  | typeof NODE_TYPE_VUEX_MUTATION
+  | typeof NODE_TYPE_VUEX_ACTION
+  | typeof NODE_TYPE_VUEX_GETTER
+  | typeof NODE_TYPE_REDUX_SLICE
+  | typeof NODE_TYPE_REDUX_STATE
+  | typeof NODE_TYPE_REDUX_REDUCER
+  | typeof NODE_TYPE_REDUX_ACTION
+  | typeof NODE_TYPE_REDUX_SELECTOR
+  | typeof NODE_TYPE_MP_APP
+  | typeof NODE_TYPE_MP_PAGE
+  | typeof NODE_TYPE_MP_COMPONENT
+  | typeof NODE_TYPE_MP_METHOD
+  | typeof NODE_TYPE_MP_LIFECYCLE
+  | typeof NODE_TYPE_MP_DATA
+  | typeof NODE_TYPE_MP_PROPERTY
+  | typeof NODE_TYPE_UNI_PAGE;
 
 /** 模块所属端 */
 export type ModuleSide = 'frontend' | 'backend' | 'shared' | 'unknown';
@@ -94,6 +160,24 @@ export interface NodeAttributes {
   isExported?: boolean;
   annotations?: string[];   // 装饰器/注解
   jsDoc?: string;           // JSDoc 注释摘要
+
+  // 状态管理（Vuex / Redux / Pinia 通用）
+  namespaced?: boolean;     // 是否命名空间模块
+  storeName?: string;       // 所属 store 名
+  actionType?: string;      // Redux action type（如 user/setUser）
+
+  // 小程序 / uni-app
+  platform?: string;        // 平台标识（mp-weixin / h5 / app-plus 等）
+  subPackage?: string;      // 所属分包名
+  isTabBar?: boolean;       // 是否 TabBar 页面
+  pageTitle?: string;       // 页面标题（navigationBarTitleText）
+  pagePath?: string;        // 页面路由路径
+  lifecycleType?: string;   // 生命周期类型（onLoad / onShow / onLaunch 等）
+  isUniLifecycle?: boolean; // 是否为 uni-app 生命周期
+  builtinComponents?: string[]; // 页面/组件使用的内置组件列表
+  componentJsonPath?: string;   // 组件配置 json 路径
+  storageKeys?: string[];      // 使用的 storage key 列表
+  requestUrls?: string[];      // 发起的网络请求 URL
 }
 
 /** 图谱节点 */
@@ -126,6 +210,14 @@ export const EDGE_TYPE_IMPORT = 'import';
 export const EDGE_TYPE_INHERIT = 'inherit';
 /** 业务映射边（能力 ↔ 模块/文件/元素） */
 export const EDGE_TYPE_BUSINESS_MAP = 'business_map';
+/** 导航边（页面跳转） */
+export const EDGE_TYPE_NAVIGATE = 'navigate';
+/** 组件引用边（页面/组件 → 子组件） */
+export const EDGE_TYPE_USE_COMPONENT = 'use-component';
+/** 事件绑定边（模板 → 处理函数） */
+export const EDGE_TYPE_BIND_EVENT = 'bind-event';
+/** 数据绑定边（模板 → data/property） */
+export const EDGE_TYPE_BIND_DATA = 'bind-data';
 
 /** 所有边类型 */
 export type EdgeType =
@@ -133,7 +225,11 @@ export type EdgeType =
   | typeof EDGE_TYPE_CALL
   | typeof EDGE_TYPE_IMPORT
   | typeof EDGE_TYPE_INHERIT
-  | typeof EDGE_TYPE_BUSINESS_MAP;
+  | typeof EDGE_TYPE_BUSINESS_MAP
+  | typeof EDGE_TYPE_NAVIGATE
+  | typeof EDGE_TYPE_USE_COMPONENT
+  | typeof EDGE_TYPE_BIND_EVENT
+  | typeof EDGE_TYPE_BIND_DATA;
 
 /** 边的来源（用于追溯映射证据） */
 export type EdgeSource =
@@ -158,6 +254,12 @@ export interface GraphEdge {
   weight: number;
   /** 生成来源 */
   source: EdgeSource;
+  /** 跳转方式（navigate 边专用：navigateTo / redirectTo / switchTab / reLaunch / navigateBack） */
+  method?: string;
+  /** 事件名（bind-event 边专用：tap / change / input 等） */
+  eventName?: string;
+  /** 绑定路径（bind-data 边专用：数据绑定的路径） */
+  bindPath?: string;
 }
 
 // ==================== 图谱数据 ====================
@@ -204,6 +306,10 @@ export interface GraphBuildConfig {
   moduleRoots: string[];
   /** 通用目录（不作为业务模块） */
   commonDirs: string[];
+  /** 启用的状态管理解析器（pinia / vuex / redux），默认 ['pinia']，空数组表示自动嗅探 */
+  stateManagers: string[];
+  /** 启用的框架扩展解析器（miniprogram / uniapp），默认空数组表示自动嗅探 */
+  frameworks: string[];
 }
 
 /** 映射策略配置 */

@@ -97,6 +97,116 @@ export function getNodeVectorText(node: GraphNode): string | null {
       return parts.join('\n');
     }
 
+    // ==================== Vuex 节点 ====================
+
+    case 'vuex-store': {
+      const parts = [node.name, 'Vuex 状态管理 Store'];
+      if (node.attrs.description) parts.push(node.attrs.description);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    case 'vuex-state':
+    case 'vuex-mutation':
+    case 'vuex-action':
+    case 'vuex-getter': {
+      const parts = [node.name];
+      const typeLabel: Record<string, string> = {
+        'vuex-state': 'Vuex state 状态',
+        'vuex-mutation': 'Vuex mutation 变更',
+        'vuex-action': 'Vuex action 动作',
+        'vuex-getter': 'Vuex getter 计算属性',
+      };
+      parts.push(typeLabel[node.type] || node.type);
+      if (node.attrs.parentName) parts.push(`所属 store: ${node.attrs.parentName}`);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    // ==================== Redux 节点 ====================
+
+    case 'redux-slice': {
+      const parts = [node.name, 'Redux Slice 状态切片'];
+      if (node.attrs.description) parts.push(node.attrs.description);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    case 'redux-state':
+    case 'redux-reducer':
+    case 'redux-action':
+    case 'redux-selector': {
+      const parts = [node.name];
+      const typeLabel: Record<string, string> = {
+        'redux-state': 'Redux state 状态',
+        'redux-reducer': 'Redux reducer 归约函数',
+        'redux-action': 'Redux action 动作',
+        'redux-selector': 'Redux selector 选择器',
+      };
+      parts.push(typeLabel[node.type] || node.type);
+      if (node.attrs.parentName) parts.push(`所属 slice: ${node.attrs.parentName}`);
+      if (node.attrs.actionType) parts.push(`actionType: ${node.attrs.actionType}`);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    // ==================== 微信小程序节点 ====================
+
+    case 'mp-app': {
+      const parts = [node.name, '微信小程序 App 实例'];
+      if (node.attrs.description) parts.push(node.attrs.description);
+      if (node.attrs.platform) parts.push(`平台: ${node.attrs.platform}`);
+      return parts.join('\n');
+    }
+
+    case 'mp-page': {
+      const parts = [node.name];
+      if (node.attrs.pageTitle) parts.push(node.attrs.pageTitle);
+      parts.push('微信小程序页面');
+      if (node.attrs.pagePath) parts.push(`路径: ${node.attrs.pagePath}`);
+      if (node.attrs.isTabBar) parts.push('TabBar 页面');
+      if (node.attrs.subPackage) parts.push(`分包: ${node.attrs.subPackage}`);
+      return parts.join('\n');
+    }
+
+    case 'mp-component': {
+      const parts = [node.name, '微信小程序自定义组件'];
+      if (node.attrs.pagePath) parts.push(`路径: ${node.attrs.pagePath}`);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    case 'mp-method':
+    case 'mp-lifecycle':
+    case 'mp-data':
+    case 'mp-property': {
+      const parts = [node.name];
+      const typeLabel: Record<string, string> = {
+        'mp-method': '小程序方法',
+        'mp-lifecycle': '小程序生命周期',
+        'mp-data': '小程序 data 数据',
+        'mp-property': '小程序组件属性',
+      };
+      parts.push(typeLabel[node.type] || node.type);
+      if (node.attrs.parentName) parts.push(`所属: ${node.attrs.parentName}`);
+      if (node.attrs.lifecycleType) parts.push(`类型: ${node.attrs.lifecycleType}`);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    // ==================== uni-app 节点 ====================
+
+    case 'uni-page': {
+      const parts = [node.name];
+      if (node.attrs.pageTitle) parts.push(node.attrs.pageTitle);
+      parts.push('uni-app 页面');
+      if (node.attrs.pagePath) parts.push(`路径: ${node.attrs.pagePath}`);
+      if (node.attrs.isTabBar) parts.push('TabBar 页面');
+      if (node.attrs.subPackage) parts.push(`分包: ${node.attrs.subPackage}`);
+      if (node.attrs.platform) parts.push(`平台: ${node.attrs.platform}`);
+      return parts.join('\n');
+    }
+
     case 'constant':
     default:
       // 常量等不生成向量（信息密度低）

@@ -50,6 +50,8 @@ import { parseAllCapabilities, ParsedCapability } from '../parsers/capability-pa
 import { parseModules, ParsedModule } from '../parsers/module-parser';
 import { parseSourceFiles, isSupportedFile } from '../parsers/source-parser';
 import { ParseResult } from '../parsers/ts-parser';
+import { isMiniprogramProject, parseMiniprogramProject } from '../parsers/miniprogram-parser';
+import { isUniappProject, parseUniappProject } from '../parsers/uniapp-parser';
 import { sniffProjectType } from '../../lib/project-type';
 import { EdgeBuilder } from './edge-builder';
 import { buildBusinessMapEdges } from './business-mapper';
@@ -210,6 +212,10 @@ export async function buildGraph(root: string, onProgress?: BuildProgressCallbac
   const elemNodes: Map<string, GraphNode[]> = new Map(); // 文件路径 → 元素节点列表
   const piniaStoreNodes: Map<string, GraphNode> = new Map(); // store id → store 节点
   const piniaElemByStore: Map<string, GraphNode[]> = new Map(); // store id → 子元素列表
+  const vuexStoreNodes: Map<string, GraphNode> = new Map(); // store name → store 节点
+  const vuexElemByStore: Map<string, GraphNode[]> = new Map(); // store name → 子元素列表
+  const reduxSliceNodes: Map<string, GraphNode> = new Map(); // slice name → slice 节点
+  const reduxElemBySlice: Map<string, GraphNode[]> = new Map(); // slice name → 子元素列表
   for (const pr of parseResults) {
     allNodes.push(pr.fileNode);
     const filePath = pr.fileNode.attrs.filePath!;
@@ -233,18 +239,125 @@ export async function buildGraph(root: string, onProgress?: BuildProgressCallbac
         piniaElemByStore.set(store.name, storeElems);
       }
     }
+
+    // Vuex store 节点（L2）
+    if (pr.vuexStores && pr.vuexStores.length > 0) {
+      for (const store of pr.vuexStores) {
+        allNodes.push(store);
+        vuexStoreNodes.set(store.name, store);
+        const storeElems = pr.elements.filter(
+          (el) => el.attrs.parentName === store.name &&
+            (el.type === 'vuex-state' || el.type === 'vuex-mutation' ||
+              el.type === 'vuex-action' || el.type === 'vuex-getter'),
+        );
+        vuexElemByStore.set(store.name, storeElems);
+      }
+    }
+
+    // Redux slice 节点（L2）
+    if (pr.reduxSlices && pr.reduxSlices.length > 0) {
+      for (const slice of pr.reduxSlices) {
+        allNodes.push(slice);
+        reduxSliceNodes.set(slice.name, slice);
+        const sliceElems = pr.elements.filter(
+          (el) => el.attrs.parentName === slice.name &&
+            (el.type === 'redux-state' || el.type === 'redux-reducer' ||
+              el.type === 'redux-action' || el.type === 'redux-selector'),
+        );
+        reduxElemBySlice.set(slice.name, sliceElems);
+      }
+    }
+  }
+
+  // --- 小程序节点与边（项目级解析） ---
+  let mpResult: ReturnType<typeof parseMiniprogramProject> | null = null;
+  const isMpProject = config.build.frameworks.includes('miniprogram') ||
+    (config.build.frameworks.length === 0 && isMiniprogramProject(root));
+  if (isMpProject) {
+    try {
+      mpResult = parseMiniprogramProject(root);
+      if (mpResult.appNode) allNodes.push(mpResult.appNode);
+      allNodes.push(...mpResult.pages);
+      allNodes.push(...mpResult.components);
+      allNodes.push(...mpResult.elements);
+    } catch (e) {
+      console.warn(`[graph-builder] 小程序解析失败: ${(e as Error).message}`);
+    }
+  }
+
+  // --- uni-app 节点与边（项目级解析） ---
+  let uniResult: ReturnType<typeof parseUniappProject> | null = null;
+  const isUniProject = config.build.frameworks.includes('uniapp') ||
+    (config.build.frameworks.length === 0 && isUniappProject(root));
+  if (isUniProject) {
+    try {
+      uniResult = parseUniappProject(root);
+      allNodes.push(...uniResult.pages);
+      allNodes.push(...uniResult.elements);
+    } catch (e) {
+      console.warn(`[graph-builder] uni-app 解析失败: ${(e as Error).message}`);
+    }
   }
 
   // --- contain 边：L1 ⊃ L2 ⊃ L3 ---
   buildContainEdges(edgeBuilder, parsedModules, fileNodes, elemNodes);
   // Pinia 从属边
   buildPiniaContainEdges(edgeBuilder, parseResults, fileNodes, piniaStoreNodes, piniaElemByStore);
+  // Vuex 从属边
+  buildVuexContainEdges(edgeBuilder, parseResults, fileNodes, vuexStoreNodes, vuexElemByStore);
+  // Redux 从属边
+  buildReduxContainEdges(edgeBuilder, parseResults, fileNodes, reduxSliceNodes, reduxElemBySlice);
+
+  // 小程序从属边及其它边
+  if (mpResult) {
+    for (const edge of mpResult.containEdges) edgeBuilder.addRawEdge(edge);
+    for (const edge of mpResult.navigateEdges) edgeBuilder.addRawEdge(edge);
+    for (const edge of mpResult.useComponentEdges) edgeBuilder.addRawEdge(edge);
+    for (const edge of mpResult.bindEventEdges) edgeBuilder.addRawEdge(edge);
+    for (const edge of mpResult.bindDataEdges) edgeBuilder.addRawEdge(edge);
+    // L1 (mp-app) contain L2 (pages/components)
+    if (mpResult.appNode) {
+      for (const page of mpResult.pages) {
+        edgeBuilder.addEdge({
+          from: mpResult.appNode.id,
+          to: page.id,
+          type: EDGE_TYPE_CONTAIN,
+          weight: 1.0,
+          source: 'structure',
+        });
+      }
+      for (const comp of mpResult.components) {
+        edgeBuilder.addEdge({
+          from: mpResult.appNode.id,
+          to: comp.id,
+          type: EDGE_TYPE_CONTAIN,
+          weight: 1.0,
+          source: 'structure',
+        });
+      }
+    }
+  }
+
+  // uni-app 边
+  if (uniResult) {
+    for (const edge of uniResult.containEdges) edgeBuilder.addRawEdge(edge);
+    for (const edge of uniResult.navigateEdges) edgeBuilder.addRawEdge(edge);
+    // 注意：uni-page 节点和已有 file 节点是同一页面的两个视角
+    // file 节点由 source-parser 生成（Vue 文件），uni-page 由这里生成
+    // 两者通过 same-page 关系关联？这里先简单处理：只加 uni-page 节点和 navigate 边
+    // contain 边由模块 L1 → uni-page 在 buildContainEdges 里处理？
+    // 暂时保持简洁，uni-page 作为独立的 L2 节点存在
+  }
 
   // --- import 边 ---
   buildImportEdges(edgeBuilder, parseResults, fileNodes, root);
 
   // --- Pinia call 边（组件 → action 调用） ---
   buildPiniaCallEdges(edgeBuilder, parseResults, root, piniaStoreNodes, piniaElemByStore);
+  // --- Vuex call 边（组件 → action/mutation 调用） ---
+  buildVuexCallEdges(edgeBuilder, parseResults, root, vuexStoreNodes, vuexElemByStore);
+  // --- Redux call 边（组件 → action/selector 调用） ---
+  buildReduxCallEdges(edgeBuilder, parseResults, root, reduxSliceNodes, reduxElemBySlice);
   mark('edges', t3);
   report('edges', 1, `${edgeBuilder.size()} 条边`);
 
@@ -537,6 +650,305 @@ function buildPiniaCallEdges(
 
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// ==================== Vuex contain 边 ====================
+
+/**
+ * 构建 Vuex 相关的 contain 边：
+ *   file → vuex-store（文件包含 store 定义）
+ *   vuex-store → state/mutation/action/getter（store 包含子元素）
+ */
+function buildVuexContainEdges(
+  eb: EdgeBuilder,
+  parseResults: ParseResult[],
+  fileNodes: Map<string, GraphNode>,
+  vuexStores: Map<string, GraphNode>,
+  vuexElemByStore: Map<string, GraphNode[]>,
+): void {
+  for (const pr of parseResults) {
+    if (!pr.vuexStores || pr.vuexStores.length === 0) continue;
+    const fileNode = pr.fileNode;
+    for (const store of pr.vuexStores) {
+      eb.addContain(fileNode.id, store.id);
+    }
+  }
+
+  for (const [storeName, elems] of vuexElemByStore) {
+    const storeNode = vuexStores.get(storeName);
+    if (!storeNode) continue;
+    for (const elem of elems) {
+      eb.addContain(storeNode.id, elem.id);
+    }
+  }
+}
+
+// ==================== Vuex call 边 ====================
+
+/**
+ * 构建组件/文件 → Vuex action/mutation 的调用边。
+ *
+ * 识别模式（启发式）：
+ *   1. this.$store.dispatch('xxx/yyy', payload) → action 调用
+ *   2. this.$store.commit('xxx/yyy', payload) → mutation 调用
+ *   3. useStore().dispatch('xxx/yyy') → Vue 3 风格
+ *   4. mapActions / mapMutations / mapState / mapGetters 辅助函数
+ */
+function buildVuexCallEdges(
+  eb: EdgeBuilder,
+  parseResults: ParseResult[],
+  root: string,
+  vuexStores: Map<string, GraphNode>,
+  vuexElemByStore: Map<string, GraphNode[]>,
+): void {
+  for (const pr of parseResults) {
+    const fileNode = pr.fileNode;
+    const filePath = fileNode.attrs.filePath;
+    if (!filePath) continue;
+
+    let source: string;
+    try {
+      source = fs.readFileSync(path.join(root, filePath), 'utf-8');
+    } catch {
+      continue;
+    }
+
+    // 1. dispatch 调用：$store.dispatch('module/action', ...) 或 store.dispatch(...)
+    const dispatchRegex = /(?:\$store|store)\.dispatch\s*\(\s*['"]([^'"]+)['"]/g;
+    let match: RegExpExecArray | null;
+    while ((match = dispatchRegex.exec(source)) !== null) {
+      const actionPath = match[1];
+      const { storeName, elemName } = splitVuexPath(actionPath);
+      const actionNode = findVuexElem(vuexStores, vuexElemByStore, storeName, elemName, 'vuex-action');
+      if (actionNode) {
+        eb.addCall(fileNode.id, actionNode.id);
+      }
+    }
+
+    // 2. commit 调用：$store.commit('module/MUTATION', ...)
+    const commitRegex = /(?:\$store|store)\.commit\s*\(\s*['"]([^'"]+)['"]/g;
+    while ((match = commitRegex.exec(source)) !== null) {
+      const mutationPath = match[1];
+      const { storeName, elemName } = splitVuexPath(mutationPath);
+      const mutationNode = findVuexElem(vuexStores, vuexElemByStore, storeName, elemName, 'vuex-mutation');
+      if (mutationNode) {
+        eb.addCall(fileNode.id, mutationNode.id);
+      }
+    }
+
+    // 3. mapActions 辅助函数
+    const mapActionsRegex = /mapActions\s*\(\s*['"](\w+)['"]\s*,\s*\[([^\]]+)\]/g;
+    while ((match = mapActionsRegex.exec(source)) !== null) {
+      const storeName = match[1];
+      const actionsStr = match[2];
+      const actionNames = actionsStr
+        .split(',')
+        .map((s) => s.trim().replace(/['"]/g, ''))
+        .filter(Boolean);
+      for (const actionName of actionNames) {
+        const actionNode = findVuexElem(vuexStores, vuexElemByStore, storeName, actionName, 'vuex-action');
+        if (actionNode) {
+          eb.addCall(fileNode.id, actionNode.id);
+        }
+      }
+    }
+
+    // 4. mapMutations 辅助函数
+    const mapMutationsRegex = /mapMutations\s*\(\s*['"](\w+)['"]\s*,\s*\[([^\]]+)\]/g;
+    while ((match = mapMutationsRegex.exec(source)) !== null) {
+      const storeName = match[1];
+      const mutStr = match[2];
+      const mutNames = mutStr
+        .split(',')
+        .map((s) => s.trim().replace(/['"]/g, ''))
+        .filter(Boolean);
+      for (const mutName of mutNames) {
+        const mutNode = findVuexElem(vuexStores, vuexElemByStore, storeName, mutName, 'vuex-mutation');
+        if (mutNode) {
+          eb.addCall(fileNode.id, mutNode.id);
+        }
+      }
+    }
+
+    // 5. mapState / mapGetters（只建引用边，不计为 call，这里先跳过）
+    //    语义上是数据读取，用 call 边不太准确。后续可新增 use-selector 边类型。
+  }
+}
+
+/** 拆分 'module/action' 或 'action' 为 storeName 和 elemName */
+function splitVuexPath(actionPath: string): { storeName: string; elemName: string } {
+  const parts = actionPath.split('/');
+  if (parts.length === 1) {
+    return { storeName: 'root', elemName: parts[0] };
+  }
+  const elemName = parts.pop()!;
+  return { storeName: parts.join('/'), elemName };
+}
+
+/** 在 Vuex store 中查找指定类型的元素节点 */
+function findVuexElem(
+  vuexStores: Map<string, GraphNode>,
+  vuexElemByStore: Map<string, GraphNode[]>,
+  storeName: string,
+  elemName: string,
+  elemType: string,
+): GraphNode | undefined {
+  const storeNode = vuexStores.get(storeName);
+  if (!storeNode) return undefined;
+  const elems = vuexElemByStore.get(storeName) || [];
+  return elems.find((e) => e.type === elemType && e.name === elemName);
+}
+
+// ==================== Redux contain 边 ====================
+
+/**
+ * 构建 Redux 相关的 contain 边：
+ *   file → redux-slice（文件包含 slice 定义）
+ *   redux-slice → state/reducer/action/selector（slice 包含子元素）
+ */
+function buildReduxContainEdges(
+  eb: EdgeBuilder,
+  parseResults: ParseResult[],
+  fileNodes: Map<string, GraphNode>,
+  reduxSlices: Map<string, GraphNode>,
+  reduxElemBySlice: Map<string, GraphNode[]>,
+): void {
+  for (const pr of parseResults) {
+    if (!pr.reduxSlices || pr.reduxSlices.length === 0) continue;
+    const fileNode = pr.fileNode;
+    for (const slice of pr.reduxSlices) {
+      eb.addContain(fileNode.id, slice.id);
+    }
+  }
+
+  for (const [sliceName, elems] of reduxElemBySlice) {
+    const sliceNode = reduxSlices.get(sliceName);
+    if (!sliceNode) continue;
+    for (const elem of elems) {
+      eb.addContain(sliceNode.id, elem.id);
+    }
+  }
+}
+
+// ==================== Redux call 边 ====================
+
+/**
+ * 构建组件/文件 → Redux action/selector 的调用边。
+ *
+ * 识别模式（启发式）：
+ *   1. useSelector(selectXxx) → selector 调用
+ *   2. useDispatch() + dispatch(someAction()) → action 调用
+ *   3. connect(mapState, mapDispatch)(Component) → selector + action
+ */
+function buildReduxCallEdges(
+  eb: EdgeBuilder,
+  parseResults: ParseResult[],
+  root: string,
+  reduxSlices: Map<string, GraphNode>,
+  reduxElemBySlice: Map<string, GraphNode[]>,
+): void {
+  for (const pr of parseResults) {
+    const fileNode = pr.fileNode;
+    const filePath = fileNode.attrs.filePath;
+    if (!filePath) continue;
+
+    let source: string;
+    try {
+      source = fs.readFileSync(path.join(root, filePath), 'utf-8');
+    } catch {
+      continue;
+    }
+
+    // 1. useSelector(selectXxx) 调用
+    const selectorRegex = /useSelector\s*\(\s*(\w+)/g;
+    let match: RegExpExecArray | null;
+    while ((match = selectorRegex.exec(source)) !== null) {
+      const selectorName = match[1];
+      const selectorNode = findReduxElemGlobal(
+        reduxSlices, reduxElemBySlice, selectorName, 'redux-selector',
+      );
+      if (selectorNode) {
+        eb.addCall(fileNode.id, selectorNode.id);
+      }
+    }
+
+    // 2. dispatch(someAction()) 调用
+    // 先找出所有从 reduxjs/toolkit 或 slice 文件导入的 action 创建函数
+    const importedActions = new Set<string>();
+    const actionImportRegex = /import\s*\{([^}]+)\}\s*from\s*['"][^'"]*(?:slice|redux|store)[^'"]*['"]/g;
+    while ((match = actionImportRegex.exec(source)) !== null) {
+      const specifiers = match[1].split(',').map((s) => s.trim());
+      for (const spec of specifiers) {
+        const name = spec.replace(/^.*\sas\s+/, '').trim();
+        if (name) importedActions.add(name);
+      }
+    }
+
+    // dispatch(action()) 模式
+    for (const actionName of importedActions) {
+      const dispatchRegex = new RegExp(`dispatch\\s*\\(\\s*${actionName}\\s*\\(`, 'g');
+      if (dispatchRegex.test(source)) {
+        const actionNode = findReduxActionByName(
+          reduxSlices, reduxElemBySlice, actionName,
+        );
+        if (actionNode) {
+          eb.addCall(fileNode.id, actionNode.id);
+        }
+      }
+    }
+
+    // 3. connect 高阶组件（简单处理：识别 mapStateToProps 中的 selector 和 mapDispatch 中的 action）
+    const connectRegex = /connect\s*\(\s*(\w+)\s*,\s*(\w+)/;
+    const connectMatch = connectRegex.exec(source);
+    if (connectMatch) {
+      const mapStateFn = connectMatch[1];
+      const mapDispatchFn = connectMatch[2];
+      // 启发式：从函数名中提取相关 selector/action
+      // 这里简化处理，暂不深入函数体
+      if (mapStateFn && mapStateFn !== 'null' && mapStateFn !== 'undefined') {
+        const selectorNode = findReduxElemGlobal(
+          reduxSlices, reduxElemBySlice, mapStateFn, 'redux-selector',
+        );
+        if (selectorNode) {
+          eb.addCall(fileNode.id, selectorNode.id);
+        }
+      }
+    }
+  }
+}
+
+/** 在所有 slice 中查找指定类型的元素（全局搜索） */
+function findReduxElemGlobal(
+  reduxSlices: Map<string, GraphNode>,
+  reduxElemBySlice: Map<string, GraphNode[]>,
+  elemName: string,
+  elemType: string,
+): GraphNode | undefined {
+  for (const [, elems] of reduxElemBySlice) {
+    const found = elems.find((e) => e.type === elemType && e.name === elemName);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+/** 根据 action 创建函数名查找对应的 action 节点（通过匹配 slice/actionType） */
+function findReduxActionByName(
+  reduxSlices: Map<string, GraphNode>,
+  reduxElemBySlice: Map<string, GraphNode[]>,
+  actionCreatorName: string,
+): GraphNode | undefined {
+  // 先按名字精确匹配
+  const global = findReduxElemGlobal(reduxSlices, reduxElemBySlice, actionCreatorName, 'redux-action');
+  if (global) return global;
+
+  // 再按 actionType 后缀匹配（如 setUser 匹配 user/setUser）
+  for (const [sliceName, elems] of reduxElemBySlice) {
+    const found = elems.find(
+      (e) => e.type === 'redux-action' && e.attrs.actionType?.endsWith('/' + actionCreatorName),
+    );
+    if (found) return found;
+  }
+  return undefined;
 }
 
 // ==================== import 边 ====================
@@ -896,6 +1308,10 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
   const elemNodes = new Map<string, GraphNode[]>();
   const piniaStoreMap = new Map<string, GraphNode>();
   const piniaElemByStore = new Map<string, GraphNode[]>();
+  const vuexStoreMap = new Map<string, GraphNode>();
+  const vuexElemByStore = new Map<string, GraphNode[]>();
+  const reduxSliceMap = new Map<string, GraphNode>();
+  const reduxElemBySlice = new Map<string, GraphNode[]>();
   for (const pr of newParseResults) {
     newNodes.push(pr.fileNode);
     const fp = pr.fileNode.attrs.filePath!;
@@ -916,6 +1332,32 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
             (el.type === 'pinia-action' || el.type === 'pinia-getter' || el.type === 'pinia-state'),
         );
         piniaElemByStore.set(store.name, storeElems);
+      }
+    }
+
+    if (pr.vuexStores && pr.vuexStores.length > 0) {
+      for (const store of pr.vuexStores) {
+        newNodes.push(store);
+        vuexStoreMap.set(store.name, store);
+        const storeElems = pr.elements.filter(
+          (el) => el.attrs.parentName === store.name &&
+            (el.type === 'vuex-state' || el.type === 'vuex-mutation' ||
+              el.type === 'vuex-action' || el.type === 'vuex-getter'),
+        );
+        vuexElemByStore.set(store.name, storeElems);
+      }
+    }
+
+    if (pr.reduxSlices && pr.reduxSlices.length > 0) {
+      for (const slice of pr.reduxSlices) {
+        newNodes.push(slice);
+        reduxSliceMap.set(slice.name, slice);
+        const sliceElems = pr.elements.filter(
+          (el) => el.attrs.parentName === slice.name &&
+            (el.type === 'redux-state' || el.type === 'redux-reducer' ||
+              el.type === 'redux-action' || el.type === 'redux-selector'),
+        );
+        reduxElemBySlice.set(slice.name, sliceElems);
       }
     }
   }
@@ -942,6 +1384,38 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     if (!storeNode) continue;
     for (const elem of elems) {
       edgeBuilder.addContain(storeNode.id, elem.id);
+    }
+  }
+
+  // 重建 Vuex contain 边
+  for (const pr of newParseResults) {
+    if (!pr.vuexStores || pr.vuexStores.length === 0) continue;
+    const fNode = pr.fileNode;
+    for (const store of pr.vuexStores) {
+      edgeBuilder.addContain(fNode.id, store.id);
+    }
+  }
+  for (const [storeName, elems] of vuexElemByStore) {
+    const storeNode = vuexStoreMap.get(storeName);
+    if (!storeNode) continue;
+    for (const elem of elems) {
+      edgeBuilder.addContain(storeNode.id, elem.id);
+    }
+  }
+
+  // 重建 Redux contain 边
+  for (const pr of newParseResults) {
+    if (!pr.reduxSlices || pr.reduxSlices.length === 0) continue;
+    const fNode = pr.fileNode;
+    for (const slice of pr.reduxSlices) {
+      edgeBuilder.addContain(fNode.id, slice.id);
+    }
+  }
+  for (const [sliceName, elems] of reduxElemBySlice) {
+    const sliceNode = reduxSliceMap.get(sliceName);
+    if (!sliceNode) continue;
+    for (const elem of elems) {
+      edgeBuilder.addContain(sliceNode.id, elem.id);
     }
   }
 

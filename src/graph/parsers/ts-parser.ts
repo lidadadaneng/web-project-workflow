@@ -26,6 +26,10 @@ export interface ParseResult {
   elements: GraphNode[];
   /** Pinia store 节点列表（L2，可选） */
   piniaStores?: GraphNode[];
+  /** Vuex store 节点列表（L2，可选） */
+  vuexStores?: GraphNode[];
+  /** Redux slice 节点列表（L2，可选） */
+  reduxSlices?: GraphNode[];
   /** import 目标（相对路径或模块名），用于生成 import 边 */
   imports: string[];
 }

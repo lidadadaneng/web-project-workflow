@@ -57,6 +57,24 @@ export class EdgeBuilder {
   }
 
   /**
+   * 直接添加一条完整边（保留所有扩展属性，如 method / eventName / bindPath 等）
+   *
+   * 用于小程序/uni-app 等场景生成的带扩展属性的边。
+   * 同 from-to-type 去重：已存在则保留权重更高的。
+   */
+  addRawEdge(edge: GraphEdge): void {
+    const id = this.edgeId(edge.from, edge.to, edge.type);
+    const existing = this.edges.get(id);
+    if (existing) {
+      if (edge.weight > existing.weight) {
+        this.edges.set(id, edge);
+      }
+      return;
+    }
+    this.edges.set(id, { ...edge, id });
+  }
+
+  /**
    * 权重叠加（同一对节点同类型边，多来源命中则权重递增）
    *
    * 定位：增量场景专用。当 `updateGraph` 对已存在的边追加新证据（如增量文件

@@ -29,6 +29,8 @@ const DEFAULT_BUILD: GraphBuildConfig = {
     'coverage',
   ],
   languages: ['typescript', 'javascript', 'vue'],
+  stateManagers: ['pinia'],
+  frameworks: [],
   moduleRoots: ['src/modules', 'src/pages', 'src/views'],
   commonDirs: [
     // 通用工具
@@ -155,6 +157,8 @@ export function loadGraphConfig(root: string): GraphConfig {
       ...(userGraph.build || {}),
       ignore: userGraph.build?.ignore ?? DEFAULT_BUILD.ignore,
       languages: userGraph.build?.languages ?? DEFAULT_BUILD.languages,
+      stateManagers: userGraph.build?.stateManagers ?? DEFAULT_BUILD.stateManagers,
+      frameworks: userGraph.build?.frameworks ?? DEFAULT_BUILD.frameworks,
       moduleRoots: userGraph.build?.moduleRoots ?? DEFAULT_BUILD.moduleRoots,
       commonDirs: userGraph.build?.commonDirs ?? DEFAULT_BUILD.commonDirs,
     },

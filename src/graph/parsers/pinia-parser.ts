@@ -2,8 +2,8 @@
  * Pinia Store 解析器
  *
  * 基于源码文本分析识别 Pinia store 定义，提取：
- * - store 节点（L3）
- * - state / getters / actions 子元素（L4）
+ * - store 节点（L2）
+ * - state / getters / actions 子元素（L3）
  *
  * 支持两种定义风格：
  *   1. Options Store: defineStore('id', { state, getters, actions })
@@ -76,7 +76,7 @@ export async function parsePiniaStores(
 
     const storeNode: GraphNode = {
       id: generateNodeId('pinia-store', [relPath, storeId]),
-      level: 'L3',
+      level: 'L2',
       type: NODE_TYPE_PINIA_STORE,
       name: storeName,
       attrs: {
@@ -358,7 +358,7 @@ function buildPiniaElement(
 ): GraphNode {
   return {
     id: generateNodeId('pinia-elem', [filePath, storeName, name]),
-    level: 'L4',
+    level: 'L3',
     type,
     name,
     attrs: {

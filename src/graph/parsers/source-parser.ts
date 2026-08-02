@@ -96,7 +96,7 @@ export async function parseSourceFile(
       );
       if (piniaResult.stores.length > 0) {
         result.piniaStores = piniaResult.stores;
-        // Pinia 的 L4 元素（action/getter/state）并入 elements
+        // Pinia 的 L3 元素（action/getter/state）并入 elements
         result.elements.push(...piniaResult.elements);
       }
     } catch (e) {
@@ -165,7 +165,7 @@ function createFileNode(
 
   return {
     id: generateNodeId('file', [relPath]),
-    level: 'L3',
+    level: 'L2',
     type: 'file',
     name: fileName,
     attrs: {

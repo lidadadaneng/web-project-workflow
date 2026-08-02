@@ -5,6 +5,7 @@ import {
   loadState,
   saveState,
   changeNameExists,
+  validateChangeName,
 } from '../lib/state';
 import { getProjectType } from '../lib/config';
 
@@ -15,6 +16,15 @@ export function registerNew(program: Command): void {
     .option('--schema <name>', '使用的 schema', 'wpw-six-phase')
     .action((name: string, opts: { schema: string }) => {
       const root = process.cwd();
+
+      // 格式校验（kebab-case）
+      const nameCheck = validateChangeName(name);
+      if (!nameCheck.valid) {
+        console.error(`错误：需求名格式不合法 — ${nameCheck.reason}`);
+        console.error('需求名必须为 kebab-case 格式（小写字母、数字、短横线），2-30 字符。');
+        console.error('示例：cart-batch-delete、user-profile-update');
+        process.exit(1);
+      }
 
       // 全局重名检查（active + archived）
       // 需求名是全局唯一标识，归档后也不能重名

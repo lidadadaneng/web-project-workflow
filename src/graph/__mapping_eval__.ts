@@ -28,7 +28,7 @@ import {
   type MappingSourceSwitch,
 } from './builders/business-mapper';
 import type { GraphNode, VectorMapping, GraphEdge } from './types';
-import type { ParsedRequirement } from './parsers/requirement-parser';
+import type { ParsedCapability } from './parsers/capability-parser';
 import type { ParsedModule } from './parsers/module-parser';
 import { getDefaultGraphConfig } from './config';
 import * as fs from 'fs';
@@ -141,7 +141,7 @@ export function runAblation(
   const nodeById = new Map<string, GraphNode>();
   for (const m of baseCtx.modules) nodeById.set(m.node.id, m.node);
   for (const [, n] of baseCtx.fileNodes) nodeById.set(n.id, n);
-  for (const r of baseCtx.reqs) nodeById.set(r.node.id, r.node);
+  for (const r of baseCtx.caps) nodeById.set(r.node.id, r.node);
 
   const results: AblationResult[] = [];
   for (const cfg of configs) {
@@ -190,25 +190,23 @@ function mkNode(id: string, level: GraphNode['level'], type: GraphNode['type'], 
   return { id, level, type, name, attrs: {}, createdAt: 0, updatedAt: 0 };
 }
 
-function mkReq(id: string, name: string, extractedModules: string[] = []): ParsedRequirement {
+function mkCap(id: string, name: string): ParsedCapability {
   return {
-    node: mkNode(id, 'L1', 'requirement', name),
+    node: mkNode(id, 'C', 'capability', name),
     dirPath: '/tmp',
     vectorText: name,
-    extractedModules,
-    extractedInterfaces: [],
   };
 }
 
 function mkMod(id: string, name: string): ParsedModule {
-  return { node: mkNode(id, 'L2', 'module', name), dir: `src/${name}` };
+  return { node: mkNode(id, 'L1', 'module', name), dir: `src/${name}` };
 }
 
 /** 构造合成图上下文（含四源证据） */
 function buildSyntheticCtx(): Omit<BusinessMapContext, 'sources'> {
-  const reqs = [
-    mkReq('req:auth', '用户认证', ['auth']),
-    mkReq('req:order', '订单管理', ['order']),
+  const caps = [
+    mkCap('cap:auth', '用户认证'),
+    mkCap('cap:order', '订单管理'),
   ];
   const modules = [
     mkMod('mod:auth', 'auth'),
@@ -216,8 +214,8 @@ function buildSyntheticCtx(): Omit<BusinessMapContext, 'sources'> {
     mkMod('mod:pay', 'pay'),
   ];
   const fileNodes = new Map<string, GraphNode>([
-    ['src/auth/login.ts', mkNode('file:login', 'L3', 'file', 'login.ts')],
-    ['src/order/list.ts', mkNode('file:orderlist', 'L3', 'file', 'list.ts')],
+    ['src/auth/login.ts', mkNode('file:login', 'L2', 'file', 'login.ts')],
+    ['src/order/list.ts', mkNode('file:orderlist', 'L2', 'file', 'list.ts')],
   ]);
 
   // 向量：req 与对应模块高相似
@@ -239,7 +237,7 @@ function buildSyntheticCtx(): Omit<BusinessMapContext, 'sources'> {
   };
 
   return {
-    reqs,
+    caps,
     modules,
     fileNodes,
     root: '/tmp/synthetic',

@@ -7,20 +7,14 @@
  *   - git-history  Git 历史追溯（间接证据，按 commit 修改文件频次）
  *   - name-match   命名匹配（低权重兜底，中英词典 + 前缀/包含匹配）
  *
- * 未来工作：ai-refine（AI 校准，可选第 5 源，需接 LLM 调用，当前为配置桩，
- *           mode === 'ai-refine' 分支未实现）。
- *
  * 同一目标被多源命中时，按 noisy-OR 聚合权重（1 − ∏(1 − wᵢ)，上限 0.95），
  * 边的 source 字段取最权威证据源（与收集顺序无关）。
  *
- * 设计要点：
- *   - traceGit / isGit 可注入（默认 traceFromGit / isGitRepo），便于单测 mock
- *   - sources 开关支持消融实验（关闭某源后重建对比）
- *   - 语义回填仅对 L2 模块 / L3 文件生成（控制规模，不对 L4 逐一生成）
+ * 语义回填仅对 L1 模块 / L2 文件生成语义证据（控制规模，不对 L3 逐一生成）。
  */
 import type { GraphConfig, GraphNode, VectorMapping } from '../types';
 import { EdgeBuilder, aggregateWeights, type MappingEvidence } from './edge-builder';
-import type { ParsedRequirement } from '../parsers/requirement-parser';
+import type { ParsedCapability } from '../parsers/capability-parser';
 import type { ParsedModule } from '../parsers/module-parser';
 import { matchByName, traceFromGit, isGitRepo, type GitTraceResult } from '../parsers/mapping-sources';
 import { cosineSimilarity } from './vector-builder';
@@ -38,7 +32,7 @@ export interface MappingSourceSwitch {
 
 /** business_map 构建上下文 */
 export interface BusinessMapContext {
-  reqs: ParsedRequirement[];
+  caps: ParsedCapability[];
   modules: ParsedModule[];
   fileNodes: Map<string, GraphNode>;
   root: string;
@@ -69,11 +63,10 @@ const MIN_EDGE_WEIGHT = 0.3;
 /**
  * 构建 business_map 边（四源证据融合）
  *
- * @param eb 边构建器
- * @param ctx 构建上下文
+ * C 层能力节点 → L1/L2/L3 结构节点
  */
 export function buildBusinessMapEdges(eb: EdgeBuilder, ctx: BusinessMapContext): void {
-  const { reqs, modules, fileNodes, root, config, vectors, dimensions, mapping } = ctx;
+  const { caps, modules, fileNodes, root, config, vectors, dimensions, mapping } = ctx;
   const traceGit: GitTracer = ctx.traceGit ?? traceFromGit;
   const isGit: (root: string) => boolean = ctx.isGit ?? isGitRepo;
   const sw = ctx.sources ?? {};
@@ -86,48 +79,47 @@ export function buildBusinessMapEdges(eb: EdgeBuilder, ctx: BusinessMapContext):
   const moduleByName = new Map<string, ParsedModule>();
   for (const m of modules) moduleByName.set(m.node.name.toLowerCase(), m);
 
-  // 文件路径 -> 文件节点 ID（前向斜杠归一化，供 Git 历史追溯匹配）
+  // 文件路径 -> 文件节点 ID
   const filePathToNodeId = new Map<string, string>();
   for (const [fp, node] of fileNodes) {
     filePathToNodeId.set(fp.replace(/\\/g, '/'), node.id);
   }
 
-  // 节点 ID -> 节点（供语义扫描取 L2/L3 节点）
+  // 节点 ID -> 节点（供语义扫描取 L1/L2 节点）
   const nodeById = new Map<string, GraphNode>();
   for (const m of modules) nodeById.set(m.node.id, m.node);
   for (const [, n] of fileNodes) nodeById.set(n.id, n);
 
-  // Git 前置判断（非 Git 仓库或关闭则整体跳过该源）
+  // Git 前置判断
   const useGit = useGitSrc && config.mapping.gitHistory && isGit(root);
   const gitMinFreq = config.mapping.gitMinFreq ?? 2;
 
-  // 语义阈值（未设置时回退 search.threshold）
+  // 语义阈值
   const semanticThreshold = config.mapping.semanticThreshold ?? config.search.threshold;
   const semanticTopK = config.mapping.semanticTopK ?? 5;
   const semanticReady =
     useSemantic && !!vectors && !!mapping && mapping.indexToNodeId.length > 0;
 
   if (useSemantic && !semanticReady) {
-    // 向量缺失时提示（不阻断其余源）
     console.warn('[business-mapper] 向量索引缺失，语义映射源已跳过');
   }
 
-  for (const req of reqs) {
+  for (const cap of caps) {
     const evidences: MappingEvidence[] = [];
 
-    if (useDoc) collectDocEvidences(req, moduleByName, evidences);
-    if (useGit) collectGitEvidences(req, root, config, traceGit, filePathToNodeId, gitMinFreq, evidences);
-    if (useName) collectNameEvidences(req, modules, moduleByName, evidences);
+    if (useDoc) collectDocEvidences(cap, moduleByName, evidences);
+    if (useGit) collectGitEvidences(cap, root, config, traceGit, filePathToNodeId, gitMinFreq, evidences);
+    if (useName) collectNameEvidences(cap, modules, moduleByName, evidences);
     if (semanticReady) {
       collectSemanticEvidences(
-        req, vectors!, dimensions, mapping!, nodeById, semanticThreshold, semanticTopK, evidences,
+        cap, vectors!, dimensions, mapping!, nodeById, semanticThreshold, semanticTopK, evidences,
       );
     }
 
     const aggregated = aggregateWeights(evidences);
     for (const [targetId, { weight, source }] of aggregated) {
       if (weight >= MIN_EDGE_WEIGHT) {
-        eb.addBusinessMap(req.node.id, targetId, weight, source);
+        eb.addBusinessMap(cap.node.id, targetId, weight, source);
       }
     }
   }
@@ -137,11 +129,13 @@ export function buildBusinessMapEdges(eb: EdgeBuilder, ctx: BusinessMapContext):
 
 /** Layer 1: 文档提取（高权重直接证据） */
 function collectDocEvidences(
-  req: ParsedRequirement,
+  cap: ParsedCapability,
   moduleByName: Map<string, ParsedModule>,
   evidences: MappingEvidence[],
 ): void {
-  for (const modName of req.extractedModules) {
+  // 从能力节点的 features 中提取模块名（启发式：功能名中包含模块名）
+  const moduleNames = extractModuleNamesFromCap(cap);
+  for (const modName of moduleNames) {
     const mod = moduleByName.get(modName.toLowerCase());
     if (mod) {
       evidences.push({
@@ -153,15 +147,43 @@ function collectDocEvidences(
   }
 }
 
-/** Layer 4: 命名匹配（低权重兜底，完整中英词典 + 前缀/包含匹配） */
+/** 从能力 spec 中提取模块名候选 */
+function extractModuleNamesFromCap(cap: ParsedCapability): string[] {
+  const names: string[] = [];
+  const text = cap.vectorText.toLowerCase();
+
+  // 从能力名和描述中提取可能的模块名
+  // 简单启发：用 - 拆分能力名，检查各部分是否匹配模块
+  const parts = cap.node.name.split('-');
+  for (const p of parts) {
+    if (p.length >= 3) names.push(p);
+  }
+
+  // 从 features 名称中提取（前几个词）
+  if (cap.node.attrs.features) {
+    for (const f of cap.node.attrs.features) {
+      // 提取功能名中的英文关键词
+      const words = f.name.split(/[\s\-_/]+/).filter(w => w.length >= 3);
+      for (const w of words) {
+        if (/^[a-zA-Z]+$/.test(w)) {
+          names.push(w.toLowerCase());
+        }
+      }
+    }
+  }
+
+  return [...new Set(names)];
+}
+
+/** Layer 4: 命名匹配（低权重兜底） */
 function collectNameEvidences(
-  req: ParsedRequirement,
+  cap: ParsedCapability,
   modules: ParsedModule[],
   moduleByName: Map<string, ParsedModule>,
   evidences: MappingEvidence[],
 ): void {
   const moduleNames = modules.map((m) => m.node.name);
-  const result = matchByName(req.node.name, moduleNames);
+  const result = matchByName(cap.node.name, moduleNames);
   for (const [modName, score] of result.matches) {
     const mod = moduleByName.get(modName.toLowerCase());
     if (mod) {
@@ -174,11 +196,10 @@ function collectNameEvidences(
   }
 }
 
-/** Layer 3: Git 历史追溯（间接证据，按 commit 修改文件频次）
- *
- * 导出以支持单测：可注入 traceGit mock，绕过真实 Git 仓库依赖。 */
+/** Layer 3: Git 历史追溯
+ * 导出以支持单测：可注入 traceGit mock。 */
 export function collectGitEvidences(
-  req: ParsedRequirement,
+  cap: ParsedCapability,
   root: string,
   config: GraphConfig,
   traceGit: GitTracer,
@@ -186,10 +207,14 @@ export function collectGitEvidences(
   gitMinFreq: number,
   evidences: MappingEvidence[],
 ): void {
-  const keywords = [req.node.name, ...req.extractedModules];
+  const keywords = [cap.node.name];
+  if (cap.node.attrs.features) {
+    for (const f of cap.node.attrs.features) {
+      keywords.push(f.name);
+    }
+  }
   const { fileCounts } = traceGit(root, keywords, config.mapping.gitMaxCommits);
 
-  // 求最大频次用于归一化
   let maxFreq = 0;
   for (const freq of fileCounts.values()) {
     if (freq > maxFreq) maxFreq = freq;
@@ -197,9 +222,9 @@ export function collectGitEvidences(
   if (maxFreq === 0) return;
 
   for (const [filePath, freq] of fileCounts) {
-    if (freq < gitMinFreq) continue; // 过滤单次修改噪声
+    if (freq < gitMinFreq) continue;
     const targetId = filePathToNodeId.get(filePath.replace(/\\/g, '/'));
-    if (!targetId) continue; // 非项目源码文件（如配置/文档），跳过
+    if (!targetId) continue;
     const normFreq = freq / maxFreq;
     evidences.push({
       targetId,
@@ -210,15 +235,15 @@ export function collectGitEvidences(
 }
 
 /**
- * Layer 2: 语义匹配（间接证据，需向量索引）
+ * Layer 2: 语义匹配
  *
- * 取需求节点向量，对所有 L2 模块 / L3 文件节点向量做余弦相似度线性扫描，
- * 取相似度 ≥ 阈值的 Top-K 作为语义证据。仅对 L2/L3 生成（控制规模）。
+ * 取能力节点向量，对所有 L1 模块 / L2 文件节点向量做余弦相似度线性扫描。
+ * 仅对 L1/L2 生成语义证据（控制规模，不对 L3 逐一生成）。
  *
- * 导出以支持单测：可注入构造的向量索引，绕过真实 Embedding 模型。
+ * 导出以支持单测。
  */
 export function collectSemanticEvidences(
-  req: ParsedRequirement,
+  cap: ParsedCapability,
   vectors: Float32Array,
   dimensions: number,
   mapping: VectorMapping,
@@ -227,32 +252,29 @@ export function collectSemanticEvidences(
   topK: number,
   evidences: MappingEvidence[],
 ): void {
-  // 取需求节点的向量
-  const reqIdx = mapping.nodeIdToIndex.get(req.node.id);
-  if (reqIdx === undefined) return; // 该需求未生成向量（如无描述文本）
-  const reqVecOffset = reqIdx * dimensions;
-  const reqVec = vectors.subarray(reqVecOffset, reqVecOffset + dimensions);
+  const capIdx = mapping.nodeIdToIndex.get(cap.node.id);
+  if (capIdx === undefined) return;
+  const capVecOffset = capIdx * dimensions;
+  const capVec = vectors.subarray(capVecOffset, capVecOffset + dimensions);
 
-  // 扫描所有向量，计算与 L2/L3 节点的相似度
   const total = mapping.indexToNodeId.length;
   const scored: Array<{ nodeId: string; score: number }> = [];
   for (let i = 0; i < total; i++) {
     const nodeId = mapping.indexToNodeId[i];
-    if (nodeId === req.node.id) continue; // 跳过自身
+    if (nodeId === cap.node.id) continue;
     const node = nodeById.get(nodeId);
     if (!node) continue;
-    // 仅对 L2 模块与 L3 文件生成语义证据（控制规模，不对 L4 逐一生成）
-    if (node.level !== 'L2' && node.level !== 'L3') continue;
+    // 仅对 L1 模块与 L2 文件生成语义证据（控制规模）
+    if (node.level !== 'L1' && node.level !== 'L2') continue;
 
     const vecOffset = i * dimensions;
     const vec = vectors.subarray(vecOffset, vecOffset + dimensions);
-    const sim = cosineSimilarity(reqVec, vec);
+    const sim = cosineSimilarity(capVec, vec);
     if (sim >= threshold) {
       scored.push({ nodeId, score: sim });
     }
   }
 
-  // Top-K（按相似度降序）
   scored.sort((a, b) => b.score - a.score);
   for (const { nodeId, score } of scored.slice(0, topK)) {
     evidences.push({

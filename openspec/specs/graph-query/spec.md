@@ -13,14 +13,48 @@
 - **AND** 若节点有 `filePath` / `parentName` 属性则一并返回
 
 #### Scenario: 按层级批量查询节点
-- **WHEN** 执行 `wpw graph query --level L4`
-- **THEN** 返回所有 L4 层级的节点列表
+- **WHEN** 执行 `wpw graph query --level L3`
+- **THEN** 返回所有 L3 层级的节点列表
 - **AND** 支持 `--limit` 参数限制返回数量
 - **AND** 每个节点信息包含 `filePath` 字段
+
+#### Scenario: 新层级值被接受
+- **WHEN** 执行 `wpw graph query --level C,L1,L2,L3`
+- **THEN** 所有层级值均被正确识别
+- **AND** 返回对应层级的节点
+
+#### Scenario: 旧层级值向后兼容
+- **WHEN** 用户使用旧层级值 L1/L2/L3/L4
+- **THEN** 系统输出警告，说明层级命名已变更
+- **AND** 尝试映射：旧 L1→C，旧 L2→L1，旧 L3→L2，旧 L4→L3
 
 #### Scenario: 查询不存在的节点
 - **WHEN** 执行 `wpw graph query --id <不存在的 node_id>`
 - **THEN** 返回空结果并输出提示
+
+### Requirement: 节点类型命名适配
+节点类型输出 SHALL 与新层级体系保持一致。
+
+#### Scenario: capability 类型为 C 层
+- **WHEN** 查询 C 层节点
+- **THEN** 节点 type 字段为 `capability`
+- **AND** 节点 level 字段为 `C`
+
+#### Scenario: 原 requirement 类型移除
+- **WHEN** 遍历所有节点类型
+- **THEN** 不存在 `requirement` 类型
+- **AND** 新增 `capability` 类型
+
+### Requirement: 按节点类型查询
+系统 SHALL 支持按节点类型过滤查询，新增 `capability` 类型选项。
+
+#### Scenario: 按 capability 类型查询
+- **WHEN** 执行 `wpw graph query --type capability`
+- **THEN** 返回所有 C 层能力节点
+
+#### Scenario: 多类型混合查询
+- **WHEN** 执行 `wpw graph query --type capability,function`
+- **THEN** 返回能力节点和函数节点的混合结果
 
 ### Requirement: 依赖链路查询
 系统 SHALL 支持查询指定节点的上游依赖、下游依赖列表，可配置查询深度与权重阈值；并支持查询两个节点之间的最短关联路径。
@@ -44,7 +78,7 @@
 
 #### Scenario: 查看图谱统计
 - **WHEN** 用户执行 `wpw graph stat`
-- **THEN** 输出各层级节点数量、各类关系边数量、向量索引规模、最后构建时间
+- **THEN** 输出各层级节点数量（C/L1/L2/L3）、各类关系边数量、向量索引规模、最后构建时间
 - **AND** 若图谱不存在，输出提示信息并建议执行 `wpw graph build`
 
 ### Requirement: JSON 输出格式

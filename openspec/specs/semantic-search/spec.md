@@ -1,6 +1,6 @@
 ## Purpose
 
-基于语义向量的自然语言检索能力。将查询文本转换为向量，与图谱节点向量计算余弦相似度，支持多条件组合过滤。
+基于语义向量的自然语言检索能力。将查询文本转换为向量，与图谱节点向量计算余弦相似度，支持多条件组合过滤。集成置信度衰减加权锚点选择算法。
 
 ## Requirements
 
@@ -57,7 +57,7 @@
 #### Scenario: 中文查询展开完整依赖链
 - **WHEN** 执行 `wpw graph context "注册"`，项目中存在完整的注册流程依赖链（RegisterView → auth store → API 层）
 - **THEN** 返回的上下文子图节点数 ≥ 英文查询 "register" 子图节点数的 50%
-- **AND** 锚点节点中包含至少一个 L4 函数节点（而非仅靠 name-match 命中的 L3 文件节点）
+- **AND** 锚点节点中包含至少一个 L3 函数节点（而非仅靠 name-match 命中的 L2 文件节点）
 
 #### Scenario: 中文查询锚点不唯一
 - **WHEN** 执行 `wpw graph context "登录认证"`
@@ -78,7 +78,7 @@
 
 #### Scenario: 词典一对多映射
 - **WHEN** 中文词"用户"映射到 `user`、`account`、`member` 三个英文等价词
-- **THEN** 词汇匹配时三个等价词均参与匹配
+- **THEN** 词汇匹配时三个等价词都参与匹配
 - **AND** 取最高匹配强度作为该中文词的 lexBoost 贡献
 
 ### Requirement: 查询跨语言展开复用 CN_EN_MAP
@@ -95,13 +95,23 @@
 ### Requirement: 多条件组合检索
 系统 SHALL 支持「语义相似度 + 层级 + 节点类型」组合过滤，提升检索精准度。
 
-#### Scenario: 仅检索 L1 需求节点
-- **WHEN** 执行 `wpw graph search "登录" --level L1`
-- **THEN** 仅返回 L1 业务需求节点中语义匹配的结果
+#### Scenario: 仅检索 C 层能力节点
+- **WHEN** 执行 `wpw graph search "登录" --level C`
+- **THEN** 仅返回 C 层业务能力节点中语义匹配的结果
 
 #### Scenario: 仅检索后端模块节点
-- **WHEN** 执行 `wpw graph search "认证" --level L2 --side backend`
+- **WHEN** 执行 `wpw graph search "认证" --level L1 --side backend`
 - **THEN** 仅返回后端模块节点中语义匹配的结果
+
+#### Scenario: C 层可被检索
+- **WHEN** 执行 `wpw graph search "<query>" --level C`
+- **THEN** 仅在 C 层能力节点中进行语义检索
+- **AND** 返回匹配的能力节点列表
+
+#### Scenario: 多层混合检索
+- **WHEN** 执行 `wpw graph search "<query>" --level C,L1,L2,L3`
+- **THEN** 在所有层级节点中进行语义检索
+- **AND** 结果按相似度混合排序
 
 ### Requirement: 检索性能
 单次语义检索（含向量生成、相似度计算、排序）端到端总耗时 SHALL ≤ 300ms（含 CLI 进程启动）。
@@ -110,16 +120,35 @@
 - **WHEN** 图谱包含万级节点，执行语义检索
 - **THEN** 端到端总耗时 ≤ 300ms
 
-### Requirement: 归档需求过滤
-系统 SHALL 支持通过配置控制是否在语义检索结果中过滤归档需求。
+### Requirement: 置信度衰减加权锚点选择
+语义检索 SHALL 支持置信度衰减加权算法，在生成锚点时根据 C 层置信度动态调整 L1 层权重。
 
-#### Scenario: 过滤归档需求
-- **WHEN** `workflow.config.yaml` 中配置 `graph.search.excludeArchived: true`，执行语义检索
-- **THEN** 返回结果中不包含已归档的 L1 需求节点及其关联子节点
+#### Scenario: 高 C 层置信度时 L1 被压制
+- **WHEN** C 层最高相似度 >= 0.8
+- **THEN** L1 节点的有效得分乘以衰减权重 ~0.09（α=3.0）
+- **AND** L1 节点在锚点排序中优先级降低
 
-#### Scenario: 包含归档需求
-- **WHEN** `workflow.config.yaml` 中配置 `graph.search.excludeArchived: false`，执行语义检索
-- **THEN** 返回结果中包含所有匹配节点，包括归档需求
+#### Scenario: 低 C 层置信度时 L1 兜底
+- **WHEN** C 层最高相似度 <= 0.2 或 C 层为空
+- **THEN** L1 节点有效得分权重 >= ~0.55（α=3.0）
+- **AND** L1 节点在锚点选择中发挥兜底作用
+
+#### Scenario: L2/L3 不受衰减影响
+- **WHEN** 应用置信度衰减
+- **THEN** L2 和 L3 层节点的相似度得分保持原值
+- **AND** 仅 L1 层节点得分被乘以衰减权重
+
+### Requirement: 衰减系数可配置
+置信度衰减的衰减系数 α SHALL 可通过配置调整。
+
+#### Scenario: 默认衰减系数
+- **WHEN** 未配置衰减系数
+- **THEN** α 默认值为 3.0
+
+#### Scenario: 自定义衰减系数
+- **WHEN** 配置 `graph.search.decayAlpha: 2.0`
+- **THEN** 系统使用 α=2.0 进行衰减计算
+- **AND** L1 权重衰减更平缓
 
 ### Requirement: 本地 Embedding 默认
 系统 SHALL 默认使用本地 Embedding 模型进行语义检索，不调用付费 API。

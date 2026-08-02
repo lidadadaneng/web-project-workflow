@@ -35,13 +35,15 @@ wpw graph update   # 增量更新图谱，保证代码上下文最新
 了解现有相关模块与依赖关系（替代逐文件扫描，大幅降低 Token）：
 
 ```bash
-# 语义检索相关模块
-wpw graph context "<需求关键词>" --token-budget 3000 --depth 2 --json
+# 语义检索相关模块（检索词必须为英文，从需求描述翻译而来）
+wpw graph context "<english-keywords-from-requirement>" --token-budget 3000 --depth 2 --json
 
 # 了解特定模块的上下游依赖
 wpw graph query --downstream <模块节点ID> --depth 3 --json
 wpw graph query --upstream <模块节点ID> --depth 2 --json
 ```
+
+> ⚠️ **强制规范**：`wpw graph context` 和 `wpw graph search` 的检索词必须为英文。中文需求描述需先翻译为英文关键词再检索。
 
 - 0 锚点 -> 回退手动 grep，提示「图谱未匹配到相关节点」
 - 向量索引缺失 -> context 降级为 `--anchors` 模式，依赖查询仍可用

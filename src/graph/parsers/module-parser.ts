@@ -55,7 +55,7 @@ function buildManualModules(
 
     const node: GraphNode = {
       id: generateNodeId('mod', [m.name, side]),
-      level: 'L2',
+      level: 'L1',
       type: NODE_TYPE_MODULE,
       name: m.name,
       attrs: {
@@ -107,7 +107,7 @@ function autoDetectModules(
 
       const node: GraphNode = {
         id: generateNodeId('mod', [entry.name, side]),
-        level: 'L2',
+        level: 'L1',
         type: NODE_TYPE_MODULE,
         name: entry.name,
         attrs: {
@@ -155,7 +155,7 @@ function detectFromSrcRoot(
 
     const node: GraphNode = {
       id: generateNodeId('mod', [entry.name, side]),
-      level: 'L2',
+      level: 'L1',
       type: NODE_TYPE_MODULE,
       name: entry.name,
       attrs: {

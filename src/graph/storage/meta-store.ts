@@ -6,11 +6,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import type { GraphMeta } from '../types';
+import { CURRENT_SCHEMA_VERSION } from '../types';
 
 const META_FILE = 'meta.json';
-
-// 2.0.0: 需求节点 ID 生成规则变更（path-based → name-based），为破坏性变更
-const SCHEMA_VERSION = '2.0.0';
 
 export interface MetaStore {
   /** 读取元数据 */
@@ -68,7 +66,7 @@ export class JsonMetaStore implements MetaStore {
 /** 创建空的元数据对象 */
 export function createEmptyMeta(): GraphMeta {
   return {
-    schemaVersion: SCHEMA_VERSION,
+    schemaVersion: CURRENT_SCHEMA_VERSION,
     builtAt: 0,
     totalNodes: 0,
     totalEdges: 0,
@@ -78,4 +76,4 @@ export function createEmptyMeta(): GraphMeta {
   };
 }
 
-export { SCHEMA_VERSION };
+export { CURRENT_SCHEMA_VERSION as SCHEMA_VERSION };

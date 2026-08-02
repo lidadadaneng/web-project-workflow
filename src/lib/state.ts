@@ -20,6 +20,40 @@ export interface ExploreDecision {
   chosenAt: string | null;
 }
 
+/**
+ * 校验需求名是否符合 kebab-case 格式。
+ *
+ * 规则：
+ * - 小写字母 + 数字 + 短横线
+ * - 首尾不能是短横线
+ * - 不能有连续短横线
+ * - 长度 2-30 字符
+ */
+export function validateChangeName(name: string): { valid: boolean; reason?: string } {
+  if (typeof name !== 'string') {
+    return { valid: false, reason: '需求名必须是字符串' };
+  }
+  if (name.length < 2) {
+    return { valid: false, reason: `需求名至少 2 个字符（当前 ${name.length} 个）` };
+  }
+  if (name.length > 30) {
+    return { valid: false, reason: `需求名最多 30 个字符（当前 ${name.length} 个）` };
+  }
+  if (name.startsWith('-')) {
+    return { valid: false, reason: '需求名不能以短横线开头' };
+  }
+  if (name.endsWith('-')) {
+    return { valid: false, reason: '需求名不能以短横线结尾' };
+  }
+  if (name.includes('--')) {
+    return { valid: false, reason: '需求名不能包含连续短横线' };
+  }
+  if (!/^[a-z0-9-]+$/.test(name)) {
+    return { valid: false, reason: '需求名只能包含小写字母、数字和短横线（kebab-case 格式）' };
+  }
+  return { valid: true };
+}
+
 export interface ChangeState {
   name: string;
   createdAt: string;

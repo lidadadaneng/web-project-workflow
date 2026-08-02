@@ -22,10 +22,44 @@ import { JsonMetaStore } from '../storage/meta-store';
 import { GraphQuerier } from '../search/graph-query';
 import { SemanticSearcher } from '../search/semantic-search';
 import { ContextPipeline } from '../context/context-pipeline';
-import type { BuildStats } from '../types';
+import type { BuildStats, NodeLevel } from '../types';
+import { LEGACY_LEVEL_MAP } from '../types';
 
 function getWpfDir(root: string): string {
   return path.join(root, 'wpw', 'knowledge', 'graph');
+}
+
+/**
+ * 将层级参数转换为新层级（向后兼容）
+ *   旧 L1 → C, 旧 L2 → L1, 旧 L3 → L2, 旧 L4 → L3
+ */
+function normalizeLevels(levels: string[]): string[] {
+  const validLevels: NodeLevel[] = ['C', 'L1', 'L2', 'L3'];
+  const validSet = new Set(validLevels);
+  const legacySet = new Set(['L1', 'L2', 'L3', 'L4']);
+
+  let hasLegacy = false;
+  const result: string[] = [];
+
+  for (const lvl of levels) {
+    if (validSet.has(lvl as NodeLevel)) {
+      result.push(lvl);
+    } else if (legacySet.has(lvl)) {
+      const mapped = LEGACY_LEVEL_MAP[lvl];
+      if (mapped) {
+        result.push(mapped);
+        hasLegacy = true;
+      }
+    } else {
+      result.push(lvl); // 原样保留，交给下游过滤
+    }
+  }
+
+  if (hasLegacy) {
+    console.warn(`[警告] 检测到旧层级值（L1/L2/L3/L4），已自动映射为新层级（C/L1/L2/L3）。建议更新命令参数。`);
+  }
+
+  return result;
 }
 
 /**
@@ -190,7 +224,7 @@ function registerQuery(graph: Command): void {
   graph
     .command('query')
     .description('结构化查询节点与依赖')
-    .option('-l, --level <levels>', '按层级过滤，逗号分隔（L1,L2,L3,L4）')
+    .option('-l, --level <levels>', '按层级过滤，逗号分隔（C,L1,L2,L3）')
     .option('-t, --type <types>', '按节点类型过滤，逗号分隔')
     .option('--limit <n>', '返回数量上限', '20')
     .option('--offset <n>', '偏移量', '0')
@@ -278,7 +312,7 @@ function registerQuery(graph: Command): void {
 
       // 普通节点查询
       const levelOpt = opts.level
-        ? String(opts.level).split(',').map((s) => s.trim()) as any
+        ? normalizeLevels(String(opts.level).split(',').map((s) => s.trim())) as any
         : undefined;
       const typeOpt = opts.type
         ? String(opts.type).split(',').map((s) => s.trim()) as any
@@ -357,7 +391,7 @@ function registerSearch(graph: Command): void {
       const searcher = new SemanticSearcher(querier, vectors, dimensions, mapping);
 
       const levelOpt = opts.level
-        ? String(opts.level).split(',').map((s) => s.trim())
+        ? normalizeLevels(String(opts.level).split(',').map((s) => s.trim()))
         : undefined;
       const typeOpt = opts.type
         ? String(opts.type).split(',').map((s) => s.trim())
@@ -368,7 +402,6 @@ function registerSearch(graph: Command): void {
         threshold: Number(opts.threshold),
         level: levelOpt,
         type: typeOpt,
-        excludeArchived: !opts.includeArchived,
       });
 
       if (opts.json) {
@@ -445,7 +478,7 @@ function registerContext(graph: Command): void {
 
       const compression = opts.compression as any;
       const levelOpt = opts.level
-        ? String(opts.level).split(',').map((s: string) => s.trim())
+        ? normalizeLevels(String(opts.level).split(',').map((s: string) => s.trim()))
         : undefined;
       const typeOpt = opts.type
         ? String(opts.type).split(',').map((s: string) => s.trim())

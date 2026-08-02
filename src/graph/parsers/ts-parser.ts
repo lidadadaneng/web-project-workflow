@@ -2,8 +2,8 @@
  * TypeScript / JavaScript 源码解析器
  *
  * 基于 web-tree-sitter 解析 TS/JS 文件，提取：
- * - 文件节点（L3）
- * - 元素节点（L4）：函数、类、接口、常量
+ * - 文件节点（L2）
+ * - 元素节点（L3）：函数、类、接口、常量
  * - import 信息（用于生成 import 边）
  */
 import * as path from 'path';
@@ -22,9 +22,9 @@ import { setParserLanguage } from './tree-sitter-loader';
 export interface ParseResult {
   /** 文件节点 */
   fileNode: GraphNode;
-  /** 元素节点列表（L4） */
+  /** 元素节点列表（L3） */
   elements: GraphNode[];
-  /** Pinia store 节点列表（L3，可选） */
+  /** Pinia store 节点列表（L2，可选） */
   piniaStores?: GraphNode[];
   /** import 目标（相对路径或模块名），用于生成 import 边 */
   imports: string[];
@@ -207,7 +207,7 @@ function extractFunction(
 
   return {
     id: generateNodeId('elem', [filePath, signature, 'function']),
-    level: 'L4',
+    level: 'L3',
     type: isComponentName(name) ? NODE_TYPE_COMPONENT : NODE_TYPE_FUNCTION,
     name: fullName,
     attrs: {
@@ -285,7 +285,7 @@ function extractClass(node: any, source: string, filePath: string): GraphNode {
 
   return {
     id: generateNodeId('elem', [filePath, name, 'class']),
-    level: 'L4',
+    level: 'L3',
     type: NODE_TYPE_CLASS,
     name,
     attrs: {
@@ -333,7 +333,7 @@ function extractInterface(node: any, source: string, filePath: string): GraphNod
 
   return {
     id: generateNodeId('elem', [filePath, name, 'interface']),
-    level: 'L4',
+    level: 'L3',
     type: NODE_TYPE_INTERFACE,
     name,
     attrs: {
@@ -364,7 +364,7 @@ function extractTypeAlias(node: any, source: string, filePath: string): GraphNod
 
   return {
     id: generateNodeId('elem', [filePath, name, 'type']),
-    level: 'L4',
+    level: 'L3',
     type: NODE_TYPE_INTERFACE,
     name,
     attrs: {
@@ -409,7 +409,7 @@ function extractConstants(
 
   elements.push({
     id: generateNodeId('elem', [filePath, name, 'const']),
-    level: 'L4',
+    level: 'L3',
     type: NODE_TYPE_CONSTANT,
     name,
     attrs: {

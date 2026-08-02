@@ -77,6 +77,7 @@ BRD → PRD → Explore(可选) → Design → Plan → Test(可选) → Apply
 - **每个阶段落盘前必须输出大纲让用户确认，禁止静默写文件**
 - **状态变更必经 CLI**（`wpw done`/`skip`/`decision`），AI 不直接改 `.wpw.yaml`
 - **BRD 面向业务方**：不主动讨论技术文件/模块/框架（除非用户主动问及），AI 独立估算逐步人力/时间成本填入"成本评估"表，供业务方决策
+- **图谱检索必须使用英文**：调用 `wpw graph search` 和 `wpw graph context`（非 `--anchors` 模式）时，检索词必须为英文。中文需求/任务描述需先翻译为英文关键词再检索。锚点模式（`--anchors`）不受此限制。
 
 ## 模板规范
 
@@ -110,9 +111,9 @@ wpw graph update   # 约 100ms，保证代码上下文最新
 ```
 
 **核心能力**：
-- `wpw graph context "<关键词>" --token-budget N` - 生成压缩后的结构化代码上下文（检索+裁剪+压缩，直接喂给 LLM）
+- `wpw graph context "<english-keywords>" --token-budget N` - 生成压缩后的结构化代码上下文（检索+裁剪+压缩，直接喂给 LLM，检索词必须为英文）
 - `wpw graph query --upstream/--downstream <节点ID>` - 查依赖关系（影响面/回归范围）
-- `wpw graph query --level L2` - 查模块/文件节点 ID
+- `wpw graph query --level L1` - 查模块节点 ID
 
 **降级策略**（所有命令统一）：
 - 图谱不存在 -> 强提示「建议先 `wpw graph build`」，但仍可回退手动读文件继续，不硬阻断
@@ -126,11 +127,11 @@ wpw graph update   # 约 100ms，保证代码上下文最新
 | `/wpw:apply` | 每任务前 `context` 取代码上下文 | Token 降 60-80% |
 | `/wpw:cr` | `query --upstream` 分析影响面 | 审查更全面 |
 | `/wpw:explore` | `context` + `query` 了解现有架构 | 探索更快更准 |
-| `/wpw:design` | `context --level L2,L3,L4` 了解模块边界 | 设计不脱节 |
+| `/wpw:design` | `context --level L1,L2,L3` 了解模块边界 | 设计不脱节 |
 | `/wpw:test` | `query --upstream/--downstream` 定回归范围 | 不遗漏不扩大 |
 | `/wpw:sync` | `query --upstream` 沿 business_map 找关联文档 | 不漏同步 |
-| `/wpw:plan` | `context --level L2,L3` 了解模块边界 | 任务切分更合理 |
-| `/wpw:brd` | `context --level L2` 参考模块规模估成本 | 估算更准（仅 AI 内部参考） |
+| `/wpw:plan` | `context --level L1,L2` 了解模块边界 | 任务切分更合理 |
+| `/wpw:brd` | `context --level L1` 参考模块规模估成本 | 估算更准（仅 AI 内部参考） |
 
 > 上表各读代码阶段（apply/cr/explore/design/test/sync/plan）的图谱前置为**必做步骤**（非"推荐"）；图谱缺失时降级回退手动读文件，不阻断流程。brd 仅 AI 内部参考、不向业务方输出技术文件。
 
@@ -142,12 +143,12 @@ wpw graph update   # 约 100ms，保证代码上下文最新
 
 | 场景 | 典型说法 | 推荐命令 | 为什么 |
 |------|---------|---------|--------|
-| 需求刚进来，不知道从哪下手 | "注册功能怎么做的"、"登录相关的代码在哪" | `wpw graph context "<需求描述>"` | 语义检索+依赖扩展一步定位，比漫无目的 grep 快 |
+| 需求刚进来，不知道从哪下手 | "注册功能怎么做的"、"登录相关的代码在哪" | `wpw graph context "user registration"`（英文关键词） | 语义检索+依赖扩展一步定位，比漫无目的 grep 快 |
 | 改之前查影响面 | "改这个函数会不会影响别的地方"、"回归范围有多大" | `wpw graph query --upstream <节点ID> --depth 2` | 手动 grep import 链容易漏间接依赖 |
-| 需要全链路视角 | "登录完整流程"、"数据从 view 到 store 的调用链" | `wpw graph context "<功能名>" --depth 3 --compression loose` | context 子图直接呈现完整依赖关系 |
-| 编码前快速取上下文 | Apply 每任务开始前、CR 前 | `wpw graph update` → `wpw graph context "<模块名>"` | Token 消耗降 60-80%，结构化输出更易建立全局认知 |
-| 新人上手 / 项目陌生 | 刚接手项目想快速了解架构 | `wpw graph stat` → `wpw graph query --level L2,L3` | L2 模块 + L3 文件清单，比读 README + 翻目录更立体 |
-| 模糊需求 / 技术探索 | Explore / Design 阶段，先看现有实现 | `wpw graph search "<技术概念>" --limit 20` | 按概念召回代码，比纯关键词全，能发现不知道存在的模块 |
+| 需要全链路视角 | "登录完整流程"、"数据从 view 到 store 的调用链" | `wpw graph context "login flow" --depth 3 --compression loose`（英文关键词） | context 子图直接呈现完整依赖关系 |
+| 编码前快速取上下文 | Apply 每任务开始前、CR 前 | `wpw graph update` → `wpw graph context "<module-name>"`（英文） | Token 消耗降 60-80%，结构化输出更易建立全局认知 |
+| 新人上手 / 项目陌生 | 刚接手项目想快速了解架构 | `wpw graph stat` → `wpw graph query --level C,L1` | C 层能力 + L1 模块清单，比读 README + 翻目录更立体 |
+| 模糊需求 / 技术探索 | Explore / Design 阶段，先看现有实现 | `wpw graph search "<technical-concept>" --limit 20`（英文） | 按概念召回代码，比纯关键词全，能发现不知道存在的模块 |
 
 ### ❌ 不该用图谱的 5 种场景
 
@@ -161,9 +162,9 @@ wpw graph update   # 约 100ms，保证代码上下文最新
 
 ### 💡 8 个提效技巧
 
-1. **英文关键词优先** — embedding 虽然支持双语，但英文检索质量高 10~15 个百分点，锚点更准，context 展开更充分。能用英文尽量用英文（`login` / `register` / `password reset` / `form validation`）。
+1. **强制使用英文检索词** — 调用 `wpw graph search` 和 `wpw graph context`（非 `--anchors` 模式）时，检索词必须为英文。中文需求/任务描述需先翻译为英文关键词再检索（`login` / `user registration` / `password reset` / `form validation`）。英文检索质量更高，锚点更准，与 name-match 证据源配合更好。
 
-2. **具体术语优于模糊描述** — `password hash` > `加密`，`pinia state` > `状态管理`，越具体越准。
+2. **具体术语优于模糊描述** — `password hash` > `security`，`pinia state` > `state management`，越具体越准。
 
 3. **context 是首选入口，不要先 search 再手动拼** — 语义检索→子图扩展→压缩序列化 = 一步到位。除非只要节点列表，否则直接上 `context`。
 
@@ -171,8 +172,9 @@ wpw graph update   # 约 100ms，保证代码上下文最新
 
 5. **用 --level 和 --type 精准裁剪** — 知道要什么层级就直接过滤，减噪声省 Token：
    ```bash
-   wpw graph context "认证" --level L2,L3     # 只看模块和文件
-   wpw graph context "auth" --type pinia-action  # 只看 Pinia action
+   wpw graph context "authentication" --level L2,L3     # 只看文件和代码元素（英文检索词）
+   wpw graph context "auth" --level C,L1                # 只看能力和模块级（英文检索词）
+   wpw graph context "auth" --type pinia-action         # 只看 Pinia action（英文检索词）
    ```
 
 6. **用 --anchors 绕过语义检索（最准最快）** — 知道节点 ID 时跳过检索直接锚定，不受 embedding 质量影响。适用于之前检索过、记下了 ID 的场景。
@@ -188,18 +190,18 @@ wpw graph update   # 约 100ms，保证代码上下文最新
 
 | 你想做什么 | 直接读代码 | 用图谱 | 推荐命令 |
 |-----------|:---:|:---:|---------|
-| 不知道功能在哪，想找 | ❌ | ✅ | `wpw graph context "<功能名>"` |
+| 不知道功能在哪，想找 | ❌ | ✅ | `wpw graph context "<feature-name>"`（英文） |
 | 已经知道文件名，想看实现 | ✅ | ❌ | `Read <文件>` |
 | 改之前想知道影响面 | ❌ | ✅ | `wpw graph query --upstream <id>` |
-| 想了解模块间调用关系 | ❌ | ✅ | `wpw graph context "<模块>" --depth 3` |
+| 想了解模块间调用关系 | ❌ | ✅ | `wpw graph context "<module>" --depth 3`（英文） |
 | 搜精确函数名/变量名 | ✅ | ❌ | `Grep` |
-| 按概念/语义模糊搜索 | ❌ | ✅ | `wpw graph search "<概念>"` |
+| 按概念/语义模糊搜索 | ❌ | ✅ | `wpw graph search "<concept>"`（英文） |
 | 项目很小（<10 文件） | ✅ | ❌ | `Glob` + `Read` |
-| 新人上手陌生项目 | ❌ | ✅ | `stat` → `query --level L2,L3` |
+| 新人上手陌生项目 | ❌ | ✅ | `stat` → `query --level C,L1` |
 | 微小改动（文案/常量） | ✅ | ❌ | 直接改 |
 | 编码前取上下文 | 辅助 | ✅ | `update` → `context` |
 
-> **一句话：图谱是"导航"，不是"地图详情"。定位用它，读代码直接上。英文关键词、先 update、context 一步到位、upstream 查影响面——四招用好，效率翻倍。**
+> **一句话：图谱是"导航"，不是"地图详情"。定位用它，读代码直接上。强制英文检索词、先 update、context 一步到位、upstream 查影响面——四招用好，效率翻倍。**
 
 ## 联动 Skill
 

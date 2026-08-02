@@ -40,6 +40,8 @@ wpw graph context --anchors <改动文件ID列表> --depth 2 --json
 - 0 锚点 / 查询无结果 -> 回退仅看 diff 文件本身，提示「图谱未匹配到相关节点」
 - 向量索引缺失 -> `--anchors` 模式仍可用（依赖查询不依赖向量）
 
+> ⚠️ **强制规范**：CR 阶段若使用 `wpw graph context` 或 `wpw graph search` 的语义检索模式（非 `--anchors`），检索词必须为英文。`--anchors` 模式和 `wpw graph query` 不受此限制。
+
 ### 2. 上下文（可选）
 
 若当前有活跃需求：

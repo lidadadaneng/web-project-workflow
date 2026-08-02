@@ -179,7 +179,7 @@ function createVueComponentNode(
 
   return {
     id: generateNodeId('component', [relPath, componentName]),
-    level: 'L4',
+    level: 'L3',
     type: NODE_TYPE_COMPONENT,
     name: componentName,
     attrs: {

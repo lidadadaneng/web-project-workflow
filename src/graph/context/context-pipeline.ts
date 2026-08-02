@@ -131,13 +131,12 @@ export class ContextPipeline {
   // ==================== 锚点解析 ====================
 
   private async resolveAnchors(options: ContextOptions): Promise<string[]> {
-    // 直接指定锚点
+    // 直接指定锚点 → 跳过语义检索和置信度衰减
     if (options.anchors && options.anchors.length > 0) {
-      // 过滤掉不存在的节点
       return options.anchors.filter((id) => this.querier.getNode(id) !== null);
     }
 
-    // 语义检索
+    // 语义检索 + 置信度衰减加权锚点选择
     if (options.query && this.searcher) {
       const queries = options.multi
         ? options.query.split(/[,，]/).map((q) => q.trim()).filter(Boolean)
@@ -147,12 +146,14 @@ export class ContextPipeline {
       const limit = options.anchorLimit ?? 5;
 
       for (const q of queries) {
+        // 启用置信度衰减加权（decay: true）
+        // L1 层得分会根据 C 层置信度动态调整
         const results = await this.searcher.search(q, {
           limit,
           threshold: options.threshold ?? this.config.search.threshold,
-          excludeArchived: !options.includeArchived,
           level: options.level,
           type: options.type,
+          decay: true, // 启用置信度衰减加权锚点选择
         });
         for (const r of results) {
           if (!allAnchors.includes(r.node.id)) {

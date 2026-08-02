@@ -1,14 +1,14 @@
 /**
  * 图谱构建调度器
  *
- * 全量构建流程：
+ * 全量构建流程（C + L1/L2/L3 架构）：
  *   1. 读取配置
- *   2. 解析需求 → L1 节点 + 文档提取
- *   3. 解析模块 → L2 节点
- *   4. 扫描源码文件 → 解析 → L3/L4 节点
- *   5. 生成 contain 边（层级从属）
+ *   2. 解析能力 specs → C 层节点
+ *   3. 解析模块 → L1 节点
+ *   4. 扫描源码文件 → 解析 → L2/L3 节点
+ *   5. 生成 contain 边（L1 ⊃ L2 ⊃ L3）
  *   6. 生成 import/call/inherit 边（依赖关系）
- *   7. 生成 business_map 边（业务映射，五层混合）
+ *   7. 生成 business_map 边（C → L1/L2/L3，多源证据融合）
  *   8. 生成向量索引
  *   9. 完整性校验
  *  10. 持久化存储
@@ -34,18 +34,19 @@ import type {
   EdgeType,
   VectorMapping,
 } from '../types';
+import { CURRENT_SCHEMA_VERSION } from '../types';
 import {
   NODE_TYPE_FILE,
   NODE_TYPE_MODULE,
-  NODE_TYPE_REQUIREMENT,
+  NODE_TYPE_CAPABILITY,
   EDGE_TYPE_CONTAIN,
 } from '../types';
 import { loadGraphConfig } from '../config';
 import { JsonlGraphStore } from '../storage/graph-store';
 import { BinaryVectorStore } from '../storage/vector-store';
 import { VectorMappingStore } from '../storage/mapping-store';
-import { JsonMetaStore, createEmptyMeta, SCHEMA_VERSION } from '../storage/meta-store';
-import { parseAllRequirements, ParsedRequirement } from '../parsers/requirement-parser';
+import { JsonMetaStore, createEmptyMeta } from '../storage/meta-store';
+import { parseAllCapabilities, ParsedCapability } from '../parsers/capability-parser';
 import { parseModules, ParsedModule } from '../parsers/module-parser';
 import { parseSourceFiles, isSupportedFile } from '../parsers/source-parser';
 import { ParseResult } from '../parsers/ts-parser';
@@ -79,17 +80,17 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   const config = loadGraphConfig(root);
   const projectType = sniffProjectType(root);
 
-  // 2. 解析需求
+  // 2. 解析能力 specs → C 层节点
   const t0 = Date.now();
-  const parsedReqs = parseAllRequirements(root);
-  mark('requirements', t0);
+  const parsedCaps = parseAllCapabilities(root);
+  mark('capabilities', t0);
 
-  // 3. 解析模块
+  // 3. 解析模块 → L1 节点
   const t1 = Date.now();
   const parsedModules = parseModules(root, config, projectType);
   mark('modules', t1);
 
-  // 4. 扫描并解析源码文件
+  // 4. 扫描并解析源码文件 → L2/L3 节点
   const t2 = Date.now();
   const sourceFiles = scanSourceFiles(root, config);
   const parseResults = await parseSourceFiles(sourceFiles, root);
@@ -101,8 +102,8 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   const allNodes: GraphNode[] = [];
 
   // --- 收集所有节点 ---
-  for (const req of parsedReqs) {
-    allNodes.push(req.node);
+  for (const cap of parsedCaps) {
+    allNodes.push(cap.node);
   }
   for (const mod of parsedModules) {
     allNodes.push(mod.node);
@@ -118,12 +119,11 @@ export async function buildGraph(root: string): Promise<BuildResult> {
     elemNodes.set(filePath, pr.elements);
     allNodes.push(...pr.elements);
 
-    // Pinia store 节点（L3）
+    // Pinia store 节点（L2）
     if (pr.piniaStores && pr.piniaStores.length > 0) {
       for (const store of pr.piniaStores) {
         allNodes.push(store);
         piniaStoreNodes.set(store.name, store);
-        // 收集该 store 的子元素（从 elements 中筛选 parentName === storeId 的）
         const storeElems = pr.elements.filter(
           (el) => el.attrs.parentName === store.name &&
             (el.type === 'pinia-action' || el.type === 'pinia-getter' || el.type === 'pinia-state'),
@@ -133,9 +133,9 @@ export async function buildGraph(root: string): Promise<BuildResult> {
     }
   }
 
-  // --- contain 边 ---
-  buildContainEdges(edgeBuilder, parsedReqs, parsedModules, fileNodes, elemNodes);
-  // Pinia 从属边：file → store (defined_in/contain) 和 store → action/getter/state (contain)
+  // --- contain 边：L1 ⊃ L2 ⊃ L3 ---
+  buildContainEdges(edgeBuilder, parsedModules, fileNodes, elemNodes);
+  // Pinia 从属边
   buildPiniaContainEdges(edgeBuilder, parseResults, fileNodes, piniaStoreNodes, piniaElemByStore);
 
   // --- import 边 ---
@@ -145,7 +145,7 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   buildPiniaCallEdges(edgeBuilder, parseResults, root, piniaStoreNodes, piniaElemByStore);
   mark('edges', t3);
 
-  // 6. 向量索引（在 business_map 之前构建，供语义回填使用；先在内存中保留，稍后持久化）
+  // 6. 向量索引（在 business_map 之前构建，供语义回填使用）
   const tVec = Date.now();
   let vectors: Float32Array | null = null;
   let vectorDimensions = 0;
@@ -171,11 +171,10 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   }
   mark('vectors', tVec);
 
-  // 7. business_map 边（四源证据融合：doc / semantic / git / name）
-  //    语义回填依赖向量索引，故必须在向量构建之后
+  // 7. business_map 边（C → L1/L2/L3，四源证据融合：doc / semantic / git / name）
   const tBiz = Date.now();
   buildBusinessMapEdges(edgeBuilder, {
-    reqs: parsedReqs,
+    caps: parsedCaps,
     modules: parsedModules,
     fileNodes,
     root,
@@ -213,7 +212,7 @@ export async function buildGraph(root: string): Promise<BuildResult> {
   const metaStore = new JsonMetaStore(wpfPath);
   const fileHashes = buildFileHashSnapshot(parseResults);
   const meta: GraphMeta = {
-    schemaVersion: SCHEMA_VERSION,
+    schemaVersion: CURRENT_SCHEMA_VERSION,
     builtAt: Date.now(),
     totalNodes: allNodes.length,
     totalEdges: edgeBuilder.size(),
@@ -242,12 +241,11 @@ export async function buildGraph(root: string): Promise<BuildResult> {
 
 function buildContainEdges(
   eb: EdgeBuilder,
-  reqs: ParsedRequirement[],
   modules: ParsedModule[],
   fileNodes: Map<string, GraphNode>,
   elemNodes: Map<string, GraphNode[]>,
 ): void {
-  // 模块 → 文件 contain 边
+  // 模块 → 文件 contain 边（L1 ⊃ L2）
   for (const mod of modules) {
     const modDir = mod.node.attrs.dir?.replace(/\\/g, '/');
     if (!modDir) continue;
@@ -260,7 +258,7 @@ function buildContainEdges(
     }
   }
 
-  // 文件 → 元素 contain 边
+  // 文件 → 元素 contain 边（L2 ⊃ L3）
   for (const [filePath, elems] of elemNodes) {
     const fileNode = fileNodes.get(filePath);
     if (!fileNode) continue;
@@ -268,9 +266,6 @@ function buildContainEdges(
       eb.addContain(fileNode.id, elem.id);
     }
   }
-
-  // 注：需求 → 模块 的 business_map 边在 buildBusinessMapEdges 中生成（不是 contain 边）
-  // 需求和模块之间是业务映射关系，不是包含关系
 }
 
 // ==================== Pinia contain 边 ====================
@@ -287,7 +282,6 @@ function buildPiniaContainEdges(
   piniaStores: Map<string, GraphNode>,
   piniaElemByStore: Map<string, GraphNode[]>,
 ): void {
-  // 建立 file → store 的 contain 边
   for (const pr of parseResults) {
     if (!pr.piniaStores || pr.piniaStores.length === 0) continue;
     const fileNode = pr.fileNode;
@@ -296,7 +290,6 @@ function buildPiniaContainEdges(
     }
   }
 
-  // 建立 store → action/getter/state 的 contain 边
   for (const [storeId, elems] of piniaElemByStore) {
     const storeNode = piniaStores.get(storeId);
     if (!storeNode) continue;
@@ -315,8 +308,6 @@ function buildPiniaContainEdges(
  *   1. import { useXxxStore } from '@/stores/xxx' → 识别 store hook
  *   2. const xxx = useXxxStore() → 识别 store 变量名
  *   3. xxx.someAction( → 识别 action 调用
- *
- * 只在能关联到已知 pinia action 节点时才建边。
  */
 function buildPiniaCallEdges(
   eb: EdgeBuilder,
@@ -325,16 +316,11 @@ function buildPiniaCallEdges(
   piniaStores: Map<string, GraphNode>,
   piniaElemByStore: Map<string, GraphNode[]>,
 ): void {
-  // 构建 store hook 名 → store id 的映射
-  // 例如 useAuthStore → useAuthStore（通常和 store id 相同）
-  // 也处理 import { useAuthStore as xxx } 的情况
-
   for (const pr of parseResults) {
     const fileNode = pr.fileNode;
     const filePath = fileNode.attrs.filePath;
     if (!filePath) continue;
 
-    // 读取源码（parseResults 里没有存 source，从文件读）
     let source: string;
     try {
       source = require('fs').readFileSync(path.join(root, filePath), 'utf-8');
@@ -343,17 +329,15 @@ function buildPiniaCallEdges(
     }
 
     // 从 import 语句中识别引入了哪些 store hook
-    // 模式：import { useXxxStore } from '.../stores/xxx'
     const storeHookNames: string[] = [];
     const importRegex = /import\s*\{([^}]+)\}\s*from\s*['"][^'"]*stores?\/[^'"]+['"]/g;
     let match;
     while ((match = importRegex.exec(source)) !== null) {
       const specifiers = match[1].split(',').map((s: string) => s.trim());
       for (const spec of specifiers) {
-        // 处理 alias: useXxxStore as xxx
         const aliasMatch = spec.match(/^(\w+)\s+as\s+(\w+)$/);
         if (aliasMatch) {
-          storeHookNames.push(aliasMatch[2]); // alias 名
+          storeHookNames.push(aliasMatch[2]);
         } else if (/^use\w+Store$/.test(spec)) {
           storeHookNames.push(spec);
         }
@@ -362,10 +346,8 @@ function buildPiniaCallEdges(
 
     if (storeHookNames.length === 0) continue;
 
-    // 查找 useXxxStore() 调用后赋值的变量名
-    const storeVarToHook = new Map<string, string>(); // 变量名 → hook名
+    const storeVarToHook = new Map<string, string>();
     for (const hookName of storeHookNames) {
-      // 模式：const xxx = useXxxStore()
       const varRegex = new RegExp(
         `(?:const|let|var)\\s+(\\w+)\\s*=\\s*${hookName}\\s*\\(`,
         'g',
@@ -376,9 +358,7 @@ function buildPiniaCallEdges(
       }
     }
 
-    // 检测 storeVar.action() 调用
     for (const [storeVar, hookName] of storeVarToHook) {
-      // hookName 通常就是 store id（useAuthStore 的 id 就是 useAuthStore）
       const storeId = hookName;
       const storeNode = piniaStores.get(storeId);
       if (!storeNode) continue;
@@ -389,7 +369,6 @@ function buildPiniaCallEdges(
       );
       if (actionNames.size === 0) continue;
 
-      // 匹配 storeVar.actionName(
       const callRegex = new RegExp(
         `${storeVar}\\.(${Array.from(actionNames).join('|')})\\s*\\(`,
         'g',
@@ -400,7 +379,6 @@ function buildPiniaCallEdges(
         calledActions.add(callMatch[1]);
       }
 
-      // 建边：从文件节点 → action 节点（也可以从组件节点，这里用文件节点简化）
       for (const actionName of calledActions) {
         const actionNode = storeElems.find(
           (e) => e.type === 'pinia-action' && e.name === actionName,
@@ -411,7 +389,7 @@ function buildPiniaCallEdges(
       }
     }
 
-    // 同时处理 mapActions 模式
+    // mapActions 模式
     const mapActionsRegex = /mapActions\s*\(\s*['"](\w+)['"]\s*,\s*\[([^\]]+)\]/g;
     let mapMatch;
     while ((mapMatch = mapActionsRegex.exec(source)) !== null) {
@@ -450,7 +428,7 @@ function buildImportEdges(
   fileNodes: Map<string, GraphNode>,
   root: string,
 ): void {
-  const pathMap = new Map<string, string>(); // 相对路径 → nodeId
+  const pathMap = new Map<string, string>();
   for (const [fp, node] of fileNodes) {
     pathMap.set(fp.replace(/\\/g, '/'), node.id);
   }
@@ -461,18 +439,14 @@ function buildImportEdges(
     const fileDir = path.dirname(filePath);
 
     for (const imp of pr.imports) {
-      // 只处理相对路径的 import（本项目内的文件）
       if (!imp.startsWith('.') && !imp.startsWith('/')) continue;
 
-      // 解析相对路径
       let resolved = path.resolve(fileDir, imp).replace(/\\/g, '/');
-      // 去掉 root 前缀
       const rootNorm = root.replace(/\\/g, '/');
       if (resolved.startsWith(rootNorm + '/')) {
         resolved = resolved.slice(rootNorm.length + 1);
       }
 
-      // 尝试匹配文件（补全扩展名）
       const targetId = resolveImportTarget(resolved, pathMap);
       if (targetId) {
         eb.addImport(fromId, targetId);
@@ -481,15 +455,12 @@ function buildImportEdges(
   }
 }
 
-/** 解析 import 路径对应的文件节点 ID */
 function resolveImportTarget(
   importPath: string,
   pathMap: Map<string, string>,
 ): string | null {
-  // 直接匹配
   if (pathMap.has(importPath)) return pathMap.get(importPath)!;
 
-  // 尝试加扩展名
   const exts = ['.ts', '.tsx', '.js', '.jsx', '/index.ts', '/index.tsx', '/index.js', '/index.jsx'];
   for (const ext of exts) {
     const candidate = importPath + ext;
@@ -517,7 +488,6 @@ function scanSourceFiles(root: string, config: GraphConfig): string[] {
       const fullPath = path.join(dir, entry.name);
       const relPath = path.relative(root, fullPath);
 
-      // 检查忽略
       const parts = relPath.split(/[\\/]/);
       if (parts.some((p) => ignoreSet.has(p) || p.startsWith('.'))) continue;
 
@@ -563,7 +533,6 @@ export function validateGraph(data: GraphData): {
 
   const nodeIds = new Set<string>();
 
-  // 节点 ID 唯一性
   for (const node of data.nodes) {
     if (nodeIds.has(node.id)) {
       errors.push(`节点 ID 冲突: ${node.id}`);
@@ -571,7 +540,6 @@ export function validateGraph(data: GraphData): {
     nodeIds.add(node.id);
   }
 
-  // 边引用合法性
   for (const edge of data.edges) {
     if (!nodeIds.has(edge.from)) {
       errors.push(`边引用不存在的起始节点: ${edge.id} (from: ${edge.from})`);
@@ -581,7 +549,6 @@ export function validateGraph(data: GraphData): {
     }
   }
 
-  // 孤立节点警告（没有任何边的节点）
   const idx = buildGraphIndex(data);
   let isolatedCount = 0;
   for (const node of data.nodes) {
@@ -605,7 +572,7 @@ export function validateGraph(data: GraphData): {
 // ==================== 统计 ====================
 
 function countNodesByLevel(nodes: GraphNode[]): Record<string, number> {
-  const counts: Record<string, number> = { L1: 0, L2: 0, L3: 0, L4: 0 };
+  const counts: Record<string, number> = { C: 0, L1: 0, L2: 0, L3: 0 };
   for (const n of nodes) {
     counts[n.level] = (counts[n.level] || 0) + 1;
   }
@@ -644,7 +611,7 @@ export function getWpfDir(root: string): string {
  *  4. 加载旧图谱到内存
  *  5. 删除变更文件相关的节点和边
  *  6. 重新解析变更文件，生成新节点新边
- *  7. 处理需求变更（active/archived 移动、.wpw.yaml 变化）
+ *  7. 检测能力变更（specs 目录变更）
  *  8. 更新向量
  *  9. 保存
  */
@@ -659,11 +626,11 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
   }
 
   // Schema 版本检查：主版本号不同视为不兼容，降级为全量构建
-  if (!isSchemaCompatible(meta.schemaVersion, SCHEMA_VERSION)) {
+  if (!isSchemaCompatible(meta.schemaVersion, CURRENT_SCHEMA_VERSION)) {
     console.warn(
-      `[graph-builder] 图谱 schema 版本不兼容（当前: ${meta.schemaVersion}, 需要: ${SCHEMA_VERSION}），正在全量重建...`,
+      `[graph-builder] 图谱 schema 版本不兼容（当前: ${meta.schemaVersion}, 需要: ${CURRENT_SCHEMA_VERSION}），正在全量重建...`,
     );
-    console.warn('[graph-builder] 原因：需求节点 ID 生成规则变更，需重建以保证数据一致性。');
+    console.warn('[graph-builder] 原因：图谱架构升级至 C+L1/L2/L3 三层结构，需重建以保证数据一致性。');
     return buildGraph(root);
   }
 
@@ -691,10 +658,9 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
-  // 对比旧快照
   const oldHashes = new Map(Object.entries(meta.fileHashes));
-  const changedFiles: string[] = []; // 新增 + 修改
-  const deletedFiles: string[] = []; // 删除
+  const changedFiles: string[] = [];
+  const deletedFiles: string[] = [];
 
   for (const [fp, hash] of currentHashes) {
     const old = oldHashes.get(fp);
@@ -718,31 +684,28 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
   const oldIdx = buildGraphIndex(oldData);
   mark('load', t1);
 
-  // 3. 检测需求变更
-  const tReq = Date.now();
-  const reqChanges = detectRequirementChanges(root, oldData.nodes);
-  const hasReqChanges = reqChanges.length > 0;
-  mark('req-detect', tReq);
+  // 3. 检测能力 spec 变更
+  const tCap = Date.now();
+  const capChanges = detectCapabilityChanges(root, oldData.nodes);
+  const hasCapChanges = capChanges.length > 0;
+  mark('cap-detect', tCap);
 
-  // 如果既没有文件变更，也没有需求变更，直接返回
-  if (!hasFileChanges && !hasReqChanges) {
+  // 如果既没有文件变更，也没有能力变更，直接返回
+  if (!hasFileChanges && !hasCapChanges) {
     return null;
   }
 
-  // 4. 删除变更文件相关的节点和边
+  // 4. 删除变更相关的节点和边
   const t2 = Date.now();
   const nodesToRemove = new Set<string>();
   const edgesToRemove = new Set<string>();
 
   for (const fp of [...changedFiles, ...deletedFiles]) {
-    // 找到对应的文件节点
     const fileNodeId = findFileNodeByPath(oldData.nodes, fp);
     if (!fileNodeId) continue;
 
-    // 标记文件节点删除
     nodesToRemove.add(fileNodeId);
 
-    // 标记该文件下所有元素节点删除
     const containEdges = oldIdx.outEdges.get(fileNodeId) ?? [];
     for (const e of containEdges) {
       if (e.type === EDGE_TYPE_CONTAIN) {
@@ -750,7 +713,6 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
       }
     }
 
-    // 标记所有与该文件节点相关的边删除
     const outE = oldIdx.outEdges.get(fileNodeId) ?? [];
     const inE = oldIdx.inEdges.get(fileNodeId) ?? [];
     for (const e of [...outE, ...inE]) {
@@ -758,32 +720,29 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
-  // 删除变更的需求节点及其所有关联边
-  // added 类型不用删（本来就没有），modified 先删后重建，deleted 直接删
-  const reqsToRebuild = reqChanges.filter(
+  // 删除变更的能力节点及其所有关联边
+  const capsToRebuild = capChanges.filter(
     (c) => c.type === 'added' || c.type === 'modified' || c.type === 'deleted',
   );
-  for (const rc of reqsToRebuild) {
-    const reqNode = oldData.nodes.find(
-      (n) => n.type === NODE_TYPE_REQUIREMENT && n.name === rc.name,
+  for (const cc of capsToRebuild) {
+    const capNode = oldData.nodes.find(
+      (n) => n.type === NODE_TYPE_CAPABILITY && n.name === cc.name,
     );
-    if (reqNode) {
-      nodesToRemove.add(reqNode.id);
-      // 删除所有与该需求相关的边
-      const outE = oldIdx.outEdges.get(reqNode.id) ?? [];
-      const inE = oldIdx.inEdges.get(reqNode.id) ?? [];
+    if (capNode) {
+      nodesToRemove.add(capNode.id);
+      const outE = oldIdx.outEdges.get(capNode.id) ?? [];
+      const inE = oldIdx.inEdges.get(capNode.id) ?? [];
       for (const e of [...outE, ...inE]) {
         edgesToRemove.add(e.id);
       }
     }
   }
 
-  // 构建新节点列表（保留未删除的）
   const newNodes = oldData.nodes.filter((n) => !nodesToRemove.has(n.id));
   const newEdges = oldData.edges.filter((e) => !edgesToRemove.has(e.id));
   mark('delete', t2);
 
-  // 4. 重新解析变更文件
+  // 5. 重新解析变更文件
   const t3 = Date.now();
   const changedAbsFiles = changedFiles
     .map((fp) => path.join(root, fp))
@@ -791,10 +750,8 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
 
   const newParseResults = await parseSourceFiles(changedAbsFiles, root);
 
-  // 添加新解析的节点和 contain 边
   const edgeBuilder = new EdgeBuilder();
 
-  // 先把保留的边加进去
   for (const e of newEdges) {
     edgeBuilder.addEdge({
       from: e.from,
@@ -805,22 +762,20 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     });
   }
 
-  // 处理需求变更：添加新增/修改的需求节点
-  // 注意：需求节点的 business_map 边暂不在增量更新中重建
-  // （与文件变更的 business_map 边处理一致，首版简化：需求有变更建议全量 rebuild）
-  const addedOrModifiedReqs = reqChanges.filter(
+  // 处理能力变更：添加新增/修改的能力节点
+  const addedOrModifiedCaps = capChanges.filter(
     (c) => (c.type === 'added' || c.type === 'modified') && c.parsed,
   );
-  for (const rc of addedOrModifiedReqs) {
-    if (rc.parsed) {
-      newNodes.push(rc.parsed.node);
+  for (const cc of addedOrModifiedCaps) {
+    if (cc.parsed) {
+      newNodes.push(cc.parsed.node);
     }
   }
 
   // 添加新解析的文件节点和元素节点
   const fileNodes = new Map<string, GraphNode>();
   const elemNodes = new Map<string, GraphNode[]>();
-  const piniaStoreMap = new Map<string, GraphNode>(); // storeId → store 节点
+  const piniaStoreMap = new Map<string, GraphNode>();
   const piniaElemByStore = new Map<string, GraphNode[]>();
   for (const pr of newParseResults) {
     newNodes.push(pr.fileNode);
@@ -829,7 +784,6 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     elemNodes.set(fp, pr.elements);
     newNodes.push(...pr.elements);
 
-    // Pinia store 节点
     if (pr.piniaStores && pr.piniaStores.length > 0) {
       for (const store of pr.piniaStores) {
         newNodes.push(store);
@@ -852,7 +806,7 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
-  // 重建 Pinia contain 边（文件⊃store, store⊃action/getter/state）
+  // 重建 Pinia contain 边
   for (const pr of newParseResults) {
     if (!pr.piniaStores || pr.piniaStores.length === 0) continue;
     const fNode = pr.fileNode;
@@ -868,7 +822,7 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
-  // 重建变更文件的模块 contain 边（模块⊃文件）
+  // 重建模块 contain 边（模块⊃文件）
   const modules = parseModules(root, config, projectType);
   for (const mod of modules) {
     const modDir = mod.node.attrs.dir?.replace(/\\/g, '/');
@@ -877,9 +831,8 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     for (const [fp, fNode] of fileNodes) {
       const normPath = fp.replace(/\\/g, '/');
       if (normPath.startsWith(modDir + '/') || normPath === modDir) {
-        // 检查这个模块节点是否已存在（复用旧的）
         const existingModNode = newNodes.find(
-          (n) => n.level === 'L2' && n.name === mod.node.name,
+          (n) => n.level === 'L1' && n.name === mod.node.name,
         );
         const modId = existingModNode ? existingModNode.id : mod.node.id;
         if (!existingModNode) {
@@ -890,11 +843,7 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
-  // 重建 import 边（涉及变更文件的都重算一遍）
-  // 先重新解析所有文件的 import 太麻烦，简单处理：
-  // 删除所有指向/来自变更文件的 import 边（已经在上面删了）
-  // 然后为新解析的文件重新建立 import 边
-  // 注意：需要所有文件的映射，所以用旧节点 + 新节点一起找
+  // 重建 import 边
   const allFileNodes = new Map<string, GraphNode>();
   for (const n of newNodes) {
     if (n.type === NODE_TYPE_FILE && n.attrs.filePath) {
@@ -902,7 +851,6 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
-  // 重新计算变更文件的 import 边
   for (const pr of newParseResults) {
     const fromId = pr.fileNode.id;
     const filePath = pr.fileNode.attrs.filePath!;
@@ -924,29 +872,23 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
-  // 注意：变更文件被其他文件 import 的反向边，这里不重新计算
-  // 因为其他文件没变，它们的 import 边应该还指向这个文件
-  // 但文件 node_id 变了吗？
-  // 答：文件节点 ID 基于路径，路径没变 ID 就没变，所以反向边还是对的 ✅
-
   mark('rebuild', t3);
 
-  // 5. 组装最终数据
+  // 6. 组装最终数据
   const t4 = Date.now();
   const finalData: GraphData = {
     nodes: newNodes,
     edges: edgeBuilder.getEdges(),
   };
 
-  // 完整性校验
   const validation = validateGraph(finalData);
   mark('validate', t4);
 
-  // 6. 保存图谱
+  // 7. 保存图谱
   const t5 = Date.now();
   graphStore.save(finalData);
 
-  // 7. 重建向量索引（首版简化：增量更新也全量重建向量）
+  // 8. 重建向量索引（首版简化：增量更新也全量重建向量）
   let vectorCount = meta.totalVectors;
   if (config.embedding.enabled) {
     try {
@@ -974,9 +916,9 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
-  // 8. 元数据
+  // 9. 元数据
   const newMeta: GraphMeta = {
-    schemaVersion: SCHEMA_VERSION,
+    schemaVersion: CURRENT_SCHEMA_VERSION,
     builtAt: Date.now(),
     totalNodes: newNodes.length,
     totalEdges: edgeBuilder.size(),
@@ -1020,12 +962,10 @@ function findFileNodeByPath(nodes: GraphNode[], filePath: string): string | null
 export async function rebuildGraph(root: string): Promise<BuildResult> {
   const wpfPath = path.join(root, WPF_DIR);
 
-  // 清空旧数据
   if (fs.existsSync(wpfPath)) {
     fs.rmSync(wpfPath, { recursive: true, force: true });
   }
 
-  // 全量构建
   return buildGraph(root);
 }
 
@@ -1043,36 +983,31 @@ function isSchemaCompatible(oldVersion: string, newVersion: string): boolean {
   return oldMajor === newMajor;
 }
 
-// ==================== 需求变更检测 ====================
+// ==================== 能力变更检测 ====================
 
-/** 需求变更类型 */
-interface RequirementChange {
+/** 能力变更类型 */
+interface CapabilityChange {
   name: string;
-  type: 'added' | 'archived' | 'modified' | 'deleted';
-  parsed?: ParsedRequirement;
+  type: 'added' | 'modified' | 'deleted';
+  parsed?: ParsedCapability;
 }
 
 /**
- * 检测需求层面的变更（新增、归档、状态/内容变更）
+ * 检测能力层面的变更（新增、修改、删除）
  *
- * 通过全量重解析当前所有需求，与旧图谱中的需求节点对比，
- * 识别出新增、归档、属性变更的需求。
- *
- * @returns 变更列表
+ * 通过全量重解析当前所有能力 specs，与旧图谱对比。
  */
-function detectRequirementChanges(
+function detectCapabilityChanges(
   root: string,
   oldNodes: GraphNode[],
-): RequirementChange[] {
-  const changes: RequirementChange[] = [];
+): CapabilityChange[] {
+  const changes: CapabilityChange[] = [];
 
-  // 全量重解析当前所有需求（active + archived）
-  const currentReqs = parseAllRequirements(root);
-  const currentMap = new Map(currentReqs.map((r) => [r.node.name, r]));
+  const currentCaps = parseAllCapabilities(root);
+  const currentMap = new Map(currentCaps.map((c) => [c.node.name, c]));
 
-  // 旧图谱中的需求节点
-  const oldReqNodes = oldNodes.filter((n) => n.type === NODE_TYPE_REQUIREMENT);
-  const oldMap = new Map(oldReqNodes.map((n) => [n.name, n]));
+  const oldCapNodes = oldNodes.filter((n) => n.type === NODE_TYPE_CAPABILITY);
+  const oldMap = new Map(oldCapNodes.map((n) => [n.name, n]));
 
   // 检测新增和修改
   for (const [name, current] of currentMap) {
@@ -1080,28 +1015,19 @@ function detectRequirementChanges(
     if (!old) {
       changes.push({ name, type: 'added', parsed: current });
     } else {
-      // 检查是否有属性变更（archived 状态、docPath、status）
-      const oldStatus = old.attrs.status;
-      const newStatus = current.node.attrs.status;
-      const oldDocPath = old.attrs.docPath;
-      const newDocPath = current.node.attrs.docPath;
+      // 检查 description 和 features 是否变化
+      const oldDesc = old.attrs.description;
+      const newDesc = current.node.attrs.description;
       const oldFeatures = JSON.stringify(old.attrs.features || []);
       const newFeatures = JSON.stringify(current.node.attrs.features || []);
 
-      const statusChanged =
-        oldStatus?.archived !== newStatus?.archived ||
-        JSON.stringify(oldStatus?.artifacts || {}) !==
-          JSON.stringify(newStatus?.artifacts || {});
-      const docPathChanged = oldDocPath !== newDocPath;
-      const featuresChanged = oldFeatures !== newFeatures;
-
-      if (statusChanged || docPathChanged || featuresChanged) {
+      if (oldDesc !== newDesc || oldFeatures !== newFeatures) {
         changes.push({ name, type: 'modified', parsed: current });
       }
     }
   }
 
-  // 检测删除（需求被彻底删除，不是归档）
+  // 检测删除
   for (const [name] of oldMap) {
     if (!currentMap.has(name)) {
       changes.push({ name, type: 'deleted' });

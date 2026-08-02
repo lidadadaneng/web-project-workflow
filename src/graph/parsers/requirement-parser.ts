@@ -20,11 +20,18 @@ import {
 import type {
   GraphNode,
   NodeAttributes,
-  RequirementStatus,
   RequirementFeature,
 } from '../types';
-import { NODE_TYPE_REQUIREMENT } from '../types';
 import { generateNodeId } from '../builders/node-builder';
+
+// 兼容：需求状态类型（仅用于需求解析器内部，不进入图谱类型系统）
+interface RequirementStatus {
+  archived: boolean;
+  artifacts: Record<string, string>;
+  schema: string;
+}
+
+const NODE_TYPE_REQUIREMENT = 'requirement';
 
 /** 解析出的需求信息 */
 export interface ParsedRequirement {
@@ -95,7 +102,7 @@ export function parseRequirement(
     schema: state.schema,
   };
 
-  const attrs: NodeAttributes = {
+  const attrs: any = {
     status: reqStatus,
     docPath: path.relative(root, dirPath),
     projectType: state.config?.projectType,
@@ -105,7 +112,7 @@ export function parseRequirement(
   // 生成需求节点
   // ID 仅基于 name 生成，保证归档后 ID 稳定，关联边不丢失
   // （需求名全局唯一，创建时已做重名检查）
-  const node: GraphNode = {
+  const node: any = {
     id: generateNodeId('req', [name]),
     level: 'L1',
     type: NODE_TYPE_REQUIREMENT,
@@ -116,8 +123,11 @@ export function parseRequirement(
   };
 
   // 提取文档文本和信息
-  const { vectorText, extractedModules, extractedInterfaces, features } =
-    extractDocContent(dirPath);
+  const { vectorText, extractedModules, extractedInterfaces, features, description } =
+    extractDocContent(dirPath, name);
+
+  // 中文描述（从 BRD 提取，失败则降级为 name）
+  attrs.description = description;
 
   // 将功能条目存入节点属性
   if (features.length > 0) {
@@ -136,11 +146,12 @@ export function parseRequirement(
 // ==================== 文档内容提取 ====================
 
 /** 从需求文档中提取向量化文本和结构化信息 */
-function extractDocContent(dirPath: string): {
+function extractDocContent(dirPath: string, reqName: string): {
   vectorText: string;
   extractedModules: string[];
   extractedInterfaces: string[];
   features: RequirementFeature[];
+  description: string;
 } {
   const files = safeReadDir(dirPath);
   let brdText = '';
@@ -160,6 +171,9 @@ function extractDocContent(dirPath: string): {
     }
   }
 
+  // 从 BRD 标题/一级标题提取中文描述
+  const description = extractDescriptionFromBRD(brdText) || reqName;
+
   // 提取功能条目（从 PRD 的功能清单 + 详细功能说明）
   const features = extractFeaturesFromPRD(prdText);
 
@@ -178,7 +192,43 @@ function extractDocContent(dirPath: string): {
   // 提取接口名
   const extractedInterfaces = extractInterfacesFromDocs(designText);
 
-  return { vectorText, extractedModules, extractedInterfaces, features };
+  return { vectorText, extractedModules, extractedInterfaces, features, description };
+}
+
+// ==================== 描述提取 ====================
+
+/**
+ * 从 BRD 文档中提取中文简述作为需求节点的 description。
+ *
+ * 提取策略（按优先级）：
+ * 1. 文档标题（第一个 # 一级标题）
+ * 2. 「业务目标」或「背景」章节的首段
+ * 3. 降级：返回空字符串（由调用方使用 name 兜底）
+ */
+function extractDescriptionFromBRD(brdText: string): string {
+  if (!brdText) return '';
+
+  // 1. 取第一个一级标题作为描述
+  const titleMatch = brdText.match(/^#\s+(.+)$/m);
+  if (titleMatch) {
+    const title = titleMatch[1].trim();
+    if (title.length > 0 && title.length < 100) {
+      return title;
+    }
+  }
+
+  // 2. 尝试从「业务目标」或「背景」章节提取首段
+  const sectionMatch = brdText.match(
+    /##\s*(?:业务目标|背景|项目背景|需求背景)[\s\S]*?\n([^\n#][^\n]*)/i,
+  );
+  if (sectionMatch) {
+    const firstLine = sectionMatch[1].trim();
+    if (firstLine.length > 0 && firstLine.length < 150) {
+      return firstLine;
+    }
+  }
+
+  return '';
 }
 
 // ==================== 功能条目提取 ====================

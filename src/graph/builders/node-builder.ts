@@ -48,8 +48,8 @@ export function buildNode(params: {
 
 /** 层级前缀映射 */
 export const LEVEL_PREFIX: Record<NodeLevel, string> = {
-  L1: 'req',
-  L2: 'mod',
-  L3: 'file',
-  L4: 'elem',
+  C: 'cap',
+  L1: 'mod',
+  L2: 'file',
+  L3: 'elem',
 };

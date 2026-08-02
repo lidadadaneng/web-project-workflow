@@ -104,7 +104,7 @@ const DEFAULT_MAPPING: GraphMappingConfig = {
 const DEFAULT_SEARCH: GraphSearchConfig = {
   defaultLimit: 10,
   threshold: 0.5,
-  excludeArchived: true,
+  decayAlpha: 3.0,
 };
 
 const DEFAULT_TRIMMING: GraphTrimmingConfig = {

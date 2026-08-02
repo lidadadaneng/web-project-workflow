@@ -1,42 +1,44 @@
 /**
  * 知识图谱核心类型定义
  *
- * 四层节点模型：L1 业务需求 → L2 业务模块 → L3 文件 → L4 代码元素
+ * 业务能力层 + 三层结构模型：
+ *   C 层（Capability 业务能力） →  L1（模块） →  L2（文件） →  L3（代码元素）
+ *   C 层与结构层之间为 business_map 边，不是 contain 层级包含
  */
 
 // ==================== 节点类型 ====================
 
 /** 节点层级 */
-export type NodeLevel = 'L1' | 'L2' | 'L3' | 'L4';
+export type NodeLevel = 'C' | 'L1' | 'L2' | 'L3';
 
-/** L1 需求节点类型 */
-export const NODE_TYPE_REQUIREMENT = 'requirement';
-/** L2 模块节点类型 */
+/** C 层能力节点类型 */
+export const NODE_TYPE_CAPABILITY = 'capability';
+/** L1 模块节点类型 */
 export const NODE_TYPE_MODULE = 'module';
-/** L3 文件节点类型 */
+/** L2 文件节点类型 */
 export const NODE_TYPE_FILE = 'file';
-/** L4 函数节点类型 */
+/** L3 函数节点类型 */
 export const NODE_TYPE_FUNCTION = 'function';
-/** L4 类节点类型 */
+/** L3 类节点类型 */
 export const NODE_TYPE_CLASS = 'class';
-/** L4 接口节点类型 */
+/** L3 接口节点类型 */
 export const NODE_TYPE_INTERFACE = 'interface';
-/** L4 常量节点类型 */
+/** L3 常量节点类型 */
 export const NODE_TYPE_CONSTANT = 'constant';
-/** L4 组件节点类型 */
+/** L3 组件节点类型 */
 export const NODE_TYPE_COMPONENT = 'component';
-/** L3 Pinia Store 节点类型 */
+/** L2 Pinia Store 节点类型 */
 export const NODE_TYPE_PINIA_STORE = 'pinia-store';
-/** L4 Pinia Action 节点类型 */
+/** L3 Pinia Action 节点类型 */
 export const NODE_TYPE_PINIA_ACTION = 'pinia-action';
-/** L4 Pinia Getter 节点类型 */
+/** L3 Pinia Getter 节点类型 */
 export const NODE_TYPE_PINIA_GETTER = 'pinia-getter';
-/** L4 Pinia State 节点类型 */
+/** L3 Pinia State 节点类型 */
 export const NODE_TYPE_PINIA_STATE = 'pinia-state';
 
 /** 所有节点类型 */
 export type NodeType =
-  | typeof NODE_TYPE_REQUIREMENT
+  | typeof NODE_TYPE_CAPABILITY
   | typeof NODE_TYPE_MODULE
   | typeof NODE_TYPE_FILE
   | typeof NODE_TYPE_FUNCTION
@@ -52,17 +54,7 @@ export type NodeType =
 /** 模块所属端 */
 export type ModuleSide = 'frontend' | 'backend' | 'shared' | 'unknown';
 
-/** 需求状态 */
-export interface RequirementStatus {
-  /** 是否归档 */
-  archived: boolean;
-  /** 各 artifact 状态（brd/prd/explore/design/plan/testplan） */
-  artifacts: Record<string, string>;
-  /** Schema 名称 */
-  schema: string;
-}
-
-/** 需求功能条目（从 PRD 结构化提取） */
+/** 需求功能条目（从 PRD/能力 spec 结构化提取） */
 export interface RequirementFeature {
   /** 功能编号，如 F1、F2 */
   id: string;
@@ -80,22 +72,19 @@ export interface NodeAttributes {
   description?: string;
   tags?: string[];
 
-  // L1 需求
-  status?: RequirementStatus;
-  docPath?: string;          // 需求文档目录路径
-  projectType?: string;
-  features?: RequirementFeature[];  // 结构化功能条目（从 PRD 提取）
+  // C 层能力
+  features?: RequirementFeature[];  // 结构化功能条目（从 spec 提取）
 
-  // L2 模块
+  // L1 模块
   side?: ModuleSide;
   dir?: string;             // 模块根目录
 
-  // L3 文件
+  // L2 文件
   filePath?: string;
   language?: string;        // typescript / javascript / ...
   fileHash?: string;
 
-  // L4 元素
+  // L3 元素
   signature?: string;       // 函数/方法签名
   params?: Array<{ name: string; type?: string }>;
   returnType?: string;
@@ -135,7 +124,7 @@ export const EDGE_TYPE_CALL = 'call';
 export const EDGE_TYPE_IMPORT = 'import';
 /** 继承边（类继承/接口实现） */
 export const EDGE_TYPE_INHERIT = 'inherit';
-/** 业务映射边（需求 ↔ 模块/文件/元素） */
+/** 业务映射边（能力 ↔ 模块/文件/元素） */
 export const EDGE_TYPE_BUSINESS_MAP = 'business_map';
 
 /** 所有边类型 */
@@ -229,7 +218,7 @@ export interface GraphMappingConfig {
   aiApiBase?: string;
   /** 语义匹配最小阈值（未设置时运行时回退 search.threshold） */
   semanticThreshold?: number;
-  /** 语义匹配每个需求召回的 Top-K 候选目标（默认 5） */
+  /** 语义匹配每个能力召回的 Top-K 候选目标（默认 5） */
   semanticTopK?: number;
   /** 是否启用 Git 历史追溯 */
   gitHistory: boolean;
@@ -245,8 +234,8 @@ export interface GraphSearchConfig {
   defaultLimit: number;
   /** 相似度阈值 */
   threshold: number;
-  /** 是否排除归档需求 */
-  excludeArchived: boolean;
+  /** 置信度衰减系数 α（默认 3.0） */
+  decayAlpha: number;
 }
 
 /** 子图裁剪配置 */
@@ -371,6 +360,9 @@ export interface GraphMeta {
   configVersion: string;
 }
 
+/** 当前 schema 版本（3.0.0：C+L1/L2/L3 架构） */
+export const CURRENT_SCHEMA_VERSION = '3.0.0';
+
 // ==================== 构建统计 ====================
 
 /** 构建统计 */
@@ -392,3 +384,19 @@ export interface BuildStats {
     warnings: string[];
   };
 }
+
+// ==================== 向后兼容 ====================
+
+/**
+ * 旧层级值到新层级值的映射
+ *   旧 L1 (需求)  →  C (能力)
+ *   旧 L2 (模块)  →  L1 (模块)
+ *   旧 L3 (文件)  →  L2 (文件)
+ *   旧 L4 (元素)  →  L3 (元素)
+ */
+export const LEGACY_LEVEL_MAP: Record<string, NodeLevel> = {
+  L1: 'C',
+  L2: 'L1',
+  L3: 'L2',
+  L4: 'L3',
+};

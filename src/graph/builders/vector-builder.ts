@@ -5,10 +5,10 @@
  * 构建二进制向量索引 + 节点映射关系。
  *
  * 哪些节点生成向量：
- * - L1 需求节点（需求描述文本）
- * - L2 模块节点（模块名 + 职责描述）
- * - L3 文件节点（文件名 + 顶层注释）
- * - L4 函数/类/接口/组件节点（名称 + 签名 + JSDoc）
+ * - C 层能力节点（能力描述 + 需求文本）
+ * - L1 模块节点（模块名 + 职责描述）
+ * - L2 文件节点（文件名 + 顶层注释）
+ * - L3 函数/类/接口/组件节点（名称 + 签名 + JSDoc）
  *
  * 常量节点不生成向量（信息太少）。
  */
@@ -31,11 +31,16 @@ export interface VectorBuildResult {
  */
 export function getNodeVectorText(node: GraphNode): string | null {
   switch (node.type) {
-    case 'requirement': {
-      // 需求：名称 + 描述 + 标签
+    case 'capability': {
+      // 能力：名称 + 描述 + 功能条目
       const parts = [node.name];
       if (node.attrs.description) parts.push(node.attrs.description);
-      if (node.attrs.tags?.length) parts.push(node.attrs.tags.join(', '));
+      if (node.attrs.features?.length) {
+        for (const f of node.attrs.features) {
+          parts.push(f.name);
+          if (f.description) parts.push(f.description);
+        }
+      }
       return parts.join('\n');
     }
 

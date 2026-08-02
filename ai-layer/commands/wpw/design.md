@@ -40,8 +40,11 @@ wpw graph update   # 增量更新图谱，保证代码上下文最新
 了解现有相关模块边界、接口定义、数据结构（确保设计不脱节）：
 
 ```bash
-wpw graph context "<需求关键词>" --token-budget 3000 --level L2,L3,L4 --json
+# 检索词必须为英文，从需求描述翻译而来
+wpw graph context "<english-keywords-from-requirement>" --token-budget 3000 --level L1,L2,L3 --json
 ```
+
+> ⚠️ **强制规范**：`wpw graph context` 和 `wpw graph search` 的检索词必须为英文。
 
 - 0 锚点 -> 回退手动读文件，提示「图谱未匹配到相关节点」
 - 向量索引缺失 -> context 降级为 `--anchors` 模式

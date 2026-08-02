@@ -20,9 +20,9 @@ export interface QueryOptions {
   level?: NodeLevel | NodeLevel[];
   /** 按节点类型过滤 */
   type?: NodeType | NodeType[];
-  /** 按所属模块过滤（L3/L4 节点） */
+  /** 按所属模块过滤（L2/L3 节点） */
   module?: string;
-  /** 按所属文件过滤（L4 节点） */
+  /** 按所属文件过滤（L3 节点） */
   file?: string;
   /** 返回数量上限 */
   limit?: number;

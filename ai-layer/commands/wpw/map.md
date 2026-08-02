@@ -9,6 +9,11 @@ tags: [workflow, map, graph, knowledge, context]
 
 构建与查询项目知识图谱，按需生成可直接喂给 LLM 的结构化上下文。
 
+> ⚠️ **强制规范：语义检索必须使用英文检索词**
+> 调用 `wpw graph search` 和 `wpw graph context`（非 --anchors 模式）时，检索词必须为英文。
+> 中文需求/任务描述需先翻译为英文关键词再检索。
+> 原因：能力节点和代码节点 name 字段多为英文 kebab-case，英文检索与 name-match 证据源配合效果更好。
+
 ## 何时使用
 
 - **编码前**：先查上下文，了解相关模块/文件/函数的依赖关系
@@ -16,18 +21,33 @@ tags: [workflow, map, graph, knowledge, context]
 - **影响面分析**：查询某模块/函数的上下游依赖
 - **新人上手**：快速了解项目结构与模块职责
 
-## 四层图谱模型
+## 图谱架构（C + L1/L2/L3 四层）
 
 ```
-L1 业务需求 → L2 业务模块 → L3 文件 → L4 代码元素
-                                             ├─ 函数
-                                             ├─ 类
-                                             ├─ 接口
-                                             ├─ 组件
-                                             └─ 常量
+C  业务能力（capability）
+  └─ business_map ─┐
+                   ▼
+L1 业务模块（module）
+  └─ contain
+    L2 文件（file）
+      └─ contain
+        L3 代码元素
+          ├─ 函数
+          ├─ 类
+          ├─ 接口
+          ├─ 组件
+          └─ 常量
 ```
 
-边类型：`contain`（包含）、`import`（导入）、`call`（调用）、`inherit`（继承）、`business_map`（业务映射）
+- **C 层（能力层）**：来自 `wpw/specs/` 目录下的 OpenSpec 规范，稳态业务能力
+- **L1 层（模块层）**：源码目录结构识别的业务模块
+- **L2 层（文件层）**：源码文件
+- **L3 层（元素层）**：函数、类、接口、组件等代码元素
+
+边类型：`contain`（包含）、`import`（导入）、`call`（调用）、`inherit`（继承）、`business_map`（业务映射，C → L1/L2/L3）
+
+> **置信度衰减锚点选择**：语义检索选锚点时，若 C 层有高置信度匹配，L1（模块层）得分会被指数衰减，
+> 防止粗粒度模块节点膨胀子图。C 层为空时自动退化为全权重结构检索。
 
 ## 常用操作
 
@@ -37,11 +57,12 @@ L1 业务需求 → L2 业务模块 → L3 文件 → L4 代码元素
 
 ```bash
 wpw graph build      # 全量构建
-wpw graph update     # 增量更新（仅重新解析变更文件）
+wpw graph update     # 增量更新（仅重新解析变更文件 + 检测能力 spec 变更）
 wpw graph rebuild    # 强制重建
 ```
 
 > 构建速度快（万行级项目约 100~500ms），日常开发 update 即可。
+> Schema 版本不兼容时 update 会自动全量重建（如升级到 3.0 架构）。
 
 ### 2. 查看统计
 
@@ -55,17 +76,17 @@ wpw graph stat --json
 用自然语言查询，输出直接可用于编码的上下文：
 
 ```bash
-# 基本用法
-wpw graph context "用户登录认证"
+# 基本用法（检索词必须为英文）
+wpw graph context "user login authentication"
 
 # 指定 Token 预算（默认 8000）
-wpw graph context "登录" --token-budget 4000
+wpw graph context "login" --token-budget 4000
 
 # 指定压缩等级：loose / standard / extreme
-wpw graph context "登录" --compression standard
+wpw graph context "login" --compression standard
 
 # JSON 输出（供程序解析）
-wpw graph context "登录" --json
+wpw graph context "login" --json
 ```
 
 输出格式（文本模式）：
@@ -78,12 +99,19 @@ wpw graph context "登录" --json
   →  依赖关系 (call/import/inherit)
   ⇄  业务映射 (business_map)
 
-⊃ [需求] 用户登录认证 ◉
-  ⊃ [模块] auth
-    ⊃ [文件] login.ts
-      ⊃ function login(username: string, password: string): Promise<User>
-      ⊃ function validateToken(token: string): User | null
-    ⊃ [文件] jwt.ts
+--- 能力层 (C) ---
+⇄ [能力] user-auth ◉
+  ⇄ [L1] auth [0.92]
+  ⇄ [L2] src/auth/login.ts [0.85]
+  • R1: 用户登录 [P0]
+  • R2: Token 验证 [P1]
+
+--- 结构层 (L1/L2/L3) ---
+⊃ [模块] auth
+  ⊃ [文件] login.ts
+    ⊃ function login(username: string, password: string): Promise<User>
+    ⊃ function validateToken(token: string): User | null
+  ⊃ [文件] jwt.ts
 ...
 
 --- 依赖关系 ---
@@ -103,7 +131,8 @@ wpw graph context "登录" --json
 
 ```bash
 # 按层级/类型查询节点
-wpw graph query --level L2
+wpw graph query --level L1           # 模块层
+wpw graph query --level C            # 能力层
 wpw graph query --type function --limit 20
 
 # 查询下游依赖
@@ -122,26 +151,29 @@ wpw graph query --level L3 --json
 ### 5. 语义检索
 
 ```bash
-wpw graph search "用户认证" --limit 10
-wpw graph search "数据库连接" --level L4 --json
+# 检索词必须为英文
+wpw graph search "user authentication" --limit 10
+wpw graph search "database connection" --level L3 --json
 ```
 
 ## 高级用法
 
 ### 直接指定锚点
 
-跳过语义检索，以已知节点为中心生成上下文：
+跳过语义检索，以已知节点为中心生成上下文（锚点模式无需英文）：
 
 ```bash
 wpw graph context --anchors mod:auth,file:src/auth/login.ts
 ```
 
+> 直接锚点模式会跳过置信度衰减，所有锚点同等权重。
+
 ### 多查询合并
 
-同时检索多个关键词，合并生成统一上下文：
+同时检索多个关键词，合并生成统一上下文（所有关键词必须为英文）：
 
 ```bash
-wpw graph context "登录,注册,密码找回" --multi
+wpw graph context "login,registration,password-reset" --multi
 ```
 
 ### 层级过滤
@@ -149,14 +181,15 @@ wpw graph context "登录,注册,密码找回" --multi
 只关心某几层的信息：
 
 ```bash
-wpw graph context "登录" --level L3,L4    # 只看文件和代码
-wpw graph context "认证" --level L2        # 只看模块级
+wpw graph context "login" --level L2,L3     # 只看文件和代码元素
+wpw graph context "auth" --level C,L1       # 只看能力和模块
+wpw graph context "auth" --level L1         # 只看模块级
 ```
 
 ### 深度与权重控制
 
 ```bash
-wpw graph context "登录" --depth 2 --min-weight 0.8
+wpw graph context "login" --depth 2 --min-weight 0.8
 ```
 
 ## 映射配置（workflow.config.yaml）
@@ -167,10 +200,12 @@ wpw graph context "登录" --depth 2 --min-weight 0.8
 graph:
   mapping:
     semanticThreshold: 0.5   # 语义匹配相似度阈值（未设置则回退 search.threshold）
-    semanticTopK: 5          # 每个需求语义召回的 Top-K 候选
+    semanticTopK: 5          # 每个能力语义召回的 Top-K 候选
     gitHistory: true         # 是否启用 Git 历史追溯源
     gitMaxCommits: 1000      # Git 回溯最大 commit 数
     gitMinFreq: 2            # Git 文件频次下限，低于此不作为证据（过滤单次修改噪声）
+  search:
+    decayAlpha: 3.0          # 置信度衰减系数 α，值越大 L1 衰减越快（默认 3.0）
 ```
 
 四源证据（doc-extract / semantic / git-history / name-match）按 noisy-OR 聚合权重，边的 `source` 取最权威源。AI 校准（ai-refine）为可选未来工作。
@@ -178,12 +213,12 @@ graph:
 ## 在 Apply 阶段的使用流程
 
 ```
-1. wpw graph update                # 确保图谱最新（增量，快）
-2. wpw graph context "<需求描述>"  # 生成上下文
+1. wpw graph update                                    # 确保图谱最新（增量，快）
+2. wpw graph context "<english-keywords-from-task>"    # 生成上下文（英文检索词）
 3. 根据上下文理解相关代码结构
 4. 实施编码
 5. 编码完成后再 update 一次
 ```
 
 > 上下文生成是 **纯本地计算**，不消耗任何 API Token。
-> 向量索引基于本地 embedding 模型（all-MiniLM-L6-v2），首次构建会自动下载模型（约 80MB）。
+> 向量索引基于本地 embedding 模型（Xenova/bge-small-zh-v1.5），首次构建会自动下载模型。

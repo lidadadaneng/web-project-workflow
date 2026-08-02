@@ -1,7 +1,7 @@
 /**
  * 层级符号化序列化
  *
- * 将子图按 L1→L2→L3→L4 层级顺序，以缩进格式输出。
+ * 将子图按 C→L1→L2→L3 层级顺序，以缩进格式输出。
  * 使用标准化符号表达从属与依赖关系：
  *   ⊃  包含关系（contain）
  *   →  调用/导入/继承 等依赖关系（call/import/inherit）
@@ -105,9 +105,14 @@ export class HierarchicalSerializer {
     }
 
     // 按层级分组
-    const byLevel: Record<string, GraphNode[]> = { L1: [], L2: [], L3: [], L4: [] };
+    const byLevel: Record<string, GraphNode[]> = { C: [], L1: [], L2: [], L3: [] };
     for (const node of this.subgraph.nodes) {
-      if (byLevel[node.level]) byLevel[node.level].push(node);
+      if (byLevel[node.level]) {
+        byLevel[node.level].push(node);
+      } else {
+        // 兼容旧层级值（L4 → L3）
+        if ((node.level as string) === 'L4') byLevel['L3'].push(node);
+      }
     }
 
     // 按包含关系构建树
@@ -125,9 +130,19 @@ export class HierarchicalSerializer {
     // 找出各层顶级节点（没有父节点在子图内的）
     const topLevelL1 = byLevel.L1.filter((n) => !parentMap.has(n.id));
 
-    // 输出 L1 → L2 → L3 → L4 树状结构
+    // 输出 C 层能力节点（通过 business_map 关联结构层）
     const depthMap = this.subgraph.distances;
 
+    if (byLevel.C.length > 0) {
+      lines.push('--- 能力层 (C) ---');
+      for (const capNode of byLevel.C) {
+        this.serializeCapabilityNode(capNode, lines, nodeMap, depthMap, level);
+      }
+      lines.push('');
+      lines.push('--- 结构层 (L1/L2/L3) ---');
+    }
+
+    // 输出 L1 → L2 → L3 树状结构
     for (const l1Node of topLevelL1) {
       this.serializeTreeNode(l1Node, 0, lines, nodeMap, childrenMap, depthMap, level);
     }
@@ -169,6 +184,58 @@ export class HierarchicalSerializer {
       nodeCount: this.subgraph.nodes.length,
       edgeCount: this.subgraph.edges.length,
     };
+  }
+
+  // ==================== C 层能力节点输出 ====================
+
+  private serializeCapabilityNode(
+    capNode: GraphNode,
+    lines: string[],
+    nodeMap: Map<string, GraphNode>,
+    distanceMap: Map<string, number>,
+    level: CompressionLevel,
+  ): void {
+    const dist = distanceMap.get(capNode.id) ?? 0;
+    const skeletonLevel = this.getSkeletonLevel(dist, level);
+    const skeleton = extractSkeleton(capNode, skeletonLevel);
+    const line = formatSkeletonLine(skeleton);
+
+    const isAnchor = this.subgraph.anchors.includes(capNode.id);
+    const anchorMark = isAnchor ? ' ◉' : '';
+
+    lines.push(`${SYMBOL_BIZ_MAP} ${line}${anchorMark}`);
+
+    // 输出该能力节点的 business_map 关联（在子图内的目标）
+    const bizEdges = this.subgraph.edges.filter(
+      (e) => e.type === EDGE_TYPE_BUSINESS_MAP && e.from === capNode.id,
+    );
+
+    if (bizEdges.length > 0 && level !== 'extreme') {
+      const targets = bizEdges
+        .map((e) => nodeMap.get(e.to))
+        .filter((n): n is GraphNode => !!n)
+        .sort((a, b) => a.level.localeCompare(b.level) || a.name.localeCompare(b.name))
+        .slice(0, level === 'loose' ? 20 : 10);
+
+      for (const target of targets) {
+        const weightStr = level === 'loose' ? ` [${(bizEdges.find((e) => e.to === target.id)!.weight).toFixed(2)}]` : '';
+        lines.push(`  ${SYMBOL_BIZ_MAP} [${target.level}] ${target.name}${weightStr}`);
+      }
+      if (bizEdges.length > targets.length) {
+        lines.push(`  ... 还有 ${bizEdges.length - targets.length} 个关联`);
+      }
+    }
+
+    // Features（仅 loose 且有 features）
+    if (level === 'loose' && capNode.attrs.features && capNode.attrs.features.length > 0) {
+      const features = capNode.attrs.features.slice(0, 5);
+      for (const f of features) {
+        lines.push(`  • ${f.id}: ${f.name}${f.priority ? ` [${f.priority}]` : ''}`);
+      }
+      if (capNode.attrs.features.length > 5) {
+        lines.push(`  ... 共 ${capNode.attrs.features.length} 个功能`);
+      }
+    }
   }
 
   // ==================== 树状输出 ====================

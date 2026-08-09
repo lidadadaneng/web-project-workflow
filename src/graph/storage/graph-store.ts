@@ -25,7 +25,9 @@ import {
   EDGE_TYPE_IMPORT,
   EDGE_TYPE_INHERIT,
   EDGE_TYPE_BUSINESS_MAP,
+  DEFAULT_GRAPH_NAME,
 } from '../types';
+import { resolveGraphDir } from './graph-path';
 
 /**
  * GraphStore 接口
@@ -79,12 +81,24 @@ export function buildGraphIndex(data: GraphData): GraphIndex {
 
 /**
  * JSONL 格式的 GraphStore 实现
+ *
+ * 支持多图谱存储：图谱文件位于 wpw/knowledge/graph/<stack>/graph.jsonl
+ * 构造函数可接受图谱目录绝对路径，或通过 (root, stack) 解析。
  */
 export class JsonlGraphStore implements GraphStore {
   private graphPath: string;
 
-  constructor(private wpfDir: string) {
-    this.graphPath = path.join(wpfDir, 'graph.jsonl');
+  constructor(graphDir: string);
+  constructor(root: string, stack: string);
+  constructor(rootOrDir: string, stack?: string) {
+    if (stack !== undefined) {
+      // (root, stack) 形式
+      const graphDir = resolveGraphDir(rootOrDir, stack || DEFAULT_GRAPH_NAME);
+      this.graphPath = path.join(graphDir, 'graph.jsonl');
+    } else {
+      // 直接传图谱目录（向后兼容）
+      this.graphPath = path.join(rootOrDir, 'graph.jsonl');
+    }
   }
 
   exists(): boolean {

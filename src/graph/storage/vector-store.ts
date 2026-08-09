@@ -15,6 +15,8 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
+import { resolveGraphDir } from './graph-path';
+import { DEFAULT_GRAPH_NAME } from '../types';
 
 const MAGIC = Buffer.from('VEC\0');
 const VERSION = 1;
@@ -38,8 +40,16 @@ export interface VectorStore {
 export class BinaryVectorStore implements VectorStore {
   private indexPath: string;
 
-  constructor(wpfDir: string) {
-    const indexDir = path.join(wpfDir, 'index');
+  constructor(graphDir: string);
+  constructor(root: string, stack: string);
+  constructor(rootOrDir: string, stack?: string) {
+    let indexDir: string;
+    if (stack !== undefined) {
+      const graphDir = resolveGraphDir(rootOrDir, stack || DEFAULT_GRAPH_NAME);
+      indexDir = path.join(graphDir, 'index');
+    } else {
+      indexDir = path.join(rootOrDir, 'index');
+    }
     if (!fs.existsSync(indexDir)) {
       fs.mkdirSync(indexDir, { recursive: true });
     }

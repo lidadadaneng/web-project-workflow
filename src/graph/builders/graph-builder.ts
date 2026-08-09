@@ -46,20 +46,28 @@ import { JsonlGraphStore } from '../storage/graph-store';
 import { BinaryVectorStore } from '../storage/vector-store';
 import { VectorMappingStore } from '../storage/mapping-store';
 import { JsonMetaStore, createEmptyMeta } from '../storage/meta-store';
+import { resolveGraphDir, isValidGraphName, GRAPH_NAME_RULES } from '../storage/graph-path';
+import { DEFAULT_GRAPH_NAME } from '../types';
 import { parseAllCapabilities, ParsedCapability } from '../parsers/capability-parser';
 import { parseModules, ParsedModule } from '../parsers/module-parser';
 import { parseSourceFiles, isSupportedFile } from '../parsers/source-parser';
 import { ParseResult } from '../parsers/ts-parser';
 import { isMiniprogramProject, parseMiniprogramProject } from '../parsers/miniprogram-parser';
 import { isUniappProject, parseUniappProject } from '../parsers/uniapp-parser';
-import { sniffProjectType } from '../../lib/project-type';
+import { sniffProjectType, type ProjectType, isBackend } from '../../lib/project-type';
 import { EdgeBuilder } from './edge-builder';
 import { buildBusinessMapEdges } from './business-mapper';
 import { buildGraphIndex } from '../storage/graph-store';
 import { generateNodeId } from './node-builder';
 import { buildNodeVectors } from './vector-builder';
 
-const WPF_DIR = path.join('wpw', 'knowledge', 'graph');
+/** 构建选项 */
+export interface BuildOptions {
+  /** 图谱名（缺省为 default） */
+  stack?: string;
+  /** 扫描根目录（相对工作根，缺省为工作根） */
+  scanRoot?: string;
+}
 
 /** 构建结果 */
 export interface BuildResult {
@@ -141,13 +149,60 @@ function weightBefore(phase: BuildPhase): number {
 
 /**
  * 全量构建图谱
+ *
+ * @param root 工作根目录
+ * @param onProgress 进度回调（旧签名兼容）
  */
-export async function buildGraph(root: string, onProgress?: BuildProgressCallback): Promise<BuildResult> {
+export async function buildGraph(
+  root: string,
+  onProgress?: BuildProgressCallback,
+): Promise<BuildResult>;
+/**
+ * 全量构建图谱
+ *
+ * @param root 工作根目录
+ * @param options 构建选项（stack、scanRoot）
+ * @param onProgress 进度回调
+ */
+export async function buildGraph(
+  root: string,
+  options?: BuildOptions,
+  onProgress?: BuildProgressCallback,
+): Promise<BuildResult>;
+export async function buildGraph(
+  root: string,
+  optionsOrCallback?: BuildOptions | BuildProgressCallback,
+  maybeOnProgress?: BuildProgressCallback,
+): Promise<BuildResult> {
+  // 处理重载：判断第二个参数是 options 对象还是回调函数
+  let options: BuildOptions | undefined;
+  let onProgress: BuildProgressCallback | undefined;
+
+  if (typeof optionsOrCallback === 'function') {
+    onProgress = optionsOrCallback as BuildProgressCallback;
+    options = undefined;
+  } else {
+    options = optionsOrCallback as BuildOptions | undefined;
+    onProgress = maybeOnProgress;
+  }
+
   const startTime = Date.now();
   const phaseTimes: Record<string, number> = {};
   const mark = (name: string, start: number) => {
     phaseTimes[name] = Date.now() - start;
   };
+
+  // 解析构建参数
+  const providedStack = options?.stack;
+  // 如果显式传入了 stack（包括空字符串），校验格式
+  if (providedStack !== undefined && providedStack !== DEFAULT_GRAPH_NAME) {
+    if (!isValidGraphName(providedStack)) {
+      throw new Error(`无效的图谱名「${providedStack}」。${GRAPH_NAME_RULES}`);
+    }
+  }
+  const stack = providedStack || DEFAULT_GRAPH_NAME;
+  const scanRootRel = options?.scanRoot || '';
+  const scanRootAbs = scanRootRel ? path.join(root, scanRootRel) : root;
 
   /** 汇报阶段进度 */
   const report = (phase: BuildPhase, phaseProgress?: number, detail?: string) => {
@@ -164,9 +219,10 @@ export async function buildGraph(root: string, onProgress?: BuildProgressCallbac
     });
   };
 
-  // 1. 配置
+  // 1. 配置（从工作根读取配置文件）
   const config = loadGraphConfig(root);
-  const projectType = sniffProjectType(root);
+  // 2. 按 scanRoot 独立嗅探项目类型
+  const projectType = sniffProjectType(scanRootAbs);
 
   // 2. 解析能力 specs → C 层节点
   report('capabilities', 0);
@@ -175,21 +231,21 @@ export async function buildGraph(root: string, onProgress?: BuildProgressCallbac
   mark('capabilities', t0);
   report('capabilities', 1, `${parsedCaps.length} 个能力`);
 
-  // 3. 解析模块 → L1 节点
+  // 3. 解析模块 → L1 节点（按 scanRoot）
   report('modules', 0);
   const t1 = Date.now();
-  const parsedModules = parseModules(root, config, projectType);
+  const parsedModules = parseModules(scanRootAbs, config, projectType);
   mark('modules', t1);
   report('modules', 1, `${parsedModules.length} 个模块`);
 
-  // 4. 扫描并解析源码文件 → L2/L3 节点
+  // 4. 扫描并解析源码文件 → L2/L3 节点（按 scanRoot）
   report('source-scan', 0);
   const t2 = Date.now();
-  const sourceFiles = scanSourceFiles(root, config);
+  const sourceFiles = scanSourceFiles(scanRootAbs, config);
   report('source-scan', 1, `${sourceFiles.length} 个文件`);
 
   report('source-parse', 0, `0/${sourceFiles.length}`);
-  const parseResults = await parseSourceFiles(sourceFiles, root, (done, total, fileName) => {
+  const parseResults = await parseSourceFiles(sourceFiles, scanRootAbs, (done, total, fileName) => {
     report('source-parse', done / total, `${done}/${total}  ${fileName}`);
   });
   mark('source-parse', t2);
@@ -269,13 +325,13 @@ export async function buildGraph(root: string, onProgress?: BuildProgressCallbac
     }
   }
 
-  // --- 小程序节点与边（项目级解析） ---
+  // --- 小程序节点与边（项目级解析，按 scanRoot） ---
   let mpResult: ReturnType<typeof parseMiniprogramProject> | null = null;
   const isMpProject = config.build.frameworks.includes('miniprogram') ||
-    (config.build.frameworks.length === 0 && isMiniprogramProject(root));
+    (config.build.frameworks.length === 0 && isMiniprogramProject(scanRootAbs));
   if (isMpProject) {
     try {
-      mpResult = parseMiniprogramProject(root);
+      mpResult = parseMiniprogramProject(scanRootAbs);
       if (mpResult.appNode) allNodes.push(mpResult.appNode);
       allNodes.push(...mpResult.pages);
       allNodes.push(...mpResult.components);
@@ -285,13 +341,13 @@ export async function buildGraph(root: string, onProgress?: BuildProgressCallbac
     }
   }
 
-  // --- uni-app 节点与边（项目级解析） ---
+  // --- uni-app 节点与边（项目级解析，按 scanRoot） ---
   let uniResult: ReturnType<typeof parseUniappProject> | null = null;
   const isUniProject = config.build.frameworks.includes('uniapp') ||
-    (config.build.frameworks.length === 0 && isUniappProject(root));
+    (config.build.frameworks.length === 0 && isUniappProject(scanRootAbs));
   if (isUniProject) {
     try {
-      uniResult = parseUniappProject(root);
+      uniResult = parseUniappProject(scanRootAbs);
       allNodes.push(...uniResult.pages);
       allNodes.push(...uniResult.elements);
     } catch (e) {
@@ -350,14 +406,14 @@ export async function buildGraph(root: string, onProgress?: BuildProgressCallbac
   }
 
   // --- import 边 ---
-  buildImportEdges(edgeBuilder, parseResults, fileNodes, root);
+  buildImportEdges(edgeBuilder, parseResults, fileNodes, scanRootAbs, projectType);
 
   // --- Pinia call 边（组件 → action 调用） ---
-  buildPiniaCallEdges(edgeBuilder, parseResults, root, piniaStoreNodes, piniaElemByStore);
+  buildPiniaCallEdges(edgeBuilder, parseResults, scanRootAbs, piniaStoreNodes, piniaElemByStore);
   // --- Vuex call 边（组件 → action/mutation 调用） ---
-  buildVuexCallEdges(edgeBuilder, parseResults, root, vuexStoreNodes, vuexElemByStore);
+  buildVuexCallEdges(edgeBuilder, parseResults, scanRootAbs, vuexStoreNodes, vuexElemByStore);
   // --- Redux call 边（组件 → action/selector 调用） ---
-  buildReduxCallEdges(edgeBuilder, parseResults, root, reduxSliceNodes, reduxElemBySlice);
+  buildReduxCallEdges(edgeBuilder, parseResults, scanRootAbs, reduxSliceNodes, reduxElemBySlice);
   mark('edges', t3);
   report('edges', 1, `${edgeBuilder.size()} 条边`);
 
@@ -402,7 +458,7 @@ export async function buildGraph(root: string, onProgress?: BuildProgressCallbac
     caps: parsedCaps,
     modules: parsedModules,
     fileNodes,
-    root,
+    root: scanRootAbs,
     config,
     vectors,
     dimensions: vectorDimensions,
@@ -425,22 +481,22 @@ export async function buildGraph(root: string, onProgress?: BuildProgressCallbac
   // 9. 持久化（图谱 + 向量索引 + 元数据）
   report('save', 0, '保存图谱...');
   const t5 = Date.now();
-  const wpfPath = path.join(root, WPF_DIR);
-  const graphStore = new JsonlGraphStore(wpfPath);
+  const graphDir = resolveGraphDir(root, stack);
+  const graphStore = new JsonlGraphStore(graphDir);
   graphStore.save(graphData);
 
   if (vectors && vectorMapping && vectors.length > 0) {
     report('save', 0.4, '保存向量索引...');
-    const vectorStore = new BinaryVectorStore(wpfPath);
+    const vectorStore = new BinaryVectorStore(graphDir);
     vectorStore.save(vectors, vectorDimensions);
 
     report('save', 0.7, '保存向量映射...');
-    const mappingStore = new VectorMappingStore(wpfPath);
+    const mappingStore = new VectorMappingStore(graphDir);
     mappingStore.save(vectorMapping);
   }
 
   report('save', 0.9, '保存元数据...');
-  const metaStore = new JsonMetaStore(wpfPath);
+  const metaStore = new JsonMetaStore(graphDir);
   const fileHashes = buildFileHashSnapshot(parseResults);
   const meta: GraphMeta = {
     schemaVersion: CURRENT_SCHEMA_VERSION,
@@ -450,6 +506,9 @@ export async function buildGraph(root: string, onProgress?: BuildProgressCallbac
     totalVectors: vectorCount,
     fileHashes,
     configVersion: configHash(config),
+    graphName: stack,
+    scanRoot: scanRootRel || '.',
+    projectType,
   };
   metaStore.save(meta);
   mark('save', t5);
@@ -958,32 +1017,134 @@ function buildImportEdges(
   parseResults: ParseResult[],
   fileNodes: Map<string, GraphNode>,
   root: string,
+  projectType: ProjectType,
 ): void {
   const pathMap = new Map<string, string>();
   for (const [fp, node] of fileNodes) {
     pathMap.set(fp.replace(/\\/g, '/'), node.id);
   }
 
+  // Java 源根识别（backend-java 项目下为 src/main/java）
+  const javaSourceRoot = isBackend(projectType) ? detectJavaSourceRoot(pathMap) : null;
+
   for (const pr of parseResults) {
     const fromId = pr.fileNode.id;
     const filePath = pr.fileNode.attrs.filePath!;
     const fileDir = path.dirname(filePath);
+    const isJava = pr.fileNode.attrs.language === 'java';
 
     for (const imp of pr.imports) {
-      if (!imp.startsWith('.') && !imp.startsWith('/')) continue;
+      if (isJava) {
+        // Java 包路径 import 解析
+        if (!javaSourceRoot) continue;
+        const targetIds = resolveJavaImport(imp, filePath, javaSourceRoot, pathMap);
+        for (const targetId of targetIds) {
+          eb.addImport(fromId, targetId);
+        }
+      } else {
+        // 前端相对路径 import
+        if (!imp.startsWith('.') && !imp.startsWith('/')) continue;
 
-      let resolved = path.resolve(fileDir, imp).replace(/\\/g, '/');
-      const rootNorm = root.replace(/\\/g, '/');
-      if (resolved.startsWith(rootNorm + '/')) {
-        resolved = resolved.slice(rootNorm.length + 1);
-      }
+        let resolved = path.resolve(fileDir, imp).replace(/\\/g, '/');
+        const rootNorm = root.replace(/\\/g, '/');
+        if (resolved.startsWith(rootNorm + '/')) {
+          resolved = resolved.slice(rootNorm.length + 1);
+        }
 
-      const targetId = resolveImportTarget(resolved, pathMap);
-      if (targetId) {
-        eb.addImport(fromId, targetId);
+        const targetId = resolveImportTarget(resolved, pathMap);
+        if (targetId) {
+          eb.addImport(fromId, targetId);
+        }
       }
     }
   }
+}
+
+/**
+ * 检测 Java 源根
+ *
+ * 从所有 .java 文件路径中找出最长公共前缀目录，
+ * 或直接用 src/main/java（Maven 标准布局）。
+ */
+function detectJavaSourceRoot(pathMap: Map<string, string>): string | null {
+  const javaFiles: string[] = [];
+  for (const [fp] of pathMap) {
+    if (fp.endsWith('.java')) javaFiles.push(fp);
+  }
+  if (javaFiles.length === 0) return null;
+
+  // 优先找 src/main/java 前缀
+  for (const fp of javaFiles) {
+    const idx = fp.indexOf('src/main/java/');
+    if (idx >= 0) {
+      return fp.slice(0, idx + 'src/main/java'.length);
+    }
+  }
+
+  // fallback: 找所有 java 文件的最长公共目录前缀
+  const parts = javaFiles[0].split('/');
+  let commonPrefix = '';
+  for (let i = 0; i < parts.length - 1; i++) {
+    const candidate = parts.slice(0, i + 1).join('/');
+    if (javaFiles.every((fp) => fp.startsWith(candidate + '/'))) {
+      commonPrefix = candidate;
+    } else {
+      break;
+    }
+  }
+  return commonPrefix || null;
+}
+
+/**
+ * 解析 Java 包路径 import
+ *
+ * @param imp import 路径（如 com.example.user.UserService 或 com.example.user.*）
+ * @param fromFilePath 当前文件路径（用于排除自引用）
+ * @param sourceRoot Java 源根（如 src/main/java）
+ * @param pathMap 文件路径 → 节点 ID 映射
+ * @returns 目标节点 ID 列表
+ */
+function resolveJavaImport(
+  imp: string,
+  fromFilePath: string,
+  sourceRoot: string,
+  pathMap: Map<string, string>,
+): string[] {
+  const results: string[] = [];
+
+  // 静态 import 已在 parser 阶段跳过，这里不用处理
+
+  // 通配 import：com.example.user.*
+  if (imp.endsWith('.*')) {
+    const pkgPath = imp.slice(0, -2); // 去掉 .*
+    const pkgDir = sourceRoot + '/' + pkgPath.replace(/\./g, '/');
+    for (const [fp, nodeId] of pathMap) {
+      if (fp.startsWith(pkgDir + '/') && fp.endsWith('.java')) {
+        // 排除自引用
+        if (fp === fromFilePath) continue;
+        results.push(nodeId);
+      }
+    }
+    return results;
+  }
+
+  // 单类型 import：com.example.user.UserService
+  const lastDot = imp.lastIndexOf('.');
+  if (lastDot < 0) return results;
+
+  const pkgPath = imp.slice(0, lastDot);
+  const className = imp.slice(lastDot + 1);
+  const targetPath = sourceRoot + '/' + pkgPath.replace(/\./g, '/') + '/' + className + '.java';
+
+  // 排除自引用
+  if (targetPath === fromFilePath) return results;
+
+  const targetId = pathMap.get(targetPath);
+  if (targetId) {
+    results.push(targetId);
+  }
+
+  return results;
 }
 
 function resolveImportTarget(
@@ -1129,9 +1290,14 @@ function configHash(config: GraphConfig): string {
     .slice(0, 16);
 }
 
-/** 获取图谱产物目录路径（wpw/knowledge/graph/） */
-export function getWpfDir(root: string): string {
-  return path.join(root, WPF_DIR);
+/**
+ * 获取图谱产物目录路径（wpw/knowledge/graph/<stack>/）
+ *
+ * @param root 工作根目录
+ * @param stack 图谱名（缺省为 default）
+ */
+export function getWpfDir(root: string, stack?: string): string {
+  return resolveGraphDir(root, stack);
 }
 
 // ==================== 增量更新 ====================
@@ -1149,15 +1315,22 @@ export function getWpfDir(root: string): string {
  *  7. 检测能力变更（specs 目录变更）
  *  8. 更新向量
  *  9. 保存
+ *
+ * @param root 工作根目录
+ * @param options.stack 图谱名（缺省 default）
  */
-export async function updateGraph(root: string): Promise<BuildResult | null> {
-  const wpfPath = path.join(root, WPF_DIR);
-  const metaStore = new JsonMetaStore(wpfPath);
+export async function updateGraph(
+  root: string,
+  options?: { stack?: string },
+): Promise<BuildResult | null> {
+  const stack = options?.stack || DEFAULT_GRAPH_NAME;
+  const graphDir = resolveGraphDir(root, stack);
+  const metaStore = new JsonMetaStore(graphDir);
   const meta = metaStore.load();
 
   // 没有历史图谱，降级为全量构建
   if (!meta) {
-    return buildGraph(root);
+    return buildGraph(root, { stack });
   }
 
   // Schema 版本检查：主版本号不同视为不兼容，降级为全量构建
@@ -1166,8 +1339,13 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
       `[graph-builder] 图谱 schema 版本不兼容（当前: ${meta.schemaVersion}, 需要: ${CURRENT_SCHEMA_VERSION}），正在全量重建...`,
     );
     console.warn('[graph-builder] 原因：图谱架构升级至 C+L1/L2/L3 三层结构，需重建以保证数据一致性。');
-    return buildGraph(root);
+    return buildGraph(root, { stack });
   }
+
+  // 从 meta 读取 scanRoot（旧图谱可能没有）
+  const scanRootRel = meta.scanRoot && meta.scanRoot !== '.' ? meta.scanRoot : '';
+  const scanRootAbs = scanRootRel ? path.join(root, scanRootRel) : root;
+  const projectType = (meta.projectType as ProjectType) || sniffProjectType(scanRootAbs);
 
   const startTime = Date.now();
   const phaseTimes: Record<string, number> = {};
@@ -1176,17 +1354,16 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
   };
 
   const config = loadGraphConfig(root);
-  const projectType = sniffProjectType(root);
 
-  // 1. 扫描当前源码文件并计算哈希
+  // 1. 扫描当前源码文件并计算哈希（按 scanRoot）
   const t0 = Date.now();
-  const sourceFiles = scanSourceFiles(root, config);
+  const sourceFiles = scanSourceFiles(scanRootAbs, config);
   const currentHashes = new Map<string, string>();
   for (const fp of sourceFiles) {
     try {
       const content = fs.readFileSync(fp, 'utf-8');
       const hash = createHash('sha256').update(content).digest('hex').slice(0, 16);
-      const relPath = path.relative(root, fp).replace(/\\/g, '/');
+      const relPath = path.relative(scanRootAbs, fp).replace(/\\/g, '/');
       currentHashes.set(relPath, hash);
     } catch {
       // 跳过读不了的文件
@@ -1214,7 +1391,7 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
 
   // 2. 加载旧图谱
   const t1 = Date.now();
-  const graphStore = new JsonlGraphStore(wpfPath);
+  const graphStore = new JsonlGraphStore(graphDir);
   const oldData = graphStore.load();
   const oldIdx = buildGraphIndex(oldData);
   mark('load', t1);
@@ -1280,10 +1457,10 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
   // 5. 重新解析变更文件
   const t3 = Date.now();
   const changedAbsFiles = changedFiles
-    .map((fp) => path.join(root, fp))
+    .map((fp) => path.join(scanRootAbs, fp))
     .filter((fp) => fs.existsSync(fp));
 
-  const newParseResults = await parseSourceFiles(changedAbsFiles, root);
+  const newParseResults = await parseSourceFiles(changedAbsFiles, scanRootAbs);
 
   const edgeBuilder = new EdgeBuilder();
 
@@ -1423,8 +1600,8 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
-  // 重建模块 contain 边（模块⊃文件）
-  const modules = parseModules(root, config, projectType);
+  // 重建模块 contain 边（模块⊃文件，按 scanRoot）
+  const modules = parseModules(scanRootAbs, config, projectType);
   for (const mod of modules) {
     const modDir = mod.node.attrs.dir?.replace(/\\/g, '/');
     if (!modDir) continue;
@@ -1452,23 +1629,37 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     }
   }
 
+  const allPathMap = new Map<string, string>(
+    Array.from(allFileNodes.entries()).map(([k, v]) => [k, v.id]),
+  );
+
+  // Java 源根识别
+  const javaSrcRoot = isBackend(projectType) ? detectJavaSourceRoot(allPathMap) : null;
+
   for (const pr of newParseResults) {
     const fromId = pr.fileNode.id;
     const filePath = pr.fileNode.attrs.filePath!;
-    const fileDir = path.dirname(filePath);
+    const isJava = pr.fileNode.attrs.language === 'java';
 
     for (const imp of pr.imports) {
-      if (!imp.startsWith('.') && !imp.startsWith('/')) continue;
-      let resolved = path.resolve(fileDir, imp).replace(/\\/g, '/');
-      const rootNorm = root.replace(/\\/g, '/');
-      if (resolved.startsWith(rootNorm + '/')) {
-        resolved = resolved.slice(rootNorm.length + 1);
-      }
-      const targetId = resolveImportTarget(resolved, new Map(
-        Array.from(allFileNodes.entries()).map(([k, v]) => [k, v.id]),
-      ));
-      if (targetId) {
-        edgeBuilder.addImport(fromId, targetId);
+      if (isJava) {
+        if (!javaSrcRoot) continue;
+        const targetIds = resolveJavaImport(imp, filePath, javaSrcRoot, allPathMap);
+        for (const targetId of targetIds) {
+          edgeBuilder.addImport(fromId, targetId);
+        }
+      } else {
+        if (!imp.startsWith('.') && !imp.startsWith('/')) continue;
+        const fileDir = path.dirname(filePath);
+        let resolved = path.resolve(fileDir, imp).replace(/\\/g, '/');
+        const scanRootNorm = scanRootAbs.replace(/\\/g, '/');
+        if (resolved.startsWith(scanRootNorm + '/')) {
+          resolved = resolved.slice(scanRootNorm.length + 1);
+        }
+        const targetId = resolveImportTarget(resolved, allPathMap);
+        if (targetId) {
+          edgeBuilder.addImport(fromId, targetId);
+        }
       }
     }
   }
@@ -1501,10 +1692,10 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
       );
 
       if (vectors.length > 0) {
-        const vectorStore = new BinaryVectorStore(wpfPath);
+        const vectorStore = new BinaryVectorStore(graphDir);
         vectorStore.save(vectors, dimensions);
 
-        const mappingStore = new VectorMappingStore(wpfPath);
+        const mappingStore = new VectorMappingStore(graphDir);
         mappingStore.save(mapping);
 
         vectorCount = mapping.indexToNodeId.length;
@@ -1526,6 +1717,9 @@ export async function updateGraph(root: string): Promise<BuildResult | null> {
     totalVectors: vectorCount,
     fileHashes: Object.fromEntries(currentHashes),
     configVersion: configHash(config),
+    graphName: stack,
+    scanRoot: scanRootRel || '.',
+    projectType,
   };
   metaStore.save(newMeta);
 
@@ -1559,15 +1753,50 @@ function findFileNodeByPath(nodes: GraphNode[], filePath: string): string | null
 
 /**
  * 强制重建图谱（清空 + 全量构建）
+ *
+ * @param root 工作根目录
+ * @param onProgress 进度回调（旧签名兼容）
  */
-export async function rebuildGraph(root: string, onProgress?: BuildProgressCallback): Promise<BuildResult> {
-  const wpfPath = path.join(root, WPF_DIR);
+export async function rebuildGraph(
+  root: string,
+  onProgress?: BuildProgressCallback,
+): Promise<BuildResult>;
+/**
+ * 强制重建图谱（清空 + 全量构建）
+ *
+ * @param root 工作根目录
+ * @param options 构建选项（stack、scanRoot）
+ * @param onProgress 进度回调
+ */
+export async function rebuildGraph(
+  root: string,
+  options?: BuildOptions,
+  onProgress?: BuildProgressCallback,
+): Promise<BuildResult>;
+export async function rebuildGraph(
+  root: string,
+  optionsOrCallback?: BuildOptions | BuildProgressCallback,
+  maybeOnProgress?: BuildProgressCallback,
+): Promise<BuildResult> {
+  let options: BuildOptions | undefined;
+  let onProgress: BuildProgressCallback | undefined;
 
-  if (fs.existsSync(wpfPath)) {
-    fs.rmSync(wpfPath, { recursive: true, force: true });
+  if (typeof optionsOrCallback === 'function') {
+    onProgress = optionsOrCallback as BuildProgressCallback;
+    options = undefined;
+  } else {
+    options = optionsOrCallback as BuildOptions | undefined;
+    onProgress = maybeOnProgress;
   }
 
-  return buildGraph(root, onProgress);
+  const stack = options?.stack || DEFAULT_GRAPH_NAME;
+  const graphDir = resolveGraphDir(root, stack);
+
+  if (fs.existsSync(graphDir)) {
+    fs.rmSync(graphDir, { recursive: true, force: true });
+  }
+
+  return buildGraph(root, options, onProgress);
 }
 
 // ==================== 工具函数 ====================

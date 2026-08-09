@@ -164,3 +164,67 @@
 #### Scenario: JSON 格式输出检索结果
 - **WHEN** 执行 `wpw graph search <query> --json`
 - **THEN** 标准输出为合法 JSON 格式，包含命中节点列表与相似度分值
+
+### Requirement: 新增节点类型纳入语义检索
+语义检索 SHALL 自动纳入 Vuex、Redux、微信小程序、uni-app 四类新增节点类型，用户可通过 `--type` 参数按类型过滤。
+
+#### Scenario: 语义检索 Vuex action
+- **WHEN** 执行 `wpw graph search "用户登录" --type vuex-action`
+- **THEN** 仅在 vuex-action 类型节点中进行语义检索
+- **AND** 返回匹配的 action 节点列表
+
+#### Scenario: 语义检索 Redux slice
+- **WHEN** 执行 `wpw graph search "用户状态管理" --type redux-slice`
+- **THEN** 返回语义匹配的 redux-slice 节点
+
+#### Scenario: 语义检索小程序页面
+- **WHEN** 执行 `wpw graph search "订单详情页" --type mp-page`
+- **THEN** 返回语义匹配的 mp-page 节点
+- **AND** 页面标题（navigationBarTitleText）参与向量匹配
+
+#### Scenario: 语义检索 uni-app 页面
+- **WHEN** 执行 `wpw graph search "商品列表" --type uni-page`
+- **THEN** 返回语义匹配的 uni-page 节点
+- **AND** 页面路径和标题都参与语义匹配
+
+### Requirement: 全类型混合检索
+不指定 `--type` 时，语义检索 SHALL 在所有节点类型（包括新增类型）中混合检索并统一排序。
+
+#### Scenario: 跨状态管理检索 action
+- **WHEN** 执行 `wpw graph search "登录" --level L3`
+- **THEN** 返回结果中可同时包含 pinia-action、vuex-action、redux-action 节点
+- **AND** 按相似度统一排序
+
+### Requirement: 节点向量质量保障
+新增节点类型的向量文本 SHALL 包含足够的语义信息，确保中文检索效果。store/slice 节点向量 SHALL 包含名称 + 所属文件路径 + 描述/注释；页面节点向量 SHALL 包含页面路径 + 页面标题 + 描述。
+
+#### Scenario: 页面节点中文检索质量
+- **WHEN** 搜索"个人中心"，存在页面标题为"个人中心"的 mp-page 或 uni-page 节点
+- **THEN** 该页面节点出现在 Top 5 结果中
+- **AND** 相似度得分不低于 0.6
+
+#### Scenario: 状态管理 action 检索质量
+- **WHEN** 搜索"提交表单"，存在相关的 vuex-action 或 redux-action 节点
+- **THEN** 该 action 节点出现在 Top 10 结果中
+
+### Requirement: 指定图谱语义检索
+`wpw graph search` SHALL 接受 `--graph <stack>` 参数，仅在指定图谱的向量索引内检索。缺省时检索 `default` 图谱。
+
+#### Scenario: 指定图谱语义检索
+- **WHEN** 执行 `wpw graph search "用户登录" --graph frontend-vue`
+- **THEN** 仅在 `frontend-vue` 图谱的向量索引内检索
+- **AND** 不返回其他图谱的节点
+
+#### Scenario: 指定后端图谱检索
+- **WHEN** 执行 `wpw graph search "推荐接口" --graph backend-springboot`
+- **THEN** 仅在 `backend-springboot` 图谱内检索
+- **AND** 返回 Java 方法/类等后端节点
+
+#### Scenario: 缺省检索 default 图谱
+- **WHEN** 执行 `wpw graph search "登录"`（无 `--graph`）
+- **THEN** 检索 `default` 图谱
+
+#### Scenario: 指定图谱无向量索引
+- **WHEN** 执行 `wpw graph search "x" --graph backend-springboot`，但该图谱向量索引不存在（构建时 embedding 关闭）
+- **THEN** 输出提示该图谱无向量索引
+- **AND** 建议重新 `wpw graph build --name backend-springboot --root <dir>` 开启 embedding

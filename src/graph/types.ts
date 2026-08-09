@@ -161,6 +161,9 @@ export interface NodeAttributes {
   annotations?: string[];   // 装饰器/注解
   jsDoc?: string;           // JSDoc 注释摘要
 
+  // REST 端点（Java Spring Boot）
+  endpoint?: { method: string; path: string };
+
   // 状态管理（Vuex / Redux / Pinia 通用）
   namespaced?: boolean;     // 是否命名空间模块
   storeName?: string;       // 所属 store 名
@@ -464,10 +467,16 @@ export interface GraphMeta {
   fileHashes: Record<string, string>;
   /** 配置版本（用于检测配置变更） */
   configVersion: string;
+  /** 图谱名称（多图谱存储用） */
+  graphName?: string;
+  /** 扫描根目录（相对工作根，多图谱按子目录构建时使用） */
+  scanRoot?: string;
+  /** 项目类型（前端/后端等，供增量更新复用） */
+  projectType?: string;
 }
 
-/** 当前 schema 版本（3.0.0：C+L1/L2/L3 架构） */
-export const CURRENT_SCHEMA_VERSION = '3.0.0';
+/** 当前 schema 版本（3.1.0：新增 Java 解析器与后端支持） */
+export const CURRENT_SCHEMA_VERSION = '3.1.0';
 
 // ==================== 构建统计 ====================
 
@@ -490,6 +499,31 @@ export interface BuildStats {
     warnings: string[];
   };
 }
+
+// ==================== 多图谱管理 ====================
+
+/** 图谱注册条目（graph list 输出） */
+export interface GraphRegistryEntry {
+  /** 图谱名 */
+  name: string;
+  /** 节点总数 */
+  totalNodes: number;
+  /** 边总数 */
+  totalEdges: number;
+  /** 向量总数 */
+  totalVectors: number;
+  /** 构建时间戳 */
+  builtAt: number;
+  /** 扫描根目录（相对工作根） */
+  scanRoot?: string;
+  /** 项目类型 */
+  projectType?: string;
+  /** schema 版本 */
+  schemaVersion: string;
+}
+
+/** 默认图谱名 */
+export const DEFAULT_GRAPH_NAME = 'default';
 
 // ==================== 向后兼容 ====================
 

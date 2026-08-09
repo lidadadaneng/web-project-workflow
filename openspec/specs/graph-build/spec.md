@@ -288,3 +288,198 @@ C 层能力节点 SHALL 携带 `description` 属性存储能力描述，以及 `
 - **WHEN** 执行 `wpw graph update` 且源码文件无变更，但能力 spec 有变更
 - **THEN** 系统仍执行能力层面的更新
 - **AND** 不返回 null（不再因"无文件变更"直接跳过）
+
+### Requirement: Vuex store 索引
+图谱构建 SHALL 支持解析 Vuex store 文件（含模块化 store），将 store 及其 state/mutations/actions/getters 作为节点纳入图谱，并建立与组件调用方的边关系。
+
+#### Scenario: Vuex 根 store 解析
+- **WHEN** 解析 `.js` / `.ts` 文件，存在 `new Vuex.Store({ modules, state, mutations, actions, getters })` 调用
+- **THEN** 生成 L2 级别的 store 节点（类型 `vuex-store`）
+- **AND** 每个子模块也生成独立的 `vuex-store` 节点
+- **AND** state 属性生成 `vuex-state` 类型的 L3 节点
+- **AND** mutation 函数生成 `vuex-mutation` 类型的 L3 节点
+- **AND** action 函数生成 `vuex-action` 类型的 L3 节点
+- **AND** getter 生成 `vuex-getter` 类型的 L3 节点
+- **AND** store 节点与文件节点建立 contain 边
+- **AND** 子元素节点与 store 节点建立 contain 边
+
+#### Scenario: 模块化 store 文件解析
+- **WHEN** 解析 `src/store/modules/user.js`，文件导出 `{ state, mutations, actions, getters, namespaced }`
+- **THEN** 生成 `vuex-store` 节点，节点名 = 模块名
+- **AND** 子元素节点类型同上
+- **AND** `namespaced: true` 时节点携带命名空间标记
+
+#### Scenario: 组件调用 Vuex 建边
+- **WHEN** Vue 组件中通过 `this.$store.dispatch('user/login')` 或 `mapActions` 调用 Vuex action
+- **THEN** 组件节点与对应的 `vuex-action` 节点建立 `call` 边
+- **AND** `commit` 调用与 `vuex-mutation` 节点建立 `call` 边
+
+#### Scenario: 非 Vuex 文件不生成 vuex 节点
+- **WHEN** 解析普通 `.js` / `.ts` 工具函数文件
+- **THEN** 不生成 vuex-* 类型节点
+- **AND** 仅按原有规则提取函数/常量等 L3 节点
+
+### Requirement: Redux / Redux Toolkit 索引
+图谱构建 SHALL 支持解析 Redux 及 Redux Toolkit 代码，识别 store、slice、reducer、action、selector，并作为节点纳入图谱。
+
+#### Scenario: createSlice 解析
+- **WHEN** 解析 `.ts` / `.js` 文件，存在 `createSlice({ name, initialState, reducers, extraReducers })` 调用
+- **THEN** 生成 L2 级别的 `redux-slice` 节点（节点名 = slice name）
+- **AND** reducer 函数生成 `redux-reducer` 类型的 L3 节点
+- **AND** 自动生成的 action 生成 `redux-action` 类型的 L3 节点
+- **AND** initialState 顶层属性生成 `redux-state` 类型的 L3 节点
+
+#### Scenario: createAction / createReducer 解析
+- **WHEN** 文件中存在 `createAction('type')` 或 `createReducer(initialState, builder => {...})`
+- **THEN** 生成对应的 `redux-action` / `redux-reducer` 节点
+
+#### Scenario: selector 解析
+- **WHEN** 文件中存在 `createSelector(...)` 或命名以 `select` 开头且参数含 state 的函数
+- **THEN** 生成 `redux-selector` 类型的 L3 节点
+
+#### Scenario: 组件使用 Redux 建边
+- **WHEN** React 组件中使用 `useSelector(selectXxx)` 或 `useDispatch()` 后 dispatch action
+- **THEN** 组件节点与对应的 `redux-selector` / `redux-action` 节点建立 `call` 边
+
+### Requirement: 微信小程序解析支持
+图谱构建 SHALL 支持解析微信小程序项目的 WXML、JS、JSON 文件，生成页面、组件、App 等节点，并建立路由跳转、组件引用等边关系。
+
+#### Scenario: 小程序项目自动识别
+- **WHEN** 项目根目录存在 `app.js` + `app.json` + `app.wxss`，且 `app.json` 含 `pages` 字段
+- **THEN** 系统自动启用小程序解析流程
+- **AND** `project.config.json` 的 `miniprogramRoot` 被正确识别
+
+#### Scenario: App 与页面节点生成
+- **WHEN** 解析小程序项目
+- **THEN** 生成 1 个 `mp-app` 类型的 L1 节点
+- **AND** 根据 `app.json` 的 `pages` 生成 N 个 `mp-page` 类型的 L2 节点
+- **AND** 页面 JS 中的 data/methods/lifecycle 生成对应的 L3 节点
+
+#### Scenario: 自定义组件解析
+- **WHEN** 小程序项目中存在含 `Component({...})` 的 JS 文件 + 对应 `.json` 中 `component: true`
+- **THEN** 生成 `mp-component` 类型的 L2 节点
+- **AND** properties / methods / lifetimes 生成对应的 L3 节点
+
+#### Scenario: WXML 模板解析
+- **WHEN** 解析 `.wxml` 文件
+- **THEN** 识别自定义组件引用，建立 `use-component` 边
+- **AND** 识别事件绑定（bindtap 等），建立 `bind-event` 边
+- **AND** 识别数据绑定（{{ }}），建立 `bind-data` 边
+
+#### Scenario: 路由跳转边
+- **WHEN** 代码中调用 `wx.navigateTo` / `wx.redirectTo` / `wx.switchTab` / `wx.reLaunch`
+- **THEN** 在源页面与目标页面之间建立 `navigate` 边
+- **AND** 边属性包含跳转方式（method）
+
+### Requirement: uni-app 解析支持
+图谱构建 SHALL 在 Vue 解析基础上扩展支持 uni-app 项目，识别 `pages.json` 路由、uni.* API、生命周期、条件编译。
+
+#### Scenario: uni-app 项目自动识别
+- **WHEN** 项目存在 `pages.json` + `manifest.json` + `App.vue`，或 package.json 含 `@dcloudio/uni-*` 依赖
+- **THEN** 系统自动启用 uni-app 解析扩展
+- **AND** 在 Vue 解析结果基础上叠加 uni-app 语义
+
+#### Scenario: pages.json 路由解析
+- **WHEN** 解析 `pages.json`
+- **THEN** 为每个页面生成 `uni-page` 类型的 L2 节点
+- **AND** 页面标题（navigationBarTitleText）纳入节点描述
+- **AND** 分包页面标记 `subPackage` 属性
+- **AND** TabBar 页面之间建立 `tab-switch` 边
+
+#### Scenario: uni.* API 调用识别
+- **WHEN** 代码中调用 `uni.navigateTo` / `uni.request` / `uni.setStorageSync` 等
+- **THEN** 路由 API 调用触发 `navigate` 边生成
+- **AND** 网络 API 调用标记请求 URL 和 method
+- **AND** 存储 API 调用标记使用的 storage key
+
+#### Scenario: 条件编译识别
+- **WHEN** 代码中含 `#ifdef MP-WEIXIN` / `#ifdef H5` 等条件编译块
+- **THEN** 块内定义的函数/组件标记 `platform` 属性
+- **AND** 可按平台维度过滤查询
+
+### Requirement: 扩展的默认语言/框架配置
+图谱构建的默认配置 SHALL 扩展支持的语言和框架选项，用户可在 `graph.build.languages` 中配置是否启用各扩展解析器。
+
+#### Scenario: 状态管理解析器可配置
+- **WHEN** 配置 `graph.build.stateManagers: ['pinia', 'vuex', 'redux']`
+- **THEN** 构建时仅启用配置中列出的状态管理解析器
+- **AND** 默认值为 `['pinia']`（向后兼容）
+
+#### Scenario: 小程序解析器可配置
+- **WHEN** 配置 `graph.build.frameworks: ['miniprogram', 'uniapp']`
+- **THEN** 构建时启用对应框架的解析扩展
+- **AND** 默认值为 `[]`（即自动嗅探）
+
+#### Scenario: 自动嗅探模式
+- **WHEN** 未显式配置状态管理和框架
+- **THEN** 系统自动嗅探项目类型并启用对应解析器
+- **AND** 嗅探结果在构建输出中显示
+
+### Requirement: 按子目录构建命名图谱
+`wpw graph build` SHALL 接受 `--name <stack>` 与 `--root <subdir>` 参数。`--name` 指定图谱名（写入 `wpw/knowledge/graph/<stack>/`）；`--root` 指定扫描根子目录（相对工作根）。可多次执行产出多个命名图谱。
+
+#### Scenario: 按子目录构建命名图谱
+- **WHEN** 执行 `wpw graph build --name frontend-vue --root frontend`
+- **THEN** 扫描 `<工作根>/frontend/` 下的源码
+- **AND** 图谱写入 `wpw/knowledge/graph/frontend-vue/`
+- **AND** `meta.json` 记录 `graphName: "frontend-vue"` 与 `scanRoot: "frontend"`
+
+#### Scenario: 多次执行产出多图谱
+- **WHEN** 先后执行 `wpw graph build --name frontend-vue --root frontend` 与 `wpw graph build --name backend-springboot --root backend`
+- **THEN** 产出 `frontend-vue` 与 `backend-springboot` 两个独立图谱
+- **AND** 各自扫描对应子目录
+
+#### Scenario: 无 --root 扫描工作根
+- **WHEN** 执行 `wpw graph build --name my-graph`（无 `--root`）
+- **THEN** 扫描工作根
+- **AND** 图谱写入 `wpw/knowledge/graph/my-graph/`
+
+#### Scenario: 命名格式校验
+- **WHEN** `--name` 值非 kebab-case 或为空
+- **THEN** 输出错误提示命名格式要求
+- **AND** 退出码非 0
+
+### Requirement: 按 scan root 独立嗅探项目类型
+每次 `graph build` SHALL 按其 `--root`（或工作根）独立嗅探项目类型，据此推断模块。多图谱下不同图谱可有不同项目类型（前端图谱 = frontend-h5，后端图谱 = backend-java）。
+
+#### Scenario: 前端子目录嗅探为前端类型
+- **WHEN** 执行 `wpw graph build --name frontend-vue --root frontend`，`frontend/` 含 `package.json` 与 vue 依赖
+- **THEN** 项目类型嗅探为 `frontend-h5`
+- **AND** 模块推断按前端 moduleRoots（src/modules 等）
+
+#### Scenario: 后端子目录嗅探为 backend-java
+- **WHEN** 执行 `wpw graph build --name backend-springboot --root backend`，`backend/` 含 `pom.xml`
+- **THEN** 项目类型嗅探为 `backend-java`
+- **AND** 模块推断按 Spring Boot 业务包（见 expand-graph-backend-java）
+
+#### Scenario: 不同图谱独立项目类型
+- **WHEN** 同一工作根下先后构建 `frontend-vue`（--root frontend）与 `backend-springboot`（--root backend）
+- **THEN** 两图谱的项目类型分别为 `frontend-h5` 与 `backend-java`
+- **AND** 互不影响
+
+### Requirement: 增量更新与重建支持命名图谱
+`wpw graph update` 与 `wpw graph rebuild` SHALL 接受 `--graph <stack>` 参数，操作指定图谱。update SHALL 从该图谱的 `meta.json` 读取 `scanRoot` 作为扫描根。
+
+#### Scenario: 命名图谱增量更新
+- **WHEN** 执行 `wpw graph update --graph backend-springboot`
+- **THEN** 从 `backend-springboot/meta.json` 读取 `scanRoot`
+- **AND** 按该 scan root 扫描变更文件并增量更新该图谱
+- **AND** 不影响其他图谱
+
+#### Scenario: 命名图谱强制重建
+- **WHEN** 执行 `wpw graph rebuild --graph frontend-vue`
+- **THEN** 清空 `frontend-vue/` 并按其 `scanRoot` 全量重建
+- **AND** 不影响其他图谱
+
+#### Scenario: update 时 meta 缺失 scanRoot
+- **WHEN** 执行 `wpw graph update --graph old-graph`，但 `meta.json` 无 `scanRoot` 字段（旧图谱）
+- **THEN** 提示该图谱缺少 scanRoot 信息
+- **AND** 建议执行 `wpw graph rebuild --graph old-graph` 重建以补全元数据
+
+### Requirement: 构建统计按图谱独立
+`wpw graph build` 的统计输出 SHALL 仅反映本次构建的命名图谱（节点/边/向量数、各阶段耗时），不包含其他图谱。
+
+#### Scenario: 统计仅含当前图谱
+- **WHEN** 执行 `wpw graph build --name backend-springboot --root backend`
+- **THEN** 统计输出的节点/边/向量数仅含 `backend-springboot` 图谱
+- **AND** 不累加其他图谱数据

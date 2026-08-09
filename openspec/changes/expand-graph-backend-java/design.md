@@ -106,11 +106,18 @@ src/main/java/com/example/
 
 ### 决策 6：tree-sitter-java WASM 可用性需先 spike
 
-**决定：** change 的第一个 task 是验证 `tree-sitter-java` npm 包是否自带 `tree-sitter-java.wasm`（与 `tree-sitter-javascript`/`tree-sitter-typescript` 一致）。若自带，照搬 loader 模式；若不带，fallback 到社区 `tree-sitter-wasms` 包。
+**决定：** 采用 `tree-sitter-java` npm 包自带的 `tree-sitter-java.wasm`（v0.23.5 已验证包含 wasm 文件），loader 路径与 tree-sitter-javascript/typescript 一致：`require.resolve('tree-sitter-java/tree-sitter-java.wasm')`。保留 fallback 到 `tree-sitter-wasms` 的代码路径作为兜底。
+
+**Spike 结论（已验证）：**
+- `tree-sitter-java@0.23.5` 包内自带 `tree-sitter-java.wasm`，与 `tree-sitter-javascript`/`tree-sitter-typescript` 模式一致
+- 可直接通过 `require.resolve('tree-sitter-java/tree-sitter-java.wasm')` 定位
+- 无需 fallback 到 `tree-sitter-wasms`（但代码中保留了该路径以防版本变更）
+- 正则降级方案作为最终 fallback 已实现（提取 class/interface/enum 名，不含签名细节）
 
 **理由：**
 - 现有 loader 靠 `require.resolve('tree-sitter-javascript/tree-sitter-javascript.wasm')` 拿 wasm，依赖语言包自带 wasm 文件
 - `tree-sitter-java` 历史上只带 native binding，是否带 wasm 需实测确认，是本 change 唯一可能卡住的点
+- 实测 v0.23.5 已自带 wasm，可直接照搬 loader 模式
 
 **备选方案：** 若 `tree-sitter-java` 无 wasm 且 `tree-sitter-wasms` 也不可用，退化为正则解析 Java（类似 WXML 方案）。能力弱但保证可用。
 

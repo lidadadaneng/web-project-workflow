@@ -60,13 +60,15 @@ BRD → PRD → Explore(可选) → Design → Plan → Test → Apply
 | `wpw apply <name> --json` | 实施准备（返回 contextFiles/tasks） |
 | `wpw task <name> --mark <id> --state <state>` | 任务标记 |
 | `wpw archive <name>` | 归档到 `wpw/archived/YYYY-MM/` |
-| `wpw graph build` | 全量构建知识图谱 |
-| `wpw graph update` | 增量更新知识图谱 |
-| `wpw graph rebuild` | 强制重建知识图谱 |
-| `wpw graph stat` | 查看图谱统计 |
-| `wpw graph query [options]` | 结构化查询（节点/依赖/路径） |
-| `wpw graph search <query>` | 语义检索图谱节点 |
-| `wpw graph context [query]` | 端到端上下文生成（直接喂给 LLM） |
+| `wpw graph build [--name <stack>] [--root <subdir>]` | 全量构建知识图谱 |
+| `wpw graph update [--graph <stack>]` | 增量更新知识图谱 |
+| `wpw graph rebuild [--graph <stack>] [--root <subdir>]` | 强制重建知识图谱 |
+| `wpw graph list` | 列举所有命名图谱 |
+| `wpw graph remove <stack>` | 删除指定命名图谱 |
+| `wpw graph stat [--graph <stack>]` | 查看图谱统计 |
+| `wpw graph query [options] [--graph <stack>]` | 结构化查询（节点/依赖/路径） |
+| `wpw graph search <query> [--graph <stack>]` | 语义检索图谱节点 |
+| `wpw graph context [query] [--graph <stack>]` | 端到端上下文生成（直接喂给 LLM） |
 
 ## 知识图谱子系统
 
@@ -78,6 +80,8 @@ L1 业务需求 → L2 业务模块 → L3 文件 → L4 代码元素
 
 **核心特性**：
 - 多源证据融合映射（已实现 4 源）：文档提取 -> 语义匹配 -> Git 历史 -> 命名匹配，按 noisy-OR 聚合权重；AI 校准为可选未来工作
+- 多语言源码解析：TypeScript / JavaScript / Vue / **Java (Spring Boot)**，前后端全栈建图
+- Spring Boot 后端深度解析：class / interface / enum / record / 方法 / 常量节点，REST endpoint 元信息，包路径 import 边，业务包模块推断
 - 加权双向 BFS 子图裁剪，支持节点上限与 Token 预算约束
 - 三档压缩（loose / standard / extreme），层级符号化序列化输出
 - 端到端 context pipeline：检索 → 裁剪 → 骨架抽取 → 序列化
@@ -101,6 +105,30 @@ wpw graph context "登录" --token-budget 8000
 # JSON 输出（供上层 AI 层调用）
 wpw graph context "登录" --json
 ```
+
+**多图谱（多技术栈项目）**：
+
+全栈项目（如 Vue + Spring Boot）可按子目录分别构建多个命名图谱，检索时指定图谱名：
+
+```bash
+# 构建前端图谱（扫描 frontend/ 子目录）
+wpw graph build --name frontend-vue --root frontend
+
+# 构建后端图谱（扫描 backend/ 子目录）
+wpw graph build --name backend-springboot --root backend
+
+# 列举所有图谱
+wpw graph list
+
+# 检索指定图谱
+wpw graph context "用户登录" --graph frontend-vue
+wpw graph context "数据库查询" --graph backend-springboot
+
+# 删除图谱
+wpw graph remove frontend-vue
+```
+
+默认图谱名为 `default`，不传 `--name` / `--graph` 时操作默认图谱。升级时现有单图谱会自动迁移到 `default/` 文件夹，行为不变。
 
 详见 `src/graph/` 源码。
 

@@ -19,15 +19,56 @@ import { JsonlGraphStore } from '../storage/graph-store';
 import { BinaryVectorStore } from '../storage/vector-store';
 import { VectorMappingStore } from '../storage/mapping-store';
 import { JsonMetaStore } from '../storage/meta-store';
+import {
+  resolveGraphDir,
+  graphExists,
+  isValidGraphName,
+  GRAPH_NAME_RULES,
+} from '../storage/graph-path';
+import {
+  listGraphs,
+  removeGraph,
+  needsLegacyMigration,
+  migrateLegacyGraph,
+} from '../storage/graph-manager';
 import { GraphQuerier } from '../search/graph-query';
 import { SemanticSearcher } from '../search/semantic-search';
 import { ContextPipeline } from '../context/context-pipeline';
-import type { BuildStats, NodeLevel } from '../types';
-import { LEGACY_LEVEL_MAP } from '../types';
+import type { BuildStats, NodeLevel, GraphRegistryEntry } from '../types';
+import { LEGACY_LEVEL_MAP, DEFAULT_GRAPH_NAME } from '../types';
 import type { BuildProgress } from '../builders/graph-builder';
 
-function getWpfDir(root: string): string {
-  return path.join(root, 'wpw', 'knowledge', 'graph');
+/**
+ * 确保旧式单图谱已迁移到 default/（在任何 graph 命令执行前调用）
+ *
+ * 仅当检测到需要迁移时执行，输出迁移信息。
+ */
+function ensureLegacyMigrated(root: string): void {
+  if (needsLegacyMigration(root)) {
+    console.log('[迁移] 检测到旧式单图谱，正在迁移到 default/ ...');
+    const result = migrateLegacyGraph(root);
+    if (result.migrated) {
+      console.log(`[迁移] 完成，已迁移 ${result.movedCount} 个文件到 default/`);
+      if (result.beforeFiles) {
+        console.log(`[迁移] 迁移前文件: ${result.beforeFiles.join(', ')}`);
+      }
+      if (result.afterFiles) {
+        console.log(`[迁移] 迁移后文件: ${result.afterFiles.join(', ')}`);
+      }
+    } else {
+      console.log(`[迁移] 跳过: ${result.reason}`);
+    }
+  }
+}
+
+/**
+ * 检查图谱是否存在，不存在则报错退出
+ */
+function assertGraphExists(root: string, stack: string): void {
+  if (!graphExists(root, stack)) {
+    console.error(`图谱「${stack}」不存在。可运行 wpw graph list 查看可用图谱。`);
+    process.exit(1);
+  }
 }
 
 /**
@@ -76,6 +117,8 @@ export function registerGraph(program: Command): void {
   registerQuery(graph);
   registerSearch(graph);
   registerContext(graph);
+  registerList(graph);
+  registerRemove(graph);
 }
 
 // ==================== build ====================
@@ -84,24 +127,53 @@ function registerBuild(graph: Command): void {
   graph
     .command('build')
     .description('全量构建知识图谱')
+    .option('--name <stack>', '图谱名（kebab-case，缺省 default）')
+    .option('--root <subdir>', '扫描根目录（相对工作根，缺省工作根）')
     .option('--json', 'JSON 输出')
     .option('--no-progress', '禁用进度条')
-    .action(async (opts: { json?: boolean; progress: boolean }) => {
-      const root = process.cwd();
+    .action(async (opts: { name?: string; root?: string; json?: boolean; progress: boolean }) => {
+      const workRoot = process.cwd();
       const { buildGraph } = await import('../builders/graph-builder');
+
+      // 迁移旧式图谱
+      ensureLegacyMigrated(workRoot);
+
+      // 校验图谱名
+      const stack = opts.name || DEFAULT_GRAPH_NAME;
+      if (opts.name && !isValidGraphName(opts.name)) {
+        console.error(`错误：${GRAPH_NAME_RULES}`);
+        process.exit(1);
+      }
+
+      // 同名覆盖提示
+      if (graphExists(workRoot, stack) && !opts.json) {
+        console.log(`注意：图谱「${stack}」已存在，将被覆盖重建。`);
+      }
 
       const useProgress = opts.progress && !opts.json && process.stderr.isTTY;
       const bar = useProgress ? createProgressBar() : null;
 
-      const result = await buildGraph(root, (p) => {
-        bar?.update(p);
-      });
+      const result = await buildGraph(
+        workRoot,
+        { stack, scanRoot: opts.root },
+        (p) => {
+          bar?.update(p);
+        },
+      );
 
       bar?.finish();
 
       if (opts.json) {
-        console.log(JSON.stringify(formatBuildOutput(result.stats), null, 2));
+        console.log(JSON.stringify({
+          ...formatBuildOutput(result.stats),
+          graphName: result.meta.graphName,
+          scanRoot: result.meta.scanRoot,
+          projectType: result.meta.projectType,
+        }, null, 2));
       } else {
+        console.log(`图谱名: ${result.meta.graphName}`);
+        console.log(`扫描根: ${result.meta.scanRoot || '.'}`);
+        console.log(`项目类型: ${result.meta.projectType || 'auto'}`);
         printBuildStats(result.stats);
       }
     });
@@ -150,12 +222,32 @@ function registerUpdate(graph: Command): void {
   graph
     .command('update')
     .description('增量更新知识图谱')
+    .option('--graph <stack>', '图谱名（缺省 default）')
     .option('--json', 'JSON 输出')
-    .action(async (opts: { json?: boolean }) => {
+    .action(async (opts: { graph?: string; json?: boolean }) => {
       const root = process.cwd();
+      const stack = opts.graph || DEFAULT_GRAPH_NAME;
+
+      // 迁移旧式图谱
+      ensureLegacyMigrated(root);
+
+      // 检查图谱是否存在
+      if (!graphExists(root, stack)) {
+        console.error(`图谱「${stack}」不存在。可运行 wpw graph list 查看可用图谱。`);
+        process.exit(1);
+      }
+
+      // 检查 meta 中是否有 scanRoot（旧图谱可能缺少）
+      const metaStore = new JsonMetaStore(resolveGraphDir(root, stack));
+      const meta = metaStore.load();
+      if (meta && !meta.scanRoot) {
+        console.warn(`[警告] 图谱「${stack}」缺少 scanRoot 元数据（旧式图谱）。`);
+        console.warn(`建议执行 wpw graph rebuild --graph ${stack} 重建以补全元数据。`);
+      }
+
       const { updateGraph } = await import('../builders/graph-builder');
 
-      const result = await updateGraph(root);
+      const result = await updateGraph(root, { stack });
 
       if (!result) {
         if (opts.json) {
@@ -187,24 +279,39 @@ function registerRebuild(graph: Command): void {
   graph
     .command('rebuild')
     .description('强制重建知识图谱（清空后全量构建）')
+    .option('--graph <stack>', '图谱名（缺省 default）')
+    .option('--root <subdir>', '扫描根目录（相对工作根，缺省工作根）')
     .option('--json', 'JSON 输出')
     .option('--no-progress', '禁用进度条')
-    .action(async (opts: { json?: boolean; progress: boolean }) => {
-      const root = process.cwd();
+    .action(async (opts: { graph?: string; root?: string; json?: boolean; progress: boolean }) => {
+      const workRoot = process.cwd();
+      const stack = opts.graph || DEFAULT_GRAPH_NAME;
       const { rebuildGraph } = await import('../builders/graph-builder');
+
+      // 迁移旧式图谱
+      ensureLegacyMigrated(workRoot);
 
       const useProgress = opts.progress && !opts.json && process.stderr.isTTY;
       const bar = useProgress ? createProgressBar() : null;
 
-      const result = await rebuildGraph(root, (p) => {
-        bar?.update(p);
-      });
+      const result = await rebuildGraph(
+        workRoot,
+        { stack, scanRoot: opts.root },
+        (p) => {
+          bar?.update(p);
+        },
+      );
 
       bar?.finish();
 
       if (opts.json) {
-        console.log(JSON.stringify(formatBuildOutput(result.stats), null, 2));
+        console.log(JSON.stringify({
+          ...formatBuildOutput(result.stats),
+          graphName: result.meta.graphName,
+          scanRoot: result.meta.scanRoot,
+        }, null, 2));
       } else {
+        console.log(`图谱名: ${result.meta.graphName}`);
         console.log('强制重建完成。');
         printBuildStats(result.stats);
       }
@@ -217,18 +324,18 @@ function registerStat(graph: Command): void {
   graph
     .command('stat')
     .description('查看图谱统计信息')
+    .option('--graph <stack>', '图谱名（缺省 default）')
     .option('--json', 'JSON 输出')
-    .action((opts: { json?: boolean }) => {
+    .action((opts: { graph?: string; json?: boolean }) => {
       const root = process.cwd();
-      const wpfDir = getWpfDir(root);
+      const stack = opts.graph || DEFAULT_GRAPH_NAME;
 
-      const graphStore = new JsonlGraphStore(wpfDir);
-      const metaStore = new JsonMetaStore(wpfDir);
+      ensureLegacyMigrated(root);
+      assertGraphExists(root, stack);
 
-      if (!graphStore.exists()) {
-        console.error('图谱不存在，请先执行 wpw graph build');
-        process.exit(1);
-      }
+      const graphDir = resolveGraphDir(root, stack);
+      const graphStore = new JsonlGraphStore(graphDir);
+      const metaStore = new JsonMetaStore(graphDir);
 
       const data = graphStore.load();
       const meta = metaStore.load();
@@ -240,6 +347,9 @@ function registerStat(graph: Command): void {
         console.log(
           JSON.stringify(
             {
+              graphName: stack,
+              scanRoot: meta?.scanRoot,
+              projectType: meta?.projectType,
               ...stats,
               schemaVersion: meta?.schemaVersion,
               configVersion: meta?.configVersion,
@@ -249,7 +359,10 @@ function registerStat(graph: Command): void {
           ),
         );
       } else {
-        console.log('=== 图谱统计 ===');
+        console.log(`=== 图谱统计 (${stack}) ===`);
+        if (meta?.scanRoot) {
+          console.log(`扫描根: ${meta.scanRoot}`);
+        }
         console.log(`节点总数: ${stats.totalNodes}`);
         console.log(`边总数: ${stats.totalEdges}`);
         console.log(`向量数: ${stats.totalVectors}`);
@@ -278,6 +391,7 @@ function registerQuery(graph: Command): void {
   graph
     .command('query')
     .description('结构化查询节点与依赖')
+    .option('--graph <stack>', '图谱名（缺省 default）')
     .option('-l, --level <levels>', '按层级过滤，逗号分隔（C,L1,L2,L3）')
     .option('-t, --type <types>', '按节点类型过滤，逗号分隔')
     .option('--limit <n>', '返回数量上限', '20')
@@ -290,14 +404,13 @@ function registerQuery(graph: Command): void {
     .option('--json', 'JSON 输出')
     .action((opts) => {
       const root = process.cwd();
-      const wpfDir = getWpfDir(root);
+      const stack = opts.graph || DEFAULT_GRAPH_NAME;
 
-      const graphStore = new JsonlGraphStore(wpfDir);
-      if (!graphStore.exists()) {
-        console.error('图谱不存在，请先执行 wpw graph build');
-        process.exit(1);
-      }
+      ensureLegacyMigrated(root);
+      assertGraphExists(root, stack);
 
+      const graphDir = resolveGraphDir(root, stack);
+      const graphStore = new JsonlGraphStore(graphDir);
       const data = graphStore.load();
       const querier = new GraphQuerier(data);
 
@@ -399,6 +512,7 @@ function registerSearch(graph: Command): void {
   graph
     .command('search <query>')
     .description('语义检索图谱节点')
+    .option('--graph <stack>', '图谱名（缺省 default）')
     .option('-l, --limit <n>', '返回数量上限', '10')
     .option('-t, --threshold <f>', '相似度阈值', '0.5')
     .option('--level <levels>', '按层级过滤')
@@ -407,19 +521,18 @@ function registerSearch(graph: Command): void {
     .option('--json', 'JSON 输出')
     .action(async (query: string, opts) => {
       const root = process.cwd();
-      const wpfDir = getWpfDir(root);
+      const stack = opts.graph || DEFAULT_GRAPH_NAME;
 
-      const graphStore = new JsonlGraphStore(wpfDir);
-      const vectorStore = new BinaryVectorStore(wpfDir);
-      const mappingStore = new VectorMappingStore(wpfDir);
+      ensureLegacyMigrated(root);
+      assertGraphExists(root, stack);
 
-      if (!graphStore.exists()) {
-        console.error('图谱不存在，请先执行 wpw graph build');
-        process.exit(1);
-      }
+      const graphDir = resolveGraphDir(root, stack);
+      const graphStore = new JsonlGraphStore(graphDir);
+      const vectorStore = new BinaryVectorStore(graphDir);
+      const mappingStore = new VectorMappingStore(graphDir);
 
       if (!vectorStore.exists()) {
-        console.error('向量索引不存在，请先执行 wpw graph build');
+        console.error(`图谱「${stack}」没有向量索引。请先执行 wpw graph build --name ${stack} 并开启 embedding。`);
         process.exit(1);
       }
 
@@ -484,6 +597,7 @@ function registerContext(graph: Command): void {
   graph
     .command('context [query]')
     .description('端到端上下文生成（语义检索 → 子图裁剪 → 压缩序列化）')
+    .option('--graph <stack>', '图谱名（缺省 default）')
     .option('--anchors <ids>', '直接指定锚点节点 ID（逗号分隔），跳过语义检索')
     .option('--multi', '多查询模式（query 用逗号分隔）')
     .option('--token-budget <n>', 'Token 预算上限')
@@ -499,17 +613,16 @@ function registerContext(graph: Command): void {
     .option('--json', 'JSON 输出完整结果')
     .action(async (query: string | undefined, opts) => {
       const root = process.cwd();
-      const wpfDir = getWpfDir(root);
+      const stack = opts.graph || DEFAULT_GRAPH_NAME;
       const config = loadGraphConfig(root);
 
-      const graphStore = new JsonlGraphStore(wpfDir);
-      const vectorStore = new BinaryVectorStore(wpfDir);
-      const mappingStore = new VectorMappingStore(wpfDir);
+      ensureLegacyMigrated(root);
+      assertGraphExists(root, stack);
 
-      if (!graphStore.exists()) {
-        console.error('图谱不存在，请先执行 wpw graph build');
-        process.exit(1);
-      }
+      const graphDir = resolveGraphDir(root, stack);
+      const graphStore = new JsonlGraphStore(graphDir);
+      const vectorStore = new BinaryVectorStore(graphDir);
+      const mappingStore = new VectorMappingStore(graphDir);
 
       const data = graphStore.load();
 
@@ -578,6 +691,92 @@ function registerContext(graph: Command): void {
         console.log(`预估 Token: ${result.stats.estimatedTokens}`);
         console.log(`压缩率: ${result.stats.compressionRatio}x`);
         console.log(`总耗时: ${result.stats.totalTimeMs}ms`);
+      }
+    });
+}
+
+// ==================== list ====================
+
+function registerList(graph: Command): void {
+  graph
+    .command('list')
+    .description('列举所有命名图谱')
+    .option('--json', 'JSON 输出')
+    .action((opts: { json?: boolean }) => {
+      const root = process.cwd();
+
+      // 迁移旧式图谱（这样 list 也能看到迁移后的 default）
+      ensureLegacyMigrated(root);
+
+      const graphs = listGraphs(root);
+
+      if (graphs.length === 0) {
+        if (opts.json) {
+          console.log('[]');
+        } else {
+          console.log('暂无图谱。可运行 wpw graph build 构建第一个图谱。');
+        }
+        return;
+      }
+
+      if (opts.json) {
+        console.log(JSON.stringify(graphs, null, 2));
+      } else {
+        // 表格输出
+        const header = ['图谱名', '节点数', '边数', '向量数', '构建时间', '扫描根', '类型'];
+        const rows = graphs.map((g: GraphRegistryEntry) => [
+          g.name,
+          g.totalNodes.toString(),
+          g.totalEdges.toString(),
+          g.totalVectors.toString(),
+          g.builtAt ? new Date(g.builtAt).toLocaleString() : '-',
+          g.scanRoot || '.',
+          g.projectType || 'auto',
+        ]);
+
+        // 计算每列最大宽度
+        const allRows = [header, ...rows];
+        const colWidths = header.map((_, i) =>
+          Math.max(...allRows.map((r) => r[i].length)),
+        );
+
+        // 输出分隔线
+        const separator = colWidths.map((w) => '-'.repeat(w)).join('-+-');
+
+        function formatRow(row: string[]): string {
+          return row.map((cell, i) => cell.padEnd(colWidths[i])).join(' | ');
+        }
+
+        console.log(formatRow(header));
+        console.log(separator);
+        for (const row of rows) {
+          console.log(formatRow(row));
+        }
+
+        console.log('');
+        console.log(`共 ${graphs.length} 个图谱`);
+      }
+    });
+}
+
+// ==================== remove ====================
+
+function registerRemove(graph: Command): void {
+  graph
+    .command('remove <stack>')
+    .description('删除指定命名图谱')
+    .option('-f, --force', '跳过确认直接删除')
+    .action((stack: string, opts: { force?: boolean; json?: boolean }) => {
+      const root = process.cwd();
+
+      ensureLegacyMigrated(root);
+
+      try {
+        removeGraph(root, stack);
+        console.log(`图谱「${stack}」已删除。`);
+      } catch (e) {
+        console.error((e as Error).message);
+        process.exit(1);
       }
     });
 }

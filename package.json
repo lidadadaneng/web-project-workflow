@@ -19,6 +19,7 @@
     "commander": "^12.1.0",
     "js-yaml": "^4.1.0",
     "sharp": "^0.35.3",
+    "tree-sitter-java": "^0.23.5",
     "tree-sitter-javascript": "^0.23.1",
     "tree-sitter-typescript": "^0.23.2",
     "web-tree-sitter": "^0.24.7"

@@ -55,7 +55,7 @@ export async function getParser(): Promise<Parser> {
  * @param wasmPath WASM 文件路径（可选，默认从 node_modules 查找）
  */
 export async function loadLanguage(
-  lang: 'typescript' | 'tsx' | 'javascript',
+  lang: 'typescript' | 'tsx' | 'javascript' | 'java',
   wasmPath?: string,
 ): Promise<Parser.Language> {
   if (languages[lang]) return languages[lang];
@@ -96,6 +96,25 @@ export async function loadLanguage(
           wasm = fs.readFileSync(jsPkg);
           break;
         }
+        case 'java': {
+          try {
+            const javaPkg = require.resolve(
+              'tree-sitter-java/tree-sitter-java.wasm',
+            );
+            wasm = fs.readFileSync(javaPkg);
+          } catch (javaErr) {
+            // fallback to tree-sitter-wasms if tree-sitter-java lacks wasm
+            try {
+              const wasmsPkg = require.resolve(
+                'tree-sitter-wasms/tree-sitter-java.wasm',
+              );
+              wasm = fs.readFileSync(wasmsPkg);
+            } catch (wasmsErr) {
+              throw javaErr; // throw original error
+            }
+          }
+          break;
+        }
         default:
           throw new Error(`不支持的语言: ${lang}`);
       }
@@ -119,7 +138,7 @@ export async function loadLanguage(
  * 设置 Parser 的语言
  */
 export async function setParserLanguage(
-  lang: 'typescript' | 'tsx' | 'javascript',
+  lang: 'typescript' | 'tsx' | 'javascript' | 'java',
 ): Promise<Parser> {
   const parser = await getParser();
   const language = await loadLanguage(lang);

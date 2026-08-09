@@ -22,9 +22,10 @@ import { parseVueFile } from './vue-parser';
 import { isPiniaStoreFile, parsePiniaStores } from './pinia-parser';
 import { isVuexStoreFile, parseVuexStores } from './vuex-parser';
 import { isReduxFile, parseReduxFile } from './redux-parser';
+import { parseJavaFile } from './java-parser';
 
 /** 支持的语言 */
-export type SupportedLanguage = 'typescript' | 'tsx' | 'javascript' | 'vue';
+export type SupportedLanguage = 'typescript' | 'tsx' | 'javascript' | 'vue' | 'java';
 
 /**
  * 判断文件是否为支持的源码文件
@@ -45,6 +46,7 @@ export function isSupportedFile(
   // javascript 配置包含 .js/.jsx/.mjs/.cjs
   if (lang === 'tsx') return languages.includes('typescript');
   if (lang === 'vue') return languages.includes('vue');
+  if (lang === 'java') return languages.includes('java');
   // typescript 和 javascript 直接匹配
   return languages.includes(lang);
 }
@@ -80,6 +82,10 @@ export async function parseSourceFile(
 
     case 'vue':
       result = await parseVueFile(filePath, root, source);
+      break;
+
+    case 'java':
+      result = await parseJavaFile(filePath, root, source);
       break;
 
     default:
@@ -203,6 +209,8 @@ function extToLanguage(ext: string): SupportedLanguage | null {
       return 'javascript';
     case '.vue':
       return 'vue';
+    case '.java':
+      return 'java';
     default:
       return null;
   }

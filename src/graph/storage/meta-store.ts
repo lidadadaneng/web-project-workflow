@@ -6,7 +6,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import type { GraphMeta } from '../types';
-import { CURRENT_SCHEMA_VERSION } from '../types';
+import { CURRENT_SCHEMA_VERSION, DEFAULT_GRAPH_NAME } from '../types';
+import { resolveGraphDir } from './graph-path';
 
 const META_FILE = 'meta.json';
 
@@ -23,9 +24,17 @@ export interface MetaStore {
 
 export class JsonMetaStore implements MetaStore {
   private metaPath: string;
+  private graphDir: string;
 
-  constructor(private wpfDir: string) {
-    this.metaPath = path.join(wpfDir, META_FILE);
+  constructor(graphDir: string);
+  constructor(root: string, stack: string);
+  constructor(rootOrDir: string, stack?: string) {
+    if (stack !== undefined) {
+      this.graphDir = resolveGraphDir(rootOrDir, stack || DEFAULT_GRAPH_NAME);
+    } else {
+      this.graphDir = rootOrDir;
+    }
+    this.metaPath = path.join(this.graphDir, META_FILE);
   }
 
   exists(): boolean {
@@ -46,8 +55,8 @@ export class JsonMetaStore implements MetaStore {
   }
 
   save(meta: GraphMeta): void {
-    if (!fs.existsSync(this.wpfDir)) {
-      fs.mkdirSync(this.wpfDir, { recursive: true });
+    if (!fs.existsSync(this.graphDir)) {
+      fs.mkdirSync(this.graphDir, { recursive: true });
     }
 
     const content = JSON.stringify(meta, null, 2);
@@ -64,7 +73,7 @@ export class JsonMetaStore implements MetaStore {
 }
 
 /** 创建空的元数据对象 */
-export function createEmptyMeta(): GraphMeta {
+export function createEmptyMeta(graphName?: string, scanRoot?: string): GraphMeta {
   return {
     schemaVersion: CURRENT_SCHEMA_VERSION,
     builtAt: 0,
@@ -73,6 +82,8 @@ export function createEmptyMeta(): GraphMeta {
     totalVectors: 0,
     fileHashes: {},
     configVersion: '',
+    graphName,
+    scanRoot,
   };
 }
 

@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-08-09
+goal: 实现 wpw/knowledge/graph/<stack>/ 分文件夹存储；graph
+  build/update/rebuild/stat/query/search/context 支持 --graph 选图谱；单图谱向后兼容迁移

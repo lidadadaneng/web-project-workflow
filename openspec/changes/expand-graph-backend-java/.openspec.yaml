@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-08-09
+goal: 实现 Java 源码解析（class/interface/enum/method/field/annotation）+ 包路径 import 边解析
+  + Spring Boot 业务包模块推断 + 方法级 L3 节点，覆盖 T1+T2 范围

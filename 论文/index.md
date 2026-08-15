@@ -8,9 +8,9 @@
 
 - 研究背景：大语言模型驱动 AI 辅助开发，但存在流程覆盖窄、可控性不足、上下文效率低三类问题。
 - 研究方法：提出三层分离架构与六阶段工作流 wpw，构建能力-结构双层知识图谱（C+L1/L2/L3），设计多源证据融合（noisy-OR）业务-代码映射与面向 LLM 上下文的压缩 Pipeline。
-- 系统实现：CLI 层（TypeScript）+ AI 层（Claude Code Skill，13 个 /wpw 命令）+ 文件系统层；多语言源码解析、本地 Embedding、零数据库存储。
+- 系统实现：CLI 层（TypeScript）+ AI 层（Claude Code Skill，14 个 /wpw 命令）+ 文件系统层；多语言源码解析（TS/JS/Vue/Java）、本地 Embedding、零数据库存储。
 - 实验验证：以美食推荐系统（vue+springboot）为测试项目，对比 4 种 AI 辅助开发方式在成本、准确性、AI 采用率等维度的表现。
-- 结论：在 vue+springboot 技术栈下，wpw 在流程规范性、准确性与综合成本上更优。
+- 结论：以美食推荐系统对比实验数据论证：在 vue+springboot 技术栈下，wpw 在流程规范性、准确性与综合成本上的相对优势及适用边界（实验前为预期，以实测回填）。
 - 关键词（英）：AI-Assisted Development；Workflow Engine；Knowledge Graph；Context Compression；Spec-Driven；noisy-OR；Large Language Model
 
 ---
@@ -20,7 +20,7 @@
 ### 1.1 研究背景与意义
 
 - **AI 辅助开发现状与问题**：LLM 使 AI 辅助编程从代码补全扩展到全流程，但现有工具存在三方面不足--流程覆盖面窄（聚焦编码，忽视需求/设计/计划/测试）、可控性不足（LLM 非确定性与工程确定性矛盾，导致状态混乱/阶段跳跃/路径漂移）、上下文效率低（大型代码库手动读文件耗 Token，长上下文"Lost in the Middle"）。
-- **技术趋势**：规格驱动开发（OpenSpec）复兴、Agent Harness 工程形成"确定性骨架+AI 血肉"共识、Skill 生态（Superpowers）发展、代码知识图谱与 RAG 上下文工程兴起，但四者交叉领域缺乏垂直整合方案。
+- **技术趋势**：规格驱动开发（OpenSpec、GitHub SpecKit）复兴、Agent Harness 工程形成"确定性骨架+AI 血肉"共识、Skill 生态（Superpowers）发展、代码知识图谱与 RAG 上下文工程兴起，但四者交叉领域缺乏垂直整合方案。
 - **研究意义**：
   - 理论意义--提出三层分离架构模式、能力-结构双层图谱模型、noisy-OR 多源证据融合、面向 LLM 的上下文压缩方法体系，丰富 AI4SE 与上下文工程理论。
   - 实践意义--为 Web 开发提供端到端 AI 工作流方案，降低 AI 使用门槛，提升上下文效率与流程规范性，沉淀组织级知识资产。
@@ -30,14 +30,16 @@
 
 #### 1.2.1 AI 辅助开发与 Agent 工作流编排研究现状
 
-- 国外：Claude Code Skill 系统、LangGraph、CrewAI、AutoGPT/OpenHands/Devin/SWE-agent 等 Agent Harness 框架；"确定性骨架+AI 血肉"、可观测性、失败可恢复、人在回路等设计原则。
-- 国内：CodeGeeX、通义灵码、豆包编程助手等聚焦代码补全与单轮问答；Agent 框架多为通用，缺少垂直领域深度。
-- 现有局限：通用编排框架缺乏软件工程领域知识；Skill 间靠人工串联，缺少流程编排与状态共享；多数框架让 AI 自己规划路径，缺乏"流程确定性、AI 仅执行"模式。
+- **规格驱动开发工具（Spec-Kit）**：GitHub 官方出品的规格驱动开发治理工具，哲学是"先定不可违反的全局规则，再写代码"。三层文档体系（CONSTITUTION.md -> SPEC.md -> REVIEW.md）保证全局规则不可突破、团队标准统一；内置 specify/clarify/plan/tasks/implement 多阶段流水线，每环节输入输出明确；深度适配 GitHub 生态（Jira/Linear 同步、可视化 Dashboard），企业级团队协作与流程管控能力最强。局限：配置门槛高（依赖 Python 3.11+ 与 uv 环境，初始化重）；流程刚性强，小需求也须走完完整规范流程，简单任务效率低；对存量"棕地"项目适配弱，更适合从零开始的绿地项目；三层规则文档 + 多阶段产物体量大，规则过多塞入上下文后 AI 易出现上下文失真与关键信息稀释。
+- **规格驱动开发工具（OpenSpec）**：轻量增量式规范管理框架，聚焦功能变更记录，适配现有代码库迭代。单份规范控制在 200-300 行，体量小、AI 不易丢失上下文；增量变更无需重写全量文档；无需 API Key 与额外依赖，propose -> apply -> archive 三步极简流程上手零成本。局限：无内置强制 TDD 与代码审查机制，质量保障依赖人工与团队自律；生态与社区规模较小，企业级协作配套能力弱。
+- **技能驱动执行方法论（Superpowers）**：通过 14 个可组合 Skill 覆盖完整开发生命周期，给 AI 强制工程纪律：先澄清需求再编码、杜绝跳步；子代理隔离上下文，两阶段审查机制自动拦截不合格代码，代码质量稳定性最高；跨平台兼容主流 AI 编程工具，不绑定特定模型或 IDE。局限：刚性技能流程限制 AI 灵活发挥，部分场景过度约束；无全局规则定义能力，缺少项目级规范治理。
+- **国内**：CodeGeeX、通义灵码、豆包编程助手等聚焦代码补全与单轮问答，缺少覆盖需求-设计-计划-测试-编码全流程的工程化工具。
+- **三者对比与共性局限**：三款工具各覆盖一层--Spec-Kit 重顶层规则治理（流程刚性最强、协作最强、上手最难），OpenSpec 重增量变更管理（最轻量、上手最容易、质量保障最弱），Superpowers 重编码执行纪律（质量保障最强、无全局治理）；实践中三者可分层组合（Spec-Kit 定全局规则 + OpenSpec 管功能变更 + Superpowers 驱动编码执行），但层间衔接仍靠人工串联。共性局限：① 无单一工具贯通"规则-变更-执行"全链路；② 上下文均依赖文档或手动读文件，缺少面向 LLM 消费的结构化上下文（知识图谱与压缩）；③ 除 Spec-Kit 重流程外，多数工具阶段状态不可审计，且缺乏"流程确定性、AI 仅执行"的轻量统一实现。
 
 #### 1.2.2 代码知识图谱与上下文工程研究现状
 
 - 国外：GraphCodeBERT、CodeSearchNet、GitHub Code Search；业务-代码追踪（Traceability Link Recovery）；RAG 与文档压缩器。
-- 国内：复旦 CodeKG、中科院 CP-Graph、清华代码表示学习；需求工程与 AI 结合（北大 RE-Agent 等）。
+- 国内：代码知识图谱与代码表示学习研究（基于 AST 的代码图谱构建、代码搜索与克隆检测）、需求工程与 AI 结合研究等方向均有开展，但同样以学术评测为主、工程化落地少（具体文献以参考文献列表为准）。
 - 现有局限：代码图谱侧重检索/查询，缺少面向 LLM 上下文消费的端到端优化；业务-代码追踪以学术评测为主，缺工程化多源融合；上下文压缩面向文本，针对代码图谱的结构感知压缩较少；图谱是孤立工具而非工作流基础设施。
 
 ### 1.3 文章结构
@@ -116,7 +118,7 @@
 
 - **能力规范采集**：以 OpenSpec 格式（Purpose/Requirements/Scenarios 三段式）从 `wpw/specs/` 采集业务能力规范，作为稳态知识来源。
 - **需求文档采集**：六阶段工作流产出的 BRD/PRD/Design/Plan/Test 等文档，作为临时需求层知识。
-- **源码采集**：项目源码文件（TS/TSX/JS/JSX/Vue/Pinia 等）作为结构层知识来源。
+- **源码采集**：项目源码文件（TS/TSX/JS/JSX/Vue/Pinia/Java 等）作为结构层知识来源。
 - **Git 历史采集**：commit message 与文件变更记录，作为 git-history 证据来源。
 
 #### 3.1.2 知识库的构建
@@ -130,7 +132,7 @@
 #### 3.2.1 数据来源和处理
 
 - 数据来源：能力规范（C 层）+ 源码目录结构（L1 模块）+ 源码文件（L2）+ 代码元素（L3）。
-- 多语言源码解析：基于 web-tree-sitter，采用"快速预检 + 完整解析"两级策略，支持 TS/TSX/JS/JSX/Vue SFC，扩展 Pinia（Options/Setup API）/Vuex/Redux/小程序/uni-app。
+- 多语言源码解析：基于 web-tree-sitter，采用"快速预检 + 完整解析"两级策略，支持 TS/TSX/JS/JSX/Vue SFC 与 Java（Spring Boot：class/interface/enum/record/方法/常量节点、Spring 注解与 REST endpoint 元信息、包路径 import 边、业务包模块推断），扩展 Pinia（Options/Setup API）/Vuex/Redux/小程序/uni-app。
 - 函数节点上下文属性：所有 L3 函数节点携带 filePath 与 parentName，用于重名函数去歧义。
 
 #### 3.2.2 数据标注
@@ -149,7 +151,7 @@
 - **实体抽取**：C 层能力节点解析器遍历 specs 目录；结构层节点由 Tree-sitter 解析器抽取（函数/类/接口/组件/store/action/getter/state）。
 - **关系抽取**：contain（包含链 L1⊃L2⊃L3）、import（跨文件模块导入）、calls（组件调用 Pinia action）、business_map（C 层到结构层跨层映射）。
 - **noisy-OR 聚合**：同一目标多源命中按 $W=1-\prod_i(1-w_i)$ 聚合，上限 0.95；多源权重严格高于任一单源。
-- **图谱存储**：纯 JSONL + 二进制向量索引（32 字节头 + Float32Array），节点 ID 取内容哈希（SHA-256 前 12 hex）保证幂等重建；Schema 版本 3.0.0，旧版本自动降级全量重建。
+- **图谱存储**：纯 JSONL + 二进制向量索引（32 字节头 + Float32Array），节点 ID 取内容哈希（SHA-256 前 12 hex）保证幂等重建；Schema 版本 3.1.0（3.1.0 起纳入 Java/Spring Boot 支持），主版本号不兼容时自动降级全量重建，次版本升级增量兼容。
 - **增量更新**：检测能力层面（新增/修改/删除）与源码文件变更，同步 C 层节点及关联边；语义映射回填阶段在向量索引构建后回填 semantic 证据。
 
 ### 3.3 生成式模型
@@ -180,11 +182,11 @@
 
 #### 4.1.2 功能需求分析
 
-- **工作流引擎**：六阶段流转（BRD->PRD->Explore->Design->Plan->Test->Apply）、强/弱依赖检查、拍板门禁、状态管理。
+- **工作流引擎**：六阶段流转（BRD->PRD->Design->Plan->Test->Apply 六个核心阶段，另有可选的 Explore 探索阶段不计入六阶段，可跳过）、强/弱依赖检查、拍板门禁、状态管理。
 - **知识图谱子系统**：graph build/update/rebuild/stat/query/search/context 全套命令。
 - **任务追踪**：Plan-as-tracker，Markdown checkbox 任务标记、进度聚合、断点续作。
 - **归档与能力沉淀**：需求归档时自动合并到能力规范。
-- **AI 层 Skill**：13 个 /wpw:xxx 命令驱动各阶段及辅助操作。
+- **AI 层 Skill**：14 个 /wpw:xxx 命令驱动各阶段及辅助操作。
 
 #### 4.1.3 非功能需求分析
 
@@ -221,7 +223,7 @@
 #### 4.3.3 AI 层实现
 
 - Skill 释放：wpw init 释放主 Skill 及联动 Skill 到 .claude/skills/。
-- 13 个 /wpw 命令：brd/prd/explore/design/plan/test/apply 等阶段命令 + 辅助命令，统一遵循三段式契约。
+- 14 个 /wpw 命令：brd/prd/explore/design/plan/test/apply 等阶段命令 + 辅助命令（init/map/archive/exp/sync/cr/skills），统一遵循三段式契约。
 - 阶段 hook：如调用 humanizer-zh 去机器腔。
 
 #### 4.3.4 系统展示
@@ -270,6 +272,7 @@
 - **方案 B：OpenSpec 驱动实现**--采用 OpenSpec 规格先行，先写能力 spec 再编码，但无工作流编排与状态管理。
 - **方案 C：Superpowers 辅助实现**--使用 superpowers 通用 Skill 集（brainstorming/code-reviewer 等）辅助，单点能力强但 Skill 间靠人工串联。
 - **方案 D：wpw 工作流实现**--采用 wpw 六阶段工作流 + 知识图谱上下文 + 三层分离架构完整流程。
+- **Spec-Kit 排除说明**：① 配置门槛高（Python 3.11+/uv 环境依赖），初始化成本与实验目标无关；② 流程刚性强，本实验以功能增量开发为主，Spec-Kit 小需求也须走完整规范流程，效率劣势来自流程本身而非 AI 辅助能力；③ 三层规则文档与多阶段产物体量大，规则过多导致 AI 上下文失真、关键信息被稀释，与本实验核心度量维度（上下文效率、Token 消耗）直接冲突，其结果不可比。故不作为实验方案，仅在 1.2.1 现状分析中参与横向讨论。
 - **控制变量**：同一需求规格、同一开发者水平、同一大模型、同一技术栈（vue+springboot）、同等时间预算。
 
 #### 5.1.3 评估指标与度量方法
@@ -299,58 +302,66 @@
 
 #### 5.2.4 wpw 工作流实现
 
-- 完整走 BRD->PRD->Explore->Design->Plan->Test->Apply 六阶段；图谱构建与上下文生成嵌入 apply 等环节；记录指标。
+- 完整走 BRD->PRD->（Explore 可选）->Design->Plan->Test->Apply 六阶段；图谱构建与上下文生成嵌入 apply 等环节；记录指标。
 - 观察优势：阶段完整、状态可审计、图谱上下文高密度、能力沉淀。
 
 ### 5.3 实验结果与分析
 
+> **注**：本节为实验前的预期分析框架（假设），各项结论以实验实测数据回填与修正为准；若实测与预期不符，如实报告并归因。
+
 #### 5.3.1 开发成本对比
 
-- Token 消耗：wpw 因图谱上下文压缩在 apply 阶段显著低于其余方案（预期降幅对比）；vibe coding 上下文逐轮膨胀最严重。
-- API 费用与开发工时：wpw 返工少、工时短；OpenSpec/Superpowers 居中；vibe coding 返工最多。
-- 成本综合排名与归因分析。
+- Token 消耗（预期）：wpw 因图谱上下文压缩在 apply 阶段低于其余方案（降幅以实测为准）；vibe coding 上下文逐轮膨胀最严重。
+- API 费用与开发工时（预期）：wpw 返工少、工时短；OpenSpec/Superpowers 居中；vibe coding 返工最多。
+- 成本综合排名与归因分析（数据回填）。
 
 #### 5.3.2 准确性与质量对比
 
-- 缺陷率：wpw 最低（流程约束 + 测试方案前置）；vibe coding 最高。
-- 功能完整度与需求符合度：wpw 因六阶段覆盖与依赖检查最完整；OpenSpec 次之。
-- 代码 review 通过率对比与归因。
+- 缺陷率（预期）：wpw 最低（流程约束 + 测试方案前置）；vibe coding 最高。
+- 功能完整度与需求符合度（预期）：wpw 因六阶段覆盖与依赖检查最完整；OpenSpec 次之。
+- 代码 review 通过率对比与归因（数据回填）。
 
 #### 5.3.3 AI 采用率对比
 
-- AI 生成代码占比：四方案均高，但 wpw 的 AI 产出经流程约束质量更高、人工修改率最低。
-- AI 参与环节比例：wpw 覆盖需求-设计-计划-测试-编码全流程（最高）；vibe coding 主要在编码环节。
-- 人工修改率：wpw 最低，vibe coding 最高。
-- 讨论：AI 采用率"高"不等于"好"，需结合准确性与可控性--wpw 在高采用率下保持高准确性。
+- AI 生成代码占比：四方案均高，但 wpw 的 AI 产出经流程约束质量更高、人工修改率预期最低。
+- AI 参与环节比例（预期）：wpw 覆盖需求-设计-计划-测试-编码全流程（最高）；vibe coding 主要在编码环节。
+- 人工修改率（预期）：wpw 最低，vibe coding 最高。
+- 讨论：AI 采用率"高"不等于"好"，需结合准确性与可控性--预期 wpw 在高采用率下保持高准确性，以实测验证。
 
 #### 5.3.4 流程规范性与可追溯性对比
 
-- 阶段完整度/状态可审计性：wpw 最优（三段式契约 + .wpw.yaml 留痕）；OpenSpec 有规格但无状态流转；Superpowers 无统一状态；vibe coding 无流程。
-- 变更可追溯性：wpw（business_map 边溯源 + 任务 git 可 diff）最优。
-- 文档完整度：wpw（六阶段文档 + 能力沉淀）最优。
+- 阶段完整度/状态可审计性（预期）：wpw 最优（三段式契约 + .wpw.yaml 留痕）；OpenSpec 有规格但无状态流转；Superpowers 无统一状态；vibe coding 无流程。
+- 变更可追溯性（预期）：wpw（business_map 边溯源 + 任务 git 可 diff）最优。
+- 文档完整度（预期）：wpw（六阶段文档 + 能力沉淀）最优。
 
 ### 5.4 结果讨论
 
 #### 5.4.1 vue+springboot 技术栈下的适用性分析
 
-- vue 前端：wpw 的 Vue SFC/Pinia 解析器与前端模板适配，图谱能准确建模组件/store 调用关系。
-- springboot 后端：讨论 wpw 当前解析器对 Java/后端的支持现状（聚焦前端为主），结合本次实验中后端模块的图谱补充策略（如以 specs 能力层 + 命名/语义/Git 三源融合兜底）。
-- 综合论证：在 vue+springboot 技术栈下，wpw 在流程规范性、准确性、综合成本上优于其余三种方式。
+- vue 前端：wpw 的 Vue SFC/Pinia 解析器与前端模板适配，图谱可建模组件/store 调用关系（覆盖范围与边界见 4.4 功能测试）。
+- springboot 后端：wpw 已实现 Java/Spring Boot 解析器（基于 tree-sitter-java），支持 class/interface/enum/record/方法/常量节点提取、Spring 注解与 REST endpoint 元信息、包路径 import 边解析与业务包模块推断（public 方法与 `@*Mapping` 方法选择性生成 L3 节点以控制规模），后端源码与前端口径一致地进入图谱，business_map 四源融合在前后端同等生效；多技术栈通过多图谱机制隔离（`--name`/`--root` 按子目录分别构建命名图谱），检索按图谱名定向，后端图谱完整性从"三源兜底"升级为"Java 解析器完整建图"。
+- 综合论证：结合实验数据论证在 vue+springboot 技术栈下 wpw 在流程规范性、准确性、综合成本上的相对优势及其成立条件（如实测与预期不符则如实归因讨论）。
 
 #### 5.4.2 wpw 的优势与适用场景
 
+- **对现有工具局限的应对**（与 1.2.1 / 5.1.2 排除说明对应）：
+  - 针对 Spec-Kit"配置门槛高"：wpw 零配置开箱即用--`wpw init` 一步生成脚手架，项目类型按文件特征自动嗅探（pom.xml/package.json/go.mod 等），模块按目录结构自动推断（业务包/技术分包识别），纯 Node.js 单运行时、图谱纯本地构建（JSONL + 二进制向量 + 本地 embedding 模型），无 Python 环境依赖，CLI 层与图谱构建无需 API Key（AI 层依赖所选 AI 编程工具自身的订阅/密钥）。
+  - 针对"流程刚性强、小需求也要走全流程"：wpw 命令级解耦--三层分离下 explore/plan/apply/archive 等阶段命令各自独立可调用、可按需组合，六阶段是完整能力边界而非强制路径；状态契约（.wpw.yaml）留痕支持断点续作与中途进入；图谱增量更新仅重解析变更文件，无需全量重建，功能增量开发的边际成本极低。
+  - 针对"规则过多导致上下文失真"：需区分"规避"与"解决"。wpw 并未从技术上解决规则膨胀导致的失真问题，而是通过轻量规则设计使其在设计层面不易发生--流程规则按阶段拆分为命令模板，AI 每阶段仅接收当前阶段指令，单次规则负载远小于全量 constitution 式文档。wpw 从技术上解决的是同构的"代码上下文膨胀"问题：代码知识沉淀为能力-结构双层图谱（C+L1/L2/L3，noisy-OR 多源融合建立业务-代码映射），消费时经语义检索锚点 -> 加权双向 BFS 子图裁剪（节点上限/Token 预算约束）-> 距离感知骨架抽取 -> 三档压缩序列化，按需生成高密度代码上下文，替代人工读全库。规则侧靠轻量设计规避、代码侧靠图谱技术解决，二者合力保障上下文效率；但规则治理本身（全局规范约束、规则规模控制）仍是开放问题（见 5.4.3）。
+- **本质分野**：Spec-Kit 以规则全量注入换取治理强度，牺牲上下文效率；wpw 以规则分阶段加载 + 代码知识图谱化检索降低单次上下文负载，取舍相反--治理强度暂弱于 constitution 式工具（见局限性分析）。
 - 优势：流程可控、上下文高效、知识可沉淀、行为可审计。
 - 适用场景：中小型 Web 项目全流程开发、团队级 AI 协同、需长期演进与知识积累的项目。
 
 #### 5.4.3 局限性分析
 
-- 后端语言（Java/Go/Python）解析支持有限，springboot 后端图谱完整性受影响。
+- 后端语言覆盖仍不完整：Java/Spring Boot 解析器已实现，但落地验证规模有限，且首版不做 `@Autowired` 依赖注入边、JPA 实体关联边与 Kotlin 支持；Go/Python 等后端语言尚未覆盖。
 - 冷启动场景能力规范缺失时退化为纯结构检索。
+- 缺少全局规则治理能力（无 constitution 级规范约束）：规则随项目与团队规模膨胀时，同样面临规则文档膨胀与上下文失真风险；wpw 通过分阶段轻量加载缓解但未根治，与 Superpowers 存在同类局限。
 - 实验规模与评估主观性（样本量、人工评审偏差）。
 
 ### 5.5 本章小结
 
-- 总结对比实验设计、四方案实现过程与多维度结果，论证在 vue+springboot 技术栈下 wpw 的优越性，并客观讨论其局限。
+- 总结对比实验设计、四方案实现过程与多维度结果，基于实测数据评估在 vue+springboot 技术栈下各方式的优劣与 wpw 的适用边界，并客观讨论其局限。
 
 ---
 
@@ -360,11 +371,11 @@
 
 - 本文工作：提出三层分离架构与六阶段工作流 wpw，构建能力-结构双层知识图谱与多源证据融合映射，研究面向 LLM 上下文的压缩 Pipeline，并以美食推荐系统对比实验验证有效性。
 - 主要成果：三层分离架构与三段式契约、C+L1/L2/L3 双层图谱、noisy-OR 四源融合、置信度衰减锚点选择、加权双向 BFS 裁剪、距离感知骨架与 Token 预算迭代控制、Plan-as-tracker。
-- 实验结论：在 vue+springboot 技术栈下，wpw 在成本、准确性、AI 采用率与流程规范性上优于 vibe coding、OpenSpec、Superpowers 三种方式。
+- 实验结论（以第 5 章实测数据回填）：基于美食推荐系统对比实验的数据分析，得出四种方式在成本、准确性、AI 采用率与流程规范性上的优劣结论及适用边界（预期 wpw 占优，以实测论证）。
 
 ### 6.2 展望
 
-- 后端语言（Java/Go/Python）解析扩展，提升 springboot 等后端图谱完整性。
+- 后端解析深化：Java 依赖注入边（@Autowired）与 JPA 实体关联边、Kotlin 支持、Go/Python 等语言扩展。
 - 引入 AI 校准证据源（ai-refine）与证据源独立性建模（条件 noisy-OR）。
 - 冷启动能力沉淀引导与精确 Token 估算。
 - 更大规模、更长周期的对照实验与自动化评估。
@@ -374,21 +385,20 @@
 
 ## 参考文献
 
-- AI 辅助开发与 Agent 工作流：Claude Code Skill、LangGraph、CrewAI、SWE-agent、Devin 等。
-- 规格驱动与 Skill 生态：OpenSpec、Superpowers、MCP。
+- 规格驱动开发与 Skill 生态：OpenSpec、GitHub SpecKit、Superpowers、Claude Code Skill、MCP。
 - 知识图谱与代码图谱：知识图谱基础、GraphCodeBERT、CodeSearchNet、复旦 CodeKG。
 - 知识表示与嵌入：Word2Vec、TransE、BERT、BGE。
 - 大语言模型与 Transformer：Attention Is All You Need、GPT、LLaMA、ChatGLM。
 - RAG 与上下文工程：RAG 原论文、Lost in the Middle、文档压缩器。
 - 多源证据融合：noisy-OR 模型（Pearl, 1988）、Traceability Link Recovery 综述。
-- 工程背景：CSCO/NCCN无关，此处为 Web 开发与软件工程方法论文献、AI4SE 白皮书。
+- 工程背景：Web 开发与软件工程方法论文献、AI4SE 综述与白皮书。
 
 ## 附录 A 后端主要代码
 
 - CLI 层核心代码：命令解析、状态管理、依赖检查、模板系统。
 - 知识图谱构建代码：多语言解析器、四层模型构建、多源证据融合、noisy-OR 聚合。
 - 上下文生成 Pipeline 代码：锚点选择、双向 BFS 裁剪、骨架分级、序列化、Token 预算迭代。
-- AI 层 Skill 代码：三段式契约、13 个 /wpw 命令、Plan-as-tracker。
+- AI 层 Skill 代码：三段式契约、14 个 /wpw 命令、Plan-as-tracker。
 - 对比实验代码与数据：美食推荐系统（vue+springboot）四方案实现记录与指标统计脚本。
 
 ## 致谢

@@ -1,70 +1,27 @@
 # 面向 Web 项目的 AI 辅助开发工作流构建及知识图谱驱动上下文优化方法研究
 
-> 本文件为论文大纲（填充版）。**目录格式参考学位论文标准结构（绪论-相关理论-构建-系统实现-实验-总结），内容为 wpw 项目**。验证环节以"美食推荐系统（vue + springboot）"为测试项目，对比 AI 对话式 vibe coding、OpenSpec、Superpowers、wpw 四种实现方式，从成本、准确性、AI 辅助程度、流程规范性等维度比较各方式表现，辅以消融实验分离工作流、知识图谱与上下文压缩各自的贡献，评估 wpw 的相对优势与适用边界。
+> **本文件为论文写作素材库存档**。第 1、3、5 章已成稿（以正文文件 `1.绪论.md`、`3.知识库与知识图谱构建.md`、`5.对比实验与评估.md` 为准，本文件对应章节仅保留状态与参数摘要）；第 2、4、6 章尚未成稿，本文件保留其详细写作素材；文末参考文献与附录为全文共享信息。
+>
+> 全文主线：面向 AI 编程智能体的**上下文工程方法**（流程约束 - 知识供给 - 预算控制三环节），wpw 为实现载体；验证环节为受控工程实验（四方案对比 + 三组消融 + 组件级基线）。
 
 ---
 
 ## ABSTRACT
 
 - 研究背景：大语言模型驱动 AI 辅助开发已拓展至多个软件工程活动，但在工程化使用中面临流程覆盖、过程可控性与上下文效率等方面的挑战。
-- 研究内容（三个创新点）：① 面向 AI Agent 的确定性开发工作流（三层分离架构、三段式编排契约与六阶段流转，解决过程可控性）；② 能力-代码双层知识图谱（C+L1/L2/L3 模型与业务-代码多源证据映射，解决业务知识与代码结构脱节）；③ 图谱驱动的任务上下文压缩方法（置信度衰减锚点选择、加权双向 BFS 子图裁剪与 Token 预算迭代控制，解决上下文效率）。
+- 研究内容（三个创新点）：① 面向 AI 编程智能体的流程约束架构（三层分离架构、三段式编排契约与阶段制品/CLI 状态管理，解决过程可控性）；② 面向智能体上下文生成的能力-代码双层知识组织方法（C+L1/L2/L3 模型与业务-代码多源证据映射，解决业务知识与代码结构脱节）；③ 图谱驱动的任务上下文压缩方法（置信度衰减锚点选择、加权双向 BFS 子图裁剪与 Token 预算迭代控制，解决上下文效率）。
 - 系统实现：CLI 层（TypeScript）+ AI 层（Claude Code Skill，14 个 /wpw 命令）+ 文件系统层；多语言源码解析（TS/JS/Vue/Java）、本地 Embedding、零数据库存储。
-- 实验验证：以美食推荐系统（vue+springboot）为测试项目，对比 4 种 AI 辅助开发方式在成本、准确性、AI 辅助程度、流程规范性等维度的表现，并以消融实验分离工作流、知识图谱与上下文压缩各自的贡献。
-- 结论：以美食推荐系统对比实验数据论证：在 vue+springboot 技术栈下，wpw 在流程规范性、准确性与综合成本上的相对优势及适用边界（实验前为预期，以实测回填）。
+- 实验验证：以美食推荐业务为载体的典型 Web 系统（vue+springboot），受控对比 4 种 AI 辅助开发方式，并以三组消融实验（知识组织/上下文生成/流程约束）与组件级基线分离各机制贡献。
+- 结论：以实测数据回填论证方法在给定资源约束下对上下文有效性、开发质量与过程可控性的影响及适用边界（实验前为预期，以实测为准）。
 - 关键词（英）：AI-Assisted Software Development；Agent Workflow；Code Knowledge Graph；Context Compression；Spec-Driven Development；Large Language Model
 
 ---
 
-## 1 绪论
+## 1 绪论（已成稿 -> `1.绪论.md`，以下为状态摘要）
 
-### 1.1 研究背景与意义
-
-- **AI 辅助开发现状**：LLM 驱动的软件工程应用已由早期的代码生成、补全与解释等局部任务，逐步拓展至需求分析、软件设计、代码开发、测试与维护等多个软件工程活动。2026 年的大规模实证研究表明 coding agent 已进入真实软件工程：对 129,134 个 GitHub 项目的分析估计其采用率达 15.85%–22.60%（Robbes 等，2026）；基于 45.6 万+ PR 的 AIDev 数据集研究显示 agent 已实际参与开发、评审与代码演进，但其 PR 接受率与人类仍有差距（Li 等，2025）。截至 2026 年 8 月，主流工程工具均已覆盖"需求/规格 -> 计划 -> 实现 -> 验证"链路（详见 1.2.1）。但现有工具在活动覆盖范围、流程约束方式与过程治理能力方面存在明显差异：部分工具仍主要聚焦代码生成与修改，面向完整开发生命周期的统一流程编排能力仍处于快速演进阶段。
-- **过程可控性问题**：LLM 输出具有概率性与生成式特征，纯对话式开发在需求澄清、任务分解、过程状态维护与结果验证等方面存在较强的过程依赖性；Agent 的自治度与产出可信度并非同一维度（Li 等，2025），如何通过显式流程约束提高开发过程的可控性与可审计性，是值得研究的问题。
-- **上下文效率问题**：随着软件仓库规模扩大，直接将大量源码、文档与开发历史注入模型上下文会带来上下文长度、检索效率与关键信息定位等困难；已有研究表明，长上下文中的信息位置可能影响模型对相关信息的利用效果（Lost in the Middle，方法源头文献），检索外部知识并按需使用可缓解参数化知识的局限（RAG，方法源头文献）。2025-2026 年的 Agent 研究进一步将仓库级上下文（repository-level context）与可执行反馈列为软件工程 Agent 的关键资源（Zhou 等，2026），"上下文工程"（Context Engineering）成为 Agent 工程研究热点。
-- **技术趋势**：规格驱动开发（Spec Kit、OpenSpec）复兴；面向 Agent 的工程化实践逐渐强调通过工作流、工具接口、状态管理与验证机制约束模型行为，形成"模型能力 + 工程控制层"协同的设计思路；技能化开源框架（Superpowers 等）涌现；代码知识图谱与 RAG 上下文工程兴起。将上述方向统一整合的研究仍相对有限。
-- **研究意义**：
-  - 理论意义--为面向 AI 编程的软件工程工作流设计以及代码知识驱动的上下文生成提供一种方法性探索（三层分离架构、能力-结构双层图谱、noisy-OR 多源证据融合、面向 LLM 的上下文压缩方法），为相关研究提供工程实践案例与实验依据。
-  - 实践意义--为 Web 开发提供端到端 AI 工作流方案，降低 AI 使用门槛，提升上下文效率与流程规范性，支持项目知识的持续积累与沉淀。
-- **本课题来源**：实际工程项目中 AI 辅助开发的痛点，提出构建 wpw（Web Project Workflow）系统。
-
-### 1.2 国内外研究现状
-
-> 工具版本与生态数据检索截至 2026 年 8 月；三者为高速迭代项目，本文将其能力描述绑定研究/实验采用版本（记录于实验环境），不以静态"产品属性"表述。
-
-#### 1.2.1 AI 辅助开发与 Agent 工作流编排研究现状
-
-- **LLM 辅助软件开发与 Coding Agent 研究**：Hou 等的系统综述（ACM TOSEM，395 篇文献）表明 LLM 已覆盖六类软件工程活动、85 项具体任务，为该领域的综述性基础。2025-2026 年研究进一步表明 coding agent 已进入真实工程实践：对 129,134 个 GitHub 项目的分析估计 coding agent 采用率达 15.85%–22.60%（Robbes 等，2026）；基于 AIDev 数据集（45.6 万+ PR、6.1 万仓库）的研究显示 agent 已参与开发、评审与代码演进，但其 PR 接受率与人类存在差距，速度与自治度不等于可信度（Li 等，2025）；对真实项目 agentic refactoring 的实证研究亦在展开（Horikawa 等，2025）；Self-Evolving Coding Agents 综述将 agent 演化对象归纳为框架/记忆/技能/工具/模型/协作结构，并指出仓库级上下文与可执行反馈是软件工程 Agent 的关键资源（Zhou 等，2026）。总体上，研究重心已从"模型能否写代码"转向"如何让 Agent 在真实工程环境中可靠、可控、低成本地工作"。
-- **规格驱动开发（SDD）研究与工具（GitHub Spec Kit）**：SDD 本身已进入学术视野--Piskala（2026）将其概括为从 code-as-source 向 specification-as-primary-artifact 的范式转移，并区分 spec-first / spec-anchored / spec-as-source 三种严格等级，且直接分析了 GitHub Spec Kit 等现代工具。工程层面，Spec Kit（GitHub 开源，研究时点仓库 0.14.x、PyPI specify-cli 0.16.4）已发展为"项目级规范治理 + 可编排工作流 + 扩展生态"的 Agentic SDD 平台：除 Constitution/Specify/Clarify/Plan/Checklist/Tasks/Analyze/Implement/Converge 等 SDD 命令外，新增通用 Workflow Engine（支持条件、循环、fan-out/fan-in、暂停恢复），形成 Core/Extension/Preset/Workflow/Bundle 分层生态（官方 2026-07 数据：121K+ stars、138 extensions、25 presets，属生态规模指标而非学术成熟度），开发阶段明确支持绿地（0-to-1）与存量迭代（Brownfield）两类场景；社区扩展中已出现面向 prompt 压缩的 Command Density。其能力体系完整，但流程制品与配置体系带来相应学习与过程成本。
-- **变更级规格管理工具（OpenSpec）**：自 1.0（OPSX Release）起从固定 phase 工作流转向 action-based workflow（"Actions, not phases"），以 artifact graph（DAG）建模制品依赖与完成状态（"dependencies are enablers, not gates"--依赖是使能条件而非强制关卡），提供 explore/propose/new/continue/ff/apply/verify/sync/archive/bulk-archive/onboard 等动作；强调 brownfield 优先（specs/ 记录系统当前状态、changes/ 管理提议变更）；已适配 30+ AI 助手（Junie/Lingma/Copilot/OpenCode 等，2026 年集成速度较快），并以 Stores（beta）向团队级/跨仓库场景演进。其核心对象是变更级规格制品的生命周期管理，而非固定的项目级开发工作流。
-- **技能驱动的 Agent 执行框架（Superpowers）**：定位为"面向 coding agent 的完整软件开发方法论"（研究时点 v6.3.0，2026-08-12），以可组合 Skill + 强制工作流（brainstorming -> git worktree -> writing-plans -> subagent-driven development -> TDD -> code review -> 收尾，官方强调"mandatory workflows, not suggestions"）组织执行：隔离上下文的实现子代理 + 任务评审/代码质量评审/整分支评审多层把关；v6.2 起工作区按 plan 隔离（.superpowers/sdd/<plan>/）避免跨计划上下文污染，并以 25/25 GREEN 基线评测约束行为；v6.3 引入任务分级（spike/bounded/architectural，小任务精简仪式）、子代理冲突仲裁（非破坏性冲突记录裁决继续执行）、同形小任务批量派发与 Plan->Spec 指针；跨 Claude Code/Codex/Cursor/Gemini CLI/Devin 等十余种 harness 运行。其治理粒度位于技能与执行工作流层，而非项目级规范宪法体系。
-- **国内**：CodeGeeX、通义灵码、豆包编程助手等聚焦代码补全与单轮问答；覆盖需求-设计-计划-测试-编码全流程的工程化工具实践正在起步。
-- **三者关系与研究空白**：三者均具备规格、计划、任务、执行、验证与 Agent 工作流机制，能力边界重叠度较高（截至检索时点，尚未见以三者为对象的同行评审系统比较研究，工具事实以官方仓库/文档为准），主要差异在设计重心与治理粒度：Spec Kit 重项目级规范治理与 SDD 编排，OpenSpec 重变更级规格与制品/动作管理，Superpowers 重 Agent 执行纪律与 Skill/子代理编排。现有工具与方法通常以文档/制品或 Agent 工作流为主要组织单元，已在"意图-规格-计划-执行"层面快速成熟，部分工具开始在 prompt/工作流/扩展层进行上下文优化（如 Command Density、子代理上下文隔离）；但项目级长期知识（业务能力规范沉淀）与代码结构知识如何进入 Agent 的任务上下文，以及如何在 Token 预算下进行结构感知、可解释的上下文选择，仍缺少与软件开发工作流深度融合的统一方法--这是本文 wpw 的切入点（比较维度见 5.4.2）。
-
-#### 1.2.2 代码知识图谱与上下文工程研究现状
-
-- **演进脉络**：
-  - 代码表示学习：GraphCodeBERT 显式利用代码的数据流结构辅助代码表示预训练，表明代码表示不应仅依赖 token 序列；
-  - 语义代码检索：CodeSearchNet 将自然语言-代码检索作为研究问题并发布约 600 万函数的数据集，推动语义代码检索发展；
-  - 需求-代码追踪（Traceability Link Recovery）：实证研究与系统综述表明该方向对软件开发与维护具有重要价值，但工具覆盖与工业场景评估仍不足【待补：2025-2026 年最新实证/综述】；
-  - RAG 与上下文工程：检索增强生成通过引入外部非参数化知识缓解参数化知识在知识访问与更新上的局限；Lost in the Middle 表明长上下文中的信息位置影响模型利用效果，推动文档压缩与上下文选择研究；2025-2026 年面向 Agent 的上下文工程研究快速发展，仓库级上下文被视为软件工程 Agent 的关键资源（Zhou 等，2026）。
-- **与 coding agent 研究的关联**：AIDev 数据集研究（Li 等，2025）与 agentic refactoring 实证（Horikawa 等，2025）均表明 agent 参与真实开发时对任务相关上下文的获取方式高度依赖人工检索或整库注入，进一步印证上下文供给是 Agent 工程化的瓶颈之一。
-- **国内**：代码知识图谱与代码表示学习（基于 AST 的代码图谱构建、代码搜索与克隆检测）、需求工程与 AI 结合等方向均有开展（具体文献以参考文献列表为准）。
-- **现有局限**：现有研究较多聚焦于代码表示、代码检索、克隆检测、需求追踪等特定任务；在面向 AI 编程 Agent 的工程化工作流中，将代码结构知识、业务语义与上下文压缩统一起来的研究仍相对有限；代码图谱多为孤立的检索/查询工具而非工作流基础设施，针对代码图谱的结构感知压缩与 Token 预算控制研究亦相对较少。
-
-### 1.3 本文主要工作与创新点
-
-本文围绕"如何让 AI 编程 Agent 在软件工程中获得项目级知识、受控执行与高效上下文"这一核心问题展开研究，主要工作凝练为三个创新点：
-
-- **创新点 1：面向 AI Agent 的确定性开发工作流**（第 4 章）。提出三层分离架构（AI 层/CLI 层/文件系统层）与三段式编排契约，以六阶段工作流（BRD->PRD->Design->Plan->Test->Apply，Explore 可选）实现流程确定性约束与 AI 生成能力的协同；状态变更必经 CLI 显式留痕，支持过程可审计与断点续作。解决过程可控性问题。
-- **创新点 2：能力-代码双层知识图谱**（第 3 章）。提出 C（业务能力）+ L1/L2/L3（模块/文件/元素）双层图谱模型，以多源证据融合（文档提取、命名匹配、语义匹配、Git 历史，noisy-OR 聚合）自动建立业务-代码关联，降低人工建立业务-代码映射的成本；能力规范随需求归档持续沉淀。解决业务知识与代码结构脱节问题。
-- **创新点 3：图谱驱动的任务上下文压缩方法**（第 3.3 节）。提出置信度衰减加权锚点选择、加权双向 BFS 子图裁剪、距离感知骨架抽取与三档压缩序列化，在 Token 预算约束下按需生成任务相关的高密度代码上下文。解决上下文效率问题。
-
-其余组件（noisy-OR 聚合公式细节、BFS 实现细节、JSONL/向量存储方案、多语言解析器、Plan-as-tracker 等）作为支撑上述创新点的实现技术，在相应章节作为实现细节描述，不单独作为创新点宣称。
-
-### 1.4 文章结构
-
-- 第 1 章绪论；第 2 章相关理论（知识图谱、知识表示、大语言模型）；第 3 章 wpw 知识库与知识图谱构建；第 4 章 wpw 系统设计与实现；第 5 章基于美食推荐系统的对比实验与评估；第 6 章总结与展望。
+- 成稿结构：1.1.1 研究背景（LLM4SE 拓展 -> coding agent 2025-2026 实证 -> 过程可控性/上下文效率两类问题 -> Context Engineering 定义 -> 技术趋势与课题来源）；1.1.2 研究意义；1.2.1（Coding Agent 研究 + Spec Kit/OpenSpec/Superpowers 2026-08 版本事实 + 三者关系与研究空白）；1.2.2（演进脉络：表示学习->代码结构建模(CPP)->语义检索->需求-代码追踪->RAG/上下文工程）；1.3 三创新点 + Agent Context Engineering 理论桥梁；1.4 文章结构。
+- 引用共 18 篇（编号 [1]-[18]，清单见文末参考文献"第 1 章引用编号对照"），均已核实。
+- 写作约定（全文沿用）：工具版本绑定研究采用版本（附录实验环境表，含 commit）；不用绝对化断言；不用产品评价词（完整/最强/替代）；预期结论一律标注"以实测为准"。
 
 ---
 
@@ -130,64 +87,15 @@
 
 ---
 
-## 3 wpw 知识库与知识图谱的构建
+## 3 wpw 知识库与知识图谱的构建（已成稿 -> `3.知识库与知识图谱构建.md`，以下为关键参数摘要，供第 4 章写作引用）
 
-### 3.1 知识库的构建
-
-#### 3.1.1 数据采集
-
-- **能力规范采集**：以 OpenSpec 格式（Purpose/Requirements/Scenarios 三段式）从 `wpw/specs/` 采集业务能力规范，作为稳态知识来源。
-- **需求文档采集**：六阶段工作流产出的 BRD/PRD/Design/Plan/Test 等文档，作为临时需求层知识。
-- **源码采集**：项目源码文件（TS/TSX/JS/JSX/Vue/Pinia/Java 等）作为结构层知识来源。
-- **Git 历史采集**：commit message 与文件变更记录，作为 git-history 证据来源。
-
-#### 3.1.2 知识库的构建
-
-- **能力规范结构化**：从 spec.md 提取 description（Purpose 章节）与 features 数组（Requirements 章节，含 id/name/priority/description）。
-- **稳态能力沉淀机制**：需求归档时自动分析归属能力领域，将需求增量合并到对应能力规范，使业务知识随项目推进持续积累，形成组织级知识库。
-- **存储方案**：能力规范以 Markdown + 结构化字段存于 `wpw/specs/`；图谱以 JSONL 存储；向量以二进制索引存储；状态以 `.wpw.yaml` 存储。
-
-### 3.2 知识图谱的构建
-
-#### 3.2.1 数据来源和处理
-
-- 数据来源：能力规范（C 层）+ 源码目录结构（L1 模块）+ 源码文件（L2）+ 代码元素（L3）。
-- 多语言源码解析：基于 web-tree-sitter，采用"快速预检 + 完整解析"两级策略，支持 TS/TSX/JS/JSX/Vue SFC 与 Java（Spring Boot：class/interface/enum/record/方法/常量节点、Spring 注解与 REST endpoint 元信息、包路径 import 边、业务包模块推断），扩展 Pinia（Options/Setup API）/Vuex/Redux/小程序/uni-app。
-- 函数节点上下文属性：所有 L3 函数节点携带 filePath 与 parentName，用于重名函数去歧义。
-
-#### 3.2.2 数据标注
-
-- **多源证据体系**（启发式证据融合，降低人工建立业务-代码关联的成本）：
-  - 文档提取（doc-extract，baseWeight 0.85）：从能力 spec 抽取模块名/关键词。
-  - 命名匹配（name-match，0.45–0.6）：≥30 词条中英词典 + 前缀/包含匹配。
-  - 语义匹配（semantic，≤0.7）：向量余弦相似度线性映射，每能力 Top-K=5。
-  - Git 历史追溯（git-history，≤0.7）：commit 修改文件频次归一化，频次 ≥2。
-- **证据源权威性排名**：structure(10) > doc-extract(8) > ai-refine(7) > git-history(5) > semantic(4) > name-match(2)。
-- **质量校验**：低权重边剪枝（聚合权重 <0.3 不生成边）；每条 business_map 边携带 source 字段记录最权威证据源，实现可追溯性。
-
-#### 3.2.3 知识图谱的构建
-
-- **本体设计**：C（能力层）+ L1（模块）+ L2（文件）+ L3（元素）双层四维模型；边类型 contain / import / business_map / calls。
-- **实体抽取**：C 层能力节点解析器遍历 specs 目录；结构层节点由 Tree-sitter 解析器抽取（函数/类/接口/组件/store/action/getter/state）。
-- **关系抽取**：contain（包含链 L1⊃L2⊃L3）、import（跨文件模块导入）、calls（组件调用 Pinia action）、business_map（C 层到结构层跨层映射）。
-- **noisy-OR 聚合**：同一目标多源命中按 $W=1-\prod_i(1-w_i)$ 聚合，上限 0.95；多源权重严格高于任一单源。
-- **图谱存储**：纯 JSONL + 二进制向量索引（32 字节头 + Float32Array），节点 ID 取内容哈希（SHA-256 前 12 hex）保证幂等重建；Schema 版本 3.1.0（3.1.0 起纳入 Java/Spring Boot 支持），主版本号不兼容时自动降级全量重建，次版本升级增量兼容。
-- **增量更新**：检测能力层面（新增/修改/删除）与源码文件变更，同步 C 层节点及关联边；语义映射回填阶段在向量索引构建后回填 semantic 证据。
-
-### 3.3 生成式模型
-
-#### 3.3.1 知识库和知识图谱与大模型的结合
-
-- **结合动机**：弥补 LLM 幻觉与上下文效率不足，提供结构化、可溯源的知识约束。
-- **RAG 上下文 Pipeline**：检索->裁剪->骨架抽取->序列化 端到端流程，直接喂给 LLM。
-- **置信度衰减加权锚点选择**：$w_{L_1}=\exp(-\alpha\cdot\mathrm{Conf}_C)$（α=3.0），高 C 置信抑制模块膨胀，低 C 置信保证召回，冷启动退化为纯结构检索。
-- **加权双向 BFS 子图裁剪**：多锚点双向扩展（支持跨层 business_map），语义分(0.6)+结构分(0.4)+距离衰减复合打分，按节点上限裁剪。
-- **距离感知骨架与符号化序列化**：距离决定粒度（full/standard/minimal），三档压缩（loose/standard/extreme），层级符号化（⊃/->/⇄，◉ 标锚点）。
-- **Token 预算迭代控制**：Token 估算公式 + 五级迭代降级（降压缩->减节点->减深度->提权重->仅锚点）+ 三级系统降级，锚点始终保留。
-
-### 3.4 本章小结
-
-- 总结 wpw 知识库（能力规范）与知识图谱（C+L1/L2/L3）的构建流程，以及与生成式大模型结合形成 RAG 上下文能力的方法，为第 4 章系统实现奠定基础。
+- **本体**：C（业务能力）+ L1/L2/L3（模块/文件/元素）；边 contain(0.9) / import(0.75) / call(0.6) / business_map（noisy-OR 聚合，≤0.95）；business_map 是映射而非包含（与 CPG 的本质区别）。
+- **证据源**：doc-extract 0.85；name-match 0.45-0.6（≤0.7）；semantic ≤0.7（Top-K=5）；git-history ≤0.7（频次≥2）；剪枝阈值 0.3；权威排名 structure(10) > doc-extract(8) > ai-refine(7) > git-history(5) > semantic(4) > name-match(2)。
+- **公式**：(3-1) noisy-OR W=1-∏(1-wᵢ)；(3-2) Conf_C=1-∏(1-W_e)；(3-3) w_L1=exp(-α·Conf_C)，α=3.0；(3-4) score=0.6·sem+0.4·struct（含距离衰减）。
+- **上下文流水线**：锚点选择 -> 加权双向 BFS（深度 3 / minWeight 0.7 / maxNodes 100）-> 距离感知骨架（full/standard/minimal 三距分级）-> 三档压缩（loose/standard/extreme）-> Token 预算五级降级链 + 三级系统降级；形式化为算法 3-1 伪代码。
+- **解析与存储**：web-tree-sitter 多语言（TS/TSX/JS/JSX/Vue/Java-Spring Boot + Pinia/Vuex/Redux/小程序/uni-app），两级策略（快速预检+完整解析）；JSONL + 32 字节头二进制向量 + meta（Schema 3.1.0）；节点 ID = 类型前缀 + SHA-256 前 12 hex（幂等）；增量更新（文件哈希快照，悬挂边已知局限）。
+- **图表**：图 3-1 本体模型 / 图 3-2 证据融合与上下文流水线 / 图 3-3 知识库整体架构 / 图 3-4 business_map 生成流程；算法 3-1；表 3-1 证据体系 / 3-2 边类型 / 3-3 L3 节点属性 / 3-4 三档压缩参数。
+- **验证钩子**（第 5 章兑现）：消融 A（去歧义属性与图谱供给）、消融 B（三档压缩权衡）、组件级基线①②（noisy-OR 与 BFS 选型）、权重参数第 5 章校准。
 
 ---
 
@@ -224,7 +132,7 @@
 #### 4.2.2 模块设计
 
 - **CLI 层模块**：命令解析、状态管理、依赖检查、模板系统、图谱构建与查询、任务追踪。
-- **AI 层模块**：wpw-workflow 主 Skill、联动 Skill（brainstorming/code-reviewer/humanizer-zh）、13 个 /wpw 子命令。
+- **AI 层模块**：wpw-workflow 主 Skill、联动 Skill（brainstorming/code-reviewer/humanizer-zh）、14 个 /wpw 子命令。
 - **图谱模块**：多语言解析器、图谱构建器、向量索引、多源证据融合、上下文生成 Pipeline。
 - **文件系统层**：工作区目录结构、状态文件、图谱存储、能力规范。
 
@@ -277,179 +185,17 @@
 
 ---
 
-## 5 基于美食推荐系统的对比实验与评估
+## 5 实验与评估（已成稿 -> `5.对比实验与评估.md`，以下为设计要点摘要）
 
-### 5.1 实验设计
-
-#### 5.1.1 实验目标与测试项目
-
-- **实验目标**：在真实 Web 开发任务上，对比不同 AI 辅助开发方式在成本、准确性、AI 辅助程度、流程规范性等维度的表现，评估 wpw 的相对优势与适用边界，并以消融实验分离各创新点贡献。
-- **测试项目**：美食推荐系统（详细设计见 5.1.2），技术栈 vue（前端）+ springboot（后端），覆盖用户认证、餐厅/菜品浏览、个性化推荐、收藏与评论等典型模块，规模适中、需求可枚举，便于横向对比。
-- **选型理由**：vue+springboot 是国内主流全栈技术栈，具有代表性；美食推荐系统业务清晰、边界明确，适合评估流程规范性与需求符合度；其前端（Vue3/Pinia/Uni-app）与后端（Java/Spring Boot）均在 wpw 图谱解析器的支持范围内，技术栈选型与第 3 章图谱能力对齐。
-
-#### 5.1.2 测试项目设计：基于大模型的美食推荐系统
-
-**（1）系统定位与创新点**
-
-- 系统定位：基于协同过滤算法与大模型优化相结合的美食推荐系统，连接用户、商家与平台，覆盖从菜品录入、个性化推荐到点单结束的全流程。
-- 业务创新：① 被动推荐附大模型生成的自然语言推荐理由（如"您常点川菜，为您推荐相似口味的'麻辣香锅'"），提升用户对推荐结果的信任度；② 支持用户与大模型直接对话，通过自然语言提出个性化需求、动态调整推荐结果。
-- 技术创新：① 菜品标签由大模型推荐生成、商家择优选用，替代人工标注，降低录入门槛；② 冷启动期以大模型生成的数据填充用户行为稀疏区间，缓解传统协同过滤冷启动问题。
-
-**（2）功能模块设计**
-
-系统由管理员、用户、美食信息、订单信息四大模块构成：
-
-- **管理员模块**（B 端 PC 管理平台）：系统首页（数据概览与导航）、个人中心、用户管理（增删改查与权限控制）、美食分类管理、美食信息管理（录入/更新/审核）、系统管理（配置与通知）、订单管理（状态更新与统计）。
-- **用户模块**（C 端微信小程序）：首页（推荐美食与热门资讯）、美食信息浏览（名称/价格/食材/评价）、购物车（增删/数量调整/结算）、美食资讯、我的（收藏管理、账户充值、在线客服、订单查询）。
-- **美食信息模块**：美食名称、分类、图片、口味（麻辣/酸甜/咸鲜等）、点击次数、价格六维属性，支撑分类筛选与运营分析。
-- **订单信息模块**：订单编号、商品信息、价格体系（价格/折扣/总价/折扣总价）、支付类型、订单状态、下单时间、配送信息（收货人/电话/地址），连接商家与用户的全生命周期订单管理。
-
-**（3）总体架构设计**
-
-系统采用 B/S 架构与"前端层-中间层-微服务层-数据层-监控治理层"分层设计：
-
-- **前端层**：商家 PC 管理端采用 Vue3 + Vite + Element Plus + Pinia + Axios，满足运营"可视化、可配置"交互需求；用户端微信小程序采用 Uni-app + uView UI，基于微信原生能力实现行为采集与实时交互。
-- **中间层**：Nginx 承担入口负载均衡与反向代理（请求分发、动静分离），微服务经 Nacos 完成服务注册与配置管理，Sentinel 实现流控与熔断降级。
-- **微服务层**（Spring Boot + Spring Cloud，按业务域拆分）：用户微服务（注册/登录/信息管理/JWT 认证）、菜品微服务（菜品 CRUD + Elasticsearch 多条件检索）、推荐微服务（协同过滤 + 矩阵分解 + LLM 语义特征融合，经 Dify 集成补充稀疏数据，含时空约束校验如配送范围/营业时段过滤）、订单微服务（订单全生命周期管理 + 行为采集经 RabbitMQ 异步上报）、API 网关（Spring Cloud Gateway 路由转发/统一认证/限流）。
-- **数据层**：MySQL（用户/菜品/订单核心业务数据 + LLM 结构化特征表，主从读写分离）+ Redis（用户偏好标签、菜品实时热度、Dify 中间结果缓存）+ Elasticsearch（菜品检索）；实时行为数据经 Kafka 流转，增量数据由 Spring Scheduler 定时同步。
-
-**（4）实验适配说明**
-
-- 本论文以该系统为测试载体，四种对比方案实现同一需求集合（用户认证、菜品浏览与检索、个性化推荐、购物车与订单、收藏与评论），需求可枚举、边界明确，便于横向度量。
-- 实验按上述设计裁剪为可横向对比的规模：微服务治理与监控组件（SkyWalking/Prometheus/K8s 等）按需简化，四方案在相同技术栈、相同需求边界与同等时间预算下开发，保证公平性。
-- 实验规模设计：为缓解单一项目的外部效度问题，实验按"一个项目 + 多任务集"组织--需求集合划分为基础搭建（认证/菜品管理）、业务核心（推荐/购物车与订单）、迭代增强（收藏/评论/资讯）三组任务，分别覆盖绿地搭建与存量迭代（brownfield）两类场景；消融实验（见 5.1.5）在此基础上重复执行。
-- 前端 Vue3/Pinia/Uni-app 与后端 Java/Spring Boot 的组合与 wpw 图谱解析器支持范围（Vue SFC/Pinia/uni-app/Java/Spring Boot）完全对齐，第 5.4.1 节的技术栈适用性分析以此为据。
-
-#### 5.1.3 对比方案设计
-
-- **方案 A：AI 对话式 vibe coding**--开发者直接与 AI 对话写代码，无流程约束、无规范、无阶段划分，AI 自由规划路径。
-- **方案 B：OpenSpec 驱动实现**--采用 OpenSpec（本文实验版本）以变更规格为中心的 action 工作流（propose/apply/sync/archive 等，artifact graph 跟踪状态）驱动实现，规格先行、增量变更管理。
-- **方案 C：Superpowers 辅助实现**--使用 Superpowers（本文实验版本）技能化工作流（brainstorming/writing-plans/subagent-driven-development/code-reviewer 等，含子代理上下文隔离）辅助实现，注重执行纪律与子代理协作。
-- **方案 D：wpw 工作流实现**--采用 wpw 六阶段工作流 + 知识图谱上下文 + 三层分离架构完整流程。
-- **Spec-Kit 参照说明**：Spec Kit 已形成完整的 Agentic SDD 能力（含简化路径、通用 Workflow Engine 与 Extension/Preset/Bundle 生态）。本文实验重点关注面向增量 Web 项目开发的轻量级流程对比，若将 Spec Kit 纳入主体对照组，需额外控制其流程制品数量、扩展配置与运行成本等变量；故将其作为研究现状中的重要参照（见 1.2.1）参与横向讨论，其体系复杂性作为实验设计中的外部变量予以讨论，不视为工具能力不足。
-- **公平性原则**：四方案在同一需求集合、同一模型、同一开发者、同等时间预算下开发；各工具的能力描述以其实验采用版本为准，以实测观察各方案的表现，不预设优劣结论。
-- **控制变量**：同一需求规格、同一开发者水平、同一大模型、同一技术栈（vue+springboot）、同等时间预算；各工具以实验采用版本为准（版本号与关键配置记录于实验环境，见 4.4.1），避免因工具快速迭代导致描述漂移。
-
-#### 5.1.4 评估指标与度量方法
-
-- **成本**：Token 消耗量（含上下文规模 Prompt Token 统计）、API 费用、开发工时、迭代/返工次数。
-- **准确性**：代码缺陷率（单位缺陷数）、需求覆盖度（已实现需求点/总需求点）、需求符合度（实现与需求一致性）、代码 review 通过率。
-- **AI 辅助程度**：AI 生成代码占比、自动化阶段覆盖率（AI 参与需求/设计/计划/测试/编码的阶段数）、人工介入次数（决策/纠偏/返工的人工操作计数）、人工修改率（AI 产出被人工修改的比例）。
-- **其他**：流程规范性（阶段完整度/状态可审计性）、可追溯性（变更可回溯程度）、文档完整度、可维护性。
-- **上下文质量**（支撑创新点 3 验证）：上下文召回率（任务相关代码元素被纳入上下文的比例）、Token 缩减率（相对全量注入）、压缩后信息保真度、下游任务表现（以该上下文完成任务的成功率）。
-- **度量方法**：自动化统计（Token/工时/缺陷/介入次数）+ 人工评审（需求符合度/规范性/可维护性）+ 量表打分。
-
-#### 5.1.5 消融实验设计
-
-为分离三项创新点各自的贡献，在 wpw 完整方案基础上设置消融变体：
-
-- **消融 A（知识图谱贡献）**：关闭图谱上下文注入（apply 阶段退化为手动读文件），对比有/无图谱在 Token 消耗、需求覆盖度、人工介入次数上的差异。
-- **消融 B（上下文压缩贡献）**：对比无压缩（相关子图全量注入）与三档压缩（loose/standard/extreme）及 Token 预算迭代控制，度量 Token 缩减率、上下文召回率、压缩后信息保真度与下游任务成功率的权衡曲线。
-- **消融 C（工作流贡献）**：仅用 apply 单命令（无六阶段流转、依赖检查与状态留痕）vs 完整六阶段工作流，对比流程规范性、返工次数与缺陷率。
-- **组件级基线对比**（支撑第 3 章方法选择）：① 证据融合策略--单一语义匹配 / 最大权重 / 加权平均 / noisy-OR 聚合，以 business_map 边的抽样人工标注准确率为参照；② 子图选择策略--全量上下文 / 向量 Top-K / 图随机游走 / 加权双向 BFS，以检索命中率与 Token 成本度量。
-
-各消融实验与主实验共用同一需求集合、同一模型与时间预算规则，结果分析见 5.3.5。
-
-### 5.2 对比实现过程
-
-#### 5.2.1 AI 对话式 vibe coding 实现
-
-- 直接对话生成 vue 前端组件与 springboot 接口；记录 Token、工时、返工、缺陷。
-- 观察问题：状态混乱、路径漂移、需求遗漏、上下文逐轮膨胀。
-
-#### 5.2.2 OpenSpec 驱动实现
-
-- 按其实验版本工作流撰写美食推荐系统变更规格（proposal/spec/design/tasks），经 apply/sync/archive 推进实现；记录指标。
-- 观察要点：规格制品与代码结构/业务知识的关联方式、变更规格到实现的衔接成本、任务级上下文的构造方式（以文档与手动检索为主的实际开销）。
-
-#### 5.2.3 Superpowers 辅助实现
-
-- 按其实验版本技能化工作流推进：brainstorming 澄清需求、writing-plans 编写计划、subagent-driven-development 执行、code-reviewer 审查；记录指标。
-- 观察要点：技能流程间的衔接与状态管理方式、子代理上下文隔离的实际效果与配置成本、任务级上下文的构造成本。
-
-#### 5.2.4 wpw 工作流实现
-
-- 完整走 BRD->PRD->（Explore 可选）->Design->Plan->Test->Apply 六阶段；图谱构建与上下文生成嵌入 apply 等环节；记录指标。
-- 观察优势：阶段完整、状态可审计、图谱上下文高密度、能力沉淀。
-
-### 5.3 实验结果与分析
-
-> **注**：本节为实验前的预期分析框架（假设），各项结论以实验实测数据回填与修正为准；若实测与预期不符，如实报告并归因。
-
-#### 5.3.1 开发成本对比
-
-- Token 消耗（预期）：wpw 因图谱上下文压缩在 apply 阶段低于其余方案（降幅以实测为准）；vibe coding 上下文逐轮膨胀最严重。
-- 社区先验参照（非学术证据，仅作动机）：2026-06 有用户公开对比 OpenSpec 与纯 Claude Code 的实现过程（前者多发现 3 个需求缺口，但代码量约 +50%、工时约 2 倍、API 成本约 3 倍），提示规格驱动流程可能引入额外过程成本，其价值需实验度量而非假设--此为本实验成本维度的动机之一（单用户案例，不作为结论依据）。
-- API 费用与开发工时（预期）：wpw 返工少、工时短；OpenSpec/Superpowers 居中；vibe coding 返工最多。
-- 成本综合排名与归因分析（数据回填）。
-
-#### 5.3.2 准确性与质量对比
-
-- 缺陷率（预期）：wpw 最低（流程约束 + 测试方案前置）；vibe coding 最高。
-- 功能完整度与需求符合度（预期）：wpw 因六阶段覆盖与依赖检查最完整；OpenSpec 次之。
-- 代码 review 通过率对比与归因（数据回填）。
-
-#### 5.3.3 AI 辅助程度对比
-
-- AI 生成代码占比：四方案均高，但 wpw 的 AI 产出经流程约束质量更高、人工修改率预期最低。
-- AI 参与环节比例（预期）：wpw 覆盖需求-设计-计划-测试-编码全流程（最高）；vibe coding 主要在编码环节。
-- 人工修改率（预期）：wpw 最低，vibe coding 最高。
-- 讨论：AI 辅助程度"高"不等于"好"，需结合准确性与可控性--预期 wpw 在高自动化覆盖率下保持高准确性与低人工介入，以实测验证。
-
-#### 5.3.4 流程规范性与可追溯性对比
-
-- 阶段完整度/状态可审计性（预期，以实测为准）：wpw 以三段式契约 + .wpw.yaml 显式留痕管理项目级阶段状态；OpenSpec 以 artifact graph 跟踪变更制品状态；Superpowers 以技能工作流约束执行过程；vibe coding 无流程约束。
-- 变更可追溯性（预期）：wpw（business_map 边溯源 + 任务 git 可 diff）最优。
-- 文档完整度（预期）：wpw（六阶段文档 + 能力沉淀）最优。
-
-#### 5.3.5 消融实验分析（数据回填）
-
-- 知识图谱贡献（消融 A，预期）：有图谱时 apply 阶段 Token 消耗与人工介入次数下降、需求覆盖度提升，以实测量化。
-- 上下文压缩贡献（消融 B，预期）：三档压缩在 Token 成本与生成质量间呈现可调权衡曲线，standard 档为较优工作点。
-- 工作流贡献（消融 C，预期）：完整六阶段工作流降低返工次数与缺陷率、提升状态可审计性。
-- 组件级基线（预期）：noisy-OR 聚合相对单一语义/最大权重/加权平均在 business_map 准确率上的增益；加权双向 BFS 相对全量/Top-K/随机游走在检索命中率与 Token 成本上的权衡优势；若实测不显著则如实归因讨论。
-
-### 5.4 结果讨论
-
-#### 5.4.1 vue+springboot 技术栈下的适用性分析
-
-- vue 前端：wpw 的 Vue SFC/Pinia 解析器与前端模板适配，图谱可建模组件/store 调用关系（覆盖范围与边界见 4.4 功能测试）。
-- springboot 后端：wpw 已实现 Java/Spring Boot 解析器（基于 tree-sitter-java），支持 class/interface/enum/record/方法/常量节点提取、Spring 注解与 REST endpoint 元信息、包路径 import 边解析与业务包模块推断（public 方法与 `@*Mapping` 方法选择性生成 L3 节点以控制规模），后端源码与前端口径一致地进入图谱，business_map 四源融合在前后端同等生效；多技术栈通过多图谱机制隔离（`--name`/`--root` 按子目录分别构建命名图谱），检索按图谱名定向，后端图谱完整性从"三源兜底"升级为"Java 解析器完整建图"。
-- 综合论证：结合实验数据论证在 vue+springboot 技术栈下 wpw 在流程规范性、准确性、综合成本上的相对优势及其成立条件（如实测与预期不符则如实归因讨论）。
-
-#### 5.4.2 wpw 的优势与适用场景
-
-- **与现有工具的设计取舍**（与 1.2.1 / 5.1.3 参照说明对应）：
-  - 相对 Spec Kit 的项目级规范治理体系（Constitution + 质量门禁 + 扩展机制），wpw 选择了更轻的起点：零配置开箱即用（`wpw init` 一步生成脚手架，项目类型按文件特征自动嗅探，模块按目录结构自动推断，纯 Node.js 单运行时、图谱纯本地构建，CLI 层无需 API Key）。代价是治理强度弱于 Constitution 式工具（无全局规范宪法与一致性检查，见 5.4.3），换取更低的采用与维护成本。
-  - 相对 OpenSpec 的变更制品管理（artifact graph + action 工作流），wpw 将变更之外的项目级知识纳入统一基础设施：能力规范随归档持续沉淀、代码结构以 C+L1/L2/L3 图谱建模、business_map 多源融合（noisy-OR）建立业务-代码关联；命令级解耦支持按需组合（六阶段是能力边界而非强制路径），图谱增量更新仅重解析变更文件，功能增量的边际成本低。
-  - 相对现有工具的上下文机制（Superpowers 的子代理上下文隔离与 plan 级工作区隔离、Spec Kit 社区的 prompt 压缩扩展如 Command Density），现有上下文优化主要发生在 prompt/工作流/扩展层；wpw 的差异化在代码侧上下文的结构化供给：知识沉淀为双层图谱后，经语义检索锚点 -> 加权双向 BFS 子图裁剪（节点上限/Token 预算约束）-> 距离感知骨架抽取 -> 三档压缩序列化，按需生成任务相关的高密度代码上下文，替代人工读全库。需区分"规避"与"解决"：wpw 未从技术上解决规则膨胀导致的失真（规则侧靠分阶段轻量加载规避），技术上解决的是同构的"代码上下文膨胀"问题；规则治理本身仍是开放问题（见 5.4.3）。
-- **定位差异小结**：现有工具分别以规则治理、变更管理、执行纪律见长且能力已有重叠；wpw 的关注点是将项目知识沉淀与任务导向上下文生成纳入统一工作流，与三者互补性强于替代性。
-- **比较维度**（本文基于官方机制的结构性归类，非官方能力评级）：
-
-| 能力维度 | Spec Kit | OpenSpec | Superpowers | wpw |
-|---|---|---|---|---|
-| 项目级规范治理（Constitution 级） | ✅✅ | △ | △ | △（规则轻量，见 5.4.3） |
-| 变更级规格管理 | ✅ | ✅✅ | △（v6.3 Plan->Spec 指针） | ✅ |
-| 工作流引擎/编排 | ✅✅ | ✅（action-based） | ✅ | ✅ |
-| Agent 执行纪律（Skill/子代理） | △/扩展 | △/生态 | ✅✅ | 可选 |
-| 代码知识图谱 | ❌ | ❌ | ❌ | ✅✅ |
-| 业务->代码映射 | △ | △ | △ | ✅✅ |
-| 图谱感知检索与任务级代码上下文 | ❌ | ❌ | △（上下文隔离层） | ✅✅ |
-| Token 预算图谱压缩 | ❌ | ❌ | ❌ | ✅✅ |
-| 长期能力知识沉淀 | △ | △（specs 记录现状） | △ | ✅✅ |
-- 优势：流程可控、上下文高效、知识可沉淀、行为可审计。
-- 适用场景：中小型 Web 项目全流程开发、团队级 AI 协同、需长期演进与知识积累的项目。
-
-#### 5.4.3 局限性分析
-
-- 后端语言覆盖仍不完整：Java/Spring Boot 解析器已实现，但落地验证规模有限，且首版不做 `@Autowired` 依赖注入边、JPA 实体关联边与 Kotlin 支持；Go/Python 等后端语言尚未覆盖。
-- 冷启动场景能力规范缺失时退化为纯结构检索。
-- 缺少全局规则治理能力（无 constitution 级规范约束）：规则随项目与团队规模膨胀时，同样面临规则文档膨胀与上下文失真风险；wpw 通过分阶段轻量加载缓解但未根治，与 Superpowers 存在同类局限。
-- 实验规模与评估主观性（样本量、人工评审偏差）。
-
-### 5.5 本章小结
-
-- 总结对比实验设计、四方案实现过程与多维度结果，基于实测数据评估在 vue+springboot 技术栈下各方式的优劣与 wpw 的适用边界，并客观讨论其局限。
+- **定位**：受控工程实验（非生态统计实验），验证上下文工程方法的机制有效性（非工具优劣、非普适性能）；wpw 为实现载体；不预设方向性结论。
+- **RQ 映射（表 5-1）**：RQ1 项目知识获取 -> 双层知识组织 -> 消融 A；RQ2 Token 预算下上下文膨胀控制 -> 图谱压缩 -> 消融 B + 组件级基线②；RQ3 执行可靠性 -> 流程约束架构 -> 消融 C；综合 -> 完整方法 -> 主实验。
+- **任务载体**：面向 AI 辅助开发评估的典型 Web 业务系统（美食推荐业务为载体）；个性化业务逻辑模块（规则推荐，算法效果非研究变量）；三组任务集 T1 绿地 / T2、T3 存量迭代（重点验证棕地上下文理解）。
+- **公平性三支柱**：① 信息约束原则（图谱冷启动成本计入方案 D、无预构建知识库、他方案手动检索成本同样计入）；② 主实验/消融分工（方案 D 多机制属方法设计特点，不以组间差异直接归因单机制）；③ Spec-Kit 参照（混杂变量控制，非能力评价）+ 版本锁定（含 commit）。
+- **指标公式**：AI 贡献代码比例（采纳口径）、人工修改率（git diff 行级）、流程完整度、状态可审计率（时间戳+责任主体+输入输出记录）、Recall=|R∩C|/|R|（双人标注 + 文件/函数双粒度 + Cohen's kappa）、Compression=1−Token_ctx/Token_full。
+- **消融命名**：A 知识组织机制 / B 上下文生成机制（三档参数见第 3 章表 3-4）/ C 流程约束机制 + 组件级基线①②。
+- **结果框架**：分析关注差异存在性/来源/假设支持，全部数据回填；社区 bake-off 仅作动机参照。
+- **讨论**：5.4.1 方法有效性分析（技术栈适配 + 三机制贡献分解 + 适用边界）；5.4.2 与现有工具比较（设计取舍 + 表 5-5 功能关注维度对比，●/◐/○/◉ 中性符号）；5.4.3 局限性（受控实验边界居首）。
+- **图表**：表 5-1 RQ 映射 / 5-2 对比方案 / 5-3 指标 / 5-4 消融 / 5-5 工具对比 + 数据回填表与权衡曲线（清单见正文文末）。
 
 ---
 
@@ -457,12 +203,12 @@
 
 ### 6.1 总结
 
-- 本文围绕"如何让 AI 编程 Agent 在软件工程中获得项目级知识、受控执行与高效上下文"展开研究，工作凝练为三个创新点：
-  - 创新点 1：面向 AI Agent 的确定性开发工作流（三层分离架构、三段式编排契约、六阶段流转与状态留痕），解决过程可控性问题。
-  - 创新点 2：能力-代码双层知识图谱（C+L1/L2/L3 模型、业务-代码多源证据映射与能力规范持续沉淀），解决业务知识与代码结构脱节问题。
+- 本文围绕"如何让 AI 编程智能体在软件工程中获得项目级知识、受控执行与高效上下文"展开研究（统一归结为智能体上下文工程问题），工作凝练为三个创新点：
+  - 创新点 1：面向 AI 编程智能体的流程约束架构（三层分离架构、三段式编排契约、阶段制品与 CLI 状态管理/状态留痕），解决过程可控性问题。
+  - 创新点 2：面向智能体上下文生成的能力-代码双层知识组织方法（C+L1/L2/L3 模型、业务-代码多源证据映射与能力规范持续沉淀；定位为知识组织与工程融合，非追踪算法创新），解决业务知识与代码结构脱节问题。
   - 创新点 3：图谱驱动的任务上下文压缩方法（置信度衰减锚点选择、加权双向 BFS 裁剪、距离感知骨架与 Token 预算迭代控制），解决上下文效率问题。
 - 实现支撑：多语言源码解析（TS/JS/Vue/Java）、noisy-OR 聚合实现、JSONL/向量零数据库存储、Plan-as-tracker 等作为实现技术支撑上述创新点，不以创新点宣称。
-- 实验结论（以第 5 章实测数据回填）：基于美食推荐系统对比实验与消融实验的数据分析，得出四种方式在成本、准确性、AI 辅助程度与流程规范性上的优劣结论、三项创新各自的贡献量及适用边界（预期 wpw 占优，以实测论证）。
+- 实验结论（以第 5 章实测数据回填）：基于受控对比实验与消融实验的数据分析，回答 RQ1-RQ3，得出各机制的贡献量、方法整体表现及适用边界（不预设方向性结论，以实测论证）。
 
 ### 6.2 展望
 
@@ -476,21 +222,34 @@
 
 ## 参考文献
 
-> 分类原则：**现状佐证文献**为 2025-2026 年可查证的实证/综述（已核实填入，检索截至 2026 年 8 月）；**奠基性方法文献**做源头引用（学术惯例不受年份限制）；**工具官方资料**一律 [EB/OL] 并锁定研究/实验版本。截至检索时点，未见以 Spec Kit / OpenSpec / Superpowers 三者为对象的同行评审系统比较研究，三者事实以官方仓库与文档为准。
+> 分类原则：**现状佐证文献**为 2025-2026 年可查证的实证/综述（已核实，检索截至 2026 年 8 月）；**奠基性方法文献**做源头引用（学术惯例不受年份限制）；**工具官方资料**一律 [EB/OL] 并锁定研究/实验版本。截至检索时点，未见以 Spec Kit / OpenSpec / Superpowers 三者为对象的同行评审系统比较研究，三者事实以官方仓库与文档为准。
 
-- **现状佐证（2025-2026，已核实）**：
-  - Robbes R, et al. Agentic Much? Adoption of Coding Agents on GitHub[EB/OL]. arXiv:2601.18341, 2026（129,134 项目，采用率 15.85%–22.60%）.
-  - Li X, et al. The Rise of AI Teammates in Software Engineering (SE 3.0): How Autonomous Coding Agents Are Reshaping Software Engineering[EB/OL]. arXiv:2507.15003, 2025（AIDev 数据集，45.6 万+ PR）.
-  - Horikawa Y, et al. Agentic Refactoring: An Empirical Study of AI Coding Agents[EB/OL]. arXiv:2511.04824, 2025.
-  - Zhou X, et al. Self-Evolving Coding Agents: A Survey[EB/OL]. arXiv:2608.03392, 2026.
-  - Piskala K. Spec-Driven Development: From Code to Contract in the Age of AI Coding Assistants[EB/OL]. arXiv:2602.00180, 2026.
-  - 【待补】需求-代码追踪（Traceability Link Recovery）2025-2026 年最新实证/综述.
-- **奠基性方法文献（源头引用）**：Lewis P, et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks[C]. NeurIPS 2020；Liu N F, et al. Lost in the Middle[EB/OL]. arXiv:2307.03172, 2023；Guo D, et al. GraphCodeBERT[C]. ICLR 2021；Husain H, et al. CodeSearchNet Challenge[EB/OL]. arXiv:1909.09436, 2019；Vaswani A, et al. Attention Is All You Need[C]. NeurIPS 2017；Pearl J. Probabilistic Reasoning in Intelligent Systems（noisy-OR）. 1988；Word2Vec / TransE / BERT / BGE 系列源头文献.
-- **综述性基础**：Hou X, et al. Large Language Models for Software Engineering: A Systematic Literature Review[J]. ACM TOSEM, 2024, 33(8)（395 篇文献、6 类活动、85 项任务，作为领域综述基础引用）.
-- **工具官方资料（[EB/OL]，2026-08 版本事实，以本文研究/实验采用版本为准）**：GitHub Spec Kit（github/spec-kit，仓库 0.14.x / PyPI specify-cli 0.16.4，2026-08-14；含 Workflow Engine、Extension/Preset/Bundle 文档）；OpenSpec（Fission-AI/OpenSpec，npm 1.7.0 / 主干 1.9.0 开发线，OPSX；含 opsx、workflows、artifact-graph 文档）；Superpowers（obra/superpowers，v6.3.0，2026-08-12；含 subagent-driven-development Skill、Release Notes）；社区对比案例：OpenSpec Discussion #1159（2026-06 bake-off，非学术证据）；Claude Code Skill；MCP.
-- **知识图谱与知识表示**：知识图谱基础文献；代码领域知识图谱相关研究【待补：2025-2026 年代表工作】.
-- **大语言模型**：GPT 系列技术报告；LLaMA；ChatGLM.
-- **工程背景**：Web 开发与软件工程方法论文献.
+**第 1 章引用编号对照**（正文章节文件已用 [1]-[18]，全文合稿时统一重排）：
+
+- [1] Hou X, et al. Large Language Models for Software Engineering: A Systematic Literature Review[J]. ACM TOSEM, 2024, 33(8).（综述性基础）
+- [2] Robbes R, et al. Agentic Much? Adoption of Coding Agents on GitHub[EB/OL]. arXiv:2601.18341, 2026.
+- [3] Li X, et al. The Rise of AI Teammates in Software Engineering (SE 3.0)[EB/OL]. arXiv:2507.15003, 2025.
+- [4] Liu N F, et al. Lost in the Middle[EB/OL]. arXiv:2307.03172, 2023.
+- [5] Lewis P, et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks[C]. NeurIPS 2020.
+- [6] Zhou X, et al. Self-Evolving Coding Agents: A Survey[EB/OL]. arXiv:2608.03392, 2026.
+- [7] Piskala K. Spec-Driven Development: From Code to Contract in the Age of AI Coding Assistants[EB/OL]. arXiv:2602.00180, 2026.
+- [8] GitHub. GitHub Spec Kit[EB/OL]. github/spec-kit, 2026.
+- [9] OBRA. Superpowers[EB/OL]. obra/superpowers, v6.3.0, 2026.
+- [10] Horikawa Y, et al. Agentic Refactoring: An Empirical Study of AI Coding Agents[EB/OL]. arXiv:2511.04824, 2025.
+- [11] Guo D, et al. GraphCodeBERT[C]. ICLR 2021.
+- [12] Husain H, et al. CodeSearchNet Challenge[EB/OL]. arXiv:1909.09436, 2019.
+- [13] Cleland-Huang J, et al. A Heterogeneous Solution for Improving the Return on Investment of Requirements Traceability. IEEE RE 2004.
+- [14] Borg M, et al. Recovering from Requirements to Code: An Empirical Study of Traceability Link Recovery. EMSE 2014, 19: 1236-1271.
+- [15] Sultanov H, Hayes J H. Application of Genetic Algorithms to the Requirements Traceability Problem. REJ 2010, 15: 173-187.
+- [16] Jimenez C E, et al. SWE-bench: Can Language Models Resolve Real-World GitHub Issues? ICLR 2024.
+- [17] Yang J, et al. SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering. NeurIPS 2024.
+- [18] Yamaguchi F, et al. Modeling and Discovering Vulnerabilities with Code Property Graphs. IEEE S&P 2014.
+
+**后续章节待补方向**（全文参考文献目标 50-80 篇）：LLM4SE 10+、Coding Agent 8+、RAG/Context Engineering 8+（含 Agent Memory、GraphRAG）、Software Traceability 5+（[13]-[15] 已覆盖 3 篇）、知识图谱/代码图谱 10+（含 Joern、Code Property Graph 相关）、SWE-bench 类基准、Word2Vec/TransE/BERT/BGE 与 Transformer/GPT/LLaMA/ChatGLM 源头文献。
+
+**工具官方资料（[EB/OL]，2026-08 版本事实，以本文研究/实验采用版本为准）**：GitHub Spec Kit（仓库 0.14.x / PyPI specify-cli 0.16.4，2026-08-14）；OpenSpec（npm 1.7.0 / 主干 1.9.0 开发线，OPSX）；Superpowers（v6.3.0，2026-08-12）；社区对比案例：OpenSpec Discussion #1159（2026-06 bake-off，非学术证据）；Claude Code Skill；MCP.
+
+**奠基性方法文献（源头引用）**：Pearl J. Probabilistic Reasoning in Intelligent Systems（noisy-OR）. 1988；Vaswani A, et al. Attention Is All You Need. NeurIPS 2017；Word2Vec / TransE / BERT / BGE 系列源头文献；知识图谱基础文献.
 
 ## 附录 A 后端主要代码
 

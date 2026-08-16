@@ -243,27 +243,3 @@ extreme & 约 30 节点 & 仅锚点标准信息，其余最小骨架 & 约 2K \\
 \section{本章小结}
 本章阐述了 wpw 的知识基础设施构建方法。在知识库层面，以能力规范为核心组织稳态知识，通过归档沉淀机制实现过程知识向稳态知识的转化，形成可持续积累的项目级知识库。在知识图谱层面，提出能力-代码双层四层本体模型，其中业务能力节点作为上层语义锚点与代码结构层通过 business\_map 边映射而非包含；业务-代码关联由文档提取、命名匹配、语义匹配与 Git 历史四类证据源经 noisy-OR 概率融合自动建立，每条关联可溯源至最权威证据，并以权重剪枝控制噪声。在大模型结合层面，提出区别于文本检索 RAG 的结构感知上下文生成流水线：置信度衰减加权锚点选择、加权双向 BFS 子图裁剪、距离感知骨架抽取与三档压缩序列化，配合五级降级的 Token 预算迭代控制，在预算约束下生成任务相关、结构连贯、可解释的高密度代码上下文。本章方法的有效性将在第 5 章通过上下文 Token 消耗与压缩率、上下文召回率与下游任务完成效果，以及图谱贡献消融实验（消融 A/B 与组件级基线）予以验证。
 
-\textbf{本章参考文献}（沿用第 1 章编号，全文合稿时统一）：
-
-\begin{itemize}
-\item {}[4] Liu N F, et al. Lost in the Middle. arXiv:2307.03172, 2023.
-\item {}[5] Lewis P, et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. NeurIPS 2020.
-\item {}[11] Guo D, et al. GraphCodeBERT: Pre-training Code Representations with Data Flow. ICLR 2021.
-\item {}[13] Cleland-Huang J, et al. A Heterogeneous Solution for Improving the Return on Investment of Requirements Traceability. IEEE RE 2004.
-\item {}[14] Borg M, et al. Recovering from Requirements to Code: An Empirical Study of Traceability Link Recovery. EMSE 2014.
-\item {}[15] Sultanov H, Hayes J H. Application of Genetic Algorithms to the Requirements Traceability Problem. REJ 2010.
-\item {}[18] Yamaguchi F, et al. Modeling and Discovering Vulnerabilities with Code Property Graphs. IEEE S\&P 2014.
-\end{itemize}
-\textbf{本章图表清单}（成稿时绘制）：
-
-\begin{itemize}
-\item 图 3-1 能力-结构双层图谱本体模型（C / L1 / L2 / L3 与四类边）
-\item 图 3-2 多源证据融合与上下文生成流水线（证据收集 -> noisy-OR 聚合 -> 锚点 -> BFS -> 骨架 -> 序列化）
-\item 图 3-3 wpw 知识库整体架构（数据来源层 -> 知识组织层 -> 智能体消费层）
-\item 图 3-4 business\_map 生成流程（能力节点 -> 候选召回 -> 四类证据 -> 融合 -> 过滤 -> 边）
-\item 算法 3-1 图谱驱动的任务上下文生成（伪代码，已含）
-\item 表 3-1 多源证据体系（已含）
-\item 表 3-2 图谱边类型（已含）
-\item 表 3-3 L3 代码元素节点属性定义（已含）
-\item 表 3-4 三档压缩策略参数对比（已含，具体数值以第 5 章实验实测为准）
-\end{itemize}

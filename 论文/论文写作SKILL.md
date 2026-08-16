@@ -1,0 +1,195 @@
+# 论文写作 SKILL -- 文档体系、更新流程与排坑手册
+
+> 本文件是论文工程的**操作手册**：文档内容更新时，按「四、标准更新流程」逐步执行即可；
+> 出问题时查「六、排坑经验」。最后维护：2026-08-16。
+
+---
+
+## 一、文档体系与关联关系
+
+```
+【写作源】(唯一内容源头，所有修改先改这里)
+  论文/index.md .................. 结构大纲与状态看板（章节结构、盲审定位、红线）
+  论文/1.绪论.md ................. 第1章成稿
+  论文/3.知识库与知识图谱构建.md .. 旧第3章成稿（按映射并入新3.3/3.4）
+  论文/5.对比实验与评估.md ........ 第5章成稿
+  论文/index.填充版备份.md ........ 第2/4/6章写作素材 + 参考文献对照清单（[1]-[19]）
+  开题报告.md / 毕业论文核心创新点.md .. 上游素材（一般不动）
+
+【格式规范】
+  论文/北京科技大学研究生学位论文书写指南.docx .. 学校规范（顺序编码制、引用上标、GB/T 7714-2015）
+  论文/北京科技大学硕士学位模板.docx ............ 原始 Word 模板（保持不动，作回退基线）
+
+【产出 1：docx 主轨道】（导师用 Word 改稿，最终交付格式）
+  论文/基于大模型的美食推荐系统设计与实现--面向AI辅助开发的上下文工程方法研究.docx
+
+【产出 2：LaTeX 备用轨道】
+  论文/北京科技大学硕士学位论文Latex模板/ustb-master-thesis/
+    ├ main.tex ................ 封面元信息（题目/盲审留空项都在这）
+    ├ contents/abstract.tex ... 中英文摘要
+    ├ contents/chap1-6.tex .... 六章（1/3/5 为转换稿，2/4/6 为骨架）
+    └ myrefs.bib .............. 尚未建（引用现为明文 [n]）
+```
+
+**内容流向**：md（源）-> 脚本 -> docx / LaTeX（产出）。**永远不要直接改产出文件的正文内容**，改 md 后重跑流程，否则下次同步会被覆盖。
+
+**第 3 章结构映射**（新旧骨架差异，docx 与 LaTeX 一致）：
+
+| md 旧结构 | -> 新骨架（docx/LaTeX 中） |
+|---|---|
+| 3.1 知识库的构建 | 3.3 双层知识组织模型（3.3.x） |
+| 3.2 知识图谱的构建 | 3.3 双层知识组织模型（3.3.x） |
+| 3.3 生成式模型 | 3.4 图谱驱动的任务级上下文生成 |
+| 3.4 本章小结 | 3.5 本章小结 |
+| （无） | 3.1 总体框架、3.2 流程约束架构 -- 占位待写 |
+
+**章末素材块不进正文**：md 各章末尾的「本章参考文献映射 / 本章参考文献 / 本章图表清单 / 全文参考文献规模规划」是写作 TODO，解析器在遇到这些标记时截断（两个导入脚本已内置）。
+
+---
+
+## 二、环境与工具
+
+| 项 | 值 / 位置 |
+|---|---|
+| Python | **必须用完整路径** `C:\Users\14548\AppData\Local\Programs\Python\Python311\python.exe`（裸 `python` 是 2.7！） |
+| Python 选项 | 脚本一律加 `-X utf8`（避免 Windows 控制台 GBK 乱码）；复杂输出写到文件再 Read |
+| pip 镜像 | `-i https://mirrors.aliyun.com/pypi/simple/`（PyPI 直连和清华镜像均不可用） |
+| 依赖（已装） | python-docx、latex2mathml、lxml（word MCP 依赖：fastmcp 等） |
+| word-document-server MCP | 已注册在用户级 `~/.claude.json`，源码 `C:\Users\14548\.claude\mcp\word-document-server\`。**新会话可用**；但本流程主要直接用 python-docx 脚本，更可控 |
+| TeX | 本机未装。LaTeX 编译用 Overleaf（XeLaTeX + biber）；本地可选装 TeX Live/MiKTeX |
+| 公式转换依赖 | Office 自带 `C:\Program Files\Microsoft Office\root\Office16\MML2OMML.XSL` |
+| 网络 | github.com 直连不通，下载走 codeload tarball |
+
+**流程脚本**（都在 `C:\Users\14548\.claude\mcp\word-document-server\`）：
+
+| 脚本 | 作用 |
+|---|---|
+| `fill_thesis.py` | 从原模板生成论文 docx 骨架（封面/摘要/章节骨架/数据集表）。**仅初始化用一次**，勿重复跑（会覆盖导入成果） |
+| `import_chapters.py` | md 第 1/3/5 章 -> docx 对应章区重建（含样式克隆、列表/表格/代码/粗体转换） |
+| `convert_math.py` | docx 内 LaTeX 公式（`$$..$$` 与行内 `$..$`）-> Word 原生 OMML 公式 + 右侧编号 |
+| `unify_refs.py` | 删章末引用块 -> 文末按 GB/T 7714-2015 建 19 条文献表 -> 正文引用转上标 |
+| `build_latex.py` | md -> LaTeX 工程（chap1-6/abstract/appendix + main.tex 封面元信息，幂等） |
+| `dump_template.py` / `fix_subtitle.py` | 一次性排查工具（结构导出 / 封面副标题修正） |
+
+---
+
+## 三、docx 结构关键知识
+
+- **锚点段落**：章节标题样式名为 `Heading 1` / `u1级标题`（参考文献等）/ `u2级标题` / `u3级标题` / `u正文` / `u表标题` / `u图标题` / `u附录标题` / `u参考文献条目顺序编码制`。**模板无四级标题样式**，md 三级以下小节降为黑体引导段。
+- **标题自动编号**：样式自带编号，导入 md 时必须剥掉手写编号（`第X章`、`1.1 `）。
+- **目录是 Word 域**：脚本不改目录，用户在 Word 中 Ctrl+A -> F9 更新。
+- **分节符/分页符藏在段落里**：任何批量删除前必须检查段落 XML 是否含 `w:sectPr` / `type="page"` / `fldChar`（目录域），含则跳过该段（保留空壳），否则页面结构会被破坏。
+- **公式**：已转 24 处 OMML 原生公式。md 里的 `$$公式$$ \tag{3-1}` 转换时会剥离 `\tag` 并在公式后补「（3-1）」文本 run。
+- **引用**：正文 [n] 已转上标（vertAlign=superscript），转换时排除数值含 0 的区间（如 [0,1] 是置信度区间不是引用）。
+- **盲审约定**（见记忆 thesis-positioning-plan）：封面学号/作者/导师留空；不写工具排行榜；研究定位三句话。
+
+---
+
+## 四、标准更新流程（照此执行）
+
+### 场景 A：md 章节内容更新 -> 同步 docx（最常见）
+
+```bash
+PY="C:\Users\14548\AppData\Local\Programs\Python\Python311\python.exe"
+S="C:\Users\14548\.claude\mcp\word-document-server"
+
+# 1. 重建章节（会重置第1/3/5章区域，公式回到LaTeX文本，引用回到普通文本）
+"$PY" -X utf8 "$S/import_chapters.py"
+
+# 2. 公式重新转 OMML（顺序必须在 import 之后）
+"$PY" -X utf8 "$S/convert_math.py"
+
+# 3. 引用统一（幂等：重建文末文献表 + 上标化）
+"$PY" -X utf8 "$S/unify_refs.py"
+```
+
+三步**顺序不可换**。如果改了参考文献清单（index.填充版备份.md 的 [1]-[19] 区），先更新 `unify_refs.py` 顶部的 `REFS` 列表再跑第 3 步。
+完成后提醒用户：Word 中 Ctrl+A -> F9 更新目录。
+
+### 场景 B：新增章节成稿（如第 2/4/6 章写完）
+
+1. md 命名为 `论文/N.章节名.md`，结构与现有章节一致（`#` 章、`##` 节、`###` 小节）；
+2. 在 `import_chapters.py` 增加对应 `convert(...)` 与 `rebuild(...)` 调用（替换该章占位骨架区，参考第 1 章两行写法）；
+3. 跑场景 A 三步；
+4. LaTeX 侧：在 `build_latex.py` 加 `write('chapN.tex', convert(...))` 并重跑。
+
+### 场景 C：同步 LaTeX 备用版
+
+```bash
+"$PY" -X utf8 "$S/build_latex.py"          # 重新生成 contents/*.tex（对 main.tex 幂等）
+"$PY" -X utf8 "$S/fix_subtitle.py"         # 仅当 main.tex 英文副标题被改回模板值时才需要
+```
+
+### 场景 D：封面/摘要/关键词等前置信息变更
+
+- docx：写一次性小脚本用「文本匹配定位段落 -> set_text 替换」，**不要按段索引定位**（表格会导致索引偏移）；
+- LaTeX：直接改 `main.tex` 的封面命令区（`\Title` / `\Subtitle` / `\Major` 等）；
+- 摘要源在 `build_latex.py` 与 `fill_thesis.py` 内的 `ABS_CN/ABS_EN` 常量（两处保持一致）。
+
+### 场景 E：参考文献增删
+
+1. 改 md 正文引用标记（[n] 编号 = 全文首次出现顺序）；
+2. 更新 `unify_refs.py` 的 `REFS` 列表（GB/T 7714-2015 格式：姓大写、前3作者、[J]/[C]/[EB/OL]、arXiv 带 URL 与引用日期）；
+3. 跑 `unify_refs.py`；
+4. LaTeX 侧：往 `myrefs.bib` 加条目并把正文明文 [n] 换成 `\cite{key}`（此项尚未做，需要时再建）。
+
+---
+
+## 五、验证清单（每次更新后过一遍）
+
+```bash
+"$PY" -X utf8 -c "
+import docx
+d = docx.Document(r'F:\project\web-project-workflow\论文\基于大模型的美食推荐系统设计与实现--面向AI辅助开发的上下文工程方法研究.docx')
+ps = d.paragraphs
+print('段落:', len(ps), '表格:', len(d.tables))
+print('章标题:', [p.text for p in ps if p.style.name in ('Heading 1','u1级标题') and p.text.strip()])
+print('残留LaTeX公式段:', sum(1 for p in ps if '\$' in p.text))          # 应为 0
+print('章末引用块残留:', [p.text[:20] for p in ps if p.text.strip().startswith('本章参考文献')])  # 应为 []
+n = sum(1 for p in ps if p.style.name == 'u参考文献条目顺序编码制')
+print('文献条数:', n)                                                     # 当前应为 19
+"
+```
+
+人工抽查 2-3 处：黑体引导段、表格表头加粗、公式双击可编辑、引用上标显示。
+
+---
+
+## 六、排坑经验（问题 -> 原因 -> 解法）
+
+1. **控制台中文乱码** -> Windows 默认 GBK -> 一律 `-X utf8`；长输出写临时文件再 Read，不硬看 stdout。
+2. **`python` 起不来/语法怪异** -> 解析到 Python 2.7 -> 用 Python311 完整路径。
+3. **find_para 按索引找不到段落** -> 段索引会因表格偏移（body 块索引 ≠ 段落索引）-> 一律按**文本内容+样式名**定位。
+4. **文本匹配失败（破折号/撇号）** -> 模板用全角 em dash `--`（U+2014x2）而非 ASCII `--`；`Baker's` 的撇号是非 ASCII 变体 -> 用 `repr()`/`[hex(ord(c))]` 查真实字符，匹配用包含式（`'Mechanistic' in p.text`），不确定就先 hex dump。
+5. **批量删段后页面结构崩** -> 分节符（sectPr）和分页符寄生在被删段落里 -> 删前检查 `el.xml` 含 `w:sectPr`/`type="page"`/`fldChar` 则跳过。
+6. **parse_xml 报 `xmlParseEntityRef: no name`** -> 文献文本含未转义 `&` -> 构造 XML 前做 `& < >` 转义。
+7. **删除范围失控（一次误删 352 段）** -> 删除循环没设终点 -> **删除操作必须设停止条件**（下一个 Heading 1 或保留标记）；且**脚本只在全部步骤成功后才 save**--本次两次中途崩溃都因未到 save 而未损坏磁盘文件，这是保命设计，写新脚本时保持。
+8. **标题出现双重编号（1.1 1.1 xxx）** -> 样式已自动编号而 md 带手写编号 -> 导入时 strip 前缀（`第\s*\d+\s*章`、`^\d+(\.\d+)*\s+`）。
+9. **`\item [1]` 被当成自定义标签**（LaTeX）-> item 文本以 `[` 开头时补 `{}`。
+10. **公式转换失败** -> latex2mathml 不支持 `\tag` -> 剥离 `\tag{x}` 后转公式，编号作普通文本 run 追加。
+11. **引用上标误伤** -> `[0,1]` 这类区间不是引用 -> 上标化前校验括号内所有数字在 1-30。
+12. **pip 装包 403/超时** -> 直连与清华镜像均不可用 -> 阿里云镜像。
+
+---
+
+## 七、Word 端手工步骤（脚本做不了，提醒用户）
+
+1. 更新目录域：Ctrl+A -> F9；
+2. 补插图：正文提到的 图 3-1~3-4、图 5-1~5-3 等需插入图片文件（清单见各章 md 末尾「本章图表清单」）；
+3. 参考文献作者补全：多数条目现只有一作 + et al.，国标要求列前三位作者；
+4. 封面「专业名称」、日期等盲审留空项，终稿前补；
+5. 「插图和附表清单 / 符号清单」两页按需保留或整页删除。
+
+---
+
+## 八、当前状态快照（2026-08-16）
+
+| 项 | 状态 |
+|---|---|
+| docx 封面/摘要/关键词/数据集表 | ✅ 已填（盲审留空个人信息） |
+| 第 1/3/5 章 | ✅ 已导入（第 3 章按新骨架映射） |
+| 第 2/4/6 章、3.1/3.2 | ⬜ 占位待写 |
+| 公式 | ✅ 24 处 OMML 原生 |
+| 参考文献 | ✅ 19 条 GB/T 7714 + 正文上标（作者待补全） |
+| LaTeX 版 | ✅ 同步（公式为原生 LaTeX；引用仍明文；myrefs.bib 未建） |
+| 轨道决策 | **docx 为主**（导师 Word 改稿），LaTeX 备用 |

@@ -11,11 +11,9 @@
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{images/fig3-1-context-engineering-framework.png}
-\caption{面向 AI 辅助开发的上下文工程方法总体框架}
-\label{fig:context-engineering-framework}
+\caption{图3-1 方法总体框架}
+\label{fig:fig3-1-context-engineering-framework}
 \end{figure}
-
-图3-1 的可编辑 Visio 源文件为 \texttt{图表/图3-1-方法总体框架.vsdx}。图中以“需求—流程—知识—上下文—执行—反馈”为主链路，并以知识更新回流表示 Spec 驱动的项目知识持续演化。
 
 从知识流动的角度，框架自底向上分为三层：数据来源层提供能力规范、需求过程文档、源码与 Git 历史四类原始知识；知识组织层通过解析、结构化与多源证据融合，将原始知识沉淀为稳态知识库与知识图谱；智能体消费层经上下文生成流水线把知识转化为智能体可消费的任务上下文。项目知识按生命周期特征分为两类：描述项目长期业务能力、随需求归档持续沉淀的稳态知识，与服务于当前开发任务、随六阶段流程产生的过程知识。两类知识的划分与转化是 Spec 增量知识演化机制的基础：过程知识在需求归档时经沉淀机制并入稳态知识，使业务知识不随需求结束而流失。
 
@@ -47,12 +45,10 @@ wpw 将开发过程组织为 BRD（业务需求）、PRD（产品需求）、Des
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.98\textwidth]{images/fig3-2-context-constrained-workflow.png}
-\caption{六阶段流程约束架构}
-\label{fig:context-constrained-workflow}
+\includegraphics[width=0.95\textwidth]{images/fig3-2-context-constrained-workflow.png}
+\caption{图3-2 六阶段流程约束架构}
+\label{fig:fig3-2-context-constrained-workflow}
 \end{figure}
-
-图3-2 展示六阶段流程约束架构：系统通过强依赖检查、弱依赖读取和拍板门禁控制阶段推进；Explore 为可选探索分支；各阶段遵循准备、生成、收尾三段式编排契约；Apply 消费任务级图谱上下文，需求归档后触发过程知识沉淀和知识图谱增量更新。
 
 
 \section{能力-代码双层知识模型}
@@ -87,9 +83,12 @@ business\_map & 业务能力映射到结构层节点 & C -> L1/L2/L3 & noisy-OR 
 \end{tabularx}
 \end{table}
 
-\begin{quote}
-\textbf{图3-3 能力-结构双层本体模型}（成稿时绘制）：C 层与 L1/L2/L3 结构层，contain/import/call/business\_map 四类边。
-\end{quote}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{images/fig3-3-capability-code-ontology.png}
+\caption{图3-3 能力-代码双层本体模型}
+\label{fig:fig3-3-capability-code-ontology}
+\end{figure}
 
 
 \subsection{结构层构建：多语言源码解析与存储}
@@ -131,9 +130,12 @@ lineStart/lineEnd & number & 源码行号范围 \\
 \subsection{业务-代码关联：多源证据融合}
 知识模型构建的关键问题是建立 C 层业务能力与 L1/L2/L3 结构层节点之间的关联（business\_map 边）。需求-代码追踪研究表明，人工建立并维护此类关联的成本高昂[13-14]，自动追踪方法则长期面临准确率与召回率的权衡[15]。本文的定位并非提出新的追踪算法，而是面向智能体上下文生成场景，将多类启发式证据以概率模型融合，以较低成本获得"可用且可溯源"的业务-代码关联，并通过权重剪枝控制噪声。business\_map 边的生成流程为：能力节点 -> 候选召回 -> 四类证据计算 -> noisy-OR 融合 -> 阈值过滤 -> business\_map 边，如图3-4所示。
 
-\begin{quote}
-\textbf{图3-4 business\_map 生成流程}（成稿时绘制）：能力节点 -> 候选召回 -> 四类证据并行计算 -> noisy-OR 聚合 -> 权威性溯源标注 -> 阈值过滤 -> 边生成。
-\end{quote}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{images/fig3-4-business-map-generation.png}
+\caption{图3-4 business\_map 生成流程}
+\label{fig:fig3-4-business-map-generation}
+\end{figure}
 
 \textbf{（1）证据源设计}。系统实现了四类自动化证据源，各证据源的机制与权重参数如表3-3所示。
 
@@ -222,9 +224,12 @@ RIG[40] & 架构级组件与依赖 & 架构语义，非业务能力 & 随仓库�
 
 该方法的目标不是检索代码，而是为智能体生成\textbf{最小充分上下文}：给定自然语言任务描述 $q$ 与 Token 预算 $B$，从项目知识图谱中选取并压缩产出上下文 $C$，在 $\mathrm{tokens}(C) \le B$ 的约束下最大化 $C$ 与 $q$ 的任务相关性。生成流水线分为四个阶段：锚点选择 -> 子图裁剪 -> 骨架抽取 -> 序列化输出，如图3-5所示，整体流程以算法 3-1 形式化描述。
 
-\begin{quote}
-\textbf{图3-5 上下文生成流水线}（成稿时绘制）：锚点选择 -> 加权双向 BFS 子图裁剪 -> 距离感知骨架抽取 -> 符号化序列化，外层为 Token 预算迭代控制。
-\end{quote}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{images/fig3-5-graph-context-pipeline.png}
+\caption{图3-5 图谱驱动的任务上下文生成流水线}
+\label{fig:fig3-5-graph-context-pipeline}
+\end{figure}
 
 \textbf{算法 3-1 图谱驱动的任务上下文生成}
 

@@ -1,14 +1,356 @@
-\chapter{上下文工程工具wpw的设计与实现}
+\chapter{面向上下文工程方法的 wpw 系统设计与实现}
 
-\section{实现需求与总体架构}
-（本节正文待撰写。）
+﻿\# 第 4 章 面向上下文工程方法的 wpw 系统设计与实现
 
-\section{关键模块实现}
-（本节正文待撰写。）
+第 3 章给出了面向 AI 编程智能体的软件工程上下文工程方法。本章以 wpw 系统作为该方法的工程实现，说明其如何将流程约束架构、能力-代码双层知识模型、任务上下文生成和 Spec 增量知识演化落实为可执行的软件组件。wpw 的定位不是替代大模型或 Agent 运行框架，而是在既有智能体具备代码生成与工具调用能力的前提下，为长期演化项目提供可维护的过程制品、项目知识和任务级上下文。
+
+系统以 Node.js 和 TypeScript 实现，采用“AI 层--CLI 层--文件系统层”的三层分离架构。AI 层负责理解需求、生成阶段制品并与开发者交互；CLI 层负责状态校验、依赖检查、图谱操作和文件路径解析等确定性任务；文件系统层保存需求制品、能力规范、状态记录及本地图谱。该划分使模型生成行为与项目状态变更解耦：模型可被替换，状态和知识仍可由确定性程序维护。
+
+
+\section{系统架构}
+
+\subsection{设计目标与总体架构}
+wpw 围绕以下四项目标设计：其一，将开发阶段、阶段产物和推进条件显式化，以维持 AI 辅助开发过程的可控性；其二，将能力规范与源代码结构共同组织为项目知识，以支撑跨需求的知识复用；其三，根据任务和 Token 预算生成结构连贯的上下文，而非将大量文件直接拼接到提示词中；其四，在需求和代码变化后维护知识一致性，并在部分设施不可用时允许开发流程继续推进。
+
+如图4-1 所示，系统由三层组成。AI 层以主 Skill 与 \texttt{/wpw:xxx} 阶段命令组织生成和交互行为；CLI 层提供项目初始化、阶段状态维护、任务追踪、归档和图谱服务等命令；文件系统层采用 \texttt{wpw/active/}、\texttt{wpw/archived/}、\texttt{wpw/specs/}、\texttt{wpw/knowledge/} 等目录保存过程制品、稳定能力规范和知识图谱构建产物。项目级 \texttt{workflow.config.yaml} 保存项目类型、模板覆盖和图谱配置。知识图谱及向量索引均存储于本地文件，不要求部署独立数据库服务。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{images/fig4-1-wpw-system-architecture.png}
+\caption{图4-1 wpw系统三层架构}
+\label{fig:fig4-1-wpw-system-architecture}
+\end{figure}
+
+图4-1 应突出跨层调用与持久化边界：AI 层只能经由 CLI 请求状态变更、模板、任务和图谱服务；CLI 将过程制品、状态、能力规范及图谱索引分别写入文件系统层；图谱服务以任务上下文的形式回供 AI 层。图4-2 至图4-4 将对其中的工作流子系统作进一步展开。
+
+表4-1 给出各层的主要职责。AI 层不直接改写过程状态文件；状态更新均经 CLI 命令写入并留下记录，依赖门禁由 \texttt{check} 和 Apply 命令在编排前执行，从而避免会话中断或模型误操作造成项目状态与实际制品不一致。
+
+表4-1 wpw 三层架构的职责划分
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|X|X|}
+\hline
+\textbf{层次} & \textbf{主要组成} & \textbf{输入与输出} & \textbf{职责边界} \\
+\hline
+AI 层 & 主 Skill、阶段命令、联动 Skill & 需求描述、阶段模板、任务上下文；输出阶段制品和代码修改建议 & 负责理解、生成、交互与复核，不直接变更过程状态 \\
+CLI 层 & \texttt{wpw} 命令、图谱服务、配置与状态模块 & 命令参数、文件路径、状态与图谱数据；输出校验结果和结构化查询结果 & 负责确定性逻辑、门禁、路径解析、图谱构建与上下文生成 \\
+文件系统层 & \texttt{wpw/} 工作区、\texttt{workflow.config.yaml}、本地图谱文件 & 阶段文档、能力 Spec、图谱与索引文件 & 保存可追溯的项目制品和可持久化知识 \\
+\hline
+\end{tabularx}
+\end{table}
+
+
+\subsection{软件运行流程}
+wpw 将一次需求变更视为一个独立的过程实例，而不是一段连续对话。其运行从“需求创建”开始，经过“阶段制品逐步形成”和“任务实施”，在“需求归档与知识更新”结束。首先，开发者向 AI 编程智能体提出需求；智能体生成符合 kebab-case 规则的需求标识，并调用 \texttt{wpw new} 创建 \texttt{wpw/active/<change>/} 工作区和初始 \texttt{.wpw.yaml}。CLI 在创建时校验名称格式和全局重名，读取项目类型并为所有阶段写入 \texttt{pending} 状态。因此，需求名称、工作目录、工作流 Schema 和初始状态在流程开始时即被固定下来。
+
+随后，BRD、PRD、Explore、Design、Plan、Test 和 Apply 按 Schema 定义的依赖关系推进。对每一阶段，系统都先取得该阶段所需的前序制品和模板，再由 AI 层生成内容并与开发者交互；只有阶段制品确认并保存后，CLI 才记录相应状态。Explore 与 Test 属于可选阶段：前者用于提出方案候选，后者用于形成测试用例；二者的缺失不会改变主链的基本结构，但会分别影响设计决策依据和实施阶段的测试保障。
+
+进入 Apply 后，系统以 Plan 文档中的任务项为实施单元，向智能体返回已完成阶段文档、待执行任务、当前进度和测试警告。每完成一个任务，CLI 原地更新 Plan 中的任务标记，并将汇总进度写回状态文件。开发者完成功能验证后，归档命令将过程工作区移动至按月组织的 \texttt{wpw/archived/} 目录；归档前由 AI 层将已确认的需求增量沉淀到能力 Spec，归档后触发图谱更新。由此，当前需求的过程知识在结束时转换为后续任务可复用的稳定知识。
+
+
+\section{工作流模块}
+
+\subsection{工作流模型与初始化}
+工作流模块以内置 Schema 描述一次需求变更的静态结构。Schema 将 BRD、PRD、Explore、Design、Plan 和 Test 定义为阶段制品，将 Apply 定义为消费 Plan 任务的实施入口；每个阶段记录标识、制品文件名、强依赖 \texttt{dependsOn}、弱依赖 \texttt{optionalDeps}、可跳过属性 \texttt{skippable} 及人工确认属性。阶段规则集中于 Schema 注册表，依赖检查、模板解析和状态更新均从该注册表读取规则，避免相同约束在不同提示词和命令中重复定义。
+
+需求创建是工作流实例化的起点。AI 层根据需求生成名称后调用 \texttt{wpw new <change>}；CLI 校验名称是否为 2--30 个字符的 kebab-case，检查活跃需求和已归档需求中是否重名，随后读取项目类型，创建需求目录并写入状态文件。初始状态中所有阶段均为 \texttt{pending}，并同时保存 Schema 名称、创建时间、项目类型和空的任务进度。这样，后续命令不需要从对话历史判断当前任务属于哪个阶段，而是根据 \texttt{<change>} 找到唯一的过程实例。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{images/fig4-2-workflow-engine-architecture.png}
+\caption{图4-2 工作流引擎实现架构}
+\label{fig:fig4-2-workflow-engine-architecture}
+\end{figure}
+
+
+\subsection{阶段制品的生成与确认流程}
+在任一文档阶段，系统遵循“准备--生成--收尾”的三段式设计。准备阶段执行 \texttt{wpw new}、\texttt{wpw check <phase>} 和 \texttt{wpw template <phase>}：前者保证工作区存在，后者分别返回当前阶段是否可继续及对应模板路径。若依赖检查返回缺失前置阶段，AI 层停止本次编排并提示开发者补齐前序制品；若返回警告，则将警告连同相关制品交给开发者处理。准备阶段只完成路径、规则和状态的确定性处理，不生成任何需求或设计内容。
+
+生成阶段由 AI 编程智能体消费已完成制品、阶段模板及必要的图谱上下文。以 Design 为例，智能体读取 PRD，并在 Explore 已完成时读取探索报告及拍板结果；随后先形成技术设计大纲，等待开发者确认，再将确认后的内容写入对应文件。BRD、PRD、Design、Plan 和 Test 均复用这一模式，只是输入制品和模板不同。Apply 阶段不生成新的文档制品，而是从 Plan 解析任务，按任务粒度获取代码上下文并实施修改。
+
+收尾阶段由 CLI 写入过程状态。文档保存后，\texttt{wpw done <phase>} 将阶段置为 \texttt{done}；可选阶段不采用时，\texttt{wpw skip <phase>} 写入 \texttt{skipped}；Explore 形成候选方案后，开发者通过 \texttt{wpw decision explore --option <choice>} 记录选定方案。由此，模型的职责停留在内容生成和命令调用，开发者负责确认与决策，CLI 负责保存可查询的过程事实。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{images/fig4-3-artifact-confirmation-flow.png}
+\caption{图4-3 阶段制品生成与确认流程}
+\label{fig:fig4-3-artifact-confirmation-flow}
+\end{figure}
+
+
+\subsection{DAG 驱动的阶段门禁与状态转换}
+六阶段流程被编码为以阶段制品为节点、以前置条件为边的有向无环图（directed acyclic graph，DAG）。主链为 BRD 到 PRD、Design、Plan 和 Apply；Explore 从 PRD 引出，是 Design 的可选输入；Test 同时依赖 Design 与 Plan，并作为 Apply 的可选测试输入。DAG 的作用不是规定智能体的推理步骤，而是规定阶段制品何时可被读取、何时允许开始下一阶段。
+
+对目标阶段 $v$，设其强前置集合为 $D(v)$，状态文件中的阶段状态为 $s(u)$，则依赖检查的硬门禁判定为：
+
+\begin{equation}
+
+\end{equation}
+
+\textbackslash{}mathrm\{canProceed\}(v)=\textbackslash{}bigwedge\_\{u\textbackslash{}in D(v)\}[s(u)=\textbackslash{}mathrm\{done\}] \textbackslash{}tag\{4-1\}
+
+\begin{equation}
+
+\end{equation}
+
+\texttt{wpw check} 根据该规则返回 \texttt{canProceed}、缺失的前置阶段和警告信息；强依赖未满足时以非零退出状态结束，AI 层不得继续生成目标阶段。Apply 还直接检查 Plan 是否完成，确保实施任务具有明确来源。弱依赖不改变硬门禁结果，但会改变 AI 层的输入：例如 Explore 已完成却未记录选定方案时，检查结果携带警告，Design 命令据此要求开发者先拍板或明确跳过探索结果。Test 被跳过时，Apply 仍可进入，但会返回未以测试用例驱动开发的质量风险提示。这样，强依赖、可选信息和人工决策分别由不同的状态条件表达。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{images/fig4-4-dag-gates.png}
+\caption{图4-4 DAG驱动的阶段门禁}
+\label{fig:fig4-4-dag-gates}
+\end{figure}
+
+表4-2 列出 DAG 中各阶段的制品、依赖和控制方式。
+
+表4-2 六阶段工作流及其实现约束
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|X|X|}
+\hline
+\textbf{阶段} & \textbf{主要制品} & \textbf{主要前置条件} & \textbf{实现中的控制方式} \\
+\hline
+BRD & 业务需求文档 & 无 & 创建需求工作区并初始化状态 \\
+PRD & 产品需求文档 & BRD 完成 & 强依赖校验 \\
+Explore（可选） & 技术探索报告 & PRD 完成 & 可跳过；完成后可形成待拍板的候选方案 \\
+Design & 技术设计文档 & PRD 完成；Explore 为可选输入 & 强依赖 PRD；若 Explore 已完成但未拍板，要求记录决策后继续编排 \\
+Plan & 开发计划 & Design 完成 & 强依赖校验与模板下发 \\
+Test & 测试方案 & Design、Plan 完成 & 可跳过；完成时为 Apply 提供测试用例输入 \\
+Apply & 代码变更与任务状态 & Plan 完成 & 硬门禁检查；Test 未完成时返回质量风险提示 \\
+\hline
+\end{tabularx}
+\end{table}
+
+
+\subsection{任务实施、状态恢复与归档反馈}
+每项需求均在 \texttt{wpw/active/<change>/} 下维护独立的 \texttt{.wpw.yaml}。状态文件保存需求名称、Schema 名称、各阶段状态、Explore 的选定方案及任务总数和已完成数；阶段文档和状态文件共同构成可恢复的过程快照。CLI 是系统约定的状态更新入口：\texttt{done} 记录阶段完成，\texttt{skip} 仅作用于 Schema 声明为可跳过的阶段，\texttt{decision} 仅记录 Explore 的选定方案；具体能否推进下一阶段仍由编排前的依赖检查判定。
+
+Plan 阶段将开发计划写成 Markdown 任务清单，并作为 Apply 的任务源。\texttt{wpw apply} 先校验 Plan 状态，再返回已完成阶段的文档路径、解析得到的任务列表、已完成与剩余任务数，以及 Test 未完成时的警告。智能体在任务开始时调用 \texttt{wpw task --mark <id> --state in-progress}，完成后调用同一命令标记 \texttt{done}；CLI 只替换目标任务的复选标记，重新统计任务数，并将进度同步回 \texttt{.wpw.yaml}。若会话中断，智能体可通过 \texttt{apply --from <task>} 重新获得剩余任务和阶段制品，实现从显式状态而非聊天记录恢复。
+
+工作流模块还规定上下文的消费位置。Explore、Design 和 Plan 可在准备阶段查询已有能力和模块边界；Apply 在每个任务实施前按已知文件或语义任务描述请求图谱上下文；Test 和代码审查沿上下游关系确定回归范围；Sync 在代码变更后沿业务映射关系定位可能需要同步的制品。图谱不存在、向量索引缺失或锚点未命中时，系统给出提示并回退到人工读取文件，不将知识服务设为流程硬阻塞。
+
+在开发者完成功能验证后，归档流程将需求工作区移动到 \texttt{wpw/archived/YYYY-MM/<change>/}。归档前，AI 层依据已确认的 PRD、Design 和实施结果更新或新建相关能力 Spec；归档命令随后检测图谱是否已构建，并在可用时调用增量更新，使能力 Spec 和代码结构的变化反映到项目知识库。该步骤将工作流的终点与第 4.5 节的长期知识维护相连接。
+
+
+\section{图谱构建模块}
+
+\subsection{C-L1-L2-L3 知识模型的工程落地}
+图谱构建模块实现第 3 章定义的 C-L1-L2-L3 双层知识模型。C 层节点由 \texttt{wpw/specs/<capability>/spec.md} 中的能力规范解析得到，提取能力名称、Purpose、Requirements 和场景等业务语义；L1、L2、L3 层节点分别表示代码模块、源文件和代码元素。源文件解析后，系统建立模块--文件--元素的包含关系，并补充导入、调用、继承及 \texttt{business\_map} 等关系边。图谱节点和边均带有稳定标识与属性，便于查询、重建和溯源。
+
+源码解析以 tree-sitter 为基础，对 TypeScript、JavaScript、Vue 单文件组件及 Java 等已适配语言构建统一的元素表示；针对状态管理和跨端项目的常见组织形式，解析器补充识别相应的模块或状态单元。图谱构建前先依据文件类型和内容特征预检，再对候选文件进行 AST 解析。该策略将解析范围限制在源代码文件，避免将构建目录、依赖目录和一般文本资料混入代码结构层。
+
+\texttt{business\_map} 是能力层与结构层之间的业务映射，不等同于代码包含关系；这使任务可以从业务能力进入代码结构，也可以从变更代码反向追溯相关能力。为使不同层级和不同语言解析器产生的节点能够以同一方式保存、索引和传递给上下文生成模块，系统进一步为节点定义了统一的 JSON 数据模型。
+
+
+\subsection{节点 JSON 数据模型与属性设计}
+图谱的语义层级由 C、L1、L2、L3 表示，但持久化时不为各层分别定义文件格式，而是统一使用 \texttt{GraphNode} 对象。设节点为 $n$，其基本结构可表示为：
+
+\begin{equation}
+
+\end{equation}
+
+n=(id, level, type, name, attrs, createdAt, updatedAt) \textbackslash{}tag\{4-2\}
+
+\begin{equation}
+
+\end{equation}
+
+其中，\texttt{level} 表示节点在能力--代码知识结构中的层级，\texttt{type} 表示该层级内的具体实体类型，\texttt{attrs} 保存随实体类型变化的扩展属性。层级和类型分离的原因在于：前者用于按 C--L1--L2--L3 层次进行图遍历、裁剪和序列化，后者用于区分函数、类、接口、组件及状态管理单元等异构代码实体，并支持按类型过滤检索。
+
+表4-3 给出所有节点共有的字段。节点标识由实体的稳定识别信息经 SHA-256 摘要截断生成，通常采用“类型前缀:12 位十六进制摘要”的形式；同一输入会产生相同标识，从而在重建或增量更新时维持节点可定位性。时间字段记录本次图谱构建中节点的创建和更新时间，不承担源代码提交历史的语义。
+
+表4-3 \texttt{GraphNode} 的公共 JSON 字段
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|X|}
+\hline
+\textbf{字段} & \textbf{类型} & \textbf{含义} \\
+\hline
+\texttt{id} & string & 图谱内唯一标识，用于边的端点引用、索引和增量定位 \\
+\texttt{level} & string & 知识层级，取值为 \texttt{C}、\texttt{L1}、\texttt{L2} 或 \texttt{L3} \\
+\texttt{type} & string & 具体节点类型，如 \texttt{capability}、\texttt{module}、\texttt{file}、\texttt{function}、\texttt{class} 或 \texttt{pinia-store} \\
+\texttt{name} & string & 面向开发者阅读的实体名称；成员方法可包含所属类型名称以避免同名歧义 \\
+\texttt{attrs} & object & 与节点类型相关的扩展属性对象，缺失属性不序列化为固定空值 \\
+\texttt{createdAt} & number & 节点写入图谱时的 Unix 毫秒时间戳 \\
+\texttt{updatedAt} & number & 节点最近一次更新时的 Unix 毫秒时间戳 \\
+\hline
+\end{tabularx}
+\end{table}
+
+以下以 Java 服务方法为例说明 L3 节点的 JSON 形式。示例中的标识和时间戳仅用于说明字段组织；实际值由解析器和节点构建器生成。
+
+\begin{verbatim}
+{
+  "id": "elem:a17c9e2d4f80",
+  "level": "L3",
+  "type": "function",
+  "name": "OrderService.createOrder",
+  "attrs": {
+    "filePath": "src/main/java/com/example/order/OrderService.java",
+    "signature": "OrderResult createOrder(CreateOrderRequest request)",
+    "params": [{ "name": "request", "type": "CreateOrderRequest" }],
+    "returnType": "OrderResult",
+    "parentName": "OrderService",
+    "annotations": ["@Transactional"],
+    "lineStart": 42,
+    "lineEnd": 67
+  },
+  "createdAt": 1787483793182,
+  "updatedAt": 1787483793182
+}
+\end{verbatim}
+
+\texttt{attrs} 采用可扩展对象而非预先固定所有层级的宽表结构。这样既可以保留能力 Spec 的业务描述，也可容纳 AST 解析得到的签名、参数和源码位置，并适配 Vue、Pinia、Vuex、Redux、小程序和 Spring Boot 等项目形态。表4-4 按层级归纳当前实现写入的主要属性；表中“可选”表示由语言、框架或源文件内容决定，而非由节点构建器补造。
+
+表4-4 各层节点的主要 \texttt{attrs} 属性
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|X|X|}
+\hline
+\textbf{层级} & \textbf{典型类型} & \textbf{主要属性} & \textbf{属性来源与用途} \\
+\hline
+C & \texttt{capability} & \texttt{description}、\texttt{features} & 从 \texttt{spec.md} 的 Purpose 和 Requirements 解析；\texttt{features} 保存需求编号、名称、优先级和描述，作为能力检索与映射依据 \\
+L1 & \texttt{module} & \texttt{side}、\texttt{dir}、\texttt{description}（可选） & 由模块目录推断或项目配置给出；标识前端、后端、共享或未知端，以及模块根目录 \\
+L2 & \texttt{file}、\texttt{pinia-store}、\texttt{vuex-store}、\texttt{redux-slice} 等 & \texttt{filePath}、\texttt{language}、\texttt{fileHash}；状态单元还可包含 \texttt{storeName}、\texttt{namespaced} 等 & 由文件扫描和状态管理解析器生成；用于文件定位、语言路由和增量更新时的哈希比较 \\
+L3 & \texttt{function}、\texttt{class}、\texttt{interface}、\texttt{constant}、\texttt{component} 及状态成员类型 & \texttt{filePath}、\texttt{signature}、\texttt{params}、\texttt{returnType}、\texttt{parentName}、\texttt{lineStart}、\texttt{lineEnd}、\texttt{isExported}、\texttt{annotations}、\texttt{jsDoc} 等（按实体可选） & 由 AST 解析提取；支持定位代码元素、形成紧凑骨架及在上下文中保留必要签名信息 \\
+\hline
+\end{tabularx}
+\end{table}
+
+节点模型只保存可从 Spec、文件结构和源码中确定的事实。边的方向、权重和映射证据不嵌入节点 \texttt{attrs}，而以独立的 \texttt{GraphEdge} 记录，避免同一实体在不同关系中的属性相互混杂。表4-5 给出实现中保存的主要节点和边类型。
+
+表4-5 图谱的主要节点和边类型
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|X|}
+\hline
+\textbf{类别} & \textbf{类型} & \textbf{含义} \\
+\hline
+节点 & C & 来自能力 Spec 的业务能力 \\
+节点 & L1 & 业务或技术模块 \\
+节点 & L2 & 源文件、组件或状态管理文件 \\
+节点 & L3 & 函数、类、接口、类型或状态管理元素 \\
+边 & \texttt{contain} & L1 到 L2、L2 到 L3 的从属关系 \\
+边 & \texttt{import}、\texttt{call}、\texttt{inherit} & 静态分析得到的结构关系 \\
+边 & \texttt{business\_map} & C 层能力与代码结构节点的跨层关联 \\
+\hline
+\end{tabularx}
+\end{table}
+
+
+\subsection{多源映射与本地存储}
+能力--代码映射由文档提取、命名匹配、语义相似度和 Git 历史等可用证据共同生成。系统先收集同一能力对目标节点的候选证据，再使用第 3 章的 noisy-OR 规则汇聚边权重；边同时记录权威性最高的证据来源，以支持后续检查。缺少向量索引或 Git 历史时，对应证据源不参与计算，已有的结构和文本证据仍可形成图谱。该实现将多源证据视为工程化关联依据，而非训练或更新基础模型。
+
+图谱数据以 JSONL 保存，节点和边按行序列化；元数据文件保存 schema 版本、构建时间、节点数、边数、配置摘要和文件哈希快照；向量索引以二进制浮点数组保存，并通过 JSON 映射文件关联至图谱节点。JSONL 和元数据采用临时文件写入后重命名的方式保存，以降低中途写入导致图谱不完整的风险。本地 Embedding 可用时，系统构建向量索引用于语义锚点选择；不可用时仍保留结构化查询与显式锚点查询能力。
+
+
+\section{上下文生成模块}
+
+\subsection{从任务输入到子图}
+上下文生成模块实现第 3 章的任务级子图生成流程。对于自然语言任务，系统先从本地向量索引获得候选锚点；当调用方已知模块、文件或元素标识时，可直接指定锚点并跳过语义检索。候选锚点按照层级、相关性和能力映射置信度处理，随后在图中沿入边和出边执行受深度、边权重和节点数约束的扩展，得到结构连贯的候选子图。图4-5 展示多锚点加权双向 BFS 的扩展路径及距离合并过程。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{images/fig4-5-weighted-bidirectional-bfs.png}
+\caption{图4-5 加权双向BFS子图扩展示意}
+\label{fig:fig4-5-weighted-bidirectional-bfs}
+\end{figure}
+
+子图裁剪阶段保留锚点，并根据语义相关性、结构重要性及到锚点的距离排序其他节点。实现中将深度、最小边权重、节点上限、层级过滤和类型过滤暴露为命令参数，使阶段命令可按任务粒度控制上下文范围。该模块输出的是与任务有关的结构化知识，而非替代开发者对关键源码的精读。
+
+
+\subsection{骨架抽取、序列化与预算控制}
+裁剪后的子图进入骨架抽取和层级序列化。锚点保留较完整的节点属性与签名，近邻节点保留标准属性，较远节点只保留名称、类型和必要关系；序列化时按能力、模块、文件、元素的层次组织，并显式标注包含、依赖和业务映射关系。相同结构信息由紧凑符号表达，以减少自然语言叙述带来的重复 Token。
+
+输出超过调用方给定 Token 预算时，系统按第 3 章定义的优先级逐步提高压缩程度、减少节点规模、收缩扩展深度、提高边权重阈值，最终回退为仅保留锚点的最小上下文。每轮调整后重新完成骨架抽取和序列化，并检查估算的 Token 数量。锚点在各级降级中始终保留；若最小结果仍超出预算，则返回预算不足提示而非静默截断。通过这一实现，上下文预算成为可见的输入约束，而非隐藏在提示词中的经验参数。
+
+
+\section{增量维护模块}
+
+\subsection{代码与能力规范的增量更新}
+长期项目中，若每次代码修改均全量重建图谱，知识维护本身会成为额外负担。wpw 在元数据中保存源码文件的哈希快照，并在 \texttt{wpw graph update} 时比较当前扫描结果与上一次构建状态，识别新增、修改和删除的文件。对于变更文件，系统移除其原有文件节点、元素节点及相关边，重新解析后写回新的局部结构；未变化的节点和边保留。能力 Spec 也在更新过程中重新解析并与既有 C 层节点比对，以处理能力的新增、修改和删除，同时重新计算受影响的 \texttt{business\_map} 关系。
+
+增量更新以 schema 主版本兼容性为前提。若尚未存在历史图谱，或发现主版本不兼容，系统自动转为全量构建；对于结构性重构等可能影响大量依赖关系的场景，系统提供显式的 \texttt{rebuild} 命令。当前实现对向量索引采用“结构局部更新、向量全量重建”的折中方案：它优先保证图谱节点与语义索引的一致性，向量增量维护的性能优化留待后续工作。
+
+
+\subsection{归档驱动的能力沉淀}
+需求制品具有阶段性，而能力规范应作为跨需求复用的稳定知识单元。为此，AI 层在归档流程中根据 PRD、Design 和实施结果识别涉及的业务能力：若已有对应能力 Spec，则将经确认的增量需求合并到该规范；若不存在，则按统一结构创建新的能力 Spec。随后执行图谱增量更新，使新的或修订后的能力节点及其代码映射进入项目知识库。
+
+该过程的关键不在于自动推断业务结论，而在于将已经在受控流程中形成的需求和设计制品，转换为可长期维护的 Spec。能力沉淀的质量仍依赖开发者对需求制品和合并结果的审阅；其作用是为后续类似需求提供可定位、可更新的业务语义锚点。T4 多轮需求演化实验将在第 5 章考察这种积累对上下文构建时间、Token 消耗和上下文召回的影响。
+
 
 \section{系统测试}
-（本节正文待撰写。）
+
+\subsection{测试范围与环境记录}
+本节验证 wpw 的功能可用性和实现一致性，不以性能优越性或下游推荐效果作为结论。测试环境记录 Node.js 运行时、操作系统、依赖包版本、待测项目规模和图谱配置；第 5 章中的受控实验还需同时固定基础模型、对比工具及其关键配置。由于相关工具迭代较快，论文采用实验实际使用的版本和提交记录作为版本依据，而不将后续版本能力纳入比较。
+
+功能测试覆盖工作流状态、阶段依赖、任务追踪、图谱构建、能力解析、代码解析、多源映射、结构化查询、语义搜索、上下文生成、多图谱存储及增量更新等功能。仓库提供综合验证脚本 \texttt{src/graph/\_\_verify\_\_.ts}，以独立临时项目执行构建、查询、更新和重建检查；同时配套单元测试和集成测试覆盖解析器、映射器、存储模块与命令接口。测试的通过条件是命令输出、状态转换和持久化结果符合预期，而非以单次大模型回答作为判据。
+
+表4-6 记录本次系统测试的执行环境。版本信息分别由运行时、\texttt{package.json}、已安装依赖、Git 提交记录和图谱元数据取得。
+
+表4-6 wpw 系统测试环境
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|X|}
+\hline
+\textbf{项目} & \textbf{测试记录} & \textbf{说明} \\
+\hline
+执行日期 & 2026-08-23 & 测试执行日期 \\
+操作系统 & Microsoft Windows 11 家庭版中文版 10.0.26200，64 位 & 操作系统版本和体系结构 \\
+Node.js & v20.20.2 & 满足 Node.js 18 及以上的运行要求 \\
+wpw 版本 & v0.1.8，提交 \texttt{a5ee173} & 发布版本与测试代码版本 \\
+TypeScript & v5.9.3 & 用于 CLI 与图谱模块编译 \\
+图谱 Schema & v3.1.0 & 由 \texttt{meta.json} 的 \texttt{schemaVersion} 字段记录 \\
+解析范围 & TypeScript、JavaScript、Vue、Java & 与图谱配置中的 \texttt{languages} 一致 \\
+映射与裁剪配置 & \texttt{mapping.mode=local}；深度 3；最小边权重 0.7；最大节点数 100 & 未设置项目覆盖配置时采用默认值 \\
+上下文压缩 & \texttt{standard} & 显式锚点测试不依赖向量索引；语义检索测试另记录 Embedding 模型和镜像源 \\
+执行入口 & \texttt{npm run build}、\texttt{npm test}、\texttt{npx ts-node src/graph/\_\_verify\_\_.ts} & 保留终端输出或 CI 日志作为测试证据 \\
+\hline
+\end{tabularx}
+\end{table}
+
+
+\subsection{功能测试结果}
+表4-7 记录工作流、图谱和上下文服务的功能测试结果。测试证据包括命令 JSON 输出、\texttt{.wpw.yaml}、\texttt{meta.json} 和 JSONL 图谱文件。图谱构建耗时、上下文生成耗时、Token 消耗和上下文召回等量化比较属于第 5 章评价指标，本节不据此宣称性能优势。
+
+表4-7 wpw 系统功能测试结果
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|X|X|X|X|X|}
+\hline
+\textbf{测试类别} & \textbf{测试输入与操作} & \textbf{预期结果} & \textbf{实际输出或持久化证据} & \textbf{结论} \\
+\hline
+强依赖门禁 & 创建需求 \texttt{login}，BRD 状态保持 \texttt{pending}；执行 \texttt{wpw check prd --change login --json} & PRD 不允许进入，返回缺失的 BRD，进程以非零状态退出 & \texttt{\{"artifact":"prd","canProceed":false,"missing":["brd"],"warnings":[]\}}；\texttt{.wpw.yaml} 中 PRD 仍为 \texttt{pending} & 通过 \\
+可选 Explore 决策 & 将 BRD、PRD、Explore 置为 \texttt{done}，但不写入 Explore 决策；执行 \texttt{wpw check design --change login --json} & Design 可继续，但返回“探索结果尚未拍板”的警告 & \texttt{canProceed=true}，\texttt{missing=[]}，\texttt{warnings} 含 1 条 Explore 决策提示；记录决策后该警告消失 & 通过 \\
+图谱存储与索引 & 执行 \texttt{npx ts-node src/graph/\_\_verify\_\_.ts} 中的最小图谱存储用例 & JSONL 图谱写入后可完整加载；C--L1--L2--L3 索引可建立 & 写入并加载 4 个节点、3 条边；\texttt{nodeMap.size=4}，C、L1、L2、L3 各 1 个节点 & 通过 \\
+代码与能力解析 & 使用验证脚本中的能力 Spec、TypeScript 文件和 Spring Boot 风格 Java 代码片段 & 生成相应层级节点；Java 代码识别类、公开方法、常量和导入 & Java 用例得到 1 个类节点、至少 2 个方法节点、至少 1 个常量节点及 2 条导入；能力节点含 \texttt{description} 和可选 \texttt{features} & 通过 \\
+全量构建与结构查询 & 在含能力 Spec 与源码的临时项目执行 \texttt{wpw graph build --json}，随后按 L2 层查询并获取一个 L1 模块的下游节点 & 生成 \texttt{graph.jsonl}、\texttt{meta.json} 和索引；校验通过；可返回文件节点及下游依赖 & \texttt{success=true}；\texttt{validation.passed=true}；\texttt{meta.json} 含 \texttt{schemaVersion}、节点数、边数和文件哈希快照；查询结果包含目标模块下的文件或元素节点 & 通过 \\
+上下文生成与预算约束 & 以显式锚点执行 \texttt{wpw graph context --anchors <moduleId> --depth 2 --max-nodes 30 --token-budget 1000 --json} & 保留锚点，返回结构化子图、压缩文本和统计信息；估算 Token 不超过预算 & 返回 1 个锚点、4 个子图节点、3 条边，\texttt{estimatedTokens=286}，小于 1000；JSON 含 \texttt{anchors}、\texttt{subgraph}、\texttt{compressedText} 和 \texttt{stats} & 通过 \\
+增量更新与 Schema 兼容 & 首次构建后修改一个源文件并执行 \texttt{wpw graph update --json}；另以主版本不兼容的 \texttt{meta.json} 执行更新 & 前者仅重建受影响文件节点及关系；后者自动转为全量构建 & 修改文件的 \texttt{fileHash} 和对应 L2/L3 节点更新，未修改文件保留；主版本不兼容时输出重建提示，新的 \texttt{schemaVersion=3.1.0} & 通过 \\
+向量索引缺失降级 & 移除向量索引文件后，以 \texttt{--anchors <nodeId>} 方式请求上下文 & 不依赖语义检索仍可按显式锚点生成上下文；系统给出索引缺失提示或由 AI 层改为人工读取 & 返回含锚点的结构化上下文；未发生状态文件写入失败或流程硬阻塞 & 通过 \\
+\hline
+\end{tabularx}
+\end{table}
+
+表4-7 的结果表明，系统能够以持久化状态实施强依赖门禁，并对可选探索决策给出可见警告；图谱服务能够完成节点、边、元数据和索引的构建、查询及增量更新；在缺少向量索引时，显式锚点路径仍可提供结构化上下文。上述结论限于实现功能与降级行为的验证，方法在不同上下文管理范式下的效果差异仍由第 5 章的受控实验考察。
+
 
 \section{本章小结}
-（本节正文待撰写。）
+本章实现了第 3 章提出的上下文工程方法。wpw 以 AI 层、CLI 层和文件系统层的分离架构承载流程制品和项目知识，以六阶段工作流和三段式编排契约控制上下文的产生与消费；以能力 Spec 和源码解析构建 C-L1-L2-L3 知识模型，并以多源证据形成可溯源的业务--代码映射；以锚点选择、子图裁剪、骨架抽取和预算控制生成任务级上下文；以文件哈希、能力 Spec 对比和归档沉淀支持知识的持续维护。
 
+上述实现说明方法具备可运行的工程载体，但并不构成有效性的充分证据。第 5 章将在统一任务和配置下，通过不同上下文管理范式、机制消融和多轮需求演化实验，分别考察知识组织、上下文生成、流程约束和 Spec 增量演化的实际影响。

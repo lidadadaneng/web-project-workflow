@@ -12,6 +12,7 @@ from pathlib import Path
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
+from docx.text.paragraph import Paragraph
 
 
 SOURCE = Path(
@@ -20,6 +21,7 @@ SOURCE = Path(
 TARGET = Path(
     r"F:\project\web-project-workflow\论文\基于大模型的美食推荐系统设计与实现--面向AI辅助开发的上下文工程方法研究_AIGC降重送检版.docx"
 )
+CHAPTER1_MARKDOWN = Path(r"F:\project\web-project-workflow\论文\1.绪论.md")
 SOURCE_SHA256 = "9DA51ABD570542411F8E67FC65A207776F605F2C401CDD3441A03E89862FDBCD"
 
 
@@ -208,6 +210,15 @@ REWRITES: dict[int, str] = {
     623: """• 实验规模与性质边界：本研究采用受控工程实验，以单一业务载体上的三组任务集完成个案层面的机制验证。相关结论仍需在其他项目类型、项目规模和团队场景中进一步检验。人工评审具有主观性，实验通过双人交叉评审和标注仲裁降低这一影响。""",
     624: """• 后端语言覆盖：系统已经实现 Java/Spring Boot 解析器，但现阶段的落地验证规模有限，首版也未建立依赖注入边和 JPA 关联边；Go/Python 等后端语言尚不在覆盖范围内。""",
     626: """• 规则治理：系统目前缺少全局规则治理能力。项目与团队规模增长后，规则膨胀仍可能造成同类失真；分阶段轻量加载只能缓解这一问题，尚未从根本上解决。""",
+    293: """上下文组织效率用上下文压缩率衡量，本文将其作为基本指标：""",
+    391: """演化机制最终落实为两件事：把过程知识沉淀为稳态知识，并对知识图谱执行增量更新。""",
+    589: """• 统计各方案的开发工时和返工次数，并对组间差异作出归因，相关数据待回填。""",
+    592: """• 汇总需求符合度的双人评审结果及分歧仲裁记录，数据待回填。""",
+    593: """• 比较代码 review 通过率并分析差异来源，数据待回填。""",
+    596: """• 在等价任务条件下，对照各方案的上下文构造方式，记录上下文规模和召回率，数据待回填。""",
+    604: """• 比较变更可追溯性和文档完整度，相关数据待回填。""",
+    614: """本文与现有方法（工具）的差异体现为设计取舍，而不是对工具能力作高下判断，主要可从三方面说明：""",
+    625: """• 冷启动：缺少能力规范时，系统退化为纯结构检索。""",
 }
 
 
@@ -239,6 +250,40 @@ def replace_paragraph_text(paragraph, text: str) -> None:
             run.font.superscript = True
 
 
+def chapter1_items() -> list[str]:
+    """Read the chapter-1 Markdown source, excluding its reference mapping."""
+    markdown = CHAPTER1_MARKDOWN.read_text(encoding="utf-8")
+    body = markdown.split("\n---\n", 1)[0]
+    items: list[str] = []
+    for line in body.splitlines():
+        line = line.strip()
+        if not line or line.startswith("|") or line.startswith("```"):
+            continue
+        if line.startswith("#"):
+            line = line.lstrip("#").strip()
+        # Markdown emphasis is not represented in the thesis DOCX text runs.
+        line = line.replace("**", "")
+        items.append(line)
+    # Word supplies the chapter number through the heading style; keep only its title text.
+    if items:
+        items = ["引言"] + items[1:]
+    return items
+
+
+def sync_chapter1_from_markdown(paragraphs) -> None:
+    """Keep the送检版 chapter 1 exactly aligned with the Markdown source."""
+    items = chapter1_items()
+    start = next((i for i, p in enumerate(paragraphs) if p.text.strip() == "引言" and i > 150), None)
+    end = next((i for i, p in enumerate(paragraphs[start + 1:], start + 1) if p.text.strip() == "相关技术"), None)
+    if start is None or end is None or end - start != len(items) - 1:
+        raise RuntimeError(f"Unexpected chapter-1 bounds: start={start}, end={end}, items={len(items)}")
+    for offset, text in enumerate(items[:-1]):
+        replace_paragraph_text(paragraphs[start + offset], text)
+    final_xml = copy.deepcopy(paragraphs[end - 1]._p)
+    paragraphs[end]._p.addprevious(final_xml)
+    replace_paragraph_text(Paragraph(final_xml, paragraphs[end]._parent), items[-1])
+
+
 def build() -> None:
     actual_hash = file_sha256(SOURCE)
     if actual_hash != SOURCE_SHA256:
@@ -255,6 +300,8 @@ def build() -> None:
         if not paragraph.text.strip():
             raise RuntimeError(f"Paragraph {index} is unexpectedly empty")
         replace_paragraph_text(paragraph, rewritten.strip())
+
+    sync_chapter1_from_markdown(paragraphs)
 
     document.save(TARGET)
     print(f"saved: {TARGET}")

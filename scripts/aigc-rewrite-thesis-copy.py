@@ -22,7 +22,7 @@ TARGET = Path(
     r"F:\project\web-project-workflow\论文\基于大模型的美食推荐系统设计与实现--面向AI辅助开发的上下文工程方法研究_AIGC降重送检版.docx"
 )
 CHAPTER1_MARKDOWN = Path(r"F:\project\web-project-workflow\论文\1.绪论.md")
-SOURCE_SHA256 = "9DA51ABD570542411F8E67FC65A207776F605F2C401CDD3441A03E89862FDBCD"
+SOURCE_SHA256 = "7D924ECC5103D5000D17DF71B173EF5EACABB3D72B65A7FD712B5C54007EBA07"
 
 
 REWRITES: dict[int, str] = {
@@ -301,7 +301,11 @@ def build() -> None:
             raise RuntimeError(f"Paragraph {index} is unexpectedly empty")
         replace_paragraph_text(paragraph, rewritten.strip())
 
-    sync_chapter1_from_markdown(paragraphs)
+    # This is an isolated送检副本. Keep the current Markdown chapter 1 intact
+    # here; source synchronization happens only after the candidate passes review.
+    selected = {k: v for k, v in REWRITES.items() if 195 < k < 425}
+    if len(selected) < 50:
+        raise RuntimeError(f"Expected a substantial chapter 1-3 rewrite set, got {len(selected)} paragraphs")
 
     document.save(TARGET)
     print(f"saved: {TARGET}")

@@ -2,7 +2,8 @@ from pathlib import Path
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Inches
+from docx.image.image import Image
+from docx.shared import Pt
 from docx.oxml.ns import qn
 
 
@@ -50,13 +51,17 @@ def insert_after(anchor, paragraph):
 
 
 document = Document(str(DOCX_PATH))
-placeholders = [p for p in document.paragraphs if any(p.text.strip().startswith(k) for k in FIGURES)]
+max_text_width = min(
+    section.page_width - section.left_margin - section.right_margin
+    for section in document.sections
+)
+placeholders = [p for p in document.paragraphs if p.text.strip() in FIGURES]
 if not placeholders:
     print("No Chapter 3 figure placeholders found; document may already be synchronized.")
     raise SystemExit(0)
 
 for placeholder in placeholders:
-    key = next(k for k in FIGURES if placeholder.text.strip().startswith(k))
+    key = placeholder.text.strip()
     figure_dir, image_name, caption_text = FIGURES[key]
     image_path = WORKSPACE / "论文" / "图表" / figure_dir / image_name
     if not image_path.exists():
@@ -67,16 +72,20 @@ for placeholder in placeholders:
     figure.paragraph_format.space_before = 0
     figure.paragraph_format.space_after = 0
     figure.paragraph_format.keep_with_next = True
-    figure.add_run().add_picture(str(image_path), width=Inches(6.2))
+    native_width = Image.from_file(str(image_path)).width
+    figure.add_run().add_picture(str(image_path), width=min(native_width, max_text_width))
 
     caption = document.add_paragraph(style="u图标题")
     caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    caption.paragraph_format.space_before = 0
-    caption.paragraph_format.space_after = 6
+    caption.paragraph_format.space_before = Pt(1.2)
+    caption.paragraph_format.space_after = Pt(12)
+    caption.paragraph_format.line_spacing = 1.0
     caption.add_run(caption_text)
     for run in caption.runs:
-        run.font.name = "宋体"
-        run._element.get_or_add_rPr().rFonts.set(qn("w:eastAsia"), "宋体")
+        run.font.name = "Times New Roman"
+        run._element.get_or_add_rPr().rFonts.set(qn("w:eastAsia"), "黑体")
+        run.font.size = Pt(10.5)
+        run.bold = True
 
     anchor = placeholder._p
     parent = anchor.getparent()

@@ -261,3 +261,21 @@ public class UserService {
   const method = result.elements.find((e) => e.type === 'function');
   assert.ok(method?.attrs.jsDoc?.includes('根据ID查询用户'));
 });
+
+test('parseJavaFile: 重载方法使用参数类型生成唯一 ID', async () => {
+  const source = `
+public class UserService {
+    public User find(Long id) { return null; }
+    public User find(String name) { return null; }
+}
+`;
+  const result = await parseJavaFile(
+    '/fake-project/src/main/java/com/example/user/UserService.java',
+    ROOT,
+    source,
+  );
+
+  const methods = result.elements.filter((e) => e.type === 'function');
+  assert.equal(methods.length, 2);
+  assert.equal(new Set(methods.map((method) => method.id)).size, 2);
+});

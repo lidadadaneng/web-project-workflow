@@ -344,13 +344,20 @@ function extractMethod(
       const param = paramsNode.namedChild(i);
       if (!param || param.type !== 'formal_parameter') continue;
       const paramName = param.childForFieldName('name')?.text ?? '';
-      // 类型：formal_parameter 的第一个 type 类节点
-      let paramType = '';
-      for (let j = 0; j < param.namedChildCount; j++) {
-        const child = param.namedChild(j);
-        if (child && child.type.endsWith('_type') && child.type !== 'formal_parameter') {
-          paramType = child.text;
-          break;
+      // 普通引用类型在 tree-sitter-java 中是 type_identifier，并不以
+      // "_type" 结尾。优先读取语法树的 type 字段，再兼容旧的节点遍历。
+      let paramType = param.childForFieldName('type')?.text ?? '';
+      if (!paramType) {
+        for (let j = 0; j < param.namedChildCount; j++) {
+          const child = param.namedChild(j);
+          if (
+            child &&
+            (child.type.endsWith('_type') || child.type === 'type_identifier' || child.type === 'scoped_type_identifier') &&
+            child.type !== 'formal_parameter'
+          ) {
+            paramType = child.text;
+            break;
+          }
         }
       }
       if (paramName) {
@@ -415,9 +422,14 @@ function extractMethod(
   }
 
   const fullName = `${parentName}.${name}`;
+  // Java permits overloaded methods.  The previous ID used only file/class/name,
+  // so overloads collapsed to one ID and made otherwise valid graphs fail
+  // validation.  Parameter types are stable across formatting changes and are
+  // sufficient to distinguish overloads within the same declaring type.
+  const overloadKey = params.map((p) => p.type || '?').join(',');
 
   return {
-    id: generateNodeId('elem', [filePath, `${parentName}.${name}`, 'method']),
+    id: generateNodeId('elem', [filePath, `${parentName}.${name}`, overloadKey, 'method']),
     level: 'L3',
     type: NODE_TYPE_FUNCTION,
     name: fullName,

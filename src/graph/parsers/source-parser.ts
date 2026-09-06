@@ -92,6 +92,11 @@ export async function parseSourceFile(
       return { fileNode: createFileNode(filePath, root, lang), elements: [], imports: [] };
   }
 
+  // L2 文件节点过去只携带文件名和路径，导致中文业务能力无法与
+  // MeishixinxiController 这类拼音文件建立可靠的语义映射。保存一段
+  // 有界源码摘要，使文件级向量能看到类注释、路由和主要标识符。
+  result.fileNode.attrs.description = buildSourceSearchSummary(source);
+
   // Pinia store 解析（仅当文件疑似 store 时）
   if (isPiniaStoreFile(filePath, source)) {
     try {
@@ -159,6 +164,18 @@ export async function parseSourceFile(
   }
 
   return result;
+}
+
+/** 为文件级语义检索生成短摘要，不改变源码内容或 AST 结构。 */
+function buildSourceSearchSummary(source: string): string {
+  return source
+    .replace(/\r/g, '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, 90)
+    .join(' ')
+    .slice(0, 2400);
 }
 
 /** 源码解析进度回调 */

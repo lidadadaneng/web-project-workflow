@@ -53,8 +53,11 @@ export function getNodeVectorText(node: GraphNode): string | null {
     }
 
     case 'file': {
-      // 文件：文件名 + 路径
-      return `${node.attrs.filePath ?? node.name}\n${node.name}`;
+      // 文件：文件名 + 路径 + 有界源码摘要。摘要让中文领域注释也能
+      // 参与能力到代码的匹配，而不再只能比较中文需求与拼音路径。
+      const parts = [node.attrs.filePath ?? node.name, node.name];
+      if (node.attrs.description) parts.push(node.attrs.description);
+      return parts.join('\n');
     }
 
     case 'function':

@@ -458,6 +458,7 @@ export async function buildGraph(
     caps: parsedCaps,
     modules: parsedModules,
     fileNodes,
+    codeNodes: allNodes,
     root: scanRootAbs,
     config,
     vectors,

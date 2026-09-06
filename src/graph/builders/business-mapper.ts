@@ -35,6 +35,8 @@ export interface BusinessMapContext {
   caps: ParsedCapability[];
   modules: ParsedModule[];
   fileNodes: Map<string, GraphNode>;
+  /** 全部结构节点；用于把能力语义直接映射到类和方法。 */
+  codeNodes?: GraphNode[];
   root: string;
   config: GraphConfig;
   /** 向量数据（语义回填用，为 null 则跳过语义源） */
@@ -66,7 +68,7 @@ const MIN_EDGE_WEIGHT = 0.3;
  * C 层能力节点 → L1/L2/L3 结构节点
  */
 export function buildBusinessMapEdges(eb: EdgeBuilder, ctx: BusinessMapContext): void {
-  const { caps, modules, fileNodes, root, config, vectors, dimensions, mapping } = ctx;
+  const { caps, modules, fileNodes, codeNodes, root, config, vectors, dimensions, mapping } = ctx;
   const traceGit: GitTracer = ctx.traceGit ?? traceFromGit;
   const isGit: (root: string) => boolean = ctx.isGit ?? isGitRepo;
   const sw = ctx.sources ?? {};
@@ -89,6 +91,7 @@ export function buildBusinessMapEdges(eb: EdgeBuilder, ctx: BusinessMapContext):
   const nodeById = new Map<string, GraphNode>();
   for (const m of modules) nodeById.set(m.node.id, m.node);
   for (const [, n] of fileNodes) nodeById.set(n.id, n);
+  for (const n of codeNodes ?? []) nodeById.set(n.id, n);
 
   // Git 前置判断
   const useGit = useGitSrc && config.mapping.gitHistory && isGit(root);
@@ -258,25 +261,51 @@ export function collectSemanticEvidences(
   const capVec = vectors.subarray(capVecOffset, capVecOffset + dimensions);
 
   const total = mapping.indexToNodeId.length;
-  const scored: Array<{ nodeId: string; score: number }> = [];
+  const scored: Array<{ nodeId: string; score: number; group: string }> = [];
   for (let i = 0; i < total; i++) {
     const nodeId = mapping.indexToNodeId[i];
     if (nodeId === cap.node.id) continue;
     const node = nodeById.get(nodeId);
     if (!node) continue;
-    // 仅对 L1 模块与 L2 文件生成语义证据（控制规模）
-    if (node.level !== 'L1' && node.level !== 'L2') continue;
+    // L3 类/方法携带源码注释、签名和路由，往往比拼音文件名更能
+    // 表达中文业务语义。topK 已限制最终规模，因此纳入 L3。
+    if (node.level !== 'L1' && node.level !== 'L2' && node.level !== 'L3') continue;
 
     const vecOffset = i * dimensions;
     const vec = vectors.subarray(vecOffset, vecOffset + dimensions);
     const sim = cosineSimilarity(capVec, vec);
     if (sim >= threshold) {
-      scored.push({ nodeId, score: sim });
+      const name = node.name.toLowerCase();
+      const accessorPenalty = /(?:^|\.)(?:get|set|is)[A-Z_]/.test(node.name) ? 0.82 : 1;
+      const typeBoost = node.type === 'class' || node.type === 'component'
+        ? 1.08
+        : node.type === 'function'
+          ? 1.02
+          : node.level === 'L2'
+            ? 1.04
+            : node.level === 'L1'
+              ? 0.85
+              : 1;
+      const genericPenalty = /\/(?:vo|model|view)\//i.test(node.attrs.filePath ?? '') ? 0.78 : 1;
+      const score = sim * accessorPenalty * typeBoost * genericPenalty;
+      const group = node.attrs.filePath ?? `node:${node.id}`;
+      scored.push({ nodeId, score, group });
     }
   }
 
   scored.sort((a, b) => b.score - a.score);
-  for (const { nodeId, score } of scored.slice(0, topK)) {
+  // Keep at most one semantic target per file.  Without this, a generated
+  // entity's many getters can occupy the whole topK and hide controllers,
+  // services and pages that implement the same capability.
+  const diversified: Array<{ nodeId: string; score: number; group: string }> = [];
+  const seenGroups = new Set<string>();
+  for (const item of scored) {
+    if (seenGroups.has(item.group)) continue;
+    seenGroups.add(item.group);
+    diversified.push(item);
+    if (diversified.length >= topK) break;
+  }
+  for (const { nodeId, score } of diversified) {
     evidences.push({
       targetId: nodeId,
       source: 'semantic',

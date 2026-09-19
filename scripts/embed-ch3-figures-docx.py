@@ -13,11 +13,11 @@ DOCX_PATH = next(
     if not p.name.startswith("~$")
 )
 FIGURES = {
-    "!图3-1": ("第3章", "图3-1-方法总体框架.png", "图3-1 方法总体框架"),
-    "!图3-2": ("第3章", "图3-2-六阶段流程约束架构.png", "图3-2 六阶段流程约束架构"),
-    "!图3-3": ("第3章", "图3-3-能力代码双层本体模型.png", "图3-3 能力-代码双层本体模型"),
-    "!图3-4": ("第3章", "图3-4-business_map生成流程.png", "图3-4 business_map 生成流程"),
-    "!图3-5": ("第3章", "图3-5-图谱驱动任务上下文生成流水线.png", "图3-5 图谱驱动的任务上下文生成流水线"),
+    "!图3-1": ("第3章", "图3-1-方法总体框架.png", "图3-1 方法总体框架", "Figure 3-1 Overall Framework of the Method"),
+    "!图3-2": ("第3章", "图3-2-六阶段流程约束架构.png", "图3-2 六阶段流程约束架构", "Figure 3-2 Six-Stage Process-Constrained Architecture"),
+    "!图3-3": ("第3章", "图3-3-能力代码双层本体模型.png", "图3-3 能力-代码双层本体模型", "Figure 3-3 Capability-Code Two-Layer Ontology Model"),
+    "!图3-4": ("第3章", "图3-4-business_map生成流程.png", "图3-4 business_map 生成流程", "Figure 3-4 business_map Generation Process"),
+    "!图3-5": ("第3章", "图3-5-图谱驱动任务上下文生成流水线.png", "图3-5 图谱驱动的任务上下文生成流水线", "Figure 3-5 Graph-Driven Task-Context Generation Pipeline"),
     "!图4-1": ("第4章", "图4-1-wpw系统三层架构.png", "图4-1 wpw 系统三层架构"),
     "!图4-2": ("第4章", "图4-2-工作流引擎实现架构.png", "图4-2 工作流引擎实现架构"),
     "!图4-3": ("第4章", "图4-3-阶段制品生成与确认流程.png", "图4-3 阶段制品生成与确认流程"),
@@ -55,14 +55,18 @@ max_text_width = min(
     section.page_width - section.left_margin - section.right_margin
     for section in document.sections
 )
-placeholders = [p for p in document.paragraphs if p.text.strip() in FIGURES]
+placeholders = [
+    p for p in document.paragraphs
+    if p.text.strip().split("||", 1)[0] in FIGURES
+]
 if not placeholders:
     print("No Chapter 3 figure placeholders found; document may already be synchronized.")
     raise SystemExit(0)
 
 for placeholder in placeholders:
-    key = placeholder.text.strip()
-    figure_dir, image_name, caption_text = FIGURES[key]
+    raw_placeholder = placeholder.text.strip()
+    key, _, caption_text_en = raw_placeholder.partition("||")
+    figure_dir, image_name, caption_text = FIGURES[key][:3]
     image_path = WORKSPACE / "论文" / "图表" / figure_dir / image_name
     if not image_path.exists():
         raise FileNotFoundError(image_path)
@@ -81,6 +85,9 @@ for placeholder in placeholders:
     caption.paragraph_format.space_after = Pt(12)
     caption.paragraph_format.line_spacing = 1.0
     caption.add_run(caption_text)
+    if caption_text_en:
+        caption.add_run().add_break()
+        caption.add_run(caption_text_en)
     for run in caption.runs:
         run.font.name = "Times New Roman"
         run._element.get_or_add_rPr().rFonts.set(qn("w:eastAsia"), "黑体")

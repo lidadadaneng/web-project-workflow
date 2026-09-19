@@ -1,6 +1,4 @@
-\chapter{wpw 系统设计与实现}
-
-
+\chapter{面向上下文工程方法的 wpw 系统设计与实现}
 
 第 3 章给出了面向 AI 编程智能体的软件工程上下文工程方法。本章以 wpw 系统作为该方法的工程实现，说明其如何将流程约束架构、能力-代码双层知识模型、任务上下文生成和 Spec 增量知识演化落实为可执行的软件组件。wpw 的定位不是替代大模型或 Agent 运行框架，而是在既有智能体具备代码生成与工具调用能力的前提下，为长期演化项目提供可维护的过程制品、项目知识和任务级上下文。
 
@@ -17,7 +15,7 @@ wpw 围绕以下四项目标设计：其一，将开发阶段、阶段产物和�
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{images/fig4-1-wpw-system-architecture.png}
-\caption{图4-1 wpw系统三层架构}
+\caption{图4-1 wpw系统三层架构\\Figure 4-1 Three-Layer Architecture of wpw}
 \label{fig:fig4-1-wpw-system-architecture}
 \end{figure}
 
@@ -25,11 +23,10 @@ wpw 围绕以下四项目标设计：其一，将开发阶段、阶段产物和�
 
 表4-1 给出各层的主要职责。AI 层不直接改写过程状态文件；状态更新均经 CLI 命令写入并留下记录，依赖门禁由 \texttt{check} 和 Apply 命令在编排前执行，从而避免会话中断或模型误操作造成项目状态与实际制品不一致。
 
-表4-1 wpw 三层架构的职责划分
-
 \begin{table}[htbp]
 \centering
 \small
+\caption{表4-1 wpw 三层架构的职责划分\\Table 4-1 Responsibilities of the Three-Layer wpw Architecture}
 \begin{tabularx}{\textwidth}{|X|X|X|X|}
 \hline
 \textbf{层次} & \textbf{主要组成} & \textbf{输入与输出} & \textbf{职责边界} \\
@@ -60,7 +57,7 @@ wpw 将一次需求变更视为一个独立的过程实例，而不是一段连�
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{images/fig4-2-workflow-engine-architecture.png}
-\caption{图4-2 工作流引擎实现架构}
+\caption{图4-2 工作流引擎实现架构\\Figure 4-2 Implementation Architecture of the Workflow Engine}
 \label{fig:fig4-2-workflow-engine-architecture}
 \end{figure}
 
@@ -75,7 +72,7 @@ wpw 将一次需求变更视为一个独立的过程实例，而不是一段连�
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{images/fig4-3-artifact-confirmation-flow.png}
-\caption{图4-3 阶段制品生成与确认流程}
+\caption{图4-3 阶段制品生成与确认流程\\Figure 4-3 Stage-Artifact Generation and Confirmation Flow}
 \label{fig:fig4-3-artifact-confirmation-flow}
 \end{figure}
 
@@ -100,17 +97,16 @@ wpw 将一次需求变更视为一个独立的过程实例，而不是一段连�
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{images/fig4-4-dag-gates.png}
-\caption{图4-4 DAG驱动的阶段门禁}
+\caption{图4-4 DAG驱动的阶段门禁\\Figure 4-4 DAG-Driven Stage Gates}
 \label{fig:fig4-4-dag-gates}
 \end{figure}
 
 表4-2 列出 DAG 中各阶段的制品、依赖和控制方式。
 
-表4-2 六阶段工作流及其实现约束
-
 \begin{table}[htbp]
 \centering
 \small
+\caption{表4-2 六阶段工作流及其实现约束\\Table 4-2 Six-Stage Workflow and Its Implementation Constraints}
 \begin{tabularx}{\textwidth}{|X|X|X|X|}
 \hline
 \textbf{阶段} & \textbf{主要制品} & \textbf{主要前置条件} & \textbf{实现中的控制方式} \\
@@ -164,11 +160,10 @@ n=(id, level, type, name, attrs, createdAt, updatedAt) \textbackslash{}tag\{4-2\
 
 表4-3 给出所有节点共有的字段。节点标识由实体的稳定识别信息经 SHA-256 摘要截断生成，通常采用“类型前缀:12 位十六进制摘要”的形式；同一输入会产生相同标识，从而在重建或增量更新时维持节点可定位性。时间字段记录本次图谱构建中节点的创建和更新时间，不承担源代码提交历史的语义。
 
-表4-3 \texttt{GraphNode} 的公共 JSON 字段
-
 \begin{table}[htbp]
 \centering
 \small
+\caption{表4-3 \texttt{GraphNode} 的公共 JSON 字段\\Table 4-3 Common JSON Fields of GraphNode}
 \begin{tabularx}{\textwidth}{|X|X|X|}
 \hline
 \textbf{字段} & \textbf{类型} & \textbf{含义} \\
@@ -209,11 +204,10 @@ n=(id, level, type, name, attrs, createdAt, updatedAt) \textbackslash{}tag\{4-2\
 
 \texttt{attrs} 采用可扩展对象而非预先固定所有层级的宽表结构。这样既可以保留能力 Spec 的业务描述，也可容纳 AST 解析得到的签名、参数和源码位置，并适配 Vue、Pinia、Vuex、Redux、小程序和 Spring Boot 等项目形态。表4-4 按层级归纳当前实现写入的主要属性；表中“可选”表示由语言、框架或源文件内容决定，而非由节点构建器补造。
 
-表4-4 各层节点的主要 \texttt{attrs} 属性
-
 \begin{table}[htbp]
 \centering
 \small
+\caption{表4-4 各层节点的主要 \texttt{attrs} 属性\\Table 4-4 Main attrs Attributes of Nodes at Each Level}
 \begin{tabularx}{\textwidth}{|X|X|X|X|}
 \hline
 \textbf{层级} & \textbf{典型类型} & \textbf{主要属性} & \textbf{属性来源与用途} \\
@@ -228,11 +222,10 @@ L3 & \texttt{function}、\texttt{class}、\texttt{interface}、\texttt{constant}
 
 节点模型只保存可从 Spec、文件结构和源码中确定的事实。边的方向、权重和映射证据不嵌入节点 \texttt{attrs}，而以独立的 \texttt{GraphEdge} 记录，避免同一实体在不同关系中的属性相互混杂。表4-5 给出实现中保存的主要节点和边类型。
 
-表4-5 图谱的主要节点和边类型
-
 \begin{table}[htbp]
 \centering
 \small
+\caption{表4-5 图谱的主要节点和边类型\\Table 4-5 Main Node and Edge Types in the Knowledge Graph}
 \begin{tabularx}{\textwidth}{|X|X|X|}
 \hline
 \textbf{类别} & \textbf{类型} & \textbf{含义} \\
@@ -263,7 +256,7 @@ L3 & \texttt{function}、\texttt{class}、\texttt{interface}、\texttt{constant}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{images/fig4-5-weighted-bidirectional-bfs.png}
-\caption{图4-5 加权双向BFS子图扩展示意}
+\caption{图4-5 加权双向BFS子图扩展示意\\Figure 4-5 Weighted Bidirectional BFS Subgraph Expansion}
 \label{fig:fig4-5-weighted-bidirectional-bfs}
 \end{figure}
 
@@ -287,7 +280,7 @@ L3 & \texttt{function}、\texttt{class}、\texttt{interface}、\texttt{constant}
 \subsection{归档驱动的能力沉淀}
 需求制品具有阶段性，而能力规范应作为跨需求复用的稳定知识单元。为此，AI 层在归档流程中根据 PRD、Design 和实施结果识别涉及的业务能力：若已有对应能力 Spec，则将经确认的增量需求合并到该规范；若不存在，则按统一结构创建新的能力 Spec。随后执行图谱增量更新，使新的或修订后的能力节点及其代码映射进入项目知识库。
 
-该过程的关键不在于自动推断业务结论，而在于将已经在受控流程中形成的需求和设计制品，转换为可长期维护的 Spec。能力沉淀的质量仍依赖开发者对需求制品和合并结果的审阅；其作用是为后续类似需求提供可定位、可更新的业务语义锚点。T4 多轮需求演化实验将在第 6 章考察这种积累对上下文构建时间、Token 消耗和上下文召回的影响。
+该过程的关键不在于自动推断业务结论，而在于将已经在受控流程中形成的需求和设计制品，转换为可维护的 Spec。能力沉淀的质量仍依赖开发者对需求制品和合并结果的审阅；其作用是为后续任务提供可定位、可更新的业务语义锚点。本文说明并验证增量更新流程能够运行，但不以短序列实验推断其长期成本或召回收益。
 
 
 \section{系统测试}
@@ -299,11 +292,10 @@ L3 & \texttt{function}、\texttt{class}、\texttt{interface}、\texttt{constant}
 
 表4-6 记录本次系统测试的执行环境。版本信息分别由运行时、\texttt{package.json}、已安装依赖、Git 提交记录和图谱元数据取得。
 
-表4-6 wpw 系统测试环境
-
 \begin{table}[htbp]
 \centering
 \small
+\caption{表4-6 wpw 系统测试环境\\Table 4-6 wpw System Test Environment}
 \begin{tabularx}{\textwidth}{|X|X|X|}
 \hline
 \textbf{项目} & \textbf{测试记录} & \textbf{说明} \\
@@ -326,11 +318,10 @@ TypeScript & v5.9.3 & 用于 CLI 与图谱模块编译 \\
 \subsection{功能测试结果}
 表4-7 记录工作流、图谱和上下文服务的功能测试结果。测试证据包括命令 JSON 输出、\texttt{.wpw.yaml}、\texttt{meta.json} 和 JSONL 图谱文件。图谱构建耗时、上下文生成耗时、Token 消耗和上下文召回等量化比较属于第 6 章评价指标，本节不据此宣称性能优势。
 
-表4-7 wpw 系统功能测试结果
-
 \begin{table}[htbp]
 \centering
 \small
+\caption{表4-7 wpw 系统功能测试结果\\Table 4-7 Functional Test Results of the wpw System}
 \begin{tabularx}{\textwidth}{|X|X|X|X|X|}
 \hline
 \textbf{测试类别} & \textbf{测试输入与操作} & \textbf{预期结果} & \textbf{实际输出或持久化证据} & \textbf{结论} \\
@@ -347,10 +338,10 @@ TypeScript & v5.9.3 & 用于 CLI 与图谱模块编译 \\
 \end{tabularx}
 \end{table}
 
-表4-7 的结果表明，系统能够以持久化状态实施强依赖门禁，并对可选探索决策给出可见警告；图谱服务能够完成节点、边、元数据和索引的构建、查询及增量更新；在缺少向量索引时，显式锚点路径仍可提供结构化上下文。上述结论限于实现功能与降级行为的验证，方法在不同上下文管理范式下的效果差异仍由第 6 章的受控实验考察。
+表4-7 的结果表明，系统能够以持久化状态实施强依赖门禁，并对可选探索决策给出可见警告；图谱服务能够完成节点、边、元数据和索引的构建、查询及增量更新；在缺少向量索引时，显式锚点路径仍可提供结构化上下文。上述结论限于实现功能与降级行为的验证，KG 驱动上下文相对于 OpenSpec 基线的效果差异仍由第 6 章的受控实验考察。
 
 
 \section{本章小结}
 本章实现了第 3 章提出的上下文工程方法。wpw 以 AI 层、CLI 层和文件系统层的分离架构承载流程制品和项目知识，以六阶段工作流和三段式编排契约控制上下文的产生与消费；以能力 Spec 和源码解析构建 C-L1-L2-L3 知识模型，并以多源证据形成可溯源的业务--代码映射；以锚点选择、子图裁剪、骨架抽取和预算控制生成任务级上下文；以文件哈希、能力 Spec 对比和归档沉淀支持知识的持续维护。
 
-上述实现说明方法具备可运行的工程载体，但并不构成有效性的充分证据。第 6 章将在统一任务和配置下，通过不同上下文管理范式、机制消融和多轮需求演化实验，分别考察知识组织、上下文生成、流程约束和 Spec 增量演化的实际影响。
+上述实现说明方法具备可运行的工程载体，但并不构成有效性的充分证据。第 6 章将在共同 SDD 任务和统一配置下，以 OpenSpec-based SDD 为任务级开发基线；组件作用则在同一组 100 个检索任务和 100 个项目场景问题中，通过 WPW-KG、WPW-Map 与 WPW-Gen 条件分别考察知识图谱、业务—代码映射及上下文生成机制的实际影响。

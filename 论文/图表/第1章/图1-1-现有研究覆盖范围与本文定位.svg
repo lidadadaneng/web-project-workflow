@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1060" viewBox="0 0 1800 1060">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#4d5963"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/>
+    </marker>
+    <style>
+      .cn { font-family: "Microsoft YaHei", "Noto Sans CJK SC", "SimSun", sans-serif; fill: #27313a; }
+      .en { font-family: "Arial", sans-serif; fill: #52616d; }
+      .title { font-size: 32px; font-weight: 600; letter-spacing: 1px; }
+      .section { font-size: 28px; font-weight: 600; }
+      .cardTitle { font-size: 27px; font-weight: 600; }
+      .cardText { font-size: 22px; }
+      .small { font-size: 20px; }
+      .tiny { font-size: 18px; }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1060" fill="#ffffff"/>
+  <text x="900" y="58" text-anchor="middle" class="cn title">现有研究覆盖范围与本文定位</text>
+  <text x="900" y="91" text-anchor="middle" class="en" font-size="19">Coverage of Existing Research and the Position of This Thesis</text>
+
+  <!-- Research-side panels -->
+  <rect x="70" y="145" width="585" height="580" rx="18" fill="#f1f5f8" stroke="#91a0ad" stroke-width="3"/>
+  <rect x="1145" y="145" width="585" height="580" rx="18" fill="#f0f6f5" stroke="#8da6a4" stroke-width="3"/>
+
+  <text x="362" y="196" text-anchor="middle" class="cn section">需求侧（规格与追踪）</text>
+  <text x="1437" y="196" text-anchor="middle" class="cn section">代码侧（图谱与检索）</text>
+  <line x1="112" y1="222" x2="613" y2="222" stroke="#b8c2ca" stroke-width="2"/>
+  <line x1="1187" y1="222" x2="1688" y2="222" stroke="#b4c7c4" stroke-width="2"/>
+
+  <!-- Left cards -->
+  <rect x="112" y="258" width="501" height="184" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
+  <text x="362" y="300" text-anchor="middle" class="cn cardTitle">规格制品</text>
+  <text x="362" y="338" text-anchor="middle" class="en" font-size="22">Spec Kit · OpenSpec · Superpowers</text>
+  <text x="362" y="382" text-anchor="middle" class="cn cardText">保存“要做什么”，约束开发流程</text>
+  <text x="362" y="415" text-anchor="middle" class="cn tiny" fill="#5c6973">规范、变更与执行阶段可检查</text>
+
+  <rect x="112" y="484" width="501" height="184" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
+  <text x="362" y="526" text-anchor="middle" class="cn cardTitle">追踪链接</text>
+  <text x="362" y="564" text-anchor="middle" class="en" font-size="22">TRIAD · 信息检索 · 需求追踪</text>
+  <text x="362" y="608" text-anchor="middle" class="cn cardText">恢复需求—代码之间的对应关系</text>
+  <text x="362" y="641" text-anchor="middle" class="cn tiny" fill="#5c6973">多用于一次性分析或链接恢复</text>
+
+  <!-- Right cards -->
+  <rect x="1187" y="258" width="501" height="184" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
+  <text x="1437" y="300" text-anchor="middle" class="cn cardTitle">代码图谱</text>
+  <text x="1437" y="338" text-anchor="middle" class="en" font-size="22">KGCompass · RIG · Athale</text>
+  <text x="1437" y="382" text-anchor="middle" class="cn cardText">描述代码结构与仓库制品关系</text>
+  <text x="1437" y="415" text-anchor="middle" class="cn tiny" fill="#5c6973">文件、类、函数、Issue 与依赖</text>
+
+  <rect x="1187" y="484" width="501" height="184" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
+  <text x="1437" y="526" text-anchor="middle" class="cn cardTitle">检索片段</text>
+  <text x="1437" y="564" text-anchor="middle" class="en" font-size="22">RAG · RepoHyper · CodeSearch</text>
+  <text x="1437" y="608" text-anchor="middle" class="cn cardText">按相似度汇集任务相关上下文</text>
+  <text x="1437" y="641" text-anchor="middle" class="cn tiny" fill="#5c6973">任务之间不直接传递项目认识</text>
+
+  <!-- Gap diagnosis -->
+  <rect x="718" y="250" width="364" height="367" rx="16" fill="#ffffff" stroke="#8d959b" stroke-width="3" stroke-dasharray="11 9"/>
+  <text x="900" y="337" text-anchor="middle" class="cn cardTitle">业务能力层缺失</text>
+  <line x1="775" y1="365" x2="1025" y2="365" stroke="#c0c5c8" stroke-width="2"/>
+  <text x="900" y="414" text-anchor="middle" class="cn cardText">需求语义与代码结构</text>
+  <text x="900" y="451" text-anchor="middle" class="cn cardText">缺少稳定的挂靠点</text>
+  <text x="900" y="516" text-anchor="middle" class="cn cardText" fill="#6a737a">演化联系断裂</text>
+  <text x="900" y="552" text-anchor="middle" class="cn tiny" fill="#6a737a">后续任务需要重新搜索和理解</text>
+
+  <!-- Bridge arrows -->
+  <path d="M613 692 C700 692, 724 700, 780 744" fill="none" stroke="#59636c" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M1187 692 C1100 692, 1076 700, 1020 744" fill="none" stroke="#59636c" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- Proposed method -->
+  <rect x="110" y="760" width="1580" height="240" rx="18" fill="#eaf2fb" stroke="#315f8d" stroke-width="4"/>
+  <text x="900" y="810" text-anchor="middle" class="cn section" fill="#244e79">本文方法：Capability 层 + 持续维护的知识链</text>
+  <text x="900" y="844" text-anchor="middle" class="en" font-size="19">Spec-driven Capability–Code knowledge model with incremental evolution</text>
+
+  <line x1="156" y1="866" x2="1644" y2="866" stroke="#9bb6d1" stroke-width="2"/>
+
+  <!-- Chain -->
+  <g class="cn" font-size="24" font-weight="600" fill="#244e79">
+    <rect x="165" y="900" width="208" height="58" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
+    <text x="269" y="937" text-anchor="middle">Spec 需求规格</text>
+    <rect x="465" y="900" width="250" height="58" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
+    <text x="590" y="937" text-anchor="middle">Capability 业务能力</text>
+    <rect x="807" y="900" width="185" height="58" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
+    <text x="899" y="937" text-anchor="middle">Code 代码结构</text>
+    <rect x="1084" y="900" width="190" height="58" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
+    <text x="1179" y="937" text-anchor="middle">Evolution 演化</text>
+    <rect x="1366" y="900" width="260" height="58" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
+    <text x="1496" y="937" text-anchor="middle">Context 任务上下文</text>
+  </g>
+
+  <g stroke="#315f8d" stroke-width="3" fill="none" marker-end="url(#arrowBlue)">
+    <line x1="380" y1="929" x2="450" y2="929"/>
+    <line x1="722" y1="929" x2="792" y2="929"/>
+    <line x1="999" y1="929" x2="1069" y2="929"/>
+    <line x1="1280" y1="929" x2="1351" y2="929"/>
+  </g>
+
+  <text x="900" y="986" text-anchor="middle" class="cn tiny" fill="#4d6984">以业务能力为语义锚点，连接需求、代码、项目演化与任务级上下文</text>
+</svg>

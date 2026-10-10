@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="960" viewBox="0 0 1800 960">
+<defs>
+<marker id="arrow-gray" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
+<marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
+<marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
+<marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
+</defs>
+<rect width="1800" height="960" fill="#ffffff"/>
+<text x="900" y="34" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:32px;font-weight:600;fill:#27313a">软件项目知识图谱示例</text>
+<text x="900" y="73" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:21px;fill:#5b6770">能力节点作为语义锚点，沿 business_map 与 contain 关系展开到代码元素</text>
+<rect x="100" y="380" width="265" height="160" rx="10" fill="#eef4f8" stroke="#7396b1" stroke-width="2"/>
+<text x="232.5" y="444.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:27px;font-weight:600;fill:#315f8d">收藏管理</text>
+<text x="232.5" y="488.8" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">能力节点 C</text>
+<rect x="485" y="380" width="270" height="160" rx="10" fill="#f4f6f7" stroke="#9faab1" stroke-width="2"/>
+<text x="620.0" y="444.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">收藏模块</text>
+<text x="620.0" y="488.8" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">模块节点 L1</text>
+<rect x="870" y="205" width="310" height="120" rx="10" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1025.0" y="253.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">favorite.service.ts</text>
+<text x="1025.0" y="286.6" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">文件节点 L2</text>
+<rect x="870" y="600" width="310" height="120" rx="10" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1025.0" y="648.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">favorite.vue</text>
+<text x="1025.0" y="681.6" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">文件节点 L2</text>
+<ellipse cx="1490.0" cy="265.0" rx="190.0" ry="60.0" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1490.0" y="250" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">addFavorite()</text>
+<text x="1490.0" y="287" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">函数节点 L3</text>
+<ellipse cx="1490.0" cy="440.0" rx="190.0" ry="60.0" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1490.0" y="425" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">removeFavorite()</text>
+<text x="1490.0" y="462" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">函数节点 L3</text>
+<ellipse cx="1490.0" cy="660.0" rx="190.0" ry="60.0" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1490.0" y="645" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">FavoriteList()</text>
+<text x="1490.0" y="682" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">组件节点 L3</text>
+<polyline points="365,460 485,460" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="365,460 485,460" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<text x="425" y="414" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:19px;font-weight:600;fill:#315f8d">business_map / 实现</text>
+<polyline points="230,380 230,135 1490,135 1490,205" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="230,380 230,135 1490,135 1490,205" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<text x="820" y="104" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;font-weight:600;fill:#315f8d">business_map / 实现</text>
+<polyline points="755,420 810,420 810,265 870,265" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="755,420 810,420 810,265 870,265" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="785" y="350" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:19px;font-weight:600;fill:#5b6770">contain / 包含</text>
+<polyline points="755,500 810,500 810,660 870,660" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="755,500 810,500 810,660 870,660" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="785" y="565" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:19px;font-weight:600;fill:#5b6770">contain / 包含</text>
+<polyline points="1180,265 1300,265" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1180,265 1300,265" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="1240" y="225" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:19px;font-weight:600;fill:#5b6770">contain</text>
+<polyline points="1180,295 1235,295 1235,440 1300,440" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1180,295 1235,295 1235,440 1300,440" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="1250" y="350" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:19px;font-weight:600;fill:#5b6770">contain</text>
+<polyline points="1180,660 1300,660" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1180,660 1300,660" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="1240" y="620" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:19px;font-weight:600;fill:#5b6770">contain</text>
+<rect x="100" y="770" width="1600" height="155" rx="10" fill="#fafbfc" stroke="#c0c8cd" stroke-width="2"/>
+<text x="145" y="807" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:22px;font-weight:600;fill:#27313a">图例</text>
+<rect x="250" y="788" width="100" height="44" rx="8" fill="#eef4f8" stroke="#7396b1" stroke-width="2"/>
+<text x="370" y="810" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#27313a">能力</text>
+<rect x="470" y="788" width="100" height="44" rx="8" fill="#f4f6f7" stroke="#9faab1" stroke-width="2"/>
+<text x="590" y="810" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#27313a">模块</text>
+<rect x="690" y="788" width="100" height="44" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="810" y="810" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#27313a">文件</text>
+<ellipse cx="960.0" cy="810.0" rx="60.0" ry="22.0" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1040" y="810" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#27313a">函数 / 组件</text>
+<polyline points="250,875 370,875" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="250,875 370,875" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<text x="395" y="875" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#27313a">business_map（业务映射 / 实现）</text>
+<polyline points="960,875 1080,875" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="960,875 1080,875" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="1105" y="875" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#27313a">contain（包含 / 层级展开）</text>
+</svg>

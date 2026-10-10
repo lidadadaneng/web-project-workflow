@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1300" viewBox="0 0 1800 1300">
 <defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker></defs>
-<style>.cn{font-family:"Microsoft YaHei","Noto Sans CJK SC","SimSun",sans-serif;fill:#27313a}.stage{font-weight:600}</style>
+<style>.cn{font-family:"Microsoft YaHei","Noto Sans CJK SC","SimSun",sans-serif;fill:#27313a}</style>
 <rect width="1800" height="1300" fill="#fff"/>
 <rect x="40" y="28" width="1720" height="762" rx="14" fill="#fff" stroke="#8f9aa2" stroke-width="2" stroke-dasharray="10 8"/>
 <text x="72" y="68" text-anchor="start" dominant-baseline="middle" class="cn" style="font-size:34px;font-weight:600;fill:#4d5963">上下文工程方法（第3章）</text>
@@ -53,8 +53,8 @@
 <polyline points="1612,212 1612,287 1612,295" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <rect x="72" y="580" width="1656" height="190" rx="10" fill="#fbfcfd" stroke="#c1c8cd" stroke-width="2" stroke-dasharray="10 8"/>
 <text x="96" y="605" text-anchor="start" dominant-baseline="middle" class="cn" style="font-size:27px;font-weight:600;fill:#4d5963">需求归档与知识演化回流</text>
-<rect x="945" y="635" width="310" height="113" rx="9" fill="#fff" stroke="#aab6bf" stroke-width="2"/>
-<rect x="1495" y="635" width="233" height="113" rx="9" fill="#fff" stroke="#aab6bf" stroke-width="2"/>
+<rect x="945" y="635" width="310" height="113" rx="10" fill="#fff" stroke="#aab6bf" stroke-width="2"/>
+<rect x="1495" y="635" width="233" height="113" rx="10" fill="#fff" stroke="#aab6bf" stroke-width="2"/>
 <text x="1100" y="672.0" text-anchor="middle" dominant-baseline="middle" class="cn" style="font-size:25px;font-weight:600;fill:#27313a">③ Spec 增量知识演化</text>
 <text x="1100" y="710.0" text-anchor="middle" dominant-baseline="middle" class="cn" style="font-size:18px;fill:#27313a">冷启动 · 新需求只更新受影响关联</text>
 <text x="1612" y="670.0" text-anchor="middle" dominant-baseline="middle" class="cn" style="font-size:29px;font-weight:600;fill:#27313a">需求归档</text>
@@ -63,15 +63,15 @@
 <polyline points="1485,691 1265,691" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <polyline points="945,691 875,691 875,575" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <rect x="40" y="835" width="1720" height="180" rx="14" fill="#fff" stroke="#8f9aa2" stroke-width="2"/>
-<text x="72" y="870" text-anchor="start" dominant-baseline="middle" class="cn" style="font-size:31px;font-weight:600;fill:#4d5963">④ wpw 系统实现（第4章）</text>
+<text x="72" y="870" text-anchor="start" dominant-baseline="middle" class="cn" style="font-size:31px;font-weight:600;fill:#4d5963">④ wpw 系统（第4章需求分析／第5章设计与实现）</text>
 <rect x="72" y="895" width="1656" height="87" rx="8" fill="#f7f9fa" stroke="#c0c8ce" stroke-width="2"/>
 <text x="900" y="920.0" text-anchor="middle" dominant-baseline="middle" class="cn" style="font-size:27px;font-weight:600;fill:#27313a">AI 层 · CLI 层 · 文件系统层</text>
 <text x="900" y="956.0" text-anchor="middle" dominant-baseline="middle" class="cn" style="font-size:21px;fill:#27313a">工作流 · 图谱构建 · 上下文生成 · 增量维护</text>
 <rect x="40" y="1050" width="1720" height="190" rx="14" fill="#fff" stroke="#8f9aa2" stroke-width="2"/>
-<text x="72" y="1085" text-anchor="start" dominant-baseline="middle" class="cn" style="font-size:31px;font-weight:600;fill:#4d5963">方法验证（第5、6章）</text>
+<text x="72" y="1085" text-anchor="start" dominant-baseline="middle" class="cn" style="font-size:31px;font-weight:600;fill:#4d5963">④ 系统测试与结果分析（第6章）</text>
 <rect x="72" y="1110" width="1656" height="97" rx="8" fill="#f7f9fa" stroke="#c0c8ce" stroke-width="2"/>
-<text x="900" y="1139.0" text-anchor="middle" dominant-baseline="middle" class="cn" style="font-size:28px;font-weight:600;fill:#27313a">美食推荐系统开发为载体</text>
-<text x="900" y="1177.0" text-anchor="middle" dominant-baseline="middle" class="cn" style="font-size:22px;fill:#27313a">T1–T3 任务比较 · 100 检索任务 · 100 项目问答 · 组件消融</text>
-<polyline points="430,895 430,805 430,660 590,660 590,575" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<polyline points="900,1018 900,1042" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="900" y="1139.0" text-anchor="middle" dominant-baseline="middle" class="cn" style="font-size:28px;font-weight:600;fill:#27313a">以美食推荐系统为统一实验载体</text>
+<text x="900" y="1177.0" text-anchor="middle" dominant-baseline="middle" class="cn" style="font-size:22px;fill:#27313a">T1–T3 任务与 OpenSpec 对照 · 100 检索任务 · 100 项目问答 · WPW-KG／WPW-Map／WPW-Gen 组件消融</text>
+<polyline points="520,835 520,805 520,660 590,660 590,575" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="900,1015 900,1042" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow)"/>
 </svg>

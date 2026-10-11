@@ -16,6 +16,8 @@
 - [x] 3.2 工作流看板：需求列表 + 六阶段 DAG 状态视图（pending/done/skipped 着色，强/弱依赖线型区分）
 - [x] 3.3 需求详情抽屉：Plan 任务进度、Explore 拍板记录、Test 缺失风险提示
 - [x] 3.4 归档中心：按 YYYY-MM 时间轴浏览，归档需求阶段制品 Markdown 渲染
+- [x] 3.5 看板可操作化：DAG 节点点击打开阶段操作面板，行内「继续」按钮定位下一可推进阶段（PhaseDag 可点击 + PhaseActionDrawer）
+- [x] 3.6 前端门禁判定与状态写回：store/workflow.ts 镜像 six-phase Schema 规则（dependsOn/skippable/optionalDeps 警告），done/skip/拍板/Apply 任务勾选，localStorage 持久化 + 重置演示数据按钮
 
 ## 4. 页面实现（知识组）
 - [x] 4.1 图谱可视化：ECharts force 图，C-L1-L2-L3 四色，边类型区分，business_map 高亮开关

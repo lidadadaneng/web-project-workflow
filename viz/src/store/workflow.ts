@@ -64,8 +64,13 @@ function restore(): boolean {
 export function useWorkflowStore() {
   async function load(force = false) {
     if (loaded.value && !force) return
+    const [mockChanges, mockDetail] = await Promise.all([getChanges(), getChangeDetail()])
     if (!restore()) {
-      ;[changes.value, detail.value] = await Promise.all([getChanges(), getChangeDetail()])
+      changes.value = mockChanges
+      detail.value = mockDetail
+    } else {
+      // 状态以本地持久化为准，mock 新增的展示字段（description/tag 等）按名合并补齐
+      changes.value = changes.value.map((c) => ({ ...mockChanges.find((m) => m.name === c.name), ...c }))
     }
     loaded.value = true
   }

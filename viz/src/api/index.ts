@@ -21,6 +21,8 @@ export interface ChangeItem {
   schema: string
   projectType: string
   createdAt: number
+  description?: string
+  tag?: string
   phases: Record<string, PhaseState>
   tasks: { total: number; done: number; inProgress: number }
   exploreDecision?: string

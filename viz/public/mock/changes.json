@@ -1,0 +1,36 @@
+[
+  {
+    "name": "user-login-auth",
+    "schema": "six-phase",
+    "projectType": "fullstack",
+    "createdAt": 1787212800000,
+    "phases": { "brd": "done", "prd": "done", "explore": "done", "design": "done", "plan": "done", "testplan": "done", "apply": "done" },
+    "tasks": { "total": 12, "done": 12, "inProgress": 0 },
+    "exploreDecision": "option-a-jwt"
+  },
+  {
+    "name": "order-refund-flow",
+    "schema": "six-phase",
+    "projectType": "fullstack",
+    "createdAt": 1787472000000,
+    "phases": { "brd": "done", "prd": "done", "explore": "skipped", "design": "done", "plan": "done", "testplan": "pending", "apply": "pending" },
+    "tasks": { "total": 9, "done": 3, "inProgress": 1 }
+  },
+  {
+    "name": "coupon-center",
+    "schema": "six-phase",
+    "projectType": "frontend-h5",
+    "createdAt": 1787644800000,
+    "phases": { "brd": "done", "prd": "done", "explore": "done", "design": "pending", "plan": "pending", "testplan": "pending", "apply": "pending" },
+    "tasks": { "total": 0, "done": 0, "inProgress": 0 },
+    "exploreDecision": "option-b-local-cache"
+  },
+  {
+    "name": "search-recommendation",
+    "schema": "six-phase",
+    "projectType": "backend-node",
+    "createdAt": 1787731200000,
+    "phases": { "brd": "done", "prd": "pending", "explore": "pending", "design": "pending", "plan": "pending", "testplan": "pending", "apply": "pending" },
+    "tasks": { "total": 0, "done": 0, "inProgress": 0 }
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "specs": [
+    {
+      "name": "six-stage-workflow",
+      "title": "六阶段工作流",
+      "updatedAt": 1787644800000,
+      "markdown": "# 六阶段工作流\n\n## Purpose\n\n将一次需求变更组织为 BRD → PRD → Explore → Design → Plan → Test → Apply 的受控流程，阶段制品显式化，推进条件由 DAG 门禁判定。\n\n## Requirements\n\n### REQ-1 阶段状态管理（P0）\n每个阶段记录 pending / done / skipped 状态，状态变更仅经 CLI 写入。\n\n### REQ-2 依赖门禁（P0）\n目标阶段的全部强前置必须为 done 才允许开始；弱依赖缺失时以警告形式呈现。\n\n### REQ-3 Explore 拍板（P1）\nExplore 完成后须记录选定方案，Design 才允许继续编排。\n\n## Scenarios\n\n- 会话中断后，通过 `wpw apply --from <task>` 从显式状态恢复，而非依赖聊天记录。"
+    },
+    {
+      "name": "graph-context",
+      "title": "图谱驱动上下文生成",
+      "updatedAt": 1787478584655,
+      "markdown": "# 图谱驱动上下文生成\n\n## Purpose\n\n依据任务描述与 Token 预算，从 C-L1-L2-L3 知识图谱中检索并裁剪出结构连贯的任务级子图，序列化后直接作为大模型输入。\n\n## Requirements\n\n### REQ-1 语义锚点检索（P0）\n自然语言任务经本地向量索引命中候选锚点，支持显式指定锚点跳过检索。\n\n### REQ-2 子图裁剪（P0）\n多锚点加权双向 BFS 扩展，受深度、边权重、节点上限约束。\n\n### REQ-3 Token 预算控制（P1）\n超预算时按 loose → standard → extreme 逐档压缩，锚点始终保留；最小结果仍超预算时返回明确提示。\n\n## Scenarios\n\n- 任务「CLI 命令注册」在 standard 档下输出 100 节点 / 约 779 Token 的结构化上下文。"
+    },
+    {
+      "name": "business-map",
+      "title": "能力-代码业务映射",
+      "updatedAt": 1787385600000,
+      "markdown": "# 能力-代码业务映射\n\n## Purpose\n\n以 business_map 边连接能力层（C）与代码结构层（L1-L3），支持从业务能力进入代码、从代码变更反溯能力。\n\n## Requirements\n\n### REQ-1 多源证据融合（P0）\n文档提取、命名匹配、语义相似度、Git 历史四类证据按 noisy-OR 聚合为边权重。\n\n### REQ-2 可溯源（P1）\n每条映射边记录权威性最高的证据来源，支持后续审查。\n\n## Scenarios\n\n- 缺少向量索引或 Git 历史时，对应证据源不参与计算，结构证据仍可形成映射。"
+    }
+  ],
+  "artifacts": [
+    { "name": "default（结构图谱）", "builtAt": 1787478584655, "nodes": 574, "edges": 741, "vectors": 574 }
+  ]
+}

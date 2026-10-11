@@ -1,0 +1,2318 @@
+{
+  "nodes": [
+    {
+      "id": "cap:workflow6stage",
+      "level": "C",
+      "type": "capability",
+      "name": "six-stage-workflow",
+      "attrs": {
+        "description": "六阶段需求开发流程：BRD→PRD→Explore→Design→Plan→Test→Apply",
+        "features": [
+          {
+            "id": "REQ-1",
+            "name": "阶段状态管理",
+            "priority": "P0"
+          },
+          {
+            "id": "REQ-2",
+            "name": "依赖门禁",
+            "priority": "P0"
+          }
+        ]
+      },
+      "createdAt": 1791685015322,
+      "updatedAt": 1791685015322
+    },
+    {
+      "id": "cap:graphcontext",
+      "level": "C",
+      "type": "capability",
+      "name": "graph-context",
+      "attrs": {
+        "description": "图谱驱动的任务级上下文生成：锚点检索、子图裁剪、三档压缩",
+        "features": [
+          {
+            "id": "REQ-1",
+            "name": "语义锚点检索",
+            "priority": "P0"
+          },
+          {
+            "id": "REQ-2",
+            "name": "Token 预算控制",
+            "priority": "P1"
+          }
+        ]
+      },
+      "createdAt": 1791685015322,
+      "updatedAt": 1791685015322
+    },
+    {
+      "id": "mod:41291f2f4d9d",
+      "level": "L1",
+      "type": "module",
+      "name": "commands",
+      "attrs": {
+        "side": "backend",
+        "dir": "src\\commands"
+      },
+      "createdAt": 1787478567805,
+      "updatedAt": 1787478567805
+    },
+    {
+      "id": "mod:7072ab9f4fcd",
+      "level": "L1",
+      "type": "module",
+      "name": "schema",
+      "attrs": {
+        "side": "backend",
+        "dir": "src\\schema"
+      },
+      "createdAt": 1787478567805,
+      "updatedAt": 1787478567805
+    },
+    {
+      "id": "file:7c83405e0f3b",
+      "level": "L2",
+      "type": "file",
+      "name": "apply.ts",
+      "attrs": {
+        "filePath": "src/commands/apply.ts",
+        "language": "typescript",
+        "fileHash": "672db2435743745f"
+      },
+      "createdAt": 1787478567810,
+      "updatedAt": 1787478567810
+    },
+    {
+      "id": "file:ad9cd7d120ba",
+      "level": "L2",
+      "type": "file",
+      "name": "archive.ts",
+      "attrs": {
+        "filePath": "src/commands/archive.ts",
+        "language": "typescript",
+        "fileHash": "5df9781c51bd606d"
+      },
+      "createdAt": 1787478567811,
+      "updatedAt": 1787478567811
+    },
+    {
+      "id": "file:04884c449801",
+      "level": "L2",
+      "type": "file",
+      "name": "check.ts",
+      "attrs": {
+        "filePath": "src/commands/check.ts",
+        "language": "typescript",
+        "fileHash": "611e39db6475d742"
+      },
+      "createdAt": 1787478567811,
+      "updatedAt": 1787478567811
+    },
+    {
+      "id": "file:a6a1db614763",
+      "level": "L2",
+      "type": "file",
+      "name": "index.ts",
+      "attrs": {
+        "filePath": "src/commands/index.ts",
+        "language": "typescript",
+        "fileHash": "5b9fa01257454acc"
+      },
+      "createdAt": 1787478567812,
+      "updatedAt": 1787478567812
+    },
+    {
+      "id": "file:ec8485d3117f",
+      "level": "L2",
+      "type": "file",
+      "name": "init.ts",
+      "attrs": {
+        "filePath": "src/commands/init.ts",
+        "language": "typescript",
+        "fileHash": "01956fb26c0cd7c6"
+      },
+      "createdAt": 1787478567813,
+      "updatedAt": 1787478567813
+    },
+    {
+      "id": "file:d68fd4fff0a5",
+      "level": "L2",
+      "type": "file",
+      "name": "list.ts",
+      "attrs": {
+        "filePath": "src/commands/list.ts",
+        "language": "typescript",
+        "fileHash": "1be249779f364c5f"
+      },
+      "createdAt": 1787478567814,
+      "updatedAt": 1787478567814
+    },
+    {
+      "id": "file:bddcbb9edc64",
+      "level": "L2",
+      "type": "file",
+      "name": "new.ts",
+      "attrs": {
+        "filePath": "src/commands/new.ts",
+        "language": "typescript",
+        "fileHash": "831d90ce7e4a502e"
+      },
+      "createdAt": 1787478567815,
+      "updatedAt": 1787478567815
+    },
+    {
+      "id": "file:94f95cce074a",
+      "level": "L2",
+      "type": "file",
+      "name": "phase-state.ts",
+      "attrs": {
+        "filePath": "src/commands/phase-state.ts",
+        "language": "typescript",
+        "fileHash": "1823f5380d68279c"
+      },
+      "createdAt": 1787478567816,
+      "updatedAt": 1787478567816
+    },
+    {
+      "id": "file:dbac866b7792",
+      "level": "L2",
+      "type": "file",
+      "name": "skills.ts",
+      "attrs": {
+        "filePath": "src/commands/skills.ts",
+        "language": "typescript",
+        "fileHash": "b6c72e477aed809b"
+      },
+      "createdAt": 1787478567818,
+      "updatedAt": 1787478567818
+    },
+    {
+      "id": "file:87bc879617ee",
+      "level": "L2",
+      "type": "file",
+      "name": "status.ts",
+      "attrs": {
+        "filePath": "src/commands/status.ts",
+        "language": "typescript",
+        "fileHash": "177c585e69c0b4aa"
+      },
+      "createdAt": 1787478567820,
+      "updatedAt": 1787478567820
+    },
+    {
+      "id": "file:0bb4c51d7673",
+      "level": "L2",
+      "type": "file",
+      "name": "task.ts",
+      "attrs": {
+        "filePath": "src/commands/task.ts",
+        "language": "typescript",
+        "fileHash": "471ea34854aa6ac5"
+      },
+      "createdAt": 1787478567821,
+      "updatedAt": 1787478567821
+    },
+    {
+      "id": "file:598ac80db7df",
+      "level": "L2",
+      "type": "file",
+      "name": "template.ts",
+      "attrs": {
+        "filePath": "src/commands/template.ts",
+        "language": "typescript",
+        "fileHash": "0cd8c2fc438d9620"
+      },
+      "createdAt": 1787478567822,
+      "updatedAt": 1787478567822
+    },
+    {
+      "id": "file:ca895f46d2e6",
+      "level": "L2",
+      "type": "file",
+      "name": "business-mapper.ts",
+      "attrs": {
+        "filePath": "src/graph/builders/business-mapper.ts",
+        "language": "typescript",
+        "fileHash": "31832dde0ddce6dd"
+      },
+      "createdAt": 1787478567825,
+      "updatedAt": 1787478567825
+    },
+    {
+      "id": "file:ac37150dd245",
+      "level": "L2",
+      "type": "file",
+      "name": "edge-builder.ts",
+      "attrs": {
+        "filePath": "src/graph/builders/edge-builder.ts",
+        "language": "typescript",
+        "fileHash": "0e2ace0c774065d5"
+      },
+      "createdAt": 1787478567828,
+      "updatedAt": 1787478567828
+    },
+    {
+      "id": "file:73ebbf58de77",
+      "level": "L2",
+      "type": "file",
+      "name": "graph-builder.ts",
+      "attrs": {
+        "filePath": "src/graph/builders/graph-builder.ts",
+        "language": "typescript",
+        "fileHash": "af72002e322c83f2"
+      },
+      "createdAt": 1787478567844,
+      "updatedAt": 1787478567844
+    },
+    {
+      "id": "file:6538965dfa74",
+      "level": "L2",
+      "type": "file",
+      "name": "node-builder.ts",
+      "attrs": {
+        "filePath": "src/graph/builders/node-builder.ts",
+        "language": "typescript",
+        "fileHash": "3d91f5e9ee658871"
+      },
+      "createdAt": 1787478567846,
+      "updatedAt": 1787478567846
+    },
+    {
+      "id": "file:0ba2067d69b8",
+      "level": "L2",
+      "type": "file",
+      "name": "vector-builder.ts",
+      "attrs": {
+        "filePath": "src/graph/builders/vector-builder.ts",
+        "language": "typescript",
+        "fileHash": "1f431cef325c9837"
+      },
+      "createdAt": 1787478567849,
+      "updatedAt": 1787478567849
+    },
+    {
+      "id": "file:c486c14fb4aa",
+      "level": "L2",
+      "type": "file",
+      "name": "graph.ts",
+      "attrs": {
+        "filePath": "src/graph/commands/graph.ts",
+        "language": "typescript",
+        "fileHash": "16c8b19765df2f71"
+      },
+      "createdAt": 1787478567857,
+      "updatedAt": 1787478567857
+    },
+    {
+      "id": "file:18cb1b42f70e",
+      "level": "L2",
+      "type": "file",
+      "name": "hierarchical-serializer.ts",
+      "attrs": {
+        "filePath": "src/graph/compression/hierarchical-serializer.ts",
+        "language": "typescript",
+        "fileHash": "6164d0689ed6466e"
+      },
+      "createdAt": 1787478567861,
+      "updatedAt": 1787478567861
+    },
+    {
+      "id": "file:380acc583018",
+      "level": "L2",
+      "type": "file",
+      "name": "skeleton-extractor.ts",
+      "attrs": {
+        "filePath": "src/graph/compression/skeleton-extractor.ts",
+        "language": "typescript",
+        "fileHash": "46e0b5cbf123aff7"
+      },
+      "createdAt": 1787478567863,
+      "updatedAt": 1787478567863
+    },
+    {
+      "id": "file:847227078c8d",
+      "level": "L2",
+      "type": "file",
+      "name": "config.ts",
+      "attrs": {
+        "filePath": "src/graph/config.ts",
+        "language": "typescript",
+        "fileHash": "3610baba7ebdf8db"
+      },
+      "createdAt": 1787478567864,
+      "updatedAt": 1787478567864
+    },
+    {
+      "id": "file:79c6f1f4b00d",
+      "level": "L2",
+      "type": "file",
+      "name": "context-pipeline.ts",
+      "attrs": {
+        "filePath": "src/graph/context/context-pipeline.ts",
+        "language": "typescript",
+        "fileHash": "72a748368328592d"
+      },
+      "createdAt": 1787478567870,
+      "updatedAt": 1787478567870
+    },
+    {
+      "id": "file:719b62738948",
+      "level": "L2",
+      "type": "file",
+      "name": "index.ts",
+      "attrs": {
+        "filePath": "src/graph/index.ts",
+        "language": "typescript",
+        "fileHash": "fe9d506149498cd7"
+      },
+      "createdAt": 1787478567871,
+      "updatedAt": 1787478567871
+    },
+    {
+      "id": "file:9a62491893bb",
+      "level": "L2",
+      "type": "file",
+      "name": "capability-parser.ts",
+      "attrs": {
+        "filePath": "src/graph/parsers/capability-parser.ts",
+        "language": "typescript",
+        "fileHash": "7e87c4f8b18ff3e4"
+      },
+      "createdAt": 1787478567873,
+      "updatedAt": 1787478567873
+    },
+    {
+      "id": "elem:ff76d96a1924",
+      "level": "L3",
+      "type": "interface",
+      "name": "Task",
+      "attrs": {
+        "signature": "interface Task",
+        "annotations": [],
+        "isExported": false,
+        "lineStart": 12,
+        "lineEnd": 16,
+        "filePath": "src/commands/apply.ts",
+        "parentName": "apply"
+      },
+      "createdAt": 1787478567809,
+      "updatedAt": 1787478567809
+    },
+    {
+      "id": "elem:a9d89782d73a",
+      "level": "L3",
+      "type": "function",
+      "name": "registerApply",
+      "attrs": {
+        "signature": "registerApply(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "apply",
+        "isExported": true,
+        "lineStart": 18,
+        "lineEnd": 105,
+        "filePath": "src/commands/apply.ts"
+      },
+      "createdAt": 1787478567809,
+      "updatedAt": 1787478567809
+    },
+    {
+      "id": "elem:4ddc002455fc",
+      "level": "L3",
+      "type": "function",
+      "name": "parseTasks",
+      "attrs": {
+        "signature": "parseTasks(planPath: string: string): Task[]",
+        "params": [
+          {
+            "name": "planPath: string",
+            "type": "string"
+          }
+        ],
+        "returnType": "Task[]",
+        "parentName": "apply",
+        "isExported": false,
+        "lineStart": 107,
+        "lineEnd": 125,
+        "filePath": "src/commands/apply.ts"
+      },
+      "createdAt": 1787478567810,
+      "updatedAt": 1787478567810
+    },
+    {
+      "id": "elem:890cffe1edd8",
+      "level": "L3",
+      "type": "function",
+      "name": "registerArchive",
+      "attrs": {
+        "signature": "registerArchive(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "archive",
+        "isExported": true,
+        "lineStart": 6,
+        "lineEnd": 48,
+        "filePath": "src/commands/archive.ts"
+      },
+      "createdAt": 1787478567811,
+      "updatedAt": 1787478567811
+    },
+    {
+      "id": "elem:dd51500d86d1",
+      "level": "L3",
+      "type": "function",
+      "name": "registerCheck",
+      "attrs": {
+        "signature": "registerCheck(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "check",
+        "isExported": true,
+        "lineStart": 5,
+        "lineEnd": 57,
+        "filePath": "src/commands/check.ts"
+      },
+      "createdAt": 1787478567811,
+      "updatedAt": 1787478567811
+    },
+    {
+      "id": "elem:9c230d4ddad8",
+      "level": "L3",
+      "type": "function",
+      "name": "registerCommands",
+      "attrs": {
+        "signature": "registerCommands(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "index",
+        "isExported": true,
+        "lineStart": 20,
+        "lineEnd": 35,
+        "filePath": "src/commands/index.ts"
+      },
+      "createdAt": 1787478567812,
+      "updatedAt": 1787478567812
+    },
+    {
+      "id": "elem:32237376bfa9",
+      "level": "L3",
+      "type": "function",
+      "name": "registerInit",
+      "attrs": {
+        "signature": "registerInit(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "init",
+        "isExported": true,
+        "lineStart": 6,
+        "lineEnd": 40,
+        "filePath": "src/commands/init.ts"
+      },
+      "createdAt": 1787478567813,
+      "updatedAt": 1787478567813
+    },
+    {
+      "id": "elem:8b7a2e584648",
+      "level": "L3",
+      "type": "function",
+      "name": "releaseAiLayer",
+      "attrs": {
+        "signature": "releaseAiLayer(root: string: string): boolean",
+        "params": [
+          {
+            "name": "root: string",
+            "type": "string"
+          }
+        ],
+        "returnType": "boolean",
+        "parentName": "init",
+        "isExported": false,
+        "lineStart": 42,
+        "lineEnd": 53,
+        "filePath": "src/commands/init.ts"
+      },
+      "createdAt": 1787478567813,
+      "updatedAt": 1787478567813
+    },
+    {
+      "id": "elem:b5a2fd254165",
+      "level": "L3",
+      "type": "function",
+      "name": "copyDir",
+      "attrs": {
+        "signature": "copyDir(src: string: string, dest: string: string, skipDirs: string[] = []: string[]): void",
+        "params": [
+          {
+            "name": "src: string",
+            "type": "string"
+          },
+          {
+            "name": "dest: string",
+            "type": "string"
+          },
+          {
+            "name": "skipDirs: string[] = []",
+            "type": "string[]"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "init",
+        "isExported": false,
+        "lineStart": 55,
+        "lineEnd": 64,
+        "filePath": "src/commands/init.ts"
+      },
+      "createdAt": 1787478567813,
+      "updatedAt": 1787478567813
+    },
+    {
+      "id": "elem:019a39680996",
+      "level": "L3",
+      "type": "function",
+      "name": "registerList",
+      "attrs": {
+        "signature": "registerList(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "list",
+        "isExported": true,
+        "lineStart": 4,
+        "lineEnd": 34,
+        "filePath": "src/commands/list.ts"
+      },
+      "createdAt": 1787478567814,
+      "updatedAt": 1787478567814
+    },
+    {
+      "id": "elem:8fa389cb7225",
+      "level": "L3",
+      "type": "function",
+      "name": "registerNew",
+      "attrs": {
+        "signature": "registerNew(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "new",
+        "isExported": true,
+        "lineStart": 12,
+        "lineEnd": 49,
+        "filePath": "src/commands/new.ts"
+      },
+      "createdAt": 1787478567815,
+      "updatedAt": 1787478567815
+    },
+    {
+      "id": "elem:3e6e50375c61",
+      "level": "L3",
+      "type": "function",
+      "name": "parseArtifact",
+      "attrs": {
+        "signature": "parseArtifact(phase: string: string): ArtifactId",
+        "params": [
+          {
+            "name": "phase: string",
+            "type": "string"
+          }
+        ],
+        "returnType": "ArtifactId",
+        "parentName": "phase-state",
+        "isExported": false,
+        "lineStart": 5,
+        "lineEnd": 11,
+        "filePath": "src/commands/phase-state.ts"
+      },
+      "createdAt": 1787478567816,
+      "updatedAt": 1787478567816
+    },
+    {
+      "id": "elem:2955da8d85a8",
+      "level": "L3",
+      "type": "function",
+      "name": "requireChange",
+      "attrs": {
+        "signature": "requireChange(opts: { change?: string }: { change?: string }): string",
+        "params": [
+          {
+            "name": "opts: { change?: string }",
+            "type": "{ change?: string }"
+          }
+        ],
+        "returnType": "string",
+        "parentName": "phase-state",
+        "isExported": false,
+        "lineStart": 13,
+        "lineEnd": 19,
+        "filePath": "src/commands/phase-state.ts"
+      },
+      "createdAt": 1787478567816,
+      "updatedAt": 1787478567816
+    },
+    {
+      "id": "elem:0fed8df22a72",
+      "level": "L3",
+      "type": "function",
+      "name": "registerDone",
+      "attrs": {
+        "signature": "registerDone(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "phase-state",
+        "isExported": true,
+        "lineStart": 21,
+        "lineEnd": 37,
+        "filePath": "src/commands/phase-state.ts"
+      },
+      "createdAt": 1787478567816,
+      "updatedAt": 1787478567816
+    },
+    {
+      "id": "elem:1ce5e52aeee8",
+      "level": "L3",
+      "type": "function",
+      "name": "registerSkills",
+      "attrs": {
+        "signature": "registerSkills(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "skills",
+        "isExported": true,
+        "lineStart": 5,
+        "lineEnd": 50,
+        "filePath": "src/commands/skills.ts"
+      },
+      "createdAt": 1787478567818,
+      "updatedAt": 1787478567818
+    },
+    {
+      "id": "elem:4a5f1e907d7f",
+      "level": "L3",
+      "type": "function",
+      "name": "registerStatus",
+      "attrs": {
+        "signature": "registerStatus(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "status",
+        "isExported": true,
+        "lineStart": 4,
+        "lineEnd": 47,
+        "filePath": "src/commands/status.ts"
+      },
+      "createdAt": 1787478567820,
+      "updatedAt": 1787478567820
+    },
+    {
+      "id": "elem:2dabd6fed97a",
+      "level": "L3",
+      "type": "function",
+      "name": "summarize",
+      "attrs": {
+        "signature": "summarize(s: ChangeState: ChangeState): string",
+        "params": [
+          {
+            "name": "s: ChangeState",
+            "type": "ChangeState"
+          }
+        ],
+        "returnType": "string",
+        "parentName": "status",
+        "isExported": false,
+        "lineStart": 49,
+        "lineEnd": 53,
+        "filePath": "src/commands/status.ts"
+      },
+      "createdAt": 1787478567820,
+      "updatedAt": 1787478567820
+    },
+    {
+      "id": "elem:8ef6188da787",
+      "level": "L3",
+      "type": "function",
+      "name": "printStatus",
+      "attrs": {
+        "signature": "printStatus(s: ChangeState: ChangeState): void",
+        "params": [
+          {
+            "name": "s: ChangeState",
+            "type": "ChangeState"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "status",
+        "isExported": false,
+        "lineStart": 55,
+        "lineEnd": 65,
+        "filePath": "src/commands/status.ts"
+      },
+      "createdAt": 1787478567820,
+      "updatedAt": 1787478567820
+    },
+    {
+      "id": "elem:cecf7b995031",
+      "level": "L3",
+      "type": "interface",
+      "name": "TaskState",
+      "attrs": {
+        "signature": "type TaskState",
+        "isExported": false,
+        "lineStart": 8,
+        "lineEnd": 8,
+        "filePath": "src/commands/task.ts",
+        "parentName": "task"
+      },
+      "createdAt": 1787478567821,
+      "updatedAt": 1787478567821
+    },
+    {
+      "id": "elem:8f3b2642ed15",
+      "level": "L3",
+      "type": "function",
+      "name": "registerTask",
+      "attrs": {
+        "signature": "registerTask(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "task",
+        "isExported": true,
+        "lineStart": 10,
+        "lineEnd": 47,
+        "filePath": "src/commands/task.ts"
+      },
+      "createdAt": 1787478567821,
+      "updatedAt": 1787478567821
+    },
+    {
+      "id": "elem:7f34e339d71a",
+      "level": "L3",
+      "type": "function",
+      "name": "markTask",
+      "attrs": {
+        "signature": "markTask(planPath: string: string, taskId: string: string, newState: TaskState: TaskState): { content: string; total: number; completed: number }",
+        "params": [
+          {
+            "name": "planPath: string",
+            "type": "string"
+          },
+          {
+            "name": "taskId: string",
+            "type": "string"
+          },
+          {
+            "name": "newState: TaskState",
+            "type": "TaskState"
+          }
+        ],
+        "returnType": "{ content: string; total: number; completed: number }",
+        "parentName": "task",
+        "isExported": false,
+        "lineStart": 49,
+        "lineEnd": 78,
+        "filePath": "src/commands/task.ts"
+      },
+      "createdAt": 1787478567821,
+      "updatedAt": 1787478567821
+    },
+    {
+      "id": "elem:5e6899dd9427",
+      "level": "L3",
+      "type": "function",
+      "name": "registerTemplate",
+      "attrs": {
+        "signature": "registerTemplate(program: Command: Command): void",
+        "params": [
+          {
+            "name": "program: Command",
+            "type": "Command"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "template",
+        "isExported": true,
+        "lineStart": 5,
+        "lineEnd": 35,
+        "filePath": "src/commands/template.ts"
+      },
+      "createdAt": 1787478567822,
+      "updatedAt": 1787478567822
+    },
+    {
+      "id": "elem:81a909198243",
+      "level": "L3",
+      "type": "interface",
+      "name": "GitTracer",
+      "attrs": {
+        "signature": "type GitTracer",
+        "isExported": true,
+        "lineStart": 23,
+        "lineEnd": 23,
+        "filePath": "src/graph/builders/business-mapper.ts",
+        "parentName": "business-mapper"
+      },
+      "createdAt": 1787478567825,
+      "updatedAt": 1787478567825
+    },
+    {
+      "id": "elem:33da989e72ef",
+      "level": "L3",
+      "type": "interface",
+      "name": "MappingSourceSwitch",
+      "attrs": {
+        "signature": "interface MappingSourceSwitch",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 26,
+        "lineEnd": 31,
+        "filePath": "src/graph/builders/business-mapper.ts",
+        "parentName": "business-mapper"
+      },
+      "createdAt": 1787478567825,
+      "updatedAt": 1787478567825
+    },
+    {
+      "id": "elem:b943807ca4c6",
+      "level": "L3",
+      "type": "interface",
+      "name": "BusinessMapContext",
+      "attrs": {
+        "signature": "interface BusinessMapContext",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 34,
+        "lineEnd": 52,
+        "filePath": "src/graph/builders/business-mapper.ts",
+        "parentName": "business-mapper"
+      },
+      "createdAt": 1787478567825,
+      "updatedAt": 1787478567825
+    },
+    {
+      "id": "elem:14c4fd3a076b",
+      "level": "L3",
+      "type": "class",
+      "name": "EdgeBuilder",
+      "attrs": {
+        "signature": "class EdgeBuilder { edges, addEdge, addRawEdge, boostEdge, addContain, addImport, addCall, addInherit, addBusinessMap, getEdges, ... }",
+        "annotations": [],
+        "parentName": "edge-builder",
+        "isExported": true,
+        "lineStart": 26,
+        "lineEnd": 158,
+        "filePath": "src/graph/builders/edge-builder.ts"
+      },
+      "createdAt": 1787478567827,
+      "updatedAt": 1787478567827
+    },
+    {
+      "id": "elem:da22e5490d62",
+      "level": "L3",
+      "type": "interface",
+      "name": "MappingEvidence",
+      "attrs": {
+        "signature": "interface MappingEvidence",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 162,
+        "lineEnd": 169,
+        "filePath": "src/graph/builders/edge-builder.ts",
+        "parentName": "edge-builder"
+      },
+      "createdAt": 1787478567828,
+      "updatedAt": 1787478567828
+    },
+    {
+      "id": "elem:6cd519c52ff4",
+      "level": "L3",
+      "type": "interface",
+      "name": "AggregatedEvidence",
+      "attrs": {
+        "signature": "interface AggregatedEvidence",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 172,
+        "lineEnd": 177,
+        "filePath": "src/graph/builders/edge-builder.ts",
+        "parentName": "edge-builder"
+      },
+      "createdAt": 1787478567828,
+      "updatedAt": 1787478567828
+    },
+    {
+      "id": "elem:cb7c746cf8e1",
+      "level": "L3",
+      "type": "interface",
+      "name": "BuildOptions",
+      "attrs": {
+        "signature": "interface BuildOptions",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 65,
+        "lineEnd": 70,
+        "filePath": "src/graph/builders/graph-builder.ts",
+        "parentName": "graph-builder"
+      },
+      "createdAt": 1787478567842,
+      "updatedAt": 1787478567842
+    },
+    {
+      "id": "elem:92553075decd",
+      "level": "L3",
+      "type": "interface",
+      "name": "BuildResult",
+      "attrs": {
+        "signature": "interface BuildResult",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 73,
+        "lineEnd": 77,
+        "filePath": "src/graph/builders/graph-builder.ts",
+        "parentName": "graph-builder"
+      },
+      "createdAt": 1787478567842,
+      "updatedAt": 1787478567842
+    },
+    {
+      "id": "elem:56a0a9f59674",
+      "level": "L3",
+      "type": "interface",
+      "name": "BuildPhase",
+      "attrs": {
+        "signature": "type BuildPhase",
+        "isExported": true,
+        "lineStart": 80,
+        "lineEnd": 89,
+        "filePath": "src/graph/builders/graph-builder.ts",
+        "parentName": "graph-builder"
+      },
+      "createdAt": 1787478567843,
+      "updatedAt": 1787478567843
+    },
+    {
+      "id": "elem:0234d9e2d738",
+      "level": "L3",
+      "type": "function",
+      "name": "generateNodeId",
+      "attrs": {
+        "signature": "generateNodeId(prefix: string: string, parts: string[]: string[]): string",
+        "params": [
+          {
+            "name": "prefix: string",
+            "type": "string"
+          },
+          {
+            "name": "parts: string[]",
+            "type": "string[]"
+          }
+        ],
+        "returnType": "string",
+        "parentName": "node-builder",
+        "isExported": true,
+        "lineStart": 17,
+        "lineEnd": 23,
+        "filePath": "src/graph/builders/node-builder.ts"
+      },
+      "createdAt": 1787478567846,
+      "updatedAt": 1787478567846
+    },
+    {
+      "id": "elem:269c6a91f0ae",
+      "level": "L3",
+      "type": "function",
+      "name": "buildNode",
+      "attrs": {
+        "signature": "buildNode(params: {\n  id: string;\n  level: NodeLevel;\n  type: NodeType;\n  name: string;\n  attrs?: NodeAttributes;\n  createdAt?: number;\n  updatedAt?: number;\n}: {\n  id: string;\n  level: NodeLevel;\n  type: NodeType;\n  name: string;\n  attrs?: NodeAttributes;\n  createdAt?: number;\n  updatedAt?: number;\n}): GraphNode",
+        "params": [
+          {
+            "name": "params: {\n  id: string;\n  level: NodeLevel;\n  type: NodeType;\n  name: string;\n  attrs?: NodeAttributes;\n  createdAt?: number;\n  updatedAt?: number;\n}",
+            "type": "{\n  id: string;\n  level: NodeLevel;\n  type: NodeType;\n  name: string;\n  attrs?: NodeAttributes;\n  createdAt?: number;\n  updatedAt?: number;\n}"
+          }
+        ],
+        "returnType": "GraphNode",
+        "parentName": "node-builder",
+        "isExported": true,
+        "lineStart": 28,
+        "lineEnd": 47,
+        "filePath": "src/graph/builders/node-builder.ts"
+      },
+      "createdAt": 1787478567846,
+      "updatedAt": 1787478567846
+    },
+    {
+      "id": "elem:7d99ab50bec7",
+      "level": "L3",
+      "type": "interface",
+      "name": "VectorBuildResult",
+      "attrs": {
+        "signature": "interface VectorBuildResult",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 18,
+        "lineEnd": 25,
+        "filePath": "src/graph/builders/vector-builder.ts",
+        "parentName": "vector-builder"
+      },
+      "createdAt": 1787478567849,
+      "updatedAt": 1787478567849
+    },
+    {
+      "id": "elem:fba9be9c2991",
+      "level": "L3",
+      "type": "function",
+      "name": "getNodeVectorText",
+      "attrs": {
+        "signature": "getNodeVectorText(node: GraphNode: GraphNode): string | null",
+        "params": [
+          {
+            "name": "node: GraphNode",
+            "type": "GraphNode"
+          }
+        ],
+        "returnType": "string | null",
+        "parentName": "vector-builder",
+        "isExported": true,
+        "lineStart": 32,
+        "lineEnd": 215,
+        "filePath": "src/graph/builders/vector-builder.ts"
+      },
+      "createdAt": 1787478567849,
+      "updatedAt": 1787478567849
+    },
+    {
+      "id": "elem:6b2a9a0340a2",
+      "level": "L3",
+      "type": "function",
+      "name": "prepareVectorTexts",
+      "attrs": {
+        "signature": "prepareVectorTexts(nodes: GraphNode[]: GraphNode[]): {\n  nodeIds: string[];\n  texts: string[];\n}",
+        "params": [
+          {
+            "name": "nodes: GraphNode[]",
+            "type": "GraphNode[]"
+          }
+        ],
+        "returnType": "{\n  nodeIds: string[];\n  texts: string[];\n}",
+        "parentName": "vector-builder",
+        "isExported": true,
+        "lineStart": 220,
+        "lineEnd": 236,
+        "filePath": "src/graph/builders/vector-builder.ts"
+      },
+      "createdAt": 1787478567849,
+      "updatedAt": 1787478567849
+    },
+    {
+      "id": "elem:c668fc068052",
+      "level": "L3",
+      "type": "function",
+      "name": "ensureLegacyMigrated",
+      "attrs": {
+        "signature": "ensureLegacyMigrated(root: string: string): void",
+        "params": [
+          {
+            "name": "root: string",
+            "type": "string"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "graph",
+        "isExported": false,
+        "jsDoc": "确保旧式单图谱已迁移到 default/（在任何 graph 命令执行前调用）\n仅当检测到需要迁移时执行，输出迁移信息。\n/",
+        "lineStart": 46,
+        "lineEnd": 62,
+        "filePath": "src/graph/commands/graph.ts"
+      },
+      "createdAt": 1787478567857,
+      "updatedAt": 1787478567857
+    },
+    {
+      "id": "elem:cd5325f25c25",
+      "level": "L3",
+      "type": "function",
+      "name": "assertGraphExists",
+      "attrs": {
+        "signature": "assertGraphExists(root: string: string, stack: string: string): void",
+        "params": [
+          {
+            "name": "root: string",
+            "type": "string"
+          },
+          {
+            "name": "stack: string",
+            "type": "string"
+          }
+        ],
+        "returnType": "void",
+        "parentName": "graph",
+        "isExported": false,
+        "jsDoc": "检查图谱是否存在，不存在则报错退出\n/",
+        "lineStart": 67,
+        "lineEnd": 72,
+        "filePath": "src/graph/commands/graph.ts"
+      },
+      "createdAt": 1787478567857,
+      "updatedAt": 1787478567857
+    },
+    {
+      "id": "elem:9dd919990716",
+      "level": "L3",
+      "type": "function",
+      "name": "normalizeLevels",
+      "attrs": {
+        "signature": "normalizeLevels(levels: string[]: string[]): string[]",
+        "params": [
+          {
+            "name": "levels: string[]",
+            "type": "string[]"
+          }
+        ],
+        "returnType": "string[]",
+        "parentName": "graph",
+        "isExported": false,
+        "jsDoc": "检查图谱是否存在，不存在则报错退出\n/\nfunction assertGraphExists(root: string, stack: string): void {\n  if (!graphExists(root, stack)) {\n    console.error(`图谱「${stack}」不存在。可运行 wpw graph list 查看可用图谱。`);\n    process.exit(1);\n  }\n}\n\n/**\n将层级参数转换为新层级（向后兼容）\n  旧 L1 → C, 旧 L2 → L1, 旧 L3 → L2, 旧 L4 → L3\n/",
+        "lineStart": 78,
+        "lineEnd": 105,
+        "filePath": "src/graph/commands/graph.ts"
+      },
+      "createdAt": 1787478567857,
+      "updatedAt": 1787478567857
+    },
+    {
+      "id": "elem:bde482e0e744",
+      "level": "L3",
+      "type": "interface",
+      "name": "CompressionLevel",
+      "attrs": {
+        "signature": "type CompressionLevel",
+        "isExported": true,
+        "lineStart": 31,
+        "lineEnd": 31,
+        "filePath": "src/graph/compression/hierarchical-serializer.ts",
+        "parentName": "hierarchical-serializer"
+      },
+      "createdAt": 1787478567861,
+      "updatedAt": 1787478567861
+    },
+    {
+      "id": "elem:72e8689af855",
+      "level": "L3",
+      "type": "interface",
+      "name": "SerializeOptions",
+      "attrs": {
+        "signature": "interface SerializeOptions",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 34,
+        "lineEnd": 43,
+        "filePath": "src/graph/compression/hierarchical-serializer.ts",
+        "parentName": "hierarchical-serializer"
+      },
+      "createdAt": 1787478567861,
+      "updatedAt": 1787478567861
+    },
+    {
+      "id": "elem:ccf6b84e9ef8",
+      "level": "L3",
+      "type": "interface",
+      "name": "SerializeResult",
+      "attrs": {
+        "signature": "interface SerializeResult",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 46,
+        "lineEnd": 55,
+        "filePath": "src/graph/compression/hierarchical-serializer.ts",
+        "parentName": "hierarchical-serializer"
+      },
+      "createdAt": 1787478567861,
+      "updatedAt": 1787478567861
+    },
+    {
+      "id": "elem:dff03aee7b80",
+      "level": "L3",
+      "type": "interface",
+      "name": "SkeletonLevel",
+      "attrs": {
+        "signature": "type SkeletonLevel",
+        "isExported": true,
+        "lineStart": 14,
+        "lineEnd": 20,
+        "filePath": "src/graph/compression/skeleton-extractor.ts",
+        "parentName": "skeleton-extractor"
+      },
+      "createdAt": 1787478567862,
+      "updatedAt": 1787478567862
+    },
+    {
+      "id": "elem:4ef6793de073",
+      "level": "L3",
+      "type": "interface",
+      "name": "SkeletonResult",
+      "attrs": {
+        "signature": "interface SkeletonResult",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 23,
+        "lineEnd": 42,
+        "filePath": "src/graph/compression/skeleton-extractor.ts",
+        "parentName": "skeleton-extractor"
+      },
+      "createdAt": 1787478567862,
+      "updatedAt": 1787478567862
+    },
+    {
+      "id": "elem:c86b686aa3b0",
+      "level": "L3",
+      "type": "function",
+      "name": "extractSkeleton",
+      "attrs": {
+        "signature": "extractSkeleton(node: GraphNode: GraphNode, level: SkeletonLevel = 'standard': SkeletonLevel): SkeletonResult",
+        "params": [
+          {
+            "name": "node: GraphNode",
+            "type": "GraphNode"
+          },
+          {
+            "name": "level: SkeletonLevel = 'standard'",
+            "type": "SkeletonLevel"
+          }
+        ],
+        "returnType": "SkeletonResult",
+        "parentName": "skeleton-extractor",
+        "isExported": true,
+        "lineStart": 50,
+        "lineEnd": 66,
+        "filePath": "src/graph/compression/skeleton-extractor.ts"
+      },
+      "createdAt": 1787478567862,
+      "updatedAt": 1787478567862
+    },
+    {
+      "id": "elem:047d01fd4ab7",
+      "level": "L3",
+      "type": "function",
+      "name": "loadGraphConfig",
+      "attrs": {
+        "signature": "loadGraphConfig(root: string: string): GraphConfig",
+        "params": [
+          {
+            "name": "root: string",
+            "type": "string"
+          }
+        ],
+        "returnType": "GraphConfig",
+        "parentName": "config",
+        "isExported": true,
+        "lineStart": 164,
+        "lineEnd": 204,
+        "filePath": "src/graph/config.ts"
+      },
+      "createdAt": 1787478567864,
+      "updatedAt": 1787478567864
+    },
+    {
+      "id": "elem:17dea7fe8e7a",
+      "level": "L3",
+      "type": "function",
+      "name": "getDefaultGraphConfig",
+      "attrs": {
+        "signature": "getDefaultGraphConfig(): GraphConfig",
+        "params": [],
+        "returnType": "GraphConfig",
+        "parentName": "config",
+        "isExported": true,
+        "lineStart": 209,
+        "lineEnd": 211,
+        "filePath": "src/graph/config.ts"
+      },
+      "createdAt": 1787478567864,
+      "updatedAt": 1787478567864
+    },
+    {
+      "id": "elem:738114d8a108",
+      "level": "L3",
+      "type": "interface",
+      "name": "ContextOptions",
+      "attrs": {
+        "signature": "interface ContextOptions",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 36,
+        "lineEnd": 63,
+        "filePath": "src/graph/context/context-pipeline.ts",
+        "parentName": "context-pipeline"
+      },
+      "createdAt": 1787478567869,
+      "updatedAt": 1787478567869
+    },
+    {
+      "id": "elem:2390a7ea1dc3",
+      "level": "L3",
+      "type": "class",
+      "name": "ContextPipeline",
+      "attrs": {
+        "signature": "class ContextPipeline { querier, searcher, config, data, constructor, generate, resolveAnchors, generateOnce, generateWithBudget, generateAnchorOnly, ... }",
+        "annotations": [],
+        "parentName": "context-pipeline",
+        "isExported": true,
+        "lineStart": 72,
+        "lineEnd": 473,
+        "filePath": "src/graph/context/context-pipeline.ts"
+      },
+      "createdAt": 1787478567869,
+      "updatedAt": 1787478567869
+    },
+    {
+      "id": "elem:22d3b541b1e9",
+      "level": "L3",
+      "type": "interface",
+      "name": "ParsedCapability",
+      "attrs": {
+        "signature": "interface ParsedCapability",
+        "annotations": [],
+        "isExported": true,
+        "lineStart": 18,
+        "lineEnd": 25,
+        "filePath": "src/graph/parsers/capability-parser.ts",
+        "parentName": "capability-parser"
+      },
+      "createdAt": 1787478567872,
+      "updatedAt": 1787478567872
+    },
+    {
+      "id": "elem:8bfa12eb5669",
+      "level": "L3",
+      "type": "function",
+      "name": "parseAllCapabilities",
+      "attrs": {
+        "signature": "parseAllCapabilities(root: string: string): ParsedCapability[]",
+        "params": [
+          {
+            "name": "root: string",
+            "type": "string"
+          }
+        ],
+        "returnType": "ParsedCapability[]",
+        "parentName": "capability-parser",
+        "isExported": true,
+        "lineStart": 33,
+        "lineEnd": 58,
+        "filePath": "src/graph/parsers/capability-parser.ts"
+      },
+      "createdAt": 1787478567872,
+      "updatedAt": 1787478567872
+    },
+    {
+      "id": "elem:27805cd2c3db",
+      "level": "L3",
+      "type": "function",
+      "name": "parseCapability",
+      "attrs": {
+        "signature": "parseCapability(specsDir: string: string, name: string: string, specPath: string: string): ParsedCapability | null",
+        "params": [
+          {
+            "name": "specsDir: string",
+            "type": "string"
+          },
+          {
+            "name": "name: string",
+            "type": "string"
+          },
+          {
+            "name": "specPath: string",
+            "type": "string"
+          }
+        ],
+        "returnType": "ParsedCapability | null",
+        "parentName": "capability-parser",
+        "isExported": false,
+        "jsDoc": "解析单个能力 spec\n/",
+        "lineStart": 63,
+        "lineEnd": 111,
+        "filePath": "src/graph/parsers/capability-parser.ts"
+      },
+      "createdAt": 1787478567872,
+      "updatedAt": 1787478567872
+    }
+  ],
+  "edges": [
+    {
+      "id": "cap:workflow6stage->business_map->mod:41291f2f4d9d",
+      "source": "cap:workflow6stage",
+      "target": "mod:41291f2f4d9d",
+      "type": "business_map",
+      "weight": 0.87,
+      "evidence": "doc-extract"
+    },
+    {
+      "id": "cap:graphcontext->business_map->mod:7072ab9f4fcd",
+      "source": "cap:graphcontext",
+      "target": "mod:7072ab9f4fcd",
+      "type": "business_map",
+      "weight": 0.92,
+      "evidence": "semantic"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:7c83405e0f3b",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:7c83405e0f3b",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:ad9cd7d120ba",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:ad9cd7d120ba",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:04884c449801",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:04884c449801",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:a6a1db614763",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:a6a1db614763",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:ec8485d3117f",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:ec8485d3117f",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:d68fd4fff0a5",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:d68fd4fff0a5",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:bddcbb9edc64",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:bddcbb9edc64",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:94f95cce074a",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:94f95cce074a",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:dbac866b7792",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:dbac866b7792",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:87bc879617ee",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:87bc879617ee",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:0bb4c51d7673",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:0bb4c51d7673",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "mod:41291f2f4d9d->contain->file:598ac80db7df",
+      "source": "mod:41291f2f4d9d",
+      "target": "file:598ac80db7df",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:7c83405e0f3b->contain->elem:ff76d96a1924",
+      "source": "file:7c83405e0f3b",
+      "target": "elem:ff76d96a1924",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:7c83405e0f3b->contain->elem:a9d89782d73a",
+      "source": "file:7c83405e0f3b",
+      "target": "elem:a9d89782d73a",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:7c83405e0f3b->contain->elem:4ddc002455fc",
+      "source": "file:7c83405e0f3b",
+      "target": "elem:4ddc002455fc",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ad9cd7d120ba->contain->elem:890cffe1edd8",
+      "source": "file:ad9cd7d120ba",
+      "target": "elem:890cffe1edd8",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:04884c449801->contain->elem:dd51500d86d1",
+      "source": "file:04884c449801",
+      "target": "elem:dd51500d86d1",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->contain->elem:9c230d4ddad8",
+      "source": "file:a6a1db614763",
+      "target": "elem:9c230d4ddad8",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ec8485d3117f->contain->elem:32237376bfa9",
+      "source": "file:ec8485d3117f",
+      "target": "elem:32237376bfa9",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ec8485d3117f->contain->elem:8b7a2e584648",
+      "source": "file:ec8485d3117f",
+      "target": "elem:8b7a2e584648",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ec8485d3117f->contain->elem:b5a2fd254165",
+      "source": "file:ec8485d3117f",
+      "target": "elem:b5a2fd254165",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:d68fd4fff0a5->contain->elem:019a39680996",
+      "source": "file:d68fd4fff0a5",
+      "target": "elem:019a39680996",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:bddcbb9edc64->contain->elem:8fa389cb7225",
+      "source": "file:bddcbb9edc64",
+      "target": "elem:8fa389cb7225",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:94f95cce074a->contain->elem:3e6e50375c61",
+      "source": "file:94f95cce074a",
+      "target": "elem:3e6e50375c61",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:94f95cce074a->contain->elem:2955da8d85a8",
+      "source": "file:94f95cce074a",
+      "target": "elem:2955da8d85a8",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:94f95cce074a->contain->elem:0fed8df22a72",
+      "source": "file:94f95cce074a",
+      "target": "elem:0fed8df22a72",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:dbac866b7792->contain->elem:1ce5e52aeee8",
+      "source": "file:dbac866b7792",
+      "target": "elem:1ce5e52aeee8",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:87bc879617ee->contain->elem:4a5f1e907d7f",
+      "source": "file:87bc879617ee",
+      "target": "elem:4a5f1e907d7f",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:87bc879617ee->contain->elem:2dabd6fed97a",
+      "source": "file:87bc879617ee",
+      "target": "elem:2dabd6fed97a",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:87bc879617ee->contain->elem:8ef6188da787",
+      "source": "file:87bc879617ee",
+      "target": "elem:8ef6188da787",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:0bb4c51d7673->contain->elem:cecf7b995031",
+      "source": "file:0bb4c51d7673",
+      "target": "elem:cecf7b995031",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:0bb4c51d7673->contain->elem:8f3b2642ed15",
+      "source": "file:0bb4c51d7673",
+      "target": "elem:8f3b2642ed15",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:0bb4c51d7673->contain->elem:7f34e339d71a",
+      "source": "file:0bb4c51d7673",
+      "target": "elem:7f34e339d71a",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:598ac80db7df->contain->elem:5e6899dd9427",
+      "source": "file:598ac80db7df",
+      "target": "elem:5e6899dd9427",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ca895f46d2e6->contain->elem:81a909198243",
+      "source": "file:ca895f46d2e6",
+      "target": "elem:81a909198243",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ca895f46d2e6->contain->elem:33da989e72ef",
+      "source": "file:ca895f46d2e6",
+      "target": "elem:33da989e72ef",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ca895f46d2e6->contain->elem:b943807ca4c6",
+      "source": "file:ca895f46d2e6",
+      "target": "elem:b943807ca4c6",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ac37150dd245->contain->elem:14c4fd3a076b",
+      "source": "file:ac37150dd245",
+      "target": "elem:14c4fd3a076b",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ac37150dd245->contain->elem:da22e5490d62",
+      "source": "file:ac37150dd245",
+      "target": "elem:da22e5490d62",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ac37150dd245->contain->elem:6cd519c52ff4",
+      "source": "file:ac37150dd245",
+      "target": "elem:6cd519c52ff4",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:73ebbf58de77->contain->elem:cb7c746cf8e1",
+      "source": "file:73ebbf58de77",
+      "target": "elem:cb7c746cf8e1",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:73ebbf58de77->contain->elem:92553075decd",
+      "source": "file:73ebbf58de77",
+      "target": "elem:92553075decd",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:73ebbf58de77->contain->elem:56a0a9f59674",
+      "source": "file:73ebbf58de77",
+      "target": "elem:56a0a9f59674",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:6538965dfa74->contain->elem:0234d9e2d738",
+      "source": "file:6538965dfa74",
+      "target": "elem:0234d9e2d738",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:6538965dfa74->contain->elem:269c6a91f0ae",
+      "source": "file:6538965dfa74",
+      "target": "elem:269c6a91f0ae",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:0ba2067d69b8->contain->elem:7d99ab50bec7",
+      "source": "file:0ba2067d69b8",
+      "target": "elem:7d99ab50bec7",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:0ba2067d69b8->contain->elem:fba9be9c2991",
+      "source": "file:0ba2067d69b8",
+      "target": "elem:fba9be9c2991",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:0ba2067d69b8->contain->elem:6b2a9a0340a2",
+      "source": "file:0ba2067d69b8",
+      "target": "elem:6b2a9a0340a2",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:c486c14fb4aa->contain->elem:c668fc068052",
+      "source": "file:c486c14fb4aa",
+      "target": "elem:c668fc068052",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:c486c14fb4aa->contain->elem:cd5325f25c25",
+      "source": "file:c486c14fb4aa",
+      "target": "elem:cd5325f25c25",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:c486c14fb4aa->contain->elem:9dd919990716",
+      "source": "file:c486c14fb4aa",
+      "target": "elem:9dd919990716",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:18cb1b42f70e->contain->elem:bde482e0e744",
+      "source": "file:18cb1b42f70e",
+      "target": "elem:bde482e0e744",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:18cb1b42f70e->contain->elem:72e8689af855",
+      "source": "file:18cb1b42f70e",
+      "target": "elem:72e8689af855",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:18cb1b42f70e->contain->elem:ccf6b84e9ef8",
+      "source": "file:18cb1b42f70e",
+      "target": "elem:ccf6b84e9ef8",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:380acc583018->contain->elem:dff03aee7b80",
+      "source": "file:380acc583018",
+      "target": "elem:dff03aee7b80",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:380acc583018->contain->elem:4ef6793de073",
+      "source": "file:380acc583018",
+      "target": "elem:4ef6793de073",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:380acc583018->contain->elem:c86b686aa3b0",
+      "source": "file:380acc583018",
+      "target": "elem:c86b686aa3b0",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:847227078c8d->contain->elem:047d01fd4ab7",
+      "source": "file:847227078c8d",
+      "target": "elem:047d01fd4ab7",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:847227078c8d->contain->elem:17dea7fe8e7a",
+      "source": "file:847227078c8d",
+      "target": "elem:17dea7fe8e7a",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:79c6f1f4b00d->contain->elem:738114d8a108",
+      "source": "file:79c6f1f4b00d",
+      "target": "elem:738114d8a108",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:79c6f1f4b00d->contain->elem:2390a7ea1dc3",
+      "source": "file:79c6f1f4b00d",
+      "target": "elem:2390a7ea1dc3",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:9a62491893bb->contain->elem:22d3b541b1e9",
+      "source": "file:9a62491893bb",
+      "target": "elem:22d3b541b1e9",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:9a62491893bb->contain->elem:8bfa12eb5669",
+      "source": "file:9a62491893bb",
+      "target": "elem:8bfa12eb5669",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:9a62491893bb->contain->elem:27805cd2c3db",
+      "source": "file:9a62491893bb",
+      "target": "elem:27805cd2c3db",
+      "type": "contain",
+      "weight": 0.9,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:ec8485d3117f",
+      "source": "file:a6a1db614763",
+      "target": "file:ec8485d3117f",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:bddcbb9edc64",
+      "source": "file:a6a1db614763",
+      "target": "file:bddcbb9edc64",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:d68fd4fff0a5",
+      "source": "file:a6a1db614763",
+      "target": "file:d68fd4fff0a5",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:87bc879617ee",
+      "source": "file:a6a1db614763",
+      "target": "file:87bc879617ee",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:04884c449801",
+      "source": "file:a6a1db614763",
+      "target": "file:04884c449801",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:598ac80db7df",
+      "source": "file:a6a1db614763",
+      "target": "file:598ac80db7df",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:94f95cce074a",
+      "source": "file:a6a1db614763",
+      "target": "file:94f95cce074a",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:7c83405e0f3b",
+      "source": "file:a6a1db614763",
+      "target": "file:7c83405e0f3b",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:0bb4c51d7673",
+      "source": "file:a6a1db614763",
+      "target": "file:0bb4c51d7673",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:ad9cd7d120ba",
+      "source": "file:a6a1db614763",
+      "target": "file:ad9cd7d120ba",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:dbac866b7792",
+      "source": "file:a6a1db614763",
+      "target": "file:dbac866b7792",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:a6a1db614763->import->file:c486c14fb4aa",
+      "source": "file:a6a1db614763",
+      "target": "file:c486c14fb4aa",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ca895f46d2e6->import->file:ac37150dd245",
+      "source": "file:ca895f46d2e6",
+      "target": "file:ac37150dd245",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ca895f46d2e6->import->file:9a62491893bb",
+      "source": "file:ca895f46d2e6",
+      "target": "file:9a62491893bb",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:ca895f46d2e6->import->file:0ba2067d69b8",
+      "source": "file:ca895f46d2e6",
+      "target": "file:0ba2067d69b8",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:73ebbf58de77->import->file:847227078c8d",
+      "source": "file:73ebbf58de77",
+      "target": "file:847227078c8d",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:73ebbf58de77->import->file:9a62491893bb",
+      "source": "file:73ebbf58de77",
+      "target": "file:9a62491893bb",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:73ebbf58de77->import->file:ac37150dd245",
+      "source": "file:73ebbf58de77",
+      "target": "file:ac37150dd245",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:73ebbf58de77->import->file:ca895f46d2e6",
+      "source": "file:73ebbf58de77",
+      "target": "file:ca895f46d2e6",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:73ebbf58de77->import->file:6538965dfa74",
+      "source": "file:73ebbf58de77",
+      "target": "file:6538965dfa74",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:73ebbf58de77->import->file:0ba2067d69b8",
+      "source": "file:73ebbf58de77",
+      "target": "file:0ba2067d69b8",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:c486c14fb4aa->import->file:847227078c8d",
+      "source": "file:c486c14fb4aa",
+      "target": "file:847227078c8d",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:c486c14fb4aa->import->file:79c6f1f4b00d",
+      "source": "file:c486c14fb4aa",
+      "target": "file:79c6f1f4b00d",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:c486c14fb4aa->import->file:73ebbf58de77",
+      "source": "file:c486c14fb4aa",
+      "target": "file:73ebbf58de77",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:18cb1b42f70e->import->file:380acc583018",
+      "source": "file:18cb1b42f70e",
+      "target": "file:380acc583018",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:79c6f1f4b00d->import->file:0ba2067d69b8",
+      "source": "file:79c6f1f4b00d",
+      "target": "file:0ba2067d69b8",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:79c6f1f4b00d->import->file:18cb1b42f70e",
+      "source": "file:79c6f1f4b00d",
+      "target": "file:18cb1b42f70e",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:719b62738948->import->file:847227078c8d",
+      "source": "file:719b62738948",
+      "target": "file:847227078c8d",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:719b62738948->import->file:73ebbf58de77",
+      "source": "file:719b62738948",
+      "target": "file:73ebbf58de77",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:719b62738948->import->file:6538965dfa74",
+      "source": "file:719b62738948",
+      "target": "file:6538965dfa74",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:719b62738948->import->file:ac37150dd245",
+      "source": "file:719b62738948",
+      "target": "file:ac37150dd245",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:719b62738948->import->file:0ba2067d69b8",
+      "source": "file:719b62738948",
+      "target": "file:0ba2067d69b8",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:719b62738948->import->file:18cb1b42f70e",
+      "source": "file:719b62738948",
+      "target": "file:18cb1b42f70e",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:719b62738948->import->file:380acc583018",
+      "source": "file:719b62738948",
+      "target": "file:380acc583018",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:719b62738948->import->file:79c6f1f4b00d",
+      "source": "file:719b62738948",
+      "target": "file:79c6f1f4b00d",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:719b62738948->import->file:c486c14fb4aa",
+      "source": "file:719b62738948",
+      "target": "file:c486c14fb4aa",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    },
+    {
+      "id": "file:9a62491893bb->import->file:6538965dfa74",
+      "source": "file:9a62491893bb",
+      "target": "file:6538965dfa74",
+      "type": "import",
+      "weight": 0.75,
+      "evidence": "structure"
+    }
+  ]
+}

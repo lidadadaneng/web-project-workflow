@@ -1,0 +1,27 @@
+{
+  "name": "order-refund-flow",
+  "schema": "six-phase",
+  "projectType": "fullstack",
+  "createdAt": 1787472000000,
+  "phases": { "brd": "done", "prd": "done", "explore": "skipped", "design": "done", "plan": "done", "testplan": "pending", "apply": "pending" },
+  "tasks": { "total": 9, "done": 3, "inProgress": 1 },
+  "docs": [
+    { "phase": "brd", "file": "BRD.md", "exists": true },
+    { "phase": "prd", "file": "PRD.md", "exists": true },
+    { "phase": "design", "file": "Design-Fe.md", "exists": true },
+    { "phase": "plan", "file": "Plan.md", "exists": true },
+    { "phase": "test", "file": "Test.md", "exists": false }
+  ],
+  "warnings": ["Test 阶段未完成：Apply 将缺少测试用例驱动，存在质量风险"],
+  "planTasks": [
+    { "id": "t1", "title": "退款状态机与数据模型设计", "state": "done" },
+    { "id": "t2", "title": "RefundService.createRefund 接口实现", "state": "done" },
+    { "id": "t3", "title": "退款审批流接入工作流引擎", "state": "done" },
+    { "id": "t4", "title": "前端退款申请页表单与校验", "state": "in-progress" },
+    { "id": "t5", "title": "退款进度时间线组件", "state": "pending" },
+    { "id": "t6", "title": "管理端退款审核列表", "state": "pending" },
+    { "id": "t7", "title": "退款回调幂等处理", "state": "pending" },
+    { "id": "t8", "title": "异常退款告警接入", "state": "pending" },
+    { "id": "t9", "title": "端到端联调与验收", "state": "pending" }
+  ]
+}

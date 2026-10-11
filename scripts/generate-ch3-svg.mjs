@@ -112,47 +112,42 @@ function fig34() {
   const w = 1750, h = 760;
   let s = header('3-4', w, h);
   s += lines(875, 35, ['business_map 生成流程'], { size: 31, fill: C.ink, weight: 650 });
-  s += lines(875, 73, ['四类互补证据经 noisy-OR 融合，按权重阈值控制关联噪声'], { size: 20, fill: C.muted });
-  s += card(70, 285, 215, 112, '能力规范', ['Purpose / Requirements', '关键词与模块名'], { titleSize: 25, subSize: 17, fill: C.blueFill, stroke: '#7396b1', titleFill: C.blue });
+  s += card(70, 285, 215, 112, '能力规范', [], { titleSize: 29, fill: C.blueFill, stroke: '#7396b1', titleFill: C.blue });
   s += line(285, 341, 330, 341);
-  s += card(330, 285, 215, 112, '候选召回', ['L1 / L2 / L3', '语义 + 名称检索'], { titleSize: 25, subSize: 17 });
+  s += card(330, 285, 215, 112, '候选召回', [], { titleSize: 29 });
   s += line(545, 341, 600, 341);
   s += rect(600, 128, 360, 426, { fill: '#fbfcfd', stroke: C.frame, sw: 2, r: 12 });
   s += lines(780, 165, ['四类证据计算'], { size: 25, fill: C.muted, weight: 650 });
   const evidence = [['doc-extract', '文档提取', '0.85'], ['name-match', '命名匹配', '0.45–0.70'], ['semantic', '语义匹配', 'Top-K / 余弦相似度'], ['git-history', 'Git 历史追溯', '频次归一化']];
-  evidence.forEach((a, i) => { const y = 205 + i * 76; s += card(640, y, 280, 56, a[1], [a[0] + ' · ' + a[2]], { titleSize: 20, subSize: 15, fill: '#fff', r: 8 }); });
+  evidence.forEach((a, i) => { const y = 205 + i * 76; s += card(640, y, 280, 56, a[1], [a[0] + ' · ' + a[2]], { titleSize: 21, subSize: 17, fill: '#fff', r: 8 }); });
   s += line(960, 341, 1020, 341);
-  s += card(1020, 285, 215, 112, 'noisy-OR', ['W = 1 − ∏(1 − wi)', '上限截断 0.95'], { titleSize: 25, subSize: 17, fill: C.greenFill, stroke: C.green, titleFill: C.green });
+  s += card(1020, 285, 215, 112, 'noisy-OR', ['W = 1 − ∏(1 − wi)'], { titleSize: 27, subSize: 19, fill: C.greenFill, stroke: C.green, titleFill: C.green });
   s += line(1235, 341, 1290, 341);
-  s += card(1290, 285, 205, 112, '确定溯源', ['structure > doc > git', '记录最权威来源'], { titleSize: 23, subSize: 16 });
+  s += card(1290, 285, 205, 112, '确定溯源', ['structure > doc > git'], { titleSize: 26, subSize: 18 });
   s += line(1495, 341, 1530, 341);
   s += `<polygon points="1590,270 1660,341 1590,412 1520,341" fill="#fff" stroke="${C.border}" stroke-width="2"/>`;
-  s += lines(1590, 330, ['W ≥ 0.30?'], { size: 20, fill: C.ink, weight: 650 });
-  s += card(1530, 490, 130, 78, '丢弃', ['候选'], { titleSize: 20, subSize: 16, fill: C.redFill, stroke: C.red, titleFill: C.red });
-  s += card(1530, 115, 150, 78, '生成', ['business_map 边'], { titleSize: 20, subSize: 15, fill: C.blueFill, stroke: C.blue, titleFill: C.blue });
-  s += pathEl('M1660 341 H1705 V154 H1680', { stroke: C.blue, marker: 'blueArrow', sw: 2.8 }); s += lines(1680, 315, ['是'], { size: 17, fill: C.blue, weight: 650 });
-  s += pathEl('M1590 412 V490', { stroke: C.red, marker: 'redArrow', sw: 2.5, dash: '8 7' }); s += lines(1620, 455, ['否'], { size: 17, fill: C.red, weight: 650 });
-  s += lines(875, 690, ['低权重候选不生成边；每条关联可追溯至其最权威证据源'], { size: 20, fill: C.muted });
+  s += lines(1590, 330, ['W ≥ 0.30?'], { size: 23, fill: C.ink, weight: 650 });
+  s += card(1530, 490, 130, 78, '丢弃', [], { titleSize: 24, fill: C.redFill, stroke: C.red, titleFill: C.red });
+  s += card(1530, 115, 150, 78, '生成', [], { titleSize: 24, fill: C.blueFill, stroke: C.blue, titleFill: C.blue });
+  s += pathEl('M1660 341 H1705 V154 H1680', { stroke: C.blue, marker: 'blueArrow', sw: 2.8 }); s += lines(1680, 315, ['是'], { size: 21, fill: C.blue, weight: 650 });
+  s += pathEl('M1590 412 V490', { stroke: C.red, marker: 'redArrow', sw: 2.5, dash: '8 7' }); s += lines(1620, 455, ['否'], { size: 21, fill: C.red, weight: 650 });
   return s + footer();
 }
 
 function fig35() {
-  const w = 1800, h = 820;
+  const w = 1800, h = 760;
   let s = header('3-5', w, h);
   s += lines(900, 35, ['图谱驱动的任务上下文生成流水线'], { size: 31, fill: C.ink, weight: 650 });
-  s += lines(900, 73, ['在 Token 预算 B 约束下，生成任务相关、结构连贯的最小充分上下文'], { size: 20, fill: C.muted });
-  const flow = [['任务描述 q', 'Token 预算 B'], ['锚点选择', '向量检索 + 映射'], ['子图裁剪', '加权双向 BFS'], ['骨架抽取', '距离感知分级'], ['符号化序列化', '输出上下文 C']];
-  flow.forEach((a, i) => { const x = 70 + i * 330; s += card(x, 230, 255, 120, a[0], [a[1]], { titleSize: 26, subSize: 18, fill: i === 4 ? C.greenFill : i === 1 ? C.blueFill : '#fff', stroke: i === 4 ? C.green : i === 1 ? '#7396b1' : C.border, sw: i === 1 || i === 4 ? 3 : 2, titleFill: i === 1 ? C.blue : i === 4 ? C.green : C.ink }); if (i < flow.length - 1) s += line(x + 255, 290, x + 305, 290); });
+  const flow = [['任务描述 q', 'Token 预算 B'], ['锚点选择'], ['子图裁剪'], ['骨架抽取'], ['符号化序列化']];
+  flow.forEach((a, i) => { const x = 70 + i * 330; s += card(x, 230, 255, 120, a[0], a.slice(1), { titleSize: 29, subSize: 20, fill: i === 4 ? C.greenFill : i === 1 ? C.blueFill : '#fff', stroke: i === 4 ? C.green : i === 1 ? '#7396b1' : C.border, sw: i === 1 || i === 4 ? 3 : 2, titleFill: i === 1 ? C.blue : i === 4 ? C.green : C.ink }); if (i < flow.length - 1) s += line(x + 255, 290, x + 305, 290); });
   s += line(1395, 350, 1395, 424, { sw: 2.5 });
   s += `<polygon points="1395,424 1475,490 1395,556 1315,490" fill="#fff" stroke="${C.border}" stroke-width="2"/>`;
-  s += lines(1395, 478, ['tokens(C)'], { size: 19, fill: C.ink, weight: 650 }); s += lines(1395, 510, ['≤ B ?'], { size: 19, fill: C.ink, weight: 650 });
-  s += card(1515, 445, 215, 90, '输出上下文 C', ['交付给智能体'], { titleSize: 23, subSize: 17, fill: C.greenFill, stroke: C.green, titleFill: C.green });
-  s += pathEl('M1475 490 H1515', { stroke: C.green, marker: 'greenArrow', sw: 3 }); s += lines(1490, 462, ['是'], { size: 17, fill: C.green, weight: 650 });
-  s += card(1160, 625, 340, 92, '五级降级链', ['降压缩档 → 减节点 → 减深度', '→ 提边权 → 仅保留锚点'], { titleSize: 24, subSize: 17, fill: C.redFill, stroke: C.red, titleFill: C.red });
-  s += pathEl('M1395 556 V625', { stroke: C.red, marker: 'redArrow', sw: 2.5, dash: '8 7' }); s += lines(1430, 592, ['否 / 超预算'], { size: 17, fill: C.red, weight: 650, anchor: 'start' });
-  s += pathEl('M1160 671 H900 V350', { stroke: C.red, marker: 'redArrow', sw: 2.5, dash: '8 7' }); s += lines(1000, 648, ['重新执行子图裁剪与骨架抽取'], { size: 17, fill: C.red, weight: 650 });
-  s += rect(80, 740, 1640, 48, { fill: C.soft, stroke: C.border, sw: 1.5, r: 8 });
-  s += lines(900, 764, ['系统级降级：向量索引缺失 → 结构检索；图谱缺失 → 文件系统提示；序列化失败 → 输出锚点清单'], { size: 17, fill: C.muted });
+  s += lines(1395, 478, ['tokens(C)'], { size: 22, fill: C.ink, weight: 650 }); s += lines(1395, 510, ['≤ B ?'], { size: 22, fill: C.ink, weight: 650 });
+  s += card(1515, 445, 215, 90, '输出上下文 C', [], { titleSize: 26, fill: C.greenFill, stroke: C.green, titleFill: C.green });
+  s += pathEl('M1475 490 H1515', { stroke: C.green, marker: 'greenArrow', sw: 3 }); s += lines(1490, 462, ['是'], { size: 21, fill: C.green, weight: 650 });
+  s += card(1160, 625, 340, 92, '五级降级链', ['压缩 → 减节点 → 减深度 → 提边权 → 仅锚点'], { titleSize: 27, subSize: 19, fill: C.redFill, stroke: C.red, titleFill: C.red });
+  s += pathEl('M1395 556 V625', { stroke: C.red, marker: 'redArrow', sw: 2.5, dash: '8 7' }); s += lines(1430, 592, ['否 / 超预算'], { size: 21, fill: C.red, weight: 650, anchor: 'start' });
+  s += pathEl('M1160 671 H900 V350', { stroke: C.red, marker: 'redArrow', sw: 2.5, dash: '8 7' }); s += lines(1000, 648, ['返回子图裁剪'], { size: 21, fill: C.red, weight: 650 });
   return s + footer();
 }
 

@@ -1,11 +1,8 @@
 <template>
   <div>
-    <!-- 页头：标题 + 副标题 + 搜索 -->
+    <!-- 页头：副标题 + 搜索 -->
     <div class="page-head">
-      <div>
-        <div class="page-title">工作流看板</div>
-        <div class="page-sub">查看和管理所有工作流的执行状态与节点信息</div>
-      </div>
+      <div class="page-sub">查看和管理所有工作流的执行状态与节点信息</div>
       <el-input
         v-model="keyword"
         class="search-input"
@@ -166,12 +163,11 @@ const detailVisible = ref(false)
 
 const labelOf = (id: string) => PHASE_DEFS.find((p) => p.id === id)?.label ?? id
 
-/** 需求整体状态：全部流转完 → finished；已有阶段推进 → running；未启动 → pending（失败态暂无来源，恒 0） */
+/** 需求整体状态：apply 流转完 → finished；已进入实施（有任务进度）→ running；否则未启动（失败态暂无来源，恒 0） */
 function statusOf(c: ChangeItem): 'finished' | 'running' | 'pending' {
-  const states = Object.values(c.phases)
-  const started = states.some((s) => s === 'done' || s === 'skipped')
-  if (!store.nextActionable(c) && c.phases.apply === 'done') return 'finished'
-  return started ? 'running' : 'pending'
+  if (c.phases.apply === 'done' && !store.nextActionable(c)) return 'finished'
+  if (c.tasks.total > 0 && c.tasks.done < c.tasks.total) return 'running'
+  return 'pending'
 }
 
 const statusText = (c: ChangeItem) => ({ finished: '已流转完', running: '进行中', pending: '未开始' })[statusOf(c)]
@@ -180,7 +176,7 @@ const tabs = computed(() => {
   const list = store.changes.value
   return [
     { key: 'all' as const, label: '全部', count: list.length },
-    { key: 'running' as const, label: '运行中', count: list.filter((c) => statusOf(c) !== 'finished').length },
+    { key: 'running' as const, label: '运行中', count: list.filter((c) => statusOf(c) === 'running').length },
     { key: 'finished' as const, label: '已完成', count: list.filter((c) => statusOf(c) === 'finished').length },
     { key: 'failed' as const, label: '失败', count: 0 },
   ]
@@ -188,7 +184,7 @@ const tabs = computed(() => {
 
 const filtered = computed(() => {
   let list = store.changes.value
-  if (activeTab.value === 'running') list = list.filter((c) => statusOf(c) !== 'finished')
+  if (activeTab.value === 'running') list = list.filter((c) => statusOf(c) === 'running')
   else if (activeTab.value === 'finished') list = list.filter((c) => statusOf(c) === 'finished')
   else if (activeTab.value === 'failed') list = []
   const kw = keyword.value.trim().toLowerCase()
@@ -230,11 +226,10 @@ onMounted(() => store.load())
 .page-head {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 16px;
 }
-.page-title { font-size: 20px; font-weight: 600; color: #1d2129; }
-.page-sub { font-size: 13px; color: #86909c; margin-top: 4px; }
+.page-sub { font-size: 13px; color: #86909c; }
 .search-input { width: 260px; }
 
 /* 状态页签 */

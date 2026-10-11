@@ -1,1 +1,84 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="720" viewBox="0 0 1800 720"><defs><marker id="arrow" markerWidth="6" markerHeight="6" refX="5.4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#59636c"/></marker><marker id="blueArrow" markerWidth="6" markerHeight="6" refX="5.4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#315f8d"/></marker><marker id="greenArrow" markerWidth="6" markerHeight="6" refX="5.4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#5f8178"/></marker><marker id="redArrow" markerWidth="6" markerHeight="6" refX="5.4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#a15e50"/></marker><style>.cn{font-family:Microsoft YaHei, Noto Sans CJK SC, SimSun, sans-serif;}</style></defs><rect width="1800" height="720" fill="#ffffff"/><rect x="45" y="36" width="1710" height="650" rx="14" fill="#ffffff" stroke="#8f9aa2" stroke-width="2" stroke-dasharray="12 9"/><text x="69" y="66" text-anchor="start" dominant-baseline="middle" class="" style="font-size:27px;font-weight:650;fill:#59636c"></text><rect x="76" y="86" width="1648" height="108" rx="10" fill="#f7f9fa" stroke="#aab4bb" stroke-width="2"/><text x="98" y="112" text-anchor="start" dominant-baseline="middle" class="" style="font-size:28px;font-weight:650;fill:#59636c">六阶段流程约束架构</text><rect x="80" y="132" width="210" height="48" rx="7" fill="#fff" stroke="#aab4bb" stroke-width="1.8"/><text x="185" y="156" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:27px;font-weight:650;fill:#27313a">BRD</text><line x1="290" y1="156" x2="345" y2="156" stroke="#59636c" stroke-width="2.2" marker-end="url(#arrow)"/><rect x="360" y="132" width="210" height="48" rx="7" fill="#fff" stroke="#aab4bb" stroke-width="1.8"/><text x="465" y="156" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:27px;font-weight:650;fill:#27313a">PRD</text><line x1="570" y1="156" x2="625" y2="156" stroke="#59636c" stroke-width="2.2" marker-end="url(#arrow)"/><rect x="640" y="132" width="210" height="48" rx="7" fill="#fff" stroke="#aab4bb" stroke-width="1.8"/><text x="745" y="156" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:27px;font-weight:650;fill:#27313a">Design</text><line x1="850" y1="156" x2="905" y2="156" stroke="#59636c" stroke-width="2.2" marker-end="url(#arrow)"/><rect x="920" y="132" width="210" height="48" rx="7" fill="#fff" stroke="#aab4bb" stroke-width="1.8"/><text x="1025" y="156" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:27px;font-weight:650;fill:#27313a">Plan</text><line x1="1130" y1="156" x2="1185" y2="156" stroke="#59636c" stroke-width="2.2" marker-end="url(#arrow)"/><rect x="1200" y="132" width="210" height="48" rx="7" fill="#fff" stroke="#aab4bb" stroke-width="1.8"/><text x="1305" y="156" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:27px;font-weight:650;fill:#27313a">Test</text><line x1="1410" y1="156" x2="1465" y2="156" stroke="#59636c" stroke-width="2.2" marker-end="url(#arrow)"/><rect x="1480" y="132" width="210" height="48" rx="7" fill="#fff" stroke="#aab4bb" stroke-width="1.8"/><text x="1585" y="156" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:27px;font-weight:650;fill:#27313a">Apply</text><path d="M900 194 V210" fill="none" stroke="#59636c" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" /><rect x="76" y="210" width="1648" height="46" rx="9" fill="#f7f9fa" stroke="#aab4bb" stroke-width="2"/><text x="900" y="233" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:24px;font-weight:650;fill:#59636c">阶段制品与状态</text><text x="98" y="280" text-anchor="start" dominant-baseline="middle" class="" style="font-size:26px;font-weight:650;fill:#59636c">需求与代码知识组织</text><path d="M900 256 V296" fill="none" stroke="#315f8d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#blueArrow)"/><rect x="75" y="315" width="245" height="130" rx="10" fill="#fff" stroke="#aab4bb" stroke-width="2"/><text x="197.5" y="380" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:34px;font-weight:650;fill:#27313a">输入知识</text><rect x="360" y="315" width="300" height="130" rx="10" fill="#eef4f8" stroke="#7396b1" stroke-width="2"/><text x="510" y="380" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:34px;font-weight:650;fill:#315f8d">双层知识模型</text><rect x="710" y="300" width="390" height="170" rx="10" fill="#eef4f8" stroke="#315f8d" stroke-width="3"/><text x="905" y="385" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:39px;font-weight:650;fill:#315f8d">项目知识图谱</text><rect x="1150" y="315" width="300" height="130" rx="10" fill="#eef5f2" stroke="#5f8178" stroke-width="2"/><text x="1300" y="380" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:34px;font-weight:650;fill:#5f8178">上下文生成</text><rect x="1495" y="315" width="235" height="130" rx="10" fill="#fff" stroke="#aab4bb" stroke-width="2"/><text x="1612.5" y="380" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:31px;font-weight:650;fill:#27313a">AI 编程智能体</text><line x1="320" y1="380" x2="360" y2="380" stroke="#59636c" stroke-width="3" marker-end="url(#arrow)"/><line x1="660" y1="380" x2="710" y2="380" stroke="#59636c" stroke-width="3" marker-end="url(#arrow)"/><line x1="1100" y1="380" x2="1150" y2="380" stroke="#59636c" stroke-width="3" marker-end="url(#arrow)"/><line x1="1450" y1="380" x2="1495" y2="380" stroke="#59636c" stroke-width="3" marker-end="url(#arrow)"/><rect x="700" y="500" width="420" height="130" rx="10" fill="#fbfcfd" stroke="#aab4bb" stroke-width="2"/><text x="910" y="530" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:30px;font-weight:650;fill:#27313a">Spec 增量知识演化</text><text x="910" y="578" text-anchor="middle" dominant-baseline="middle" class="" style="font-size:24px;font-weight:550;fill:#59636c">冷启动 → 归档沉淀 → 增量更新</text><path d="M1612 445 V525 H1120" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#greenArrow)"/><path d="M700 565 H675 V405 H710" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#blueArrow)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1280" viewBox="0 0 1800 1280">
+  <defs>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5.4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#59636c"/></marker>
+    <marker id="blueArrow" markerWidth="6" markerHeight="6" refX="5.4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#315f8d"/></marker>
+    <marker id="blueLeft" markerWidth="6" markerHeight="6" refX="0.6" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M6,0 L0,3 L6,6 Z" fill="#315f8d"/></marker>
+    <marker id="greenArrow" markerWidth="6" markerHeight="6" refX="5.4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#5f8178"/></marker>
+    <marker id="greenLeft" markerWidth="6" markerHeight="6" refX="0.6" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M6,0 L0,3 L6,6 Z" fill="#5f8178"/></marker>
+    <style>
+      .cn{font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;fill:#27313a}
+      .title{font-size:30px;font-weight:700;fill:#59636c}
+      .subtitle{font-size:23px;font-weight:500;fill:#59636c}
+      .stage{font-size:27px;font-weight:700;fill:#315f8d}
+      .desc{font-size:22px;font-weight:500;fill:#315f8d}
+      .section{font-size:29px;font-weight:700;fill:#315f8d}
+      .small{font-size:22px;font-weight:500;fill:#315f8d}
+      .greenTitle{font-size:29px;font-weight:700;fill:#5f8178}
+      .greenText{font-size:22px;font-weight:500;fill:#5f8178}
+    </style>
+  </defs>
+  <rect width="1800" height="1280" fill="#ffffff"/>
+  <rect x="28" y="24" width="748" height="1232" rx="14" fill="#ffffff" stroke="#7fa8ca" stroke-width="2" stroke-dasharray="12 9"/>
+  <rect x="824" y="24" width="948" height="1232" rx="14" fill="#ffffff" stroke="#84bfae" stroke-width="2" stroke-dasharray="12 9"/>
+
+  <rect x="52" y="48" width="700" height="108" rx="10" fill="#eef4f8" stroke="#5b9de2" stroke-width="2"/>
+  <text x="402" y="84" text-anchor="middle" dominant-baseline="middle" class="cn title" fill="#315f8d">开发流程</text>
+  <text x="402" y="122" text-anchor="middle" dominant-baseline="middle" class="cn subtitle">按阶段推进，逐步产出阶段制品</text>
+  <g stroke="#315f8d" stroke-width="2.4" fill="none" marker-end="url(#blueArrow)">
+    <line x1="402" y1="156" x2="402" y2="183"/><line x1="402" y1="274" x2="402" y2="301"/><line x1="402" y1="392" x2="402" y2="419"/>
+    <line x1="402" y1="510" x2="402" y2="537"/><line x1="402" y1="628" x2="402" y2="655"/><line x1="402" y1="746" x2="402" y2="773"/><line x1="402" y1="864" x2="402" y2="891"/>
+  </g>
+  <g>
+    <rect x="95" y="183" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
+    <text x="402" y="214" text-anchor="middle" dominant-baseline="middle" class="cn stage">BRD</text><text x="402" y="248" text-anchor="middle" dominant-baseline="middle" class="cn desc">业务背景、目标与范围</text>
+    <rect x="95" y="301" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
+    <text x="402" y="332" text-anchor="middle" dominant-baseline="middle" class="cn stage">PRD</text><text x="402" y="366" text-anchor="middle" dominant-baseline="middle" class="cn desc">产品需求与方案</text>
+    <rect x="95" y="419" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
+    <text x="402" y="450" text-anchor="middle" dominant-baseline="middle" class="cn stage">Explore</text><text x="402" y="484" text-anchor="middle" dominant-baseline="middle" class="cn desc">探索与调研（可选）</text>
+    <rect x="95" y="537" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
+    <text x="402" y="568" text-anchor="middle" dominant-baseline="middle" class="cn stage">Design</text><text x="402" y="602" text-anchor="middle" dominant-baseline="middle" class="cn desc">设计方案与技术方案</text>
+    <rect x="95" y="655" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
+    <text x="402" y="686" text-anchor="middle" dominant-baseline="middle" class="cn stage">Plan</text><text x="402" y="720" text-anchor="middle" dominant-baseline="middle" class="cn desc">任务分解与排期</text>
+    <rect x="95" y="773" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
+    <text x="402" y="804" text-anchor="middle" dominant-baseline="middle" class="cn stage">Test</text><text x="402" y="838" text-anchor="middle" dominant-baseline="middle" class="cn desc">测试与验证</text>
+    <rect x="95" y="891" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
+    <text x="402" y="922" text-anchor="middle" dominant-baseline="middle" class="cn stage">Apply</text><text x="402" y="956" text-anchor="middle" dominant-baseline="middle" class="cn desc">发布与上线</text>
+    <rect x="95" y="1009" width="614" height="108" rx="10" fill="#fff5e7" stroke="#f08c18" stroke-width="2"/>
+    <text x="402" y="1043" text-anchor="middle" dominant-baseline="middle" class="cn stage" style="fill:#a15e20">Archive</text><text x="402" y="1082" text-anchor="middle" dominant-baseline="middle" class="cn desc" style="fill:#a15e20">阶段制品、需求归档、代码变更</text>
+  </g>
+
+  <rect x="850" y="48" width="896" height="108" rx="10" fill="#eef5f2" stroke="#23a584" stroke-width="2"/>
+  <text x="1298" y="84" text-anchor="middle" dominant-baseline="middle" class="cn title" fill="#287f70">项目知识图谱演进线</text>
+  <text x="1298" y="122" text-anchor="middle" dominant-baseline="middle" class="cn subtitle">持续维护的双层项目知识模型，循环迭代更新</text>
+
+  <rect x="875" y="188" width="846" height="232" rx="12" fill="#f8fbfa" stroke="#239a84" stroke-width="2"/>
+  <text x="1298" y="241" text-anchor="middle" dominant-baseline="middle" class="cn section">双层项目知识模型</text>
+  <rect x="905" y="284" width="310" height="96" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
+  <text x="1060" y="317" text-anchor="middle" dominant-baseline="middle" class="cn stage">业务能力层</text><text x="1060" y="352" text-anchor="middle" dominant-baseline="middle" class="cn small">（由能力规范沉淀）</text>
+  <rect x="1381" y="284" width="310" height="96" rx="10" fill="#f5f0fb" stroke="#7154c7" stroke-width="2"/>
+  <text x="1536" y="317" text-anchor="middle" dominant-baseline="middle" class="cn stage" fill="#5d43a9">代码结构层</text><text x="1536" y="352" text-anchor="middle" dominant-baseline="middle" class="cn small" fill="#5d43a9">（由多语言源码解析）</text>
+  <line x1="1215" y1="332" x2="1381" y2="332" stroke="#315f8d" stroke-width="2.4" marker-start="url(#blueLeft)" marker-end="url(#blueArrow)"/><text x="1298" y="309" text-anchor="middle" dominant-baseline="middle" class="cn small">关联</text>
+
+  <path d="M1298 420 V454" fill="none" stroke="#5f8178" stroke-width="2.8" marker-end="url(#greenArrow)"/>
+  <rect x="875" y="454" width="846" height="238" rx="12" fill="#f8fbfa" stroke="#239a84" stroke-width="2"/>
+  <text x="1298" y="510" text-anchor="middle" dominant-baseline="middle" class="cn section" fill="#287f70">上下文生成流水线</text>
+  <rect x="905" y="548" width="236" height="108" rx="10" fill="#ffffff" stroke="#2f8bf2" stroke-width="2"/>
+  <text x="1023" y="581" text-anchor="middle" dominant-baseline="middle" class="cn stage">锚点选择</text><text x="1023" y="620" text-anchor="middle" dominant-baseline="middle" class="cn small">（定位相关知识）</text>
+  <rect x="1180" y="548" width="236" height="108" rx="10" fill="#ffffff" stroke="#2f8bf2" stroke-width="2"/>
+  <text x="1298" y="581" text-anchor="middle" dominant-baseline="middle" class="cn stage">子图裁剪</text><text x="1298" y="620" text-anchor="middle" dominant-baseline="middle" class="cn small">（提取相关内容）</text>
+  <rect x="1455" y="548" width="236" height="108" rx="10" fill="#ffffff" stroke="#2f8bf2" stroke-width="2"/>
+  <text x="1573" y="581" text-anchor="middle" dominant-baseline="middle" class="cn stage">压缩序列化</text><text x="1573" y="620" text-anchor="middle" dominant-baseline="middle" class="cn small">（生成上下文）</text>
+  <g stroke="#2f8bf2" stroke-width="2.4" fill="none" marker-end="url(#blueArrow)"><line x1="1141" y1="602" x2="1180" y2="602"/><line x1="1416" y1="602" x2="1455" y2="602"/></g>
+
+  <path d="M840 456 V928 M840 600 H875" fill="none" stroke="#315f8d" stroke-width="2.4"/>
+  <g stroke="#315f8d" stroke-width="2.4" fill="none" marker-end="url(#blueArrow)">
+    <line x1="840" y1="456" x2="710" y2="456"/><line x1="840" y1="574" x2="710" y2="574"/><line x1="840" y1="692" x2="710" y2="692"/><line x1="840" y1="810" x2="710" y2="810"/><line x1="840" y1="928" x2="710" y2="928"/>
+  </g>
+  <path d="M709 1063 H905" fill="none" stroke="#5f8178" stroke-width="2.8" marker-end="url(#greenArrow)"/>
+  <rect x="717" y="1025" width="180" height="36" rx="9" fill="#eef8f4"/>
+  <text x="807" y="1043" text-anchor="middle" dominant-baseline="middle" class="cn greenText" style="fill:#000000">归档与代码变更</text>
+  <rect x="905" y="1004" width="570" height="154" rx="12" fill="#eef8f4" stroke="#239a84" stroke-width="2"/>
+  <text x="1190" y="1049" text-anchor="middle" dominant-baseline="middle" class="cn greenTitle">关联知识增量更新</text><text x="1190" y="1091" text-anchor="middle" dominant-baseline="middle" class="cn greenText">解析归档内容，关联相关知识，</text><text x="1190" y="1122" text-anchor="middle" dominant-baseline="middle" class="cn greenText">更新知识图谱</text>
+  <path d="M1475 1080 H1742 V238 H1685" fill="none" stroke="#5f8178" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#greenArrow)"/>
+  <rect x="1524" y="1036" width="158" height="44" rx="22" fill="#eef8f4"/><text x="1603" y="1058" text-anchor="middle" dominant-baseline="middle" class="cn" font-size="24" font-weight="700" fill="#5f8178">回写更新</text>
+</svg>

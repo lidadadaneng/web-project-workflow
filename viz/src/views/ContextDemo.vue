@@ -4,7 +4,7 @@
     <el-card class="page-card">
       <template #header>任务输入</template>
       <div class="input-row">
-        <el-input v-model="query" placeholder="自然语言任务，如：CLI 命令注册" style="max-width: 420px" />
+        <el-input v-model="query" placeholder="自然语言任务，如：调整购物车中收藏商品的展示逻辑" style="max-width: 420px" />
         <div class="budget">
           <span class="budget-label">Token 预算：{{ budget }}</span>
           <el-slider v-model="budget" :min="500" :max="4000" :step="100" style="width: 200px" />
@@ -68,7 +68,7 @@ import { getContextDemo, type ContextDemo } from '@/api'
 import GraphCanvas from '@/components/GraphCanvas.vue'
 import { LEVEL_COLORS } from '@/components/graph-theme'
 
-const query = ref('CLI 命令注册')
+const query = ref('调整购物车中收藏商品的展示逻辑')
 const budget = ref(1000)
 const loading = ref(false)
 const demo = ref<ContextDemo | null>(null)

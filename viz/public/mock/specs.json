@@ -1,25 +1,32 @@
 {
   "specs": [
     {
-      "name": "six-stage-workflow",
-      "title": "六阶段工作流",
-      "updatedAt": 1787644800000,
-      "markdown": "# 六阶段工作流\n\n## Purpose\n\n将一次需求变更组织为 BRD → PRD → Explore → Design → Plan → Test → Apply 的受控流程，阶段制品显式化，推进条件由 DAG 门禁判定。\n\n## Requirements\n\n### REQ-1 阶段状态管理（P0）\n每个阶段记录 pending / done / skipped 状态，状态变更仅经 CLI 写入。\n\n### REQ-2 依赖门禁（P0）\n目标阶段的全部强前置必须为 done 才允许开始；弱依赖缺失时以警告形式呈现。\n\n### REQ-3 Explore 拍板（P1）\nExplore 完成后须记录选定方案，Design 才允许继续编排。\n\n## Scenarios\n\n- 会话中断后，通过 `wpw apply --from <task>` 从显式状态恢复，而非依赖聊天记录。"
+      "name": "meishixinxi-manage",
+      "title": "美食信息管理",
+      "updatedAt": 1788610041049,
+      "markdown": "# 美食信息管理\n\n## Purpose\n\n管理后台对美食信息的维护能力，覆盖列表查询、新增、编辑、下架与图文详情管理，对应 `views/modules/meishixinxi/` 页面组。\n\n## Requirements\n\n### REQ-1 列表与筛选（P0）\n按美食分类、名称关键字分页查询，支持批量删除；列表数据来自后端 `meishixinxi` 接口分页返回。\n\n### REQ-2 新增 / 编辑（P0）\n`add-or-update.vue` 以弹窗形式复用同一表单，封面图经 `FileUpload` 组件上传，富文本详情经 `Editor` 组件编辑。\n\n### REQ-3 评论联动（P1）\n美食详情关联 `discussmeishixinxi` 评论列表，删除美食时级联清理评论数据。\n\n## Scenarios\n\n- 管理员在列表页切换「美食分类」下拉框，表格实时刷新且分页重置到第 1 页。"
     },
     {
-      "name": "graph-context",
-      "title": "图谱驱动上下文生成",
-      "updatedAt": 1787478584655,
-      "markdown": "# 图谱驱动上下文生成\n\n## Purpose\n\n依据任务描述与 Token 预算，从 C-L1-L2-L3 知识图谱中检索并裁剪出结构连贯的任务级子图，序列化后直接作为大模型输入。\n\n## Requirements\n\n### REQ-1 语义锚点检索（P0）\n自然语言任务经本地向量索引命中候选锚点，支持显式指定锚点跳过检索。\n\n### REQ-2 子图裁剪（P0）\n多锚点加权双向 BFS 扩展，受深度、边权重、节点上限约束。\n\n### REQ-3 Token 预算控制（P1）\n超预算时按 loose → standard → extreme 逐档压缩，锚点始终保留；最小结果仍超预算时返回明确提示。\n\n## Scenarios\n\n- 任务「CLI 命令注册」在 standard 档下输出 100 节点 / 约 779 Token 的结构化上下文。"
+      "name": "orders-manage",
+      "title": "订单管理",
+      "updatedAt": 1788610041049,
+      "markdown": "# 订单管理\n\n## Purpose\n\n管理后台对用户订单的全生命周期处理：查询、详情核对、发货与状态流转，对应 `views/modules/orders/` 页面组。\n\n## Requirements\n\n### REQ-1 多状态查询（P0）\n按订单号、用户、订单状态组合筛选，状态枚举与后端字典保持一致。\n\n### REQ-2 订单详情（P0）\n详情弹窗展示商品快照、收货地址快照与支付金额，地址数据来自 `address` 模块的历史快照而非实时引用。\n\n### REQ-3 状态流转（P1）\n仅允许按「待支付 → 待发货 → 已发货 → 已完成」单向流转，非法流转由后端拦截并返回明确提示。\n\n## Scenarios\n\n- 管理员对已支付订单点击「发货」，填写物流单号后订单进入「已发货」，用户端同步可见。"
     },
     {
-      "name": "business-map",
-      "title": "能力-代码业务映射",
-      "updatedAt": 1787385600000,
-      "markdown": "# 能力-代码业务映射\n\n## Purpose\n\n以 business_map 边连接能力层（C）与代码结构层（L1-L3），支持从业务能力进入代码、从代码变更反溯能力。\n\n## Requirements\n\n### REQ-1 多源证据融合（P0）\n文档提取、命名匹配、语义相似度、Git 历史四类证据按 noisy-OR 聚合为边权重。\n\n### REQ-2 可溯源（P1）\n每条映射边记录权威性最高的证据来源，支持后续审查。\n\n## Scenarios\n\n- 缺少向量索引或 Git 历史时，对应证据源不参与计算，结构证据仍可形成映射。"
+      "name": "auth-center",
+      "title": "登录与权限认证",
+      "updatedAt": 1788610041049,
+      "markdown": "# 登录与权限认证\n\n## Purpose\n\n管理后台的入口认证与菜单权限控制，覆盖 `login.vue`、`index.vue` 与路由守卫。\n\n## Requirements\n\n### REQ-1 登录认证（P0）\n账号密码提交后端校验，成功后写入 token 与角色信息；`index.vue` 按角色动态渲染左侧菜单（`IndexAside`）。\n\n### REQ-2 路由守卫（P0）\n未登录访问任意管理页重定向到登录页；登录后访问登录页重定向到首页。\n\n### REQ-3 个人中心（P1）\n`center.vue` 支持修改当前管理员资料，`update-password.vue` 独立处理密码修改并强制重新登录。\n\n## Scenarios\n\n- token 过期后任意接口返回 401，前端统一清空登录态并跳转登录页。"
+    },
+    {
+      "name": "cart-storeup",
+      "title": "购物车与收藏管理",
+      "updatedAt": 1788610041049,
+      "markdown": "# 购物车与收藏管理\n\n## Purpose\n\n管理后台对用户购物车（`cart`）与收藏夹（`storeup`）数据的查看与异常清理能力。\n\n## Requirements\n\n### REQ-1 购物车查看（P0）\n按用户检索购物车条目，展示商品、数量与加入时间，支持清理失效商品条目。\n\n### REQ-2 收藏统计（P1）\n`storeup` 列表按美食维度聚合收藏数，为「美食推荐」运营位提供数据参考。\n\n### REQ-3 数据一致性（P1）\n美食下架后，关联购物车与收藏条目标记失效而非物理删除，保留运营审计线索。\n\n## Scenarios\n\n- 运营人员发现某美食收藏数异常上涨时，可在收藏列表按时间排序定位异常来源用户。"
     }
   ],
   "artifacts": [
-    { "name": "default（结构图谱）", "builtAt": 1787478584655, "nodes": 574, "edges": 741, "vectors": 574 }
+    { "name": "admin-frontend（管理后台图谱）", "builtAt": 1788610041049, "nodes": 134, "edges": 135, "vectors": 134 },
+    { "name": "default（全量结构图谱）", "builtAt": 1788610041049, "nodes": 1871, "edges": 2349, "vectors": 1857 }
   ]
 }

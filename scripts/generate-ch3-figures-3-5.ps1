@@ -75,7 +75,7 @@ foreach ($item in @(@(2.70,'handleLogin()'),@(6.65,'createOrder()'),@(10.60,'loa
 foreach ($x in @(2.70,6.65,10.60)) { Add-Line $page $x 4.61 $x 4.04 $true $true 1.1 $accent | Out-Null; Add-Line $page $x 3.46 $x 3.05 $true $false 1.0 $ink | Out-Null; Add-Line $page $x 2.45 $x 2.05 $true $false 1.0 $ink | Out-Null }
 Add-Line $page 3.70 2.75 5.65 2.75 $true $false 1.0 $ink | Out-Null; Add-Line $page 3.70 1.75 5.65 1.75 $true $false 1.0 $ink | Out-Null
 Add-Text $page 6.65 0.55 10.40 0.30 '实线：contain / import / call　　　　　　　　　蓝灰虚线：business_map' 9.5 $false $muted | Out-Null
-Save-Canvas $canvas '图3-3-能力代码双层本体模型'
+Save-Canvas $canvas '图3-2-能力代码双层本体模型'
 
 # 图3-4：标准流程图，表现 business_map 边的生成与判定过程。
 $canvas = New-Canvas 13.5 5.2; $page = $canvas.Page
@@ -99,9 +99,9 @@ Add-Line $page 11.68 3.10 11.92 3.10 $true $false 1.0 $accent | Out-Null
 Add-Text $page 12.05 3.58 0.55 0.20 '是' 9 $true $accent | Out-Null
 Add-Line $page 10.90 2.50 10.90 1.40 $true $true 0.9 $muted | Out-Null
 Add-Text $page 10.90 1.72 1.80 0.24 '否：丢弃候选' 9 $false $muted | Out-Null
-Save-Canvas $canvas '图3-4-business_map生成流程'
+Save-Canvas $canvas '图3-3-business_map生成流程'
 
-# 图3-5：主流程、预算判定与明确回退节点。
+# 图3-4：主流程、预算判定与明确回退节点。
 $canvas = New-Canvas 14.5 6.6; $page = $canvas.Page
 $flow = @(
     @(1.25, "任务描述 q`nToken 预算 B"),
@@ -127,4 +127,4 @@ Add-Box $page 6.05 1.45 2.00 0.95 "重新裁剪`n再执行骨架抽取" 13 $true
 Add-Line $page 9.72 1.45 7.05 1.45 $true $true 1.0 $accent | Out-Null
 Add-Line $page 6.05 1.93 6.05 4.28 $true $true 1.0 $accent | Out-Null
 Add-Text $page 8.35 1.78 1.70 0.22 '超预算，回到子图裁剪' 10.5 $true $accent | Out-Null
-Save-Canvas $canvas '图3-5-图谱驱动任务上下文生成流水线'
+Save-Canvas $canvas '图3-4-图谱驱动任务上下文生成流水线'

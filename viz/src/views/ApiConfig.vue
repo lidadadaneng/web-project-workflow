@@ -31,7 +31,7 @@
           <span class="mono">{{ maskedKey }}</span>
         </el-descriptions-item>
         <el-descriptions-item label="存储位置">
-          <span class="mono">localStorage（一期）/ wpw/.local/config.json（二期，已加入 .gitignore）</span>
+          <span class="mono">localStorage</span>
         </el-descriptions-item>
       </el-descriptions>
       <el-alert

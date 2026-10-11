@@ -75,8 +75,10 @@
                 <el-dropdown-item command="continue" :disabled="!store.nextActionable(row)">
                   继续：{{ store.nextActionable(row) ? labelOf(store.nextActionable(row)!) : '无' }}
                 </el-dropdown-item>
+                <el-dropdown-item command="chat">AI 对话协同</el-dropdown-item>
+                <el-dropdown-item command="history">历史回溯</el-dropdown-item>
                 <el-dropdown-item command="detail">查看详情</el-dropdown-item>
-                <el-dropdown-item command="reset" divided>重置演示数据</el-dropdown-item>
+                <el-dropdown-item command="reset" divided>重置数据</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -89,12 +91,13 @@
 
     <el-empty v-if="!filtered.length" description="没有匹配的工作流" :image-size="80" />
 
-    <!-- 阶段操作面板 -->
+    <!-- 阶段操作面板（含 AI 对话 / 文档 / 历史回溯） -->
     <PhaseActionDrawer
       v-if="actionTarget"
       v-model:visible="actionVisible"
       :change="actionTarget"
       :phase-id="actionPhase"
+      :initial-tab="actionTab"
       :detail="store.detail.value"
     />
 
@@ -149,16 +152,19 @@ import { computed, onMounted, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import type { ChangeItem } from '@/api'
 import { useWorkflowStore, PHASE_DEFS } from '@/store/workflow'
+import { useAssistantStore } from '@/store/assistant'
 import PhaseDag from '@/components/PhaseDag.vue'
 import PhaseActionDrawer from '@/components/PhaseActionDrawer.vue'
 
 const store = useWorkflowStore()
+const assistant = useAssistantStore()
 
 const keyword = ref('')
 const activeTab = ref<'all' | 'running' | 'finished' | 'failed'>('all')
 const actionVisible = ref(false)
 const actionTarget = ref<ChangeItem | null>(null)
 const actionPhase = ref('')
+const actionTab = ref('action')
 const detailVisible = ref(false)
 
 const labelOf = (id: string) => PHASE_DEFS.find((p) => p.id === id)?.label ?? id
@@ -195,9 +201,10 @@ const filtered = computed(() => {
 const formatTime = (t: number) =>
   new Date(t).toLocaleString('zh-CN', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 
-function openPhase(change: ChangeItem, phaseId: string) {
+function openPhase(change: ChangeItem, phaseId: string, tab = 'action') {
   actionTarget.value = change
   actionPhase.value = phaseId
+  actionTab.value = tab
   actionVisible.value = true
 }
 
@@ -210,15 +217,23 @@ function onCommand(cmd: string, row: ChangeItem) {
   if (cmd === 'continue') {
     const next = store.nextActionable(row)
     if (next) openPhase(row, next)
+  } else if (cmd === 'chat') {
+    openPhase(row, store.nextActionable(row) ?? 'apply', 'chat')
+  } else if (cmd === 'history') {
+    openPhase(row, store.nextActionable(row) ?? 'apply', 'history')
   } else if (cmd === 'detail') {
     openDetail()
   } else if (cmd === 'reset') {
     localStorage.removeItem('wpw-viz-workflow-state')
+    localStorage.removeItem('wpw-viz-assistant')
     location.reload()
   }
 }
 
-onMounted(() => store.load())
+onMounted(() => {
+  store.load()
+  assistant.load()
+})
 </script>
 
 <style scoped>

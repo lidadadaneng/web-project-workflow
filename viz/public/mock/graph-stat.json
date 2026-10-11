@@ -1,48 +1,20 @@
 {
   "graphName": "default",
   "scanRoot": ".",
-  "projectType": "backend-node",
-  "totalNodes": 574,
-  "totalEdges": 741,
-  "totalVectors": 574,
+  "projectType": "backend-java",
+  "totalNodes": 1812,
+  "totalEdges": 2134,
+  "totalVectors": 1807,
   "nodesByLevel": {
-    "L1": 2,
-    "L2": 81,
-    "L3": 491
+    "L1": 12,
+    "L2": 431,
+    "L3": 1369
   },
   "edgesByType": {
-    "contain": 504,
-    "import": 237
+    "contain": 1599,
+    "import": 535
   },
-  "builtAt": 1787478584655,
+  "builtAt": 1788633350152,
   "schemaVersion": "3.1.0",
-  "configVersion": "3ee68fad94faaa59",
-  "evidenceSources": [
-    {
-      "source": "doc-extract",
-      "count": 12,
-      "avgWeight": 0.85
-    },
-    {
-      "source": "semantic",
-      "count": 18,
-      "avgWeight": 0.78
-    },
-    {
-      "source": "git-history",
-      "count": 6,
-      "avgWeight": 0.64
-    },
-    {
-      "source": "naming",
-      "count": 9,
-      "avgWeight": 0.52
-    }
-  ],
-  "coverage": {
-    "mappedCapabilities": 2,
-    "totalCapabilities": 3,
-    "mappedModules": 2,
-    "totalModules": 2
-  }
+  "configVersion": "f988e048a9be2515"
 }

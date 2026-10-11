@@ -114,6 +114,9 @@ export interface ChatReply {
   contextTokens?: number
 }
 
+/** 阶段制品文档（mock 契约：二期由 GET /api/phase-docs 提供真实制品内容） */
+export type PhaseDocs = Record<string, string>
+
 // ---------- API ----------
 
 export const getChanges = () => get<ChangeItem[]>('changes')
@@ -124,6 +127,7 @@ export const getContextDemo = () => get<ContextDemo>('context-demo')
 export const getSpecs = () => get<KnowledgeData>('specs')
 export const getArchived = () => get<ArchivedChange[]>('archived')
 export const getTokenStats = () => get<TokenStats>('token-stats')
+export const getPhaseDocs = () => get<PhaseDocs>('phase-docs')
 
 /** 一期 mock：按键匹配语料，未命中时返回默认应答。二期替换为 SSE 流式接口 */
 export async function getChatReply(prompt: string, withContext: boolean): Promise<ChatReply> {

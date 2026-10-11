@@ -1,11 +1,5 @@
 <template>
   <div class="chat-page">
-    <el-alert type="warning" :closable="false" class="page-card">
-      <template #title>
-        Mock 模式：当前为一期前端演示，应答来自本地语料；二期接入配置的 LLM API 后自动切换为真实对话。
-      </template>
-    </el-alert>
-
     <el-card class="page-card">
       <div class="chat-toolbar">
         <el-switch v-model="withContext" active-text="注入项目上下文" />

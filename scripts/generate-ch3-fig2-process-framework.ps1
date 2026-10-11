@@ -2,8 +2,8 @@
 
 $workspace = 'F:\project\web-project-workflow'
 $outputDir = Join-Path $workspace '论文\图表'
-$vsdxPath = Join-Path $outputDir '图3-2-六阶段流程约束架构.vsdx'
-$pngPath  = Join-Path $outputDir '图3-2-六阶段流程约束架构.png'
+$vsdxPath = Join-Path $outputDir '图3-7-六阶段流程约束架构.vsdx'
+$pngPath  = Join-Path $outputDir '图3-7-六阶段流程约束架构.png'
 
 New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 

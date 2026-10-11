@@ -1,2991 +1,429 @@
 {
-  "query": "CLI 命令注册与阶段状态管理",
+  "query": "调整购物车中收藏商品的展示逻辑",
   "anchors": [
     {
-      "id": "mod:41291f2f4d9d",
-      "name": "commands",
-      "level": "L1",
-      "score": 0.95
+      "id": "cap:cart-storeup",
+      "name": "购物车与收藏管理",
+      "level": "C",
+      "score": 0.93
     }
   ],
   "subgraph": {
     "nodes": [
       {
-        "id": "mod:41291f2f4d9d",
+        "id": "cap:cart-storeup",
+        "level": "C",
+        "type": "capability",
+        "name": "购物车与收藏管理",
+        "attrs": {
+          "specPath": "openspec/specs/cart-storeup/spec.md",
+          "requirementCount": 4
+        },
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
+      },
+      {
+        "id": "mod:a3f18c2e7b01",
         "level": "L1",
         "type": "module",
-        "name": "commands",
+        "name": "web-cart",
+        "attrs": {
+          "side": "frontend",
+          "dir": "web\\src"
+        },
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
+      },
+      {
+        "id": "mod:b7e24d9f1c52",
+        "level": "L1",
+        "type": "module",
+        "name": "server-cart",
         "attrs": {
           "side": "backend",
-          "dir": "src\\commands"
+          "dir": "server\\src"
         },
-        "createdAt": 1787478567805,
-        "updatedAt": 1787478567805
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "file:674d4368c6ae",
+        "id": "file:c1a05e3d8b21",
         "level": "L2",
         "type": "file",
-        "name": "state.ts",
+        "name": "Cart.vue",
         "attrs": {
-          "filePath": "src/lib/state.ts",
-          "language": "typescript",
-          "fileHash": "593feab76aab25be"
+          "filePath": "web/src/views/Cart.vue",
+          "language": "vue",
+          "fileHash": "a1b2c3d4e5f60718"
         },
-        "createdAt": 1787478567981,
-        "updatedAt": 1787478567981
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "file:c486c14fb4aa",
+        "id": "file:d2b16f4e9c32",
         "level": "L2",
         "type": "file",
-        "name": "graph.ts",
+        "name": "FavoriteList.vue",
         "attrs": {
-          "filePath": "src/graph/commands/graph.ts",
-          "language": "typescript",
-          "fileHash": "16c8b19765df2f71"
+          "filePath": "web/src/components/FavoriteList.vue",
+          "language": "vue",
+          "fileHash": "b2c3d4e5f6071829"
         },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "file:b9d69250920d",
+        "id": "file:e3c27a5f0d43",
         "level": "L2",
         "type": "file",
-        "name": "six-phase.ts",
+        "name": "cart.ts",
         "attrs": {
-          "filePath": "src/schema/six-phase.ts",
+          "filePath": "web/src/store/cart.ts",
           "language": "typescript",
-          "fileHash": "e471511a35392ac4"
+          "fileHash": "c3d4e5f60718293a"
         },
-        "createdAt": 1787478567983,
-        "updatedAt": 1787478567983
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "file:428ec1d61164",
+        "id": "file:f4d38b6a1e54",
         "level": "L2",
         "type": "file",
-        "name": "types.ts",
+        "name": "cart-api.ts",
         "attrs": {
-          "filePath": "src/graph/types.ts",
+          "filePath": "web/src/api/cart.ts",
           "language": "typescript",
-          "fileHash": "fa53e5d8885cd5d8"
+          "fileHash": "d4e5f60718293a4b"
         },
-        "createdAt": 1787478567962,
-        "updatedAt": 1787478567962
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "file:a6a1db614763",
+        "id": "file:a5e49c7b2f65",
         "level": "L2",
         "type": "file",
-        "name": "index.ts",
+        "name": "cart-routes.js",
         "attrs": {
-          "filePath": "src/commands/index.ts",
-          "language": "typescript",
-          "fileHash": "5b9fa01257454acc"
+          "filePath": "server/src/routes/cart.js",
+          "language": "javascript",
+          "fileHash": "e5f60718293a4b5c"
         },
-        "createdAt": 1787478567812,
-        "updatedAt": 1787478567812
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "file:aae69d7449b7",
+        "id": "file:b6f5ad8c3a76",
         "level": "L2",
         "type": "file",
-        "name": "linked-skills.ts",
+        "name": "favorite.js",
         "attrs": {
-          "filePath": "src/lib/linked-skills.ts",
-          "language": "typescript",
-          "fileHash": "3b44741d1f985396"
+          "filePath": "server/src/services/favorite.js",
+          "language": "javascript",
+          "fileHash": "f60718293a4b5c6d"
         },
-        "createdAt": 1787478567977,
-        "updatedAt": 1787478567977
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "file:0b4f5977a52c",
-        "level": "L2",
-        "type": "file",
-        "name": "config.ts",
-        "attrs": {
-          "filePath": "src/lib/config.ts",
-          "language": "typescript",
-          "fileHash": "c20609fc94734037"
-        },
-        "createdAt": 1787478567972,
-        "updatedAt": 1787478567972
-      },
-      {
-        "id": "file:94f95cce074a",
-        "level": "L2",
-        "type": "file",
-        "name": "phase-state.ts",
-        "attrs": {
-          "filePath": "src/commands/phase-state.ts",
-          "language": "typescript",
-          "fileHash": "1823f5380d68279c"
-        },
-        "createdAt": 1787478567816,
-        "updatedAt": 1787478567816
-      },
-      {
-        "id": "file:ec8485d3117f",
-        "level": "L2",
-        "type": "file",
-        "name": "init.ts",
-        "attrs": {
-          "filePath": "src/commands/init.ts",
-          "language": "typescript",
-          "fileHash": "01956fb26c0cd7c6"
-        },
-        "createdAt": 1787478567813,
-        "updatedAt": 1787478567813
-      },
-      {
-        "id": "file:acf781927b3d",
-        "level": "L2",
-        "type": "file",
-        "name": "graph-path.ts",
-        "attrs": {
-          "filePath": "src/graph/storage/graph-path.ts",
-          "language": "typescript",
-          "fileHash": "010c131c968734d0"
-        },
-        "createdAt": 1787478567951,
-        "updatedAt": 1787478567951
-      },
-      {
-        "id": "file:7c83405e0f3b",
-        "level": "L2",
-        "type": "file",
-        "name": "apply.ts",
-        "attrs": {
-          "filePath": "src/commands/apply.ts",
-          "language": "typescript",
-          "fileHash": "672db2435743745f"
-        },
-        "createdAt": 1787478567810,
-        "updatedAt": 1787478567810
-      },
-      {
-        "id": "file:0bb4c51d7673",
-        "level": "L2",
-        "type": "file",
-        "name": "task.ts",
-        "attrs": {
-          "filePath": "src/commands/task.ts",
-          "language": "typescript",
-          "fileHash": "471ea34854aa6ac5"
-        },
-        "createdAt": 1787478567821,
-        "updatedAt": 1787478567821
-      },
-      {
-        "id": "file:87bc879617ee",
-        "level": "L2",
-        "type": "file",
-        "name": "status.ts",
-        "attrs": {
-          "filePath": "src/commands/status.ts",
-          "language": "typescript",
-          "fileHash": "177c585e69c0b4aa"
-        },
-        "createdAt": 1787478567820,
-        "updatedAt": 1787478567820
-      },
-      {
-        "id": "file:f92ab81c99a7",
-        "level": "L2",
-        "type": "file",
-        "name": "template-resolver.ts",
-        "attrs": {
-          "filePath": "src/lib/template-resolver.ts",
-          "language": "typescript",
-          "fileHash": "6ebc22fa79c8b8be"
-        },
-        "createdAt": 1787478567982,
-        "updatedAt": 1787478567982
-      },
-      {
-        "id": "file:04884c449801",
-        "level": "L2",
-        "type": "file",
-        "name": "check.ts",
-        "attrs": {
-          "filePath": "src/commands/check.ts",
-          "language": "typescript",
-          "fileHash": "611e39db6475d742"
-        },
-        "createdAt": 1787478567811,
-        "updatedAt": 1787478567811
-      },
-      {
-        "id": "file:bddcbb9edc64",
-        "level": "L2",
-        "type": "file",
-        "name": "new.ts",
-        "attrs": {
-          "filePath": "src/commands/new.ts",
-          "language": "typescript",
-          "fileHash": "831d90ce7e4a502e"
-        },
-        "createdAt": 1787478567815,
-        "updatedAt": 1787478567815
-      },
-      {
-        "id": "file:598ac80db7df",
-        "level": "L2",
-        "type": "file",
-        "name": "template.ts",
-        "attrs": {
-          "filePath": "src/commands/template.ts",
-          "language": "typescript",
-          "fileHash": "0cd8c2fc438d9620"
-        },
-        "createdAt": 1787478567822,
-        "updatedAt": 1787478567822
-      },
-      {
-        "id": "file:ad9cd7d120ba",
-        "level": "L2",
-        "type": "file",
-        "name": "archive.ts",
-        "attrs": {
-          "filePath": "src/commands/archive.ts",
-          "language": "typescript",
-          "fileHash": "5df9781c51bd606d"
-        },
-        "createdAt": 1787478567811,
-        "updatedAt": 1787478567811
-      },
-      {
-        "id": "file:d68fd4fff0a5",
-        "level": "L2",
-        "type": "file",
-        "name": "list.ts",
-        "attrs": {
-          "filePath": "src/commands/list.ts",
-          "language": "typescript",
-          "fileHash": "1be249779f364c5f"
-        },
-        "createdAt": 1787478567814,
-        "updatedAt": 1787478567814
-      },
-      {
-        "id": "file:dbac866b7792",
-        "level": "L2",
-        "type": "file",
-        "name": "skills.ts",
-        "attrs": {
-          "filePath": "src/commands/skills.ts",
-          "language": "typescript",
-          "fileHash": "b6c72e477aed809b"
-        },
-        "createdAt": 1787478567818,
-        "updatedAt": 1787478567818
-      },
-      {
-        "id": "file:0e58bc918772",
-        "level": "L2",
-        "type": "file",
-        "name": "graph-store.ts",
-        "attrs": {
-          "filePath": "src/graph/storage/graph-store.ts",
-          "language": "typescript",
-          "fileHash": "ec518819511ea489"
-        },
-        "createdAt": 1787478567952,
-        "updatedAt": 1787478567952
-      },
-      {
-        "id": "file:73ebbf58de77",
-        "level": "L2",
-        "type": "file",
-        "name": "graph-builder.ts",
-        "attrs": {
-          "filePath": "src/graph/builders/graph-builder.ts",
-          "language": "typescript",
-          "fileHash": "af72002e322c83f2"
-        },
-        "createdAt": 1787478567844,
-        "updatedAt": 1787478567844
-      },
-      {
-        "id": "file:cf63f0e6cbfb",
-        "level": "L2",
-        "type": "file",
-        "name": "dependency.ts",
-        "attrs": {
-          "filePath": "src/lib/dependency.ts",
-          "language": "typescript",
-          "fileHash": "103eca21da152348"
-        },
-        "createdAt": 1787478567973,
-        "updatedAt": 1787478567973
-      },
-      {
-        "id": "file:c522c8211a3b",
-        "level": "L2",
-        "type": "file",
-        "name": "meta-store.ts",
-        "attrs": {
-          "filePath": "src/graph/storage/meta-store.ts",
-          "language": "typescript",
-          "fileHash": "3f60df300ee95b66"
-        },
-        "createdAt": 1787478567954,
-        "updatedAt": 1787478567954
-      },
-      {
-        "id": "file:c3b0e5490fa7",
-        "level": "L2",
-        "type": "file",
-        "name": "graph-query.ts",
-        "attrs": {
-          "filePath": "src/graph/search/graph-query.ts",
-          "language": "typescript",
-          "fileHash": "f34035119ade4ce5"
-        },
-        "createdAt": 1787478567945,
-        "updatedAt": 1787478567945
-      },
-      {
-        "id": "file:847227078c8d",
-        "level": "L2",
-        "type": "file",
-        "name": "config.ts",
-        "attrs": {
-          "filePath": "src/graph/config.ts",
-          "language": "typescript",
-          "fileHash": "3610baba7ebdf8db"
-        },
-        "createdAt": 1787478567864,
-        "updatedAt": 1787478567864
-      },
-      {
-        "id": "file:f77ed38fccdc",
-        "level": "L2",
-        "type": "file",
-        "name": "vector-store.ts",
-        "attrs": {
-          "filePath": "src/graph/storage/vector-store.ts",
-          "language": "typescript",
-          "fileHash": "9afdf05f88fd81a5"
-        },
-        "createdAt": 1787478567955,
-        "updatedAt": 1787478567955
-      },
-      {
-        "id": "file:4838e0dd7a29",
-        "level": "L2",
-        "type": "file",
-        "name": "mapping-store.ts",
-        "attrs": {
-          "filePath": "src/graph/storage/mapping-store.ts",
-          "language": "typescript",
-          "fileHash": "eddbd57de4c7337f"
-        },
-        "createdAt": 1787478567953,
-        "updatedAt": 1787478567953
-      },
-      {
-        "id": "file:7579db2bbb5c",
-        "level": "L2",
-        "type": "file",
-        "name": "semantic-search.ts",
-        "attrs": {
-          "filePath": "src/graph/search/semantic-search.ts",
-          "language": "typescript",
-          "fileHash": "76b854a6e8848436"
-        },
-        "createdAt": 1787478567948,
-        "updatedAt": 1787478567948
-      },
-      {
-        "id": "file:79c6f1f4b00d",
-        "level": "L2",
-        "type": "file",
-        "name": "context-pipeline.ts",
-        "attrs": {
-          "filePath": "src/graph/context/context-pipeline.ts",
-          "language": "typescript",
-          "fileHash": "72a748368328592d"
-        },
-        "createdAt": 1787478567870,
-        "updatedAt": 1787478567870
-      },
-      {
-        "id": "file:6cf7c8dd8bf5",
-        "level": "L2",
-        "type": "file",
-        "name": "graph-manager.ts",
-        "attrs": {
-          "filePath": "src/graph/storage/graph-manager.ts",
-          "language": "typescript",
-          "fileHash": "45e468844b6e8f46"
-        },
-        "createdAt": 1787478567950,
-        "updatedAt": 1787478567950
-      },
-      {
-        "id": "elem:ff76d96a1924",
-        "level": "L3",
-        "type": "interface",
-        "name": "Task",
-        "attrs": {
-          "signature": "interface Task",
-          "annotations": [],
-          "isExported": false,
-          "lineStart": 12,
-          "lineEnd": 16,
-          "filePath": "src/commands/apply.ts",
-          "parentName": "apply"
-        },
-        "createdAt": 1787478567809,
-        "updatedAt": 1787478567809
-      },
-      {
-        "id": "elem:a9d89782d73a",
+        "id": "elem:c7a6be9d4b87",
         "level": "L3",
         "type": "function",
-        "name": "registerApply",
+        "name": "toggleFavorite",
         "attrs": {
-          "signature": "registerApply(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
+          "signature": "toggleFavorite(dish: Dish): void",
+          "params": [{ "name": "dish", "type": "Dish" }],
           "returnType": "void",
-          "parentName": "apply",
-          "isExported": true,
-          "lineStart": 18,
-          "lineEnd": 105,
-          "filePath": "src/commands/apply.ts"
-        },
-        "createdAt": 1787478567809,
-        "updatedAt": 1787478567809
-      },
-      {
-        "id": "elem:4ddc002455fc",
-        "level": "L3",
-        "type": "function",
-        "name": "parseTasks",
-        "attrs": {
-          "signature": "parseTasks(planPath: string: string): Task[]",
-          "params": [
-            {
-              "name": "planPath: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "Task[]",
-          "parentName": "apply",
-          "isExported": false,
-          "lineStart": 107,
-          "lineEnd": 125,
-          "filePath": "src/commands/apply.ts"
-        },
-        "createdAt": 1787478567810,
-        "updatedAt": 1787478567810
-      },
-      {
-        "id": "elem:890cffe1edd8",
-        "level": "L3",
-        "type": "function",
-        "name": "registerArchive",
-        "attrs": {
-          "signature": "registerArchive(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "archive",
-          "isExported": true,
-          "lineStart": 6,
-          "lineEnd": 48,
-          "filePath": "src/commands/archive.ts"
-        },
-        "createdAt": 1787478567811,
-        "updatedAt": 1787478567811
-      },
-      {
-        "id": "elem:dd51500d86d1",
-        "level": "L3",
-        "type": "function",
-        "name": "registerCheck",
-        "attrs": {
-          "signature": "registerCheck(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "check",
-          "isExported": true,
-          "lineStart": 5,
-          "lineEnd": 57,
-          "filePath": "src/commands/check.ts"
-        },
-        "createdAt": 1787478567811,
-        "updatedAt": 1787478567811
-      },
-      {
-        "id": "elem:9c230d4ddad8",
-        "level": "L3",
-        "type": "function",
-        "name": "registerCommands",
-        "attrs": {
-          "signature": "registerCommands(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "index",
-          "isExported": true,
-          "lineStart": 20,
-          "lineEnd": 35,
-          "filePath": "src/commands/index.ts"
-        },
-        "createdAt": 1787478567812,
-        "updatedAt": 1787478567812
-      },
-      {
-        "id": "elem:32237376bfa9",
-        "level": "L3",
-        "type": "function",
-        "name": "registerInit",
-        "attrs": {
-          "signature": "registerInit(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "init",
-          "isExported": true,
-          "lineStart": 6,
-          "lineEnd": 40,
-          "filePath": "src/commands/init.ts"
-        },
-        "createdAt": 1787478567813,
-        "updatedAt": 1787478567813
-      },
-      {
-        "id": "elem:8b7a2e584648",
-        "level": "L3",
-        "type": "function",
-        "name": "releaseAiLayer",
-        "attrs": {
-          "signature": "releaseAiLayer(root: string: string): boolean",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "boolean",
-          "parentName": "init",
+          "parentName": "Cart",
           "isExported": false,
           "lineStart": 42,
-          "lineEnd": 53,
-          "filePath": "src/commands/init.ts"
+          "lineEnd": 55,
+          "filePath": "web/src/views/Cart.vue"
         },
-        "createdAt": 1787478567813,
-        "updatedAt": 1787478567813
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:b5a2fd254165",
+        "id": "elem:d8b7cf0e5c98",
         "level": "L3",
-        "type": "function",
-        "name": "copyDir",
+        "type": "computed",
+        "name": "favoriteItems",
         "attrs": {
-          "signature": "copyDir(src: string: string, dest: string: string, skipDirs: string[] = []: string[]): void",
-          "params": [
-            {
-              "name": "src: string",
-              "type": "string"
-            },
-            {
-              "name": "dest: string",
-              "type": "string"
-            },
-            {
-              "name": "skipDirs: string[] = []",
-              "type": "string[]"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "init",
+          "signature": "favoriteItems: Dish[]",
+          "returnType": "Dish[]",
+          "parentName": "Cart",
           "isExported": false,
-          "lineStart": 55,
-          "lineEnd": 64,
-          "filePath": "src/commands/init.ts"
+          "lineStart": 57,
+          "lineEnd": 63,
+          "filePath": "web/src/views/Cart.vue"
         },
-        "createdAt": 1787478567813,
-        "updatedAt": 1787478567813
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:5e2f7b7231ba",
+        "id": "elem:e9c8d01f6da9",
         "level": "L3",
         "type": "function",
-        "name": "releaseLinkedSkills",
+        "name": "removeFavorite",
         "attrs": {
-          "signature": "releaseLinkedSkills(root: string: string): void",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            }
-          ],
+          "signature": "removeFavorite(id: string): void",
+          "params": [{ "name": "id", "type": "string" }],
           "returnType": "void",
-          "parentName": "init",
+          "parentName": "FavoriteList",
           "isExported": false,
-          "jsDoc": "释放打包的联动 Skill 快照（ai-layer/linked-skills/*）到 .claude/skills/。\n快照由维护者 `npm run update-skills` 抓取；若不存在，提示用户跑 `wpw skills update` 实时拉取。\n/",
-          "lineStart": 70,
-          "lineEnd": 94,
-          "filePath": "src/commands/init.ts"
+          "lineStart": 28,
+          "lineEnd": 36,
+          "filePath": "web/src/components/FavoriteList.vue"
         },
-        "createdAt": 1787478567813,
-        "updatedAt": 1787478567813
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:b08b09d7742b",
+        "id": "elem:f0d9e12a7eba",
         "level": "L3",
         "type": "function",
-        "name": "ensureGitignore",
+        "name": "goToDish",
         "attrs": {
-          "signature": "ensureGitignore(root: string: string): void",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            }
-          ],
+          "signature": "goToDish(id: string): void",
+          "params": [{ "name": "id", "type": "string" }],
           "returnType": "void",
-          "parentName": "init",
+          "parentName": "FavoriteList",
           "isExported": false,
-          "jsDoc": "确保 .gitignore 忽略知识图谱构建产物（wpw/knowledge/graph/）。\n图谱是本地构建产物，不应纳入版本控制。\n若 .gitignore 已存在则追加（幂等），不存在则创建。\n/",
-          "lineStart": 102,
-          "lineEnd": 118,
-          "filePath": "src/commands/init.ts"
+          "lineStart": 38,
+          "lineEnd": 44,
+          "filePath": "web/src/components/FavoriteList.vue"
         },
-        "createdAt": 1787478567813,
-        "updatedAt": 1787478567813
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:019a39680996",
+        "id": "elem:a1eaf23b8fcb",
         "level": "L3",
         "type": "function",
-        "name": "registerList",
+        "name": "addFavorite",
         "attrs": {
-          "signature": "registerList(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
+          "signature": "addFavorite(dish: Dish): void",
+          "params": [{ "name": "dish", "type": "Dish" }],
           "returnType": "void",
-          "parentName": "list",
+          "parentName": "cart",
           "isExported": true,
-          "lineStart": 4,
-          "lineEnd": 34,
-          "filePath": "src/commands/list.ts"
+          "lineStart": 15,
+          "lineEnd": 24,
+          "filePath": "web/src/store/cart.ts"
         },
-        "createdAt": 1787478567814,
-        "updatedAt": 1787478567814
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:8fa389cb7225",
+        "id": "elem:b2fb034c9adc",
         "level": "L3",
         "type": "function",
-        "name": "registerNew",
+        "name": "removeFavorite",
         "attrs": {
-          "signature": "registerNew(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
+          "signature": "removeFavorite(id: string): void",
+          "params": [{ "name": "id", "type": "string" }],
           "returnType": "void",
-          "parentName": "new",
+          "parentName": "cart",
           "isExported": true,
-          "lineStart": 12,
-          "lineEnd": 49,
-          "filePath": "src/commands/new.ts"
+          "lineStart": 26,
+          "lineEnd": 35,
+          "filePath": "web/src/store/cart.ts"
         },
-        "createdAt": 1787478567815,
-        "updatedAt": 1787478567815
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:3e6e50375c61",
+        "id": "elem:c30c145dbeed",
         "level": "L3",
-        "type": "function",
-        "name": "parseArtifact",
+        "type": "variable",
+        "name": "favorites",
         "attrs": {
-          "signature": "parseArtifact(phase: string: string): ArtifactId",
-          "params": [
-            {
-              "name": "phase: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "ArtifactId",
-          "parentName": "phase-state",
-          "isExported": false,
-          "lineStart": 5,
-          "lineEnd": 11,
-          "filePath": "src/commands/phase-state.ts"
-        },
-        "createdAt": 1787478567816,
-        "updatedAt": 1787478567816
-      },
-      {
-        "id": "elem:2955da8d85a8",
-        "level": "L3",
-        "type": "function",
-        "name": "requireChange",
-        "attrs": {
-          "signature": "requireChange(opts: { change?: string }: { change?: string }): string",
-          "params": [
-            {
-              "name": "opts: { change?: string }",
-              "type": "{ change?: string }"
-            }
-          ],
-          "returnType": "string",
-          "parentName": "phase-state",
-          "isExported": false,
-          "lineStart": 13,
-          "lineEnd": 19,
-          "filePath": "src/commands/phase-state.ts"
-        },
-        "createdAt": 1787478567816,
-        "updatedAt": 1787478567816
-      },
-      {
-        "id": "elem:0fed8df22a72",
-        "level": "L3",
-        "type": "function",
-        "name": "registerDone",
-        "attrs": {
-          "signature": "registerDone(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "phase-state",
+          "signature": "favorites: Dish[]",
+          "parentName": "cart",
           "isExported": true,
-          "lineStart": 21,
-          "lineEnd": 37,
-          "filePath": "src/commands/phase-state.ts"
-        },
-        "createdAt": 1787478567816,
-        "updatedAt": 1787478567816
-      },
-      {
-        "id": "elem:264f438cb1d9",
-        "level": "L3",
-        "type": "function",
-        "name": "registerSkip",
-        "attrs": {
-          "signature": "registerSkip(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "phase-state",
-          "isExported": true,
-          "lineStart": 39,
-          "lineEnd": 62,
-          "filePath": "src/commands/phase-state.ts"
-        },
-        "createdAt": 1787478567816,
-        "updatedAt": 1787478567816
-      },
-      {
-        "id": "elem:38486ba83a30",
-        "level": "L3",
-        "type": "function",
-        "name": "registerDecision",
-        "attrs": {
-          "signature": "registerDecision(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "phase-state",
-          "isExported": true,
-          "lineStart": 64,
-          "lineEnd": 85,
-          "filePath": "src/commands/phase-state.ts"
-        },
-        "createdAt": 1787478567816,
-        "updatedAt": 1787478567816
-      },
-      {
-        "id": "elem:1ce5e52aeee8",
-        "level": "L3",
-        "type": "function",
-        "name": "registerSkills",
-        "attrs": {
-          "signature": "registerSkills(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "skills",
-          "isExported": true,
-          "lineStart": 5,
-          "lineEnd": 50,
-          "filePath": "src/commands/skills.ts"
-        },
-        "createdAt": 1787478567818,
-        "updatedAt": 1787478567818
-      },
-      {
-        "id": "elem:4a5f1e907d7f",
-        "level": "L3",
-        "type": "function",
-        "name": "registerStatus",
-        "attrs": {
-          "signature": "registerStatus(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "status",
-          "isExported": true,
-          "lineStart": 4,
-          "lineEnd": 47,
-          "filePath": "src/commands/status.ts"
-        },
-        "createdAt": 1787478567820,
-        "updatedAt": 1787478567820
-      },
-      {
-        "id": "elem:2dabd6fed97a",
-        "level": "L3",
-        "type": "function",
-        "name": "summarize",
-        "attrs": {
-          "signature": "summarize(s: ChangeState: ChangeState): string",
-          "params": [
-            {
-              "name": "s: ChangeState",
-              "type": "ChangeState"
-            }
-          ],
-          "returnType": "string",
-          "parentName": "status",
-          "isExported": false,
-          "lineStart": 49,
-          "lineEnd": 53,
-          "filePath": "src/commands/status.ts"
-        },
-        "createdAt": 1787478567820,
-        "updatedAt": 1787478567820
-      },
-      {
-        "id": "elem:8ef6188da787",
-        "level": "L3",
-        "type": "function",
-        "name": "printStatus",
-        "attrs": {
-          "signature": "printStatus(s: ChangeState: ChangeState): void",
-          "params": [
-            {
-              "name": "s: ChangeState",
-              "type": "ChangeState"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "status",
-          "isExported": false,
-          "lineStart": 55,
-          "lineEnd": 65,
-          "filePath": "src/commands/status.ts"
-        },
-        "createdAt": 1787478567820,
-        "updatedAt": 1787478567820
-      },
-      {
-        "id": "elem:cecf7b995031",
-        "level": "L3",
-        "type": "interface",
-        "name": "TaskState",
-        "attrs": {
-          "signature": "type TaskState",
-          "isExported": false,
           "lineStart": 8,
           "lineEnd": 8,
-          "filePath": "src/commands/task.ts",
-          "parentName": "task"
+          "filePath": "web/src/store/cart.ts"
         },
-        "createdAt": 1787478567821,
-        "updatedAt": 1787478567821
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:8f3b2642ed15",
+        "id": "elem:d41d256ecffe",
         "level": "L3",
         "type": "function",
-        "name": "registerTask",
+        "name": "fetchFavorites",
         "attrs": {
-          "signature": "registerTask(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "task",
+          "signature": "fetchFavorites(): Promise<Dish[]>",
+          "params": [],
+          "returnType": "Promise<Dish[]>",
+          "parentName": "cart-api",
           "isExported": true,
-          "lineStart": 10,
-          "lineEnd": 47,
-          "filePath": "src/commands/task.ts"
+          "lineStart": 6,
+          "lineEnd": 12,
+          "filePath": "web/src/api/cart.ts"
         },
-        "createdAt": 1787478567821,
-        "updatedAt": 1787478567821
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:7f34e339d71a",
+        "id": "elem:e52e367fd00f",
         "level": "L3",
         "type": "function",
-        "name": "markTask",
+        "name": "postToggleFavorite",
         "attrs": {
-          "signature": "markTask(planPath: string: string, taskId: string: string, newState: TaskState: TaskState): { content: string; total: number; completed: number }",
-          "params": [
-            {
-              "name": "planPath: string",
-              "type": "string"
-            },
-            {
-              "name": "taskId: string",
-              "type": "string"
-            },
-            {
-              "name": "newState: TaskState",
-              "type": "TaskState"
-            }
-          ],
-          "returnType": "{ content: string; total: number; completed: number }",
-          "parentName": "task",
-          "isExported": false,
-          "lineStart": 49,
-          "lineEnd": 78,
-          "filePath": "src/commands/task.ts"
+          "signature": "postToggleFavorite(id: string): Promise<void>",
+          "params": [{ "name": "id", "type": "string" }],
+          "returnType": "Promise<void>",
+          "parentName": "cart-api",
+          "isExported": true,
+          "lineStart": 14,
+          "lineEnd": 20,
+          "filePath": "web/src/api/cart.ts"
         },
-        "createdAt": 1787478567821,
-        "updatedAt": 1787478567821
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:5e6899dd9427",
+        "id": "elem:f63f4780e110",
         "level": "L3",
         "type": "function",
-        "name": "registerTemplate",
+        "name": "registerCartRoutes",
         "attrs": {
-          "signature": "registerTemplate(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
+          "signature": "registerCartRoutes(app: Express): void",
+          "params": [{ "name": "app", "type": "Express" }],
           "returnType": "void",
-          "parentName": "template",
+          "parentName": "cart-routes",
           "isExported": true,
           "lineStart": 5,
-          "lineEnd": 35,
-          "filePath": "src/commands/template.ts"
-        },
-        "createdAt": 1787478567822,
-        "updatedAt": 1787478567822
-      },
-      {
-        "id": "file:bec48f35e539",
-        "level": "L2",
-        "type": "file",
-        "name": "project-type.ts",
-        "attrs": {
-          "filePath": "src/lib/project-type.ts",
-          "language": "typescript",
-          "fileHash": "8e8a2385b3f9b6ca"
-        },
-        "createdAt": 1787478567978,
-        "updatedAt": 1787478567978
-      },
-      {
-        "id": "elem:2088b717358a",
-        "level": "L3",
-        "type": "interface",
-        "name": "ExploreDecision",
-        "attrs": {
-          "signature": "interface ExploreDecision",
-          "annotations": [],
-          "isExported": true,
-          "lineStart": 18,
-          "lineEnd": 21,
-          "filePath": "src/lib/state.ts",
-          "parentName": "state"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:ccd78458a666",
-        "level": "L3",
-        "type": "function",
-        "name": "validateChangeName",
-        "attrs": {
-          "signature": "validateChangeName(name: string: string): { valid: boolean; reason?: string }",
-          "params": [
-            {
-              "name": "name: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "{ valid: boolean; reason?: string }",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 32,
-          "lineEnd": 55,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:a76707922260",
-        "level": "L3",
-        "type": "interface",
-        "name": "ChangeState",
-        "attrs": {
-          "signature": "interface ChangeState",
-          "annotations": [],
-          "isExported": true,
-          "lineStart": 57,
-          "lineEnd": 72,
-          "filePath": "src/lib/state.ts",
-          "parentName": "state"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:9a896040c371",
-        "level": "L3",
-        "type": "function",
-        "name": "initState",
-        "attrs": {
-          "signature": "initState(name: string: string, projectType: string = 'auto': string, schemaName: string = sixPhaseSchema.name: string): ChangeState",
-          "params": [
-            {
-              "name": "name: string",
-              "type": "string"
-            },
-            {
-              "name": "projectType: string = 'auto'",
-              "type": "string"
-            },
-            {
-              "name": "schemaName: string = sixPhaseSchema.name",
-              "type": "string"
-            }
-          ],
-          "returnType": "ChangeState",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 74,
-          "lineEnd": 93,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:749e50965461",
-        "level": "L3",
-        "type": "function",
-        "name": "getActiveDir",
-        "attrs": {
-          "signature": "getActiveDir(root: string: string): string",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "string",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 95,
-          "lineEnd": 97,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:5ce9fa0b49cc",
-        "level": "L3",
-        "type": "function",
-        "name": "getArchivedDir",
-        "attrs": {
-          "signature": "getArchivedDir(root: string: string): string",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "string",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 99,
-          "lineEnd": 101,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:42c45332051f",
-        "level": "L3",
-        "type": "function",
-        "name": "getChangeDir",
-        "attrs": {
-          "signature": "getChangeDir(root: string: string, name: string: string): string",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "string",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 103,
-          "lineEnd": 105,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:f5baa03eb068",
-        "level": "L3",
-        "type": "function",
-        "name": "getStatePath",
-        "attrs": {
-          "signature": "getStatePath(root: string: string, name: string: string): string",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "string",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 107,
-          "lineEnd": 109,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:ee5056f77761",
-        "level": "L3",
-        "type": "function",
-        "name": "loadState",
-        "attrs": {
-          "signature": "loadState(root: string: string, name: string: string): ChangeState | null",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "ChangeState | null",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 111,
-          "lineEnd": 116,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:51baacabb117",
-        "level": "L3",
-        "type": "function",
-        "name": "loadStateOrThrow",
-        "attrs": {
-          "signature": "loadStateOrThrow(root: string: string, name: string: string): ChangeState",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "ChangeState",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 118,
-          "lineEnd": 122,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:9a5b40eed1f7",
-        "level": "L3",
-        "type": "function",
-        "name": "saveState",
-        "attrs": {
-          "signature": "saveState(root: string: string, state: ChangeState: ChangeState): void",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "state: ChangeState",
-              "type": "ChangeState"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 124,
-          "lineEnd": 129,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:16cce2600556",
-        "level": "L3",
-        "type": "function",
-        "name": "setStatus",
-        "attrs": {
-          "signature": "setStatus(root: string: string, name: string: string, id: ArtifactId: ArtifactId, status: ArtifactStatus: ArtifactStatus): ChangeState",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            },
-            {
-              "name": "id: ArtifactId",
-              "type": "ArtifactId"
-            },
-            {
-              "name": "status: ArtifactStatus",
-              "type": "ArtifactStatus"
-            }
-          ],
-          "returnType": "ChangeState",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 131,
-          "lineEnd": 141,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:041c4f66ab4c",
-        "level": "L3",
-        "type": "function",
-        "name": "setDecision",
-        "attrs": {
-          "signature": "setDecision(root: string: string, name: string: string, id: ArtifactId: ArtifactId, option: string: string): ChangeState",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            },
-            {
-              "name": "id: ArtifactId",
-              "type": "ArtifactId"
-            },
-            {
-              "name": "option: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "ChangeState",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 143,
-          "lineEnd": 160,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:d00bdcd490e7",
-        "level": "L3",
-        "type": "function",
-        "name": "setProgress",
-        "attrs": {
-          "signature": "setProgress(root: string: string, name: string: string, totalTasks: number: number, completedTasks: number: number): ChangeState",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            },
-            {
-              "name": "totalTasks: number",
-              "type": "number"
-            },
-            {
-              "name": "completedTasks: number",
-              "type": "number"
-            }
-          ],
-          "returnType": "ChangeState",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 162,
-          "lineEnd": 173,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567980,
-        "updatedAt": 1787478567980
-      },
-      {
-        "id": "elem:f7424d5f171c",
-        "level": "L3",
-        "type": "function",
-        "name": "listChanges",
-        "attrs": {
-          "signature": "listChanges(root: string: string): string[]",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "string[]",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 176,
-          "lineEnd": 184,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567981,
-        "updatedAt": 1787478567981
-      },
-      {
-        "id": "elem:fe72836d9a58",
-        "level": "L3",
-        "type": "function",
-        "name": "changeNameExists",
-        "attrs": {
-          "signature": "changeNameExists(root: string: string, name: string: string): boolean",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "boolean",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 192,
-          "lineEnd": 213,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567981,
-        "updatedAt": 1787478567981
-      },
-      {
-        "id": "elem:281cf285e390",
-        "level": "L3",
-        "type": "function",
-        "name": "listArchivedChanges",
-        "attrs": {
-          "signature": "listArchivedChanges(root: string: string): string[]",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "string[]",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 220,
-          "lineEnd": 241,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567981,
-        "updatedAt": 1787478567981
-      },
-      {
-        "id": "elem:345c6788ea5d",
-        "level": "L3",
-        "type": "function",
-        "name": "findArchivedChangeDir",
-        "attrs": {
-          "signature": "findArchivedChangeDir(root: string: string, name: string: string): string | null",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "string | null",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 249,
-          "lineEnd": 266,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567981,
-        "updatedAt": 1787478567981
-      },
-      {
-        "id": "elem:8f393c17ac22",
-        "level": "L3",
-        "type": "function",
-        "name": "loadArchivedState",
-        "attrs": {
-          "signature": "loadArchivedState(root: string: string, name: string: string): ChangeState | null",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "ChangeState | null",
-          "parentName": "state",
-          "isExported": true,
-          "lineStart": 273,
-          "lineEnd": 286,
-          "filePath": "src/lib/state.ts"
-        },
-        "createdAt": 1787478567981,
-        "updatedAt": 1787478567981
-      },
-      {
-        "id": "elem:ce752fb4d7b2",
-        "level": "L3",
-        "type": "interface",
-        "name": "ArtifactId",
-        "attrs": {
-          "signature": "type ArtifactId",
-          "isExported": true,
-          "lineStart": 12,
           "lineEnd": 18,
-          "filePath": "src/schema/six-phase.ts",
-          "parentName": "six-phase"
+          "filePath": "server/src/routes/cart.js"
         },
-        "createdAt": 1787478567983,
-        "updatedAt": 1787478567983
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:9dca128ad7c2",
+        "id": "elem:a7405891f221",
         "level": "L3",
-        "type": "interface",
-        "name": "ArtifactStatus",
+        "type": "function",
+        "name": "toggleFavoriteHandler",
         "attrs": {
-          "signature": "type ArtifactStatus",
-          "isExported": true,
+          "signature": "toggleFavoriteHandler(req: Request, res: Response): void",
+          "params": [
+            { "name": "req", "type": "Request" },
+            { "name": "res", "type": "Response" }
+          ],
+          "returnType": "void",
+          "parentName": "cart-routes",
+          "isExported": false,
           "lineStart": 20,
-          "lineEnd": 25,
-          "filePath": "src/schema/six-phase.ts",
-          "parentName": "six-phase"
+          "lineEnd": 41,
+          "filePath": "server/src/routes/cart.js"
         },
-        "createdAt": 1787478567983,
-        "updatedAt": 1787478567983
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:00127c6c2846",
-        "level": "L3",
-        "type": "interface",
-        "name": "ArtifactDef",
-        "attrs": {
-          "signature": "interface ArtifactDef",
-          "annotations": [],
-          "isExported": true,
-          "lineStart": 27,
-          "lineEnd": 38,
-          "filePath": "src/schema/six-phase.ts",
-          "parentName": "six-phase"
-        },
-        "createdAt": 1787478567983,
-        "updatedAt": 1787478567983
-      },
-      {
-        "id": "elem:7729848ad943",
-        "level": "L3",
-        "type": "interface",
-        "name": "SchemaDef",
-        "attrs": {
-          "signature": "interface SchemaDef",
-          "annotations": [],
-          "isExported": true,
-          "lineStart": 40,
-          "lineEnd": 52,
-          "filePath": "src/schema/six-phase.ts",
-          "parentName": "six-phase"
-        },
-        "createdAt": 1787478567983,
-        "updatedAt": 1787478567983
-      },
-      {
-        "id": "elem:34ed1fec3c57",
+        "id": "elem:b85169a20332",
         "level": "L3",
         "type": "function",
-        "name": "getSchema",
+        "name": "listFavorites",
         "attrs": {
-          "signature": "getSchema(name: string: string): SchemaDef",
-          "params": [
-            {
-              "name": "name: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "SchemaDef",
-          "parentName": "six-phase",
+          "signature": "listFavorites(userId: string): Dish[]",
+          "params": [{ "name": "userId", "type": "string" }],
+          "returnType": "Dish[]",
+          "parentName": "favorite",
           "isExported": true,
-          "lineStart": 127,
-          "lineEnd": 131,
-          "filePath": "src/schema/six-phase.ts"
+          "lineStart": 9,
+          "lineEnd": 22,
+          "filePath": "server/src/services/favorite.js"
         },
-        "createdAt": 1787478567983,
-        "updatedAt": 1787478567983
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       },
       {
-        "id": "elem:355f022e7db1",
+        "id": "elem:c9627ab31443",
         "level": "L3",
         "type": "function",
-        "name": "getArtifact",
+        "name": "setFavorite",
         "attrs": {
-          "signature": "getArtifact(schema: SchemaDef: SchemaDef, id: ArtifactId: ArtifactId): ArtifactDef",
+          "signature": "setFavorite(userId: string, dishId: string, on: boolean): void",
           "params": [
-            {
-              "name": "schema: SchemaDef",
-              "type": "SchemaDef"
-            },
-            {
-              "name": "id: ArtifactId",
-              "type": "ArtifactId"
-            }
-          ],
-          "returnType": "ArtifactDef",
-          "parentName": "six-phase",
-          "isExported": true,
-          "lineStart": 133,
-          "lineEnd": 137,
-          "filePath": "src/schema/six-phase.ts"
-        },
-        "createdAt": 1787478567983,
-        "updatedAt": 1787478567983
-      },
-      {
-        "id": "elem:8963f776d5e1",
-        "level": "L3",
-        "type": "function",
-        "name": "resolveFileName",
-        "attrs": {
-          "signature": "resolveFileName(artifact: ArtifactDef: ArtifactDef, name: string: string): string",
-          "params": [
-            {
-              "name": "artifact: ArtifactDef",
-              "type": "ArtifactDef"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "string",
-          "parentName": "six-phase",
-          "isExported": true,
-          "lineStart": 139,
-          "lineEnd": 141,
-          "filePath": "src/schema/six-phase.ts"
-        },
-        "createdAt": 1787478567983,
-        "updatedAt": 1787478567983
-      },
-      {
-        "id": "elem:d0e96de2e696",
-        "level": "L3",
-        "type": "function",
-        "name": "listArtifactIds",
-        "attrs": {
-          "signature": "listArtifactIds(schema: SchemaDef: SchemaDef): ArtifactId[]",
-          "params": [
-            {
-              "name": "schema: SchemaDef",
-              "type": "SchemaDef"
-            }
-          ],
-          "returnType": "ArtifactId[]",
-          "parentName": "six-phase",
-          "isExported": true,
-          "lineStart": 144,
-          "lineEnd": 146,
-          "filePath": "src/schema/six-phase.ts"
-        },
-        "createdAt": 1787478567983,
-        "updatedAt": 1787478567983
-      },
-      {
-        "id": "elem:02212ce2cc9f",
-        "level": "L3",
-        "type": "interface",
-        "name": "CheckResult",
-        "attrs": {
-          "signature": "interface CheckResult",
-          "annotations": [],
-          "isExported": true,
-          "lineStart": 12,
-          "lineEnd": 18,
-          "filePath": "src/lib/dependency.ts",
-          "parentName": "dependency"
-        },
-        "createdAt": 1787478567973,
-        "updatedAt": 1787478567973
-      },
-      {
-        "id": "elem:6730d0eb625c",
-        "level": "L3",
-        "type": "function",
-        "name": "checkArtifact",
-        "attrs": {
-          "signature": "checkArtifact(root: string: string, name: string: string, id: ArtifactId: ArtifactId): CheckResult",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "name: string",
-              "type": "string"
-            },
-            {
-              "name": "id: ArtifactId",
-              "type": "ArtifactId"
-            }
-          ],
-          "returnType": "CheckResult",
-          "parentName": "dependency",
-          "isExported": true,
-          "lineStart": 20,
-          "lineEnd": 60,
-          "filePath": "src/lib/dependency.ts"
-        },
-        "createdAt": 1787478567973,
-        "updatedAt": 1787478567973
-      },
-      {
-        "id": "elem:c668fc068052",
-        "level": "L3",
-        "type": "function",
-        "name": "ensureLegacyMigrated",
-        "attrs": {
-          "signature": "ensureLegacyMigrated(root: string: string): void",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            }
+            { "name": "userId", "type": "string" },
+            { "name": "dishId", "type": "string" },
+            { "name": "on", "type": "boolean" }
           ],
           "returnType": "void",
-          "parentName": "graph",
-          "isExported": false,
-          "jsDoc": "确保旧式单图谱已迁移到 default/（在任何 graph 命令执行前调用）\n仅当检测到需要迁移时执行，输出迁移信息。\n/",
-          "lineStart": 46,
-          "lineEnd": 62,
-          "filePath": "src/graph/commands/graph.ts"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:cd5325f25c25",
-        "level": "L3",
-        "type": "function",
-        "name": "assertGraphExists",
-        "attrs": {
-          "signature": "assertGraphExists(root: string: string, stack: string: string): void",
-          "params": [
-            {
-              "name": "root: string",
-              "type": "string"
-            },
-            {
-              "name": "stack: string",
-              "type": "string"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "graph",
-          "isExported": false,
-          "jsDoc": "检查图谱是否存在，不存在则报错退出\n/",
-          "lineStart": 67,
-          "lineEnd": 72,
-          "filePath": "src/graph/commands/graph.ts"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:9dd919990716",
-        "level": "L3",
-        "type": "function",
-        "name": "normalizeLevels",
-        "attrs": {
-          "signature": "normalizeLevels(levels: string[]: string[]): string[]",
-          "params": [
-            {
-              "name": "levels: string[]",
-              "type": "string[]"
-            }
-          ],
-          "returnType": "string[]",
-          "parentName": "graph",
-          "isExported": false,
-          "jsDoc": "检查图谱是否存在，不存在则报错退出\n/\nfunction assertGraphExists(root: string, stack: string): void {\n  if (!graphExists(root, stack)) {\n    console.error(`图谱「${stack}」不存在。可运行 wpw graph list 查看可用图谱。`);\n    process.exit(1);\n  }\n}\n\n/**\n将层级参数转换为新层级（向后兼容）\n  旧 L1 → C, 旧 L2 → L1, 旧 L3 → L2, 旧 L4 → L3\n/",
-          "lineStart": 78,
-          "lineEnd": 105,
-          "filePath": "src/graph/commands/graph.ts"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:dc42893dc161",
-        "level": "L3",
-        "type": "function",
-        "name": "registerGraph",
-        "attrs": {
-          "signature": "registerGraph(program: Command: Command): void",
-          "params": [
-            {
-              "name": "program: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "graph",
+          "parentName": "favorite",
           "isExported": true,
-          "lineStart": 110,
-          "lineEnd": 122,
-          "filePath": "src/graph/commands/graph.ts"
+          "lineStart": 24,
+          "lineEnd": 47,
+          "filePath": "server/src/services/favorite.js"
         },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:ee3027bb21a5",
-        "level": "L3",
-        "type": "function",
-        "name": "registerBuild",
-        "attrs": {
-          "signature": "registerBuild(graph: Command: Command): void",
-          "params": [
-            {
-              "name": "graph: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "graph",
-          "isExported": false,
-          "lineStart": 126,
-          "lineEnd": 180,
-          "filePath": "src/graph/commands/graph.ts"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:d98a523d88d0",
-        "level": "L3",
-        "type": "interface",
-        "name": "ProgressBar",
-        "attrs": {
-          "signature": "interface ProgressBar",
-          "annotations": [],
-          "isExported": false,
-          "lineStart": 184,
-          "lineEnd": 187,
-          "filePath": "src/graph/commands/graph.ts",
-          "parentName": "graph"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:877a6d56df61",
-        "level": "L3",
-        "type": "function",
-        "name": "createProgressBar",
-        "attrs": {
-          "signature": "createProgressBar(): ProgressBar",
-          "params": [],
-          "returnType": "ProgressBar",
-          "parentName": "graph",
-          "isExported": false,
-          "lineStart": 189,
-          "lineEnd": 217,
-          "filePath": "src/graph/commands/graph.ts"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:2775152c6c4e",
-        "level": "L3",
-        "type": "function",
-        "name": "registerUpdate",
-        "attrs": {
-          "signature": "registerUpdate(graph: Command: Command): void",
-          "params": [
-            {
-              "name": "graph: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "graph",
-          "isExported": false,
-          "lineStart": 221,
-          "lineEnd": 274,
-          "filePath": "src/graph/commands/graph.ts"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:8051c9c8e3e1",
-        "level": "L3",
-        "type": "function",
-        "name": "registerRebuild",
-        "attrs": {
-          "signature": "registerRebuild(graph: Command: Command): void",
-          "params": [
-            {
-              "name": "graph: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "graph",
-          "isExported": false,
-          "lineStart": 278,
-          "lineEnd": 319,
-          "filePath": "src/graph/commands/graph.ts"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:fc1fd8596556",
-        "level": "L3",
-        "type": "function",
-        "name": "registerStat",
-        "attrs": {
-          "signature": "registerStat(graph: Command: Command): void",
-          "params": [
-            {
-              "name": "graph: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "graph",
-          "isExported": false,
-          "lineStart": 323,
-          "lineEnd": 386,
-          "filePath": "src/graph/commands/graph.ts"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:d1319e5d2028",
-        "level": "L3",
-        "type": "function",
-        "name": "registerQuery",
-        "attrs": {
-          "signature": "registerQuery(graph: Command: Command): void",
-          "params": [
-            {
-              "name": "graph: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "graph",
-          "isExported": false,
-          "lineStart": 390,
-          "lineEnd": 507,
-          "filePath": "src/graph/commands/graph.ts"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
-      },
-      {
-        "id": "elem:f9207abe21d8",
-        "level": "L3",
-        "type": "function",
-        "name": "registerSearch",
-        "attrs": {
-          "signature": "registerSearch(graph: Command: Command): void",
-          "params": [
-            {
-              "name": "graph: Command",
-              "type": "Command"
-            }
-          ],
-          "returnType": "void",
-          "parentName": "graph",
-          "isExported": false,
-          "lineStart": 511,
-          "lineEnd": 592,
-          "filePath": "src/graph/commands/graph.ts"
-        },
-        "createdAt": 1787478567857,
-        "updatedAt": 1787478567857
+        "createdAt": 1788610041049,
+        "updatedAt": 1788610041049
       }
     ],
     "edges": [
       {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:7c83405e0f3b",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:ad9cd7d120ba",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:04884c449801",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:a6a1db614763",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:ec8485d3117f",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:d68fd4fff0a5",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:bddcbb9edc64",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:94f95cce074a",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:dbac866b7792",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:87bc879617ee",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:0bb4c51d7673",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "mod:41291f2f4d9d",
-        "target": "file:598ac80db7df",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:7c83405e0f3b",
-        "target": "elem:ff76d96a1924",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:7c83405e0f3b",
-        "target": "elem:a9d89782d73a",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:7c83405e0f3b",
-        "target": "elem:4ddc002455fc",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:ad9cd7d120ba",
-        "target": "elem:890cffe1edd8",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:04884c449801",
-        "target": "elem:dd51500d86d1",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "elem:9c230d4ddad8",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:ec8485d3117f",
-        "target": "elem:32237376bfa9",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:ec8485d3117f",
-        "target": "elem:8b7a2e584648",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:ec8485d3117f",
-        "target": "elem:b5a2fd254165",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:ec8485d3117f",
-        "target": "elem:5e2f7b7231ba",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:ec8485d3117f",
-        "target": "elem:b08b09d7742b",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:d68fd4fff0a5",
-        "target": "elem:019a39680996",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:bddcbb9edc64",
-        "target": "elem:8fa389cb7225",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:94f95cce074a",
-        "target": "elem:3e6e50375c61",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:94f95cce074a",
-        "target": "elem:2955da8d85a8",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:94f95cce074a",
-        "target": "elem:0fed8df22a72",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:94f95cce074a",
-        "target": "elem:264f438cb1d9",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:94f95cce074a",
-        "target": "elem:38486ba83a30",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:dbac866b7792",
-        "target": "elem:1ce5e52aeee8",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:87bc879617ee",
-        "target": "elem:4a5f1e907d7f",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:87bc879617ee",
-        "target": "elem:2dabd6fed97a",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:87bc879617ee",
-        "target": "elem:8ef6188da787",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:0bb4c51d7673",
-        "target": "elem:cecf7b995031",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:0bb4c51d7673",
-        "target": "elem:8f3b2642ed15",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:0bb4c51d7673",
-        "target": "elem:7f34e339d71a",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:598ac80db7df",
-        "target": "elem:5e6899dd9427",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:c668fc068052",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:cd5325f25c25",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:9dd919990716",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:dc42893dc161",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:ee3027bb21a5",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:d98a523d88d0",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:877a6d56df61",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:2775152c6c4e",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:8051c9c8e3e1",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:fc1fd8596556",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:d1319e5d2028",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "elem:f9207abe21d8",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:cf63f0e6cbfb",
-        "target": "elem:02212ce2cc9f",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:cf63f0e6cbfb",
-        "target": "elem:6730d0eb625c",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:2088b717358a",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:ccd78458a666",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:a76707922260",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:9a896040c371",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:749e50965461",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:5ce9fa0b49cc",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:42c45332051f",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:f5baa03eb068",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:ee5056f77761",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:51baacabb117",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:9a5b40eed1f7",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:16cce2600556",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:041c4f66ab4c",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:d00bdcd490e7",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:f7424d5f171c",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:fe72836d9a58",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:281cf285e390",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:345c6788ea5d",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "elem:8f393c17ac22",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:b9d69250920d",
-        "target": "elem:ce752fb4d7b2",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:b9d69250920d",
-        "target": "elem:9dca128ad7c2",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:b9d69250920d",
-        "target": "elem:00127c6c2846",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:b9d69250920d",
-        "target": "elem:7729848ad943",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:b9d69250920d",
-        "target": "elem:34ed1fec3c57",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:b9d69250920d",
-        "target": "elem:355f022e7db1",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:b9d69250920d",
-        "target": "elem:8963f776d5e1",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:b9d69250920d",
-        "target": "elem:d0e96de2e696",
-        "type": "contain",
-        "weight": 0.9
-      },
-      {
-        "source": "file:7c83405e0f3b",
-        "target": "file:674d4368c6ae",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:7c83405e0f3b",
-        "target": "file:b9d69250920d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:ad9cd7d120ba",
-        "target": "file:674d4368c6ae",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:04884c449801",
-        "target": "file:cf63f0e6cbfb",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:04884c449801",
-        "target": "file:b9d69250920d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:ec8485d3117f",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:bddcbb9edc64",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:d68fd4fff0a5",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:87bc879617ee",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:04884c449801",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:598ac80db7df",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:94f95cce074a",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:7c83405e0f3b",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:0bb4c51d7673",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:ad9cd7d120ba",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:dbac866b7792",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:a6a1db614763",
-        "target": "file:c486c14fb4aa",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:ec8485d3117f",
-        "target": "file:0b4f5977a52c",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:d68fd4fff0a5",
-        "target": "file:674d4368c6ae",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:bddcbb9edc64",
-        "target": "file:674d4368c6ae",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:bddcbb9edc64",
-        "target": "file:0b4f5977a52c",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:94f95cce074a",
-        "target": "file:674d4368c6ae",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:94f95cce074a",
-        "target": "file:b9d69250920d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:dbac866b7792",
-        "target": "file:aae69d7449b7",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:87bc879617ee",
-        "target": "file:674d4368c6ae",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:0bb4c51d7673",
-        "target": "file:674d4368c6ae",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:0bb4c51d7673",
-        "target": "file:b9d69250920d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:598ac80db7df",
-        "target": "file:f92ab81c99a7",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:598ac80db7df",
-        "target": "file:b9d69250920d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:73ebbf58de77",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:73ebbf58de77",
-        "target": "file:847227078c8d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:73ebbf58de77",
-        "target": "file:0e58bc918772",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:73ebbf58de77",
-        "target": "file:f77ed38fccdc",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:73ebbf58de77",
-        "target": "file:4838e0dd7a29",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:73ebbf58de77",
-        "target": "file:c522c8211a3b",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:73ebbf58de77",
-        "target": "file:acf781927b3d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:73ebbf58de77",
-        "target": "file:bec48f35e539",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:847227078c8d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:0e58bc918772",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:f77ed38fccdc",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:4838e0dd7a29",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:c522c8211a3b",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:acf781927b3d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:6cf7c8dd8bf5",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:c3b0e5490fa7",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:7579db2bbb5c",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:79c6f1f4b00d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c486c14fb4aa",
-        "target": "file:73ebbf58de77",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:847227078c8d",
-        "target": "file:0b4f5977a52c",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:847227078c8d",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:79c6f1f4b00d",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:79c6f1f4b00d",
-        "target": "file:c3b0e5490fa7",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:79c6f1f4b00d",
-        "target": "file:7579db2bbb5c",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:79c6f1f4b00d",
-        "target": "file:0e58bc918772",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c3b0e5490fa7",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c3b0e5490fa7",
-        "target": "file:0e58bc918772",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:7579db2bbb5c",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:7579db2bbb5c",
-        "target": "file:c3b0e5490fa7",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:6cf7c8dd8bf5",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:6cf7c8dd8bf5",
-        "target": "file:acf781927b3d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:6cf7c8dd8bf5",
-        "target": "file:c522c8211a3b",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:acf781927b3d",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:0e58bc918772",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:0e58bc918772",
-        "target": "file:acf781927b3d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:4838e0dd7a29",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:4838e0dd7a29",
-        "target": "file:acf781927b3d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c522c8211a3b",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:c522c8211a3b",
-        "target": "file:acf781927b3d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:f77ed38fccdc",
-        "target": "file:acf781927b3d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:f77ed38fccdc",
-        "target": "file:428ec1d61164",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:cf63f0e6cbfb",
-        "target": "file:b9d69250920d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:cf63f0e6cbfb",
-        "target": "file:674d4368c6ae",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:674d4368c6ae",
-        "target": "file:b9d69250920d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:f92ab81c99a7",
-        "target": "file:b9d69250920d",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:f92ab81c99a7",
-        "target": "file:0b4f5977a52c",
-        "type": "import",
-        "weight": 0.75
-      },
-      {
-        "source": "file:f92ab81c99a7",
-        "target": "file:bec48f35e539",
-        "type": "import",
-        "weight": 0.75
-      }
+        "source": "cap:cart-storeup",
+        "target": "mod:a3f18c2e7b01",
+        "type": "business_map",
+        "weight": 0.88,
+        "evidence": "命名匹配+文档提取"
+      },
+      {
+        "source": "cap:cart-storeup",
+        "target": "mod:b7e24d9f1c52",
+        "type": "business_map",
+        "weight": 0.81,
+        "evidence": "语义相似度+Git历史"
+      },
+      { "source": "mod:a3f18c2e7b01", "target": "file:c1a05e3d8b21", "type": "contain", "weight": 0.9 },
+      { "source": "mod:a3f18c2e7b01", "target": "file:d2b16f4e9c32", "type": "contain", "weight": 0.9 },
+      { "source": "mod:a3f18c2e7b01", "target": "file:e3c27a5f0d43", "type": "contain", "weight": 0.9 },
+      { "source": "mod:a3f18c2e7b01", "target": "file:f4d38b6a1e54", "type": "contain", "weight": 0.9 },
+      { "source": "mod:b7e24d9f1c52", "target": "file:a5e49c7b2f65", "type": "contain", "weight": 0.9 },
+      { "source": "mod:b7e24d9f1c52", "target": "file:b6f5ad8c3a76", "type": "contain", "weight": 0.9 },
+      { "source": "file:c1a05e3d8b21", "target": "elem:c7a6be9d4b87", "type": "contain", "weight": 0.9 },
+      { "source": "file:c1a05e3d8b21", "target": "elem:d8b7cf0e5c98", "type": "contain", "weight": 0.9 },
+      { "source": "file:d2b16f4e9c32", "target": "elem:e9c8d01f6da9", "type": "contain", "weight": 0.9 },
+      { "source": "file:d2b16f4e9c32", "target": "elem:f0d9e12a7eba", "type": "contain", "weight": 0.9 },
+      { "source": "file:e3c27a5f0d43", "target": "elem:a1eaf23b8fcb", "type": "contain", "weight": 0.9 },
+      { "source": "file:e3c27a5f0d43", "target": "elem:b2fb034c9adc", "type": "contain", "weight": 0.9 },
+      { "source": "file:e3c27a5f0d43", "target": "elem:c30c145dbeed", "type": "contain", "weight": 0.9 },
+      { "source": "file:f4d38b6a1e54", "target": "elem:d41d256ecffe", "type": "contain", "weight": 0.9 },
+      { "source": "file:f4d38b6a1e54", "target": "elem:e52e367fd00f", "type": "contain", "weight": 0.9 },
+      { "source": "file:a5e49c7b2f65", "target": "elem:f63f4780e110", "type": "contain", "weight": 0.9 },
+      { "source": "file:a5e49c7b2f65", "target": "elem:a7405891f221", "type": "contain", "weight": 0.9 },
+      { "source": "file:b6f5ad8c3a76", "target": "elem:b85169a20332", "type": "contain", "weight": 0.9 },
+      { "source": "file:b6f5ad8c3a76", "target": "elem:c9627ab31443", "type": "contain", "weight": 0.9 },
+      { "source": "file:c1a05e3d8b21", "target": "file:d2b16f4e9c32", "type": "import", "weight": 0.75 },
+      { "source": "file:c1a05e3d8b21", "target": "file:e3c27a5f0d43", "type": "import", "weight": 0.75 },
+      { "source": "file:d2b16f4e9c32", "target": "file:e3c27a5f0d43", "type": "import", "weight": 0.75 },
+      { "source": "file:e3c27a5f0d43", "target": "file:f4d38b6a1e54", "type": "import", "weight": 0.75 },
+      { "source": "file:a5e49c7b2f65", "target": "file:b6f5ad8c3a76", "type": "import", "weight": 0.75 },
+      { "source": "elem:a7405891f221", "target": "elem:c9627ab31443", "type": "call", "weight": 0.7 },
+      { "source": "elem:a7405891f221", "target": "elem:b85169a20332", "type": "call", "weight": 0.7 }
     ]
   },
   "results": [
     {
       "level": "loose",
-      "nodeCount": 100,
-      "tokenEstimate": 1784,
-      "serialized": "=== 知识图谱上下文 ===\n\n符号说明:\n  ⊃  包含关系 (contain)\n  →  依赖关系 (call/import/inherit)\n  ⇄  业务映射 (business_map)\n\n⊃ [模块] commands ◉\n  ⊃ [文件] apply.ts\n    ⊃ [函数] parseTasks(planPath: string: string): Task[] extends apply\n    ⊃ [函数] registerApply(program: Command: Command): void extends apply\n    ⊃ [接口] interface Task extends apply\n  ⊃ [文件] archive.ts\n    ⊃ [函数] registerArchive(program: Command: Command): void extends archive\n  ⊃ [文件] check.ts\n    ⊃ [函数] registerCheck(program: Command: Command): void extends check\n  ⊃ [文件] index.ts\n    ⊃ [函数] registerCommands(program: Command: Command): void extends index\n  ⊃ [文件] init.ts\n    ⊃ [函数] copyDir(src: string: string, dest: string: string, skipDirs: string[] = []: string[]): void extends init\n    ⊃ [函数] ensureGitignore(root: string: string): void extends init\n    ⊃ [函数] registerInit(program: Command: Command): void extends init\n    ⊃ [函数] releaseAiLayer(root: string: string): boolean extends init\n    ⊃ [函数] releaseLinkedSkills(root: string: string): void extends init\n  ⊃ [文件] list.ts\n    ⊃ [函数] registerList(program: Command: Command): void extends list\n  ⊃ [文件] new.ts\n    ⊃ [函数] registerNew(program: Command: Command): void extends new\n  ⊃ [文件] phase-state.ts\n    ⊃ [函数] parseArtifact(phase: string: string): ArtifactId extends phase-state\n    ⊃ [函数] registerDecision(program: Command: Command): void extends phase-state\n    ⊃ [函数] registerDone(program: Command: Command): void extends phase-state\n    ⊃ [函数] registerSkip(program: Command: Command): void extends phase-state\n    ⊃ [函数] requireChange(opts: { change?: string }: { change?: string }): string extends phase-state\n  ⊃ [文件] skills.ts\n    ⊃ [函数] registerSkills(program: Command: Command): void extends skills\n  ⊃ [文件] status.ts\n    ⊃ [函数] printStatus(s: ChangeState: ChangeState): void extends status\n    ⊃ [函数] registerStatus(program: Command: Command): void extends status\n    ⊃ [函数] summarize(s: ChangeState: ChangeState): string extends status\n  ⊃ [文件] task.ts\n    ⊃ [函数] markTask(planPath: string: string, taskId: string: string, newState: TaskState: TaskState): { content: string; total: number; completed: number } extends task\n    ⊃ [函数] registerTask(program: Command: Command): void extends task\n    ⊃ [接口] type TaskState extends task\n  ⊃ [文件] template.ts\n    ⊃ [函数] registerTemplate(program: Command: Command): void extends template\n⊃ [文件] state.ts\n  ⊃ [函数] changeNameExists(root: string: string, name: string: string): boolean extends state\n  ⊃ [接口] interface ChangeState extends state\n  ⊃ [接口] interface ExploreDecision extends state\n  ⊃ [函数] findArchivedChangeDir(root: string: string, name: string: string): string | null extends state\n  ⊃ [函数] getActiveDir(root: string: string): string extends state\n  ⊃ [函数] getArchivedDir(root: string: string): string extends state\n  ⊃ [函数] getChangeDir(root: string: string, name: string: string): string extends state\n  ⊃ [函数] getStatePath(root: string: string, name: string: string): string extends state\n  ⊃ [函数] initState(name: string: string, projectType: string = 'auto': string, schemaName: string = sixPhaseSchema.name: string): ChangeState extends state\n  ⊃ [函数] listArchivedChanges(root: string: string): string[] extends state\n  ⊃ [函数] listChanges(root: string: string): string[] extends state\n  ⊃ [函数] loadArchivedState(root: string: string, name: string: string): ChangeState | null extends state\n  ⊃ [函数] loadState(root: string: string, name: string: string): ChangeState | null extends state\n  ⊃ [函数] loadStateOrThrow(root: string: string, name: string: string): ChangeState extends state\n  ⊃ [函数] saveState(root: string: string, state: ChangeState: ChangeState): void extends state\n  ⊃ [函数] setDecision(root: string: string, name: string: string, id: ArtifactId: ArtifactId, option: string: string): ChangeState extends state\n  ⊃ [函数] setProgress(root: string: string, name: string: string, totalTasks: number: number, completedTasks: number: number): ChangeState extends state\n  ⊃ [函数] setStatus(root: string: string, name: string: string, id: ArtifactId: ArtifactId, status: ArtifactStatus: ArtifactStatus): ChangeState extends state\n  ⊃ [函数] validateChangeName(name: string: string): { valid: boolean; reason?: string } extends state\n⊃ [文件] graph.ts\n  ⊃ [函数] assertGraphExists(root: string: string, stack: string: string): void extends graph\n  ⊃ [函数] createProgressBar(): ProgressBar extends graph\n  ⊃ [函数] ensureLegacyMigrated(root: string: string): void extends graph\n  ⊃ [函数] normalizeLevels(levels: string[]: string[]): string[] extends graph\n  ⊃ [接口] interface ProgressBar extends graph\n  ⊃ [函数] registerBuild(graph: Command: Command): void extends graph\n  ⊃ [函数] registerGraph(program: Command: Command): void extends graph\n  ⊃ [函数] registerQuery(graph: Command: Command): void extends graph\n  ⊃ [函数] registerRebuild(graph: Command: Command): void extends graph\n  ⊃ [函数] registerSearch(graph: Command: Command): void extends graph\n  ⊃ [函数] registerStat(graph: Command: Command): void extends graph\n  ⊃ [函数] registerUpdate(graph: Command: Command): void extends graph\n⊃ [文件] six-phase.ts\n  ⊃ [接口] interface ArtifactDef extends six-phase\n  ⊃ [接口] type ArtifactId extends six-phase\n  ⊃ [接口] type ArtifactStatus extends six-phase\n  ⊃ [函数] getArtifact(schema: SchemaDef: SchemaDef, id: ArtifactId: ArtifactId): ArtifactDef extends six-phase\n  ⊃ [函数] getSchema(name: string: string): SchemaDef extends six-phase\n  ⊃ [函数] listArtifactIds(schema: SchemaDef: SchemaDef): ArtifactId[] extends six-phase\n  ⊃ [函数] resolveFileName(artifact: ArtifactDef: ArtifactDef, name: string: string): string extends six-phase\n  ⊃ [接口] interface SchemaDef extends six-phase\n⊃ [文件] types.ts\n⊃ [文件] linked-skills.ts\n⊃ [文件] config.ts\n⊃ [文件] graph-path.ts\n⊃ [文件] template-resolver.ts\n⊃ [文件] graph-store.ts\n⊃ [文件] graph-builder.ts\n⊃ [文件] dependency.ts\n  ⊃ [函数] checkArtifact(root: string: string, name: string: string, id: ArtifactId: ArtifactId): CheckResult extends dependency\n  ⊃ [接口] interface CheckResult extends dependency\n⊃ [文件] meta-store.ts\n⊃ [文件] graph-query.ts\n⊃ [文件] config.ts\n⊃ [文件] vector-store.ts\n⊃ [文件] mapping-store.ts\n⊃ [文件] semantic-search.ts\n⊃ [文件] context-pipeline.ts\n⊃ [文件] graph-manager.ts\n⊃ [文件] project-type.ts\n\n--- 依赖关系 ---\n  apply.ts → state.ts [0.75] 导入\n  apply.ts → six-phase.ts [0.75] 导入\n  archive.ts → state.ts [0.75] 导入\n  check.ts → dependency.ts [0.75] 导入\n  check.ts → six-phase.ts [0.75] 导入\n  index.ts → init.ts [0.75] 导入\n  index.ts → new.ts [0.75] 导入\n  index.ts → list.ts [0.75] 导入\n  index.ts → status.ts [0.75] 导入\n  index.ts → check.ts [0.75] 导入\n  index.ts → template.ts [0.75] 导入\n  index.ts → phase-state.ts [0.75] 导入\n  index.ts → apply.ts [0.75] 导入\n  index.ts → task.ts [0.75] 导入\n  index.ts → archive.ts [0.75] 导入\n  index.ts → skills.ts [0.75] 导入\n  index.ts → graph.ts [0.75] 导入\n  init.ts → config.ts [0.75] 导入\n  list.ts → state.ts [0.75] 导入\n  new.ts → state.ts [0.75] 导入\n  new.ts → config.ts [0.75] 导入\n  phase-state.ts → state.ts [0.75] 导入\n  phase-state.ts → six-phase.ts [0.75] 导入\n  skills.ts → linked-skills.ts [0.75] 导入\n  status.ts → state.ts [0.75] 导入\n  task.ts → state.ts [0.75] 导入\n  task.ts → six-phase.ts [0.75] 导入\n  template.ts → template-resolver.ts [0.75] 导入\n  template.ts → six-phase.ts [0.75] 导入\n  graph-builder.ts → types.ts [0.75] 导入\n  graph-builder.ts → config.ts [0.75] 导入\n  graph-builder.ts → graph-store.ts [0.75] 导入\n  graph-builder.ts → vector-store.ts [0.75] 导入\n  graph-builder.ts → mapping-store.ts [0.75] 导入\n  graph-builder.ts → meta-store.ts [0.75] 导入\n  graph-builder.ts → graph-path.ts [0.75] 导入\n  graph-builder.ts → project-type.ts [0.75] 导入\n  graph.ts → config.ts [0.75] 导入\n  graph.ts → graph-store.ts [0.75] 导入\n  graph.ts → vector-store.ts [0.75] 导入\n  graph.ts → mapping-store.ts [0.75] 导入\n  graph.ts → meta-store.ts [0.75] 导入\n  graph.ts → graph-path.ts [0.75] 导入\n  graph.ts → graph-manager.ts [0.75] 导入\n  graph.ts → graph-query.ts [0.75] 导入\n  graph.ts → semantic-search.ts [0.75] 导入\n  graph.ts → context-pipeline.ts [0.75] 导入\n  graph.ts → types.ts [0.75] 导入\n  graph.ts → graph-builder.ts [0.75] 导入\n  config.ts → config.ts [0.75] 导入\n  config.ts → types.ts [0.75] 导入\n  context-pipeline.ts → types.ts [0.75] 导入\n  context-pipeline.ts → graph-query.ts [0.75] 导入\n  context-pipeline.ts → semantic-search.ts [0.75] 导入\n  context-pipeline.ts → graph-store.ts [0.75] 导入\n  graph-query.ts → types.ts [0.75] 导入\n  graph-query.ts → graph-store.ts [0.75] 导入\n  semantic-search.ts → types.ts [0.75] 导入\n  semantic-search.ts → graph-query.ts [0.75] 导入\n  graph-manager.ts → types.ts [0.75] 导入\n  graph-manager.ts → graph-path.ts [0.75] 导入\n  graph-manager.ts → meta-store.ts [0.75] 导入\n  graph-path.ts → types.ts [0.75] 导入\n  graph-store.ts → types.ts [0.75] 导入\n  graph-store.ts → graph-path.ts [0.75] 导入\n  mapping-store.ts → types.ts [0.75] 导入\n  mapping-store.ts → graph-path.ts [0.75] 导入\n  meta-store.ts → types.ts [0.75] 导入\n  meta-store.ts → graph-path.ts [0.75] 导入\n  vector-store.ts → graph-path.ts [0.75] 导入\n  vector-store.ts → types.ts [0.75] 导入\n  dependency.ts → six-phase.ts [0.75] 导入\n  dependency.ts → state.ts [0.75] 导入\n  state.ts → six-phase.ts [0.75] 导入\n  template-resolver.ts → six-phase.ts [0.75] 导入\n  template-resolver.ts → config.ts [0.75] 导入\n  template-resolver.ts → project-type.ts [0.75] 导入\n"
+      "nodeCount": 22,
+      "tokenEstimate": 1246,
+      "serialized": "=== 知识图谱上下文 ===\n\n符号说明:\n  ⊃  包含关系 (contain)\n  →  依赖关系 (call/import/inherit)\n  ⇄  业务映射 (business_map)\n\n⇄ [能力] 购物车与收藏管理 ◉\n  ⊃ [模块] web-cart\n    ⊃ [文件] Cart.vue\n      ⊃ [函数] toggleFavorite(dish: Dish): void extends Cart\n      ⊃ [计算属性] favoriteItems: Dish[] extends Cart\n    ⊃ [文件] FavoriteList.vue\n      ⊃ [函数] removeFavorite(id: string): void extends FavoriteList\n      ⊃ [函数] goToDish(id: string): void extends FavoriteList\n    ⊃ [文件] cart.ts\n      ⊃ [函数] addFavorite(dish: Dish): void extends cart\n      ⊃ [函数] removeFavorite(id: string): void extends cart\n      ⊃ [状态] favorites: Dish[] extends cart\n    ⊃ [文件] cart-api.ts\n      ⊃ [函数] fetchFavorites(): Promise<Dish[]> extends cart-api\n      ⊃ [函数] postToggleFavorite(id: string): Promise<void> extends cart-api\n  ⊃ [模块] server-cart\n    ⊃ [文件] cart-routes.js\n      ⊃ [函数] registerCartRoutes(app: Express): void extends cart-routes\n      ⊃ [函数] toggleFavoriteHandler(req: Request, res: Response): void extends cart-routes\n    ⊃ [文件] favorite.js\n      ⊃ [函数] listFavorites(userId: string): Dish[] extends favorite\n      ⊃ [函数] setFavorite(userId: string, dishId: string, on: boolean): void extends favorite\n\n--- 依赖关系 ---\n  Cart.vue → FavoriteList.vue [0.75] 导入\n  Cart.vue → cart.ts [0.75] 导入\n  FavoriteList.vue → cart.ts [0.75] 导入\n  cart.ts → cart-api.ts [0.75] 导入\n  cart-routes.js → favorite.js [0.75] 导入\n  toggleFavoriteHandler → setFavorite [0.70] 调用\n  toggleFavoriteHandler → listFavorites [0.70] 调用\n\n--- 业务映射 ---\n  购物车与收藏管理 ⇄ web-cart [0.88] 命名匹配+文档提取\n  购物车与收藏管理 ⇄ server-cart [0.81] 语义相似度+Git历史\n"
     },
     {
       "level": "standard",
-      "nodeCount": 100,
-      "tokenEstimate": 779,
-      "serialized": "=== 知识图谱上下文 ===\n\n符号说明:\n  ⊃  包含关系 (contain)\n  →  依赖关系 (call/import/inherit)\n  ⇄  业务映射 (business_map)\n\n⊃ [模块] commands ◉\n  ⊃ [文件] apply.ts\n    ⊃ [函数] parseTasks\n    ⊃ [函数] registerApply\n    ⊃ [接口] Task\n  ⊃ [文件] archive.ts\n    ⊃ [函数] registerArchive\n  ⊃ [文件] check.ts\n    ⊃ [函数] registerCheck\n  ⊃ [文件] index.ts\n    ⊃ [函数] registerCommands\n  ⊃ [文件] init.ts\n    ⊃ [函数] copyDir\n    ⊃ [函数] ensureGitignore\n    ⊃ [函数] registerInit\n    ⊃ [函数] releaseAiLayer\n    ⊃ [函数] releaseLinkedSkills\n  ⊃ [文件] list.ts\n    ⊃ [函数] registerList\n  ⊃ [文件] new.ts\n    ⊃ [函数] registerNew\n  ⊃ [文件] phase-state.ts\n    ⊃ [函数] parseArtifact\n    ⊃ [函数] registerDecision\n    ⊃ [函数] registerDone\n    ⊃ [函数] registerSkip\n    ⊃ [函数] requireChange\n  ⊃ [文件] skills.ts\n    ⊃ [函数] registerSkills\n  ⊃ [文件] status.ts\n    ⊃ [函数] printStatus\n    ⊃ [函数] registerStatus\n    ⊃ [函数] summarize\n  ⊃ [文件] task.ts\n    ⊃ [函数] markTask\n    ⊃ [函数] registerTask\n    ⊃ [接口] TaskState\n  ⊃ [文件] template.ts\n    ⊃ [函数] registerTemplate\n⊃ [文件] state.ts\n  ⊃ [函数] changeNameExists\n  ⊃ [接口] ChangeState\n  ⊃ [接口] ExploreDecision\n  ⊃ [函数] findArchivedChangeDir\n  ⊃ [函数] getActiveDir\n  ⊃ [函数] getArchivedDir\n  ⊃ [函数] getChangeDir\n  ⊃ [函数] getStatePath\n  ⊃ [函数] initState\n  ⊃ [函数] listArchivedChanges\n  ⊃ [函数] listChanges\n  ⊃ [函数] loadArchivedState\n  ⊃ [函数] loadState\n  ⊃ [函数] loadStateOrThrow\n  ⊃ [函数] saveState\n  ⊃ [函数] setDecision\n  ⊃ [函数] setProgress\n  ⊃ [函数] setStatus\n  ⊃ [函数] validateChangeName\n⊃ [文件] graph.ts\n  ⊃ [函数] assertGraphExists\n  ⊃ [函数] createProgressBar\n  ⊃ [函数] ensureLegacyMigrated\n  ⊃ [函数] normalizeLevels\n  ⊃ [接口] ProgressBar\n  ⊃ [函数] registerBuild\n  ⊃ [函数] registerGraph\n  ⊃ [函数] registerQuery\n  ⊃ [函数] registerRebuild\n  ⊃ [函数] registerSearch\n  ⊃ [函数] registerStat\n  ⊃ [函数] registerUpdate\n⊃ [文件] six-phase.ts\n  ⊃ [接口] ArtifactDef\n  ⊃ [接口] ArtifactId\n  ⊃ [接口] ArtifactStatus\n  ⊃ [函数] getArtifact\n  ⊃ [函数] getSchema\n  ⊃ [函数] listArtifactIds\n  ⊃ [函数] resolveFileName\n  ⊃ [接口] SchemaDef\n⊃ [文件] types.ts\n⊃ [文件] linked-skills.ts\n⊃ [文件] config.ts\n⊃ [文件] graph-path.ts\n⊃ [文件] template-resolver.ts\n⊃ [文件] graph-store.ts\n⊃ [文件] graph-builder.ts\n⊃ [文件] dependency.ts\n  ⊃ [函数] checkArtifact\n  ⊃ [接口] CheckResult\n⊃ [文件] meta-store.ts\n⊃ [文件] graph-query.ts\n⊃ [文件] config.ts\n⊃ [文件] vector-store.ts\n⊃ [文件] mapping-store.ts\n⊃ [文件] semantic-search.ts\n⊃ [文件] context-pipeline.ts\n⊃ [文件] graph-manager.ts\n⊃ [文件] project-type.ts\n\n--- 依赖关系 ---\n  apply.ts → state.ts\n  apply.ts → six-phase.ts\n  archive.ts → state.ts\n  check.ts → dependency.ts\n  check.ts → six-phase.ts\n  index.ts → init.ts\n  index.ts → new.ts\n  index.ts → list.ts\n  index.ts → status.ts\n  index.ts → check.ts\n  index.ts → template.ts\n  index.ts → phase-state.ts\n  index.ts → apply.ts\n  index.ts → task.ts\n  index.ts → archive.ts\n  index.ts → skills.ts\n  index.ts → graph.ts\n  init.ts → config.ts\n  list.ts → state.ts\n  new.ts → state.ts\n  new.ts → config.ts\n  phase-state.ts → state.ts\n  phase-state.ts → six-phase.ts\n  skills.ts → linked-skills.ts\n  status.ts → state.ts\n  task.ts → state.ts\n  task.ts → six-phase.ts\n  template.ts → template-resolver.ts\n  template.ts → six-phase.ts\n  graph-builder.ts → types.ts\n  graph-builder.ts → config.ts\n  graph-builder.ts → graph-store.ts\n  graph-builder.ts → vector-store.ts\n  graph-builder.ts → mapping-store.ts\n  graph-builder.ts → meta-store.ts\n  graph-builder.ts → graph-path.ts\n  graph-builder.ts → project-type.ts\n  graph.ts → config.ts\n  graph.ts → graph-store.ts\n  graph.ts → vector-store.ts\n  graph.ts → mapping-store.ts\n  graph.ts → meta-store.ts\n  graph.ts → graph-path.ts\n  graph.ts → graph-manager.ts\n  graph.ts → graph-query.ts\n  graph.ts → semantic-search.ts\n  graph.ts → context-pipeline.ts\n  graph.ts → types.ts\n  graph.ts → graph-builder.ts\n  config.ts → config.ts\n"
+      "nodeCount": 22,
+      "tokenEstimate": 638,
+      "serialized": "=== 知识图谱上下文 ===\n\n符号说明:\n  ⊃  包含关系 (contain)\n  →  依赖关系 (call/import/inherit)\n  ⇄  业务映射 (business_map)\n\n⇄ [能力] 购物车与收藏管理 ◉\n  ⊃ [模块] web-cart\n    ⊃ [文件] Cart.vue\n      ⊃ [函数] toggleFavorite\n      ⊃ [计算属性] favoriteItems\n    ⊃ [文件] FavoriteList.vue\n      ⊃ [函数] removeFavorite\n      ⊃ [函数] goToDish\n    ⊃ [文件] cart.ts\n      ⊃ [函数] addFavorite\n      ⊃ [函数] removeFavorite\n      ⊃ [状态] favorites\n    ⊃ [文件] cart-api.ts\n      ⊃ [函数] fetchFavorites\n      ⊃ [函数] postToggleFavorite\n  ⊃ [模块] server-cart\n    ⊃ [文件] cart-routes.js\n      ⊃ [函数] registerCartRoutes\n      ⊃ [函数] toggleFavoriteHandler\n    ⊃ [文件] favorite.js\n      ⊃ [函数] listFavorites\n      ⊃ [函数] setFavorite\n\n--- 依赖关系 ---\n  Cart.vue → FavoriteList.vue\n  Cart.vue → cart.ts\n  FavoriteList.vue → cart.ts\n  cart.ts → cart-api.ts\n  cart-routes.js → favorite.js\n  toggleFavoriteHandler → setFavorite\n  toggleFavoriteHandler → listFavorites\n\n--- 业务映射 ---\n  购物车与收藏管理 ⇄ web-cart\n  购物车与收藏管理 ⇄ server-cart\n"
     },
     {
       "level": "extreme",
-      "nodeCount": 100,
-      "tokenEstimate": 471,
-      "serialized": "=== 知识图谱上下文 ===\n\n⊃ [模块] commands ◉\n  ⊃ [文件] apply.ts\n    ⊃ [函数] parseTasks\n    ⊃ [函数] registerApply\n    ⊃ [接口] Task\n  ⊃ [文件] archive.ts\n    ⊃ [函数] registerArchive\n  ⊃ [文件] check.ts\n    ⊃ [函数] registerCheck\n  ⊃ [文件] index.ts\n    ⊃ [函数] registerCommands\n  ⊃ [文件] init.ts\n    ⊃ [函数] copyDir\n    ⊃ [函数] ensureGitignore\n    ⊃ [函数] registerInit\n    ⊃ [函数] releaseAiLayer\n    ⊃ [函数] releaseLinkedSkills\n  ⊃ [文件] list.ts\n    ⊃ [函数] registerList\n  ⊃ [文件] new.ts\n    ⊃ [函数] registerNew\n  ⊃ [文件] phase-state.ts\n    ⊃ [函数] parseArtifact\n    ⊃ [函数] registerDecision\n    ⊃ [函数] registerDone\n    ⊃ [函数] registerSkip\n    ⊃ [函数] requireChange\n  ⊃ [文件] skills.ts\n    ⊃ [函数] registerSkills\n  ⊃ [文件] status.ts\n    ⊃ [函数] printStatus\n    ⊃ [函数] registerStatus\n    ⊃ [函数] summarize\n  ⊃ [文件] task.ts\n    ⊃ [函数] markTask\n    ⊃ [函数] registerTask\n    ⊃ [接口] TaskState\n  ⊃ [文件] template.ts\n    ⊃ [函数] registerTemplate\n⊃ [文件] state.ts\n  ⊃ [函数] changeNameExists\n  ⊃ [接口] ChangeState\n  ⊃ [接口] ExploreDecision\n  ⊃ [函数] findArchivedChangeDir\n  ⊃ [函数] getActiveDir\n  ⊃ [函数] getArchivedDir\n  ⊃ [函数] getChangeDir\n  ⊃ [函数] getStatePath\n  ⊃ [函数] initState\n  ⊃ [函数] listArchivedChanges\n  ⊃ [函数] listChanges\n  ⊃ [函数] loadArchivedState\n  ⊃ [函数] loadState\n  ⊃ [函数] loadStateOrThrow\n  ⊃ [函数] saveState\n  ⊃ [函数] setDecision\n  ⊃ [函数] setProgress\n  ⊃ [函数] setStatus\n  ⊃ [函数] validateChangeName\n⊃ [文件] graph.ts\n  ⊃ [函数] assertGraphExists\n  ⊃ [函数] createProgressBar\n  ⊃ [函数] ensureLegacyMigrated\n  ⊃ [函数] normalizeLevels\n  ⊃ [接口] ProgressBar\n  ⊃ [函数] registerBuild\n  ⊃ [函数] registerGraph\n  ⊃ [函数] registerQuery\n  ⊃ [函数] registerRebuild\n  ⊃ [函数] registerSearch\n  ⊃ [函数] registerStat\n  ⊃ [函数] registerUpdate\n⊃ [文件] six-phase.ts\n  ⊃ [接口] ArtifactDef\n  ⊃ [接口] ArtifactId\n  ⊃ [接口] ArtifactStatus\n  ⊃ [函数] getArtifact\n  ⊃ [函数] getSchema\n  ⊃ [函数] listArtifactIds\n  ⊃ [函数] resolveFileName\n  ⊃ [接口] SchemaDef\n⊃ [文件] types.ts\n⊃ [文件] linked-skills.ts\n⊃ [文件] config.ts\n⊃ [文件] graph-path.ts\n⊃ [文件] template-resolver.ts\n⊃ [文件] graph-store.ts\n⊃ [文件] graph-builder.ts\n⊃ [文件] dependency.ts\n  ⊃ [函数] checkArtifact\n  ⊃ [接口] CheckResult\n⊃ [文件] meta-store.ts\n⊃ [文件] graph-query.ts\n⊃ [文件] config.ts\n⊃ [文件] vector-store.ts\n⊃ [文件] mapping-store.ts\n⊃ [文件] semantic-search.ts\n⊃ [文件] context-pipeline.ts\n⊃ [文件] graph-manager.ts\n⊃ [文件] project-type.ts\n\n--- 依赖关系 ---\n"
+      "nodeCount": 17,
+      "tokenEstimate": 326,
+      "serialized": "=== 知识图谱上下文 ===\n\n⇄ [能力] 购物车与收藏管理 ◉\n  ⊃ [模块] web-cart\n    ⊃ [文件] Cart.vue\n      ⊃ [函数] toggleFavorite\n    ⊃ [文件] FavoriteList.vue\n      ⊃ [函数] removeFavorite\n    ⊃ [文件] cart.ts\n      ⊃ [函数] addFavorite\n      ⊃ [函数] removeFavorite\n      ⊃ [状态] favorites\n    ⊃ [文件] cart-api.ts\n  ⊃ [模块] server-cart\n    ⊃ [文件] cart-routes.js\n      ⊃ [函数] toggleFavoriteHandler\n    ⊃ [文件] favorite.js\n      ⊃ [函数] listFavorites\n      ⊃ [函数] setFavorite\n\n--- 依赖关系 ---\n\n--- 业务映射 ---\n  购物车与收藏管理 ⇄ web-cart\n  购物车与收藏管理 ⇄ server-cart\n"
     }
   ]
 }

@@ -10,7 +10,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/index.ts",
-    "test": "node --test dist/test/**/*.test.js || echo \"no tests\"",
+    "test": "npm run test:build && node --test dist-test/test",
+    "test:build": "tsc -p tsconfig.test.json",
+    "viz": "node dist/index.js viz --root \"论文/关键词召回实验数据/workspaces/wpw-full\" --port 7788",
     "update-skills": "npm run build && node scripts/update-linked-skills.js",
     "dev:link": "node scripts/dev-link.js"
   },

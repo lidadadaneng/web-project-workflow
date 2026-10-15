@@ -18,7 +18,10 @@
           <el-button type="primary" @click="save">保存配置</el-button>
           <el-button :loading="testing" @click="test">连接测试</el-button>
           <el-tag v-if="testResult === 'ok'" type="success" style="margin-left: 12px">连接成功</el-tag>
-          <el-tag v-else-if="testResult === 'fail'" type="danger" style="margin-left: 12px">连接失败，请检查配置</el-tag>
+          <el-tag v-else-if="testResult === 'fail'" type="danger" style="margin-left: 12px">连接失败</el-tag>
+        </el-form-item>
+        <el-form-item v-if="testMessage">
+          <span class="muted">{{ testMessage }}</span>
         </el-form-item>
       </el-form>
 
@@ -31,14 +34,14 @@
           <span class="mono">{{ maskedKey }}</span>
         </el-descriptions-item>
         <el-descriptions-item label="存储位置">
-          <span class="mono">localStorage</span>
+          <span class="mono">localStorage（每次请求由服务端转发，不落盘）</span>
         </el-descriptions-item>
       </el-descriptions>
       <el-alert
         type="info"
         :closable="false"
         style="margin-top: 16px"
-        title="API Key 仅保存在本地，不会写入 workflow.config.yaml 等会提交至版本库的文件。"
+        title="API Key 仅保存在浏览器本地，不会写入 workflow.config.yaml 等会提交至版本库的文件；发起对话时随请求传给本地服务转发，服务端不留存。"
       />
     </el-card>
   </div>
@@ -47,13 +50,13 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { saveLlmConfig, getLlmConfig, testLlm, type LlmConfig } from '@/api'
 
-const STORAGE_KEY = 'wpw-viz-api-config'
-
-const form = reactive({ baseUrl: '', apiKey: '', model: '' })
+const form = reactive<LlmConfig>({ baseUrl: '', apiKey: '', model: '' })
 const models = ['deepseek-chat', 'deepseek-reasoner', 'qwen-max', 'kimi-k3', 'gpt-4o', 'claude-sonnet-5']
 const testing = ref(false)
 const testResult = ref<'' | 'ok' | 'fail'>('')
+const testMessage = ref('')
 
 const maskedKey = computed(() => {
   const k = form.apiKey
@@ -62,30 +65,36 @@ const maskedKey = computed(() => {
 })
 
 function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(form))
+  saveLlmConfig({ ...form })
   ElMessage.success('配置已保存到本地')
 }
 
-function test() {
-  if (!form.baseUrl || !form.apiKey) {
-    ElMessage.warning('请先填写 Base URL 和 API Key')
+/** 真实连通性探测：由本地服务转发到 /models，失败再退化为一次最小 chat 调用 */
+async function test() {
+  if (!form.baseUrl || !form.apiKey || !form.model) {
+    ElMessage.warning('请先填写 Base URL、API Key 和模型')
     return
   }
   testing.value = true
   testResult.value = ''
-  // 一期 mock：格式合法即视为成功；二期由后端代理真实探测
-  setTimeout(() => {
+  testMessage.value = ''
+  try {
+    const result = await testLlm({ ...form })
+    testResult.value = result.ok ? 'ok' : 'fail'
+    testMessage.value = result.message
+    if (result.ok) save()
+  } catch (e) {
+    testResult.value = 'fail'
+    testMessage.value = (e as Error).message
+  } finally {
     testing.value = false
-    testResult.value = form.baseUrl.startsWith('http') && form.apiKey.length >= 8 ? 'ok' : 'fail'
-  }, 800)
+  }
 }
 
-onMounted(() => {
-  const saved = localStorage.getItem(STORAGE_KEY)
-  if (saved) Object.assign(form, JSON.parse(saved))
-})
+onMounted(() => Object.assign(form, getLlmConfig()))
 </script>
 
 <style scoped>
 .config-wrap { display: flex; justify-content: center; }
+.muted { font-size: 12px; color: var(--el-text-color-secondary); }
 </style>

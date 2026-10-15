@@ -4,14 +4,41 @@
     <el-card class="page-card">
       <template #header>任务输入</template>
       <div class="input-row">
-        <el-input v-model="query" placeholder="自然语言任务，如：调整购物车中收藏商品的展示逻辑" style="max-width: 420px" />
+        <el-input
+          v-model="query"
+          placeholder="自然语言任务，如：购物车 / 订单 / 用户登录"
+          style="max-width: 360px"
+          @keyup.enter="generate"
+        />
         <div class="budget">
           <span class="budget-label">Token 预算：{{ budget }}</span>
-          <el-slider v-model="budget" :min="500" :max="4000" :step="100" style="width: 200px" />
+          <el-slider v-model="budget" :min="500" :max="4000" :step="100" style="width: 180px" />
         </div>
-        <el-button type="primary" icon="MagicStick" :loading="loading" @click="generate">生成上下文</el-button>
+        <el-switch v-model="semantic" active-text="语义检索" />
+        <el-button type="primary" icon="MagicStick" :loading="loading" :disabled="!query.trim()" @click="generate">
+          生成上下文
+        </el-button>
+      </div>
+      <div class="examples">
+        <span class="muted">试试：</span>
+        <el-tag v-for="q in examples" :key="q" size="small" effect="plain" class="example" @click="useExample(q)">{{ q }}</el-tag>
       </div>
     </el-card>
+
+    <el-alert
+      v-if="demo?.degraded"
+      :title="demo.degraded"
+      type="warning"
+      :closable="false"
+      style="margin-top: 12px"
+    />
+    <el-alert
+      v-if="error"
+      :title="error"
+      type="error"
+      :closable="false"
+      style="margin-top: 12px"
+    />
 
     <template v-if="demo">
       <!-- 过程区 -->
@@ -64,23 +91,39 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getContextDemo, type ContextDemo } from '@/api'
+import { getContext, type ContextDemo } from '@/api'
 import GraphCanvas from '@/components/GraphCanvas.vue'
 import { LEVEL_COLORS } from '@/components/graph-theme'
 
-const query = ref('调整购物车中收藏商品的展示逻辑')
+const query = ref('购物车')
 const budget = ref(1000)
+const semantic = ref(true)
 const loading = ref(false)
 const demo = ref<ContextDemo | null>(null)
+const error = ref('')
+const examples = ['购物车', '订单', '用户登录', '收货地址', '评论']
 
 const anchorIds = computed(() => demo.value?.anchors.map((a) => a.id) ?? [])
 const levelColor = (l: string) => LEVEL_COLORS[l] ?? '#909399'
 const tagType = (l: string) => (l === 'loose' ? 'success' : l === 'standard' ? 'primary' : 'warning') as 'success' | 'primary' | 'warning'
 
+function useExample(q: string) {
+  query.value = q
+  generate()
+}
+
+/** 真实跑一遍图谱管线：语义检索找锚点 → 加权双向 BFS 子图 → 三档压缩 */
 async function generate() {
+  const q = query.value.trim()
+  if (!q || loading.value) return
+
   loading.value = true
+  error.value = ''
   try {
-    demo.value = await getContextDemo()
+    demo.value = await getContext({ query: q, budget: budget.value, semantic: semantic.value })
+  } catch (e) {
+    error.value = (e as Error).message
+    ElMessage.error(error.value)
   } finally {
     loading.value = false
   }
@@ -94,6 +137,9 @@ async function copy(text: string) {
 
 <style scoped>
 .input-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.examples { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.example { cursor: pointer; }
+.muted { color: var(--el-text-color-secondary); font-size: 13px; }
 .budget { display: flex; align-items: center; gap: 12px; }
 .budget-label { font-size: 13px; color: var(--el-text-color-secondary); white-space: nowrap; }
 .anchor-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--el-border-color-lighter); }

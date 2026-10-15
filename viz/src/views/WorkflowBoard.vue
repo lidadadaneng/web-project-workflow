@@ -2,15 +2,38 @@
   <div>
     <!-- 页头：副标题 + 搜索 -->
     <div class="page-head">
-      <div class="page-sub">查看和管理所有工作流的执行状态与节点信息</div>
-      <el-input
-        v-model="keyword"
-        class="search-input"
-        placeholder="搜索工作流名称…"
-        clearable
-        :prefix-icon="Search"
-      />
+      <div class="page-sub">
+        查看和管理所有工作流的执行状态与节点信息
+        <span v-if="meta" class="workspace mono">工作区：{{ meta.root }}</span>
+      </div>
+      <div class="head-actions">
+        <el-button size="small" :loading="store.loading.value" @click="reload">刷新</el-button>
+        <el-button type="primary" size="small" icon="Plus" @click="newVisible = true">新建需求</el-button>
+        <el-input
+          v-model="keyword"
+          class="search-input"
+          placeholder="搜索工作流名称…"
+          clearable
+          :prefix-icon="Search"
+        />
+      </div>
     </div>
+
+    <el-alert
+      v-if="store.error.value"
+      :title="store.error.value"
+      type="error"
+      :closable="false"
+      style="margin-bottom: 12px"
+    />
+    <el-alert
+      v-if="meta && !loading && !store.changes.value.length"
+      type="info"
+      :closable="false"
+      style="margin-bottom: 12px"
+      title="该工作区暂无活跃需求"
+      description="点击右上角「新建需求」会在 wpw/active/ 下创建真实目录与 .wpw.yaml；也可以在 IDE 中执行 /wpw:brd 让 AI 层生成首个制品。"
+    />
 
     <!-- 状态页签 -->
     <div class="tabs">
@@ -78,18 +101,32 @@
                 <el-dropdown-item command="chat">AI 对话协同</el-dropdown-item>
                 <el-dropdown-item command="history">历史回溯</el-dropdown-item>
                 <el-dropdown-item command="detail">查看详情</el-dropdown-item>
-                <el-dropdown-item command="reset" divided>重置数据</el-dropdown-item>
+                <el-dropdown-item command="archive" divided>归档需求</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
         </div>
         <div class="side-bottom">
-          <el-button text type="primary" class="detail-link" @click="openDetail">详情 &gt;</el-button>
+          <el-button text type="primary" class="detail-link" @click="openDetail(row)">详情 &gt;</el-button>
         </div>
       </div>
     </div>
 
-    <el-empty v-if="!filtered.length" description="没有匹配的工作流" :image-size="80" />
+    <el-empty v-if="!filtered.length && store.changes.value.length" description="没有匹配的工作流" :image-size="80" />
+
+    <!-- 新建需求（真实创建 wpw/active/<name>/.wpw.yaml） -->
+    <el-dialog v-model="newVisible" title="新建需求" width="440px">
+      <el-form label-width="90px" @submit.prevent>
+        <el-form-item label="需求名">
+          <el-input v-model="newName" placeholder="kebab-case，如 cart-batch-delete" @keyup.enter="createNew" />
+        </el-form-item>
+      </el-form>
+      <div class="muted">需求名 2-30 字符，仅小写字母/数字/短横线，且全局唯一（含已归档需求）。</div>
+      <template #footer>
+        <el-button @click="newVisible = false">取消</el-button>
+        <el-button type="primary" :loading="creating" :disabled="!newName.trim()" @click="createNew">创建</el-button>
+      </template>
+    </el-dialog>
 
     <!-- 阶段操作面板（含 AI 对话 / 文档 / 历史回溯） -->
     <PhaseActionDrawer
@@ -149,23 +186,29 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
-import type { ChangeItem } from '@/api'
+import { createChange, getMeta, type ChangeItem, type WorkspaceMeta } from '@/api'
 import { useWorkflowStore, PHASE_DEFS } from '@/store/workflow'
-import { useAssistantStore } from '@/store/assistant'
 import PhaseDag from '@/components/PhaseDag.vue'
 import PhaseActionDrawer from '@/components/PhaseActionDrawer.vue'
 
 const store = useWorkflowStore()
-const assistant = useAssistantStore()
 
 const keyword = ref('')
 const activeTab = ref<'all' | 'running' | 'finished' | 'failed'>('all')
 const actionVisible = ref(false)
-const actionTarget = ref<ChangeItem | null>(null)
+/** 只记需求名，对象本身从 store 里实时取——否则写操作换掉 store 里的对象后，抽屉会一直显示旧状态 */
+const actionName = ref('')
+const actionTarget = computed(() => store.changes.value.find((c) => c.name === actionName.value) ?? null)
 const actionPhase = ref('')
 const actionTab = ref('action')
 const detailVisible = ref(false)
+const meta = ref<WorkspaceMeta | null>(null)
+const loading = ref(false)
+const newVisible = ref(false)
+const newName = ref('')
+const creating = ref(false)
 
 const labelOf = (id: string) => PHASE_DEFS.find((p) => p.id === id)?.label ?? id
 
@@ -202,15 +245,57 @@ const formatTime = (t: number) =>
   new Date(t).toLocaleString('zh-CN', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 
 function openPhase(change: ChangeItem, phaseId: string, tab = 'action') {
-  actionTarget.value = change
+  actionName.value = change.name
   actionPhase.value = phaseId
   actionTab.value = tab
   actionVisible.value = true
 }
 
-async function openDetail() {
-  await store.load()
+async function openDetail(row: ChangeItem) {
+  await store.loadDetail(row.name)
   detailVisible.value = true
+}
+
+async function reload() {
+  loading.value = true
+  try {
+    await store.load(true)
+  } catch (e) {
+    ElMessage.error((e as Error).message)
+  } finally {
+    loading.value = false
+  }
+}
+
+async function createNew() {
+  const name = newName.value.trim()
+  if (!name) return
+  creating.value = true
+  try {
+    await createChange(name)
+    ElMessage.success(`已创建需求 ${name}（wpw/active/${name}/.wpw.yaml）`)
+    newVisible.value = false
+    newName.value = ''
+    await store.load(true)
+  } catch (e) {
+    ElMessage.error((e as Error).message)
+  } finally {
+    creating.value = false
+  }
+}
+
+async function onArchive(row: ChangeItem) {
+  await ElMessageBox.confirm(
+    `将「${row.name}」从 wpw/active/ 移动到 wpw/archived/YYYY-MM/，目录与制品一并迁移。归档后不能回退、不能新建同名需求。`,
+    '确认归档',
+    { type: 'warning', confirmButtonText: '归档', cancelButtonText: '取消' },
+  )
+  try {
+    const result = await store.archive(row.name)
+    ElMessage.success(`已归档到 ${result.dest}${result.note ? `（${result.note}）` : ''}`)
+  } catch (e) {
+    ElMessage.error((e as Error).message)
+  }
 }
 
 function onCommand(cmd: string, row: ChangeItem) {
@@ -222,17 +307,19 @@ function onCommand(cmd: string, row: ChangeItem) {
   } else if (cmd === 'history') {
     openPhase(row, store.nextActionable(row) ?? 'apply', 'history')
   } else if (cmd === 'detail') {
-    openDetail()
-  } else if (cmd === 'reset') {
-    localStorage.removeItem('wpw-viz-workflow-state')
-    localStorage.removeItem('wpw-viz-assistant')
-    location.reload()
+    openDetail(row)
+  } else if (cmd === 'archive') {
+    onArchive(row)
   }
 }
 
-onMounted(() => {
-  store.load()
-  assistant.load()
+onMounted(async () => {
+  await reload()
+  try {
+    meta.value = await getMeta()
+  } catch {
+    // 元信息拿不到不影响看板
+  }
 })
 </script>
 
@@ -245,6 +332,8 @@ onMounted(() => {
   margin-bottom: 16px;
 }
 .page-sub { font-size: 13px; color: #86909c; }
+.workspace { margin-left: 10px; font-size: 12px; color: #a8abb2; }
+.head-actions { display: flex; align-items: center; gap: 12px; }
 .search-input { width: 260px; }
 
 /* 状态页签 */

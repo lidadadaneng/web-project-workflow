@@ -1,16 +1,31 @@
 /**
- * 工作流前端状态仓库（一期 mock）。
+ * 工作流前端状态仓库（真实后端）。
+ *
+ * 所有读写都落到 `wpw viz` 服务的 /api，也就是真实的 wpw/active/<name>/.wpw.yaml
+ * 与阶段制品文件——不再有 localStorage 影子状态。
  *
  * 门禁判定规则与 CLI 内置 Schema（src/schema/six-phase.ts）保持一致：
  *   - dependsOn：强前置必须 done
- *   - optionalDeps：弱依赖不阻塞，但产生警告（如 explore 完成未拍板）
+ *   - optionalDeps：弱依赖不阻塞，但 explore 完成未拍板会产生警告
  *   - skippable：explore / testplan 可跳过
  *   - apply：强依赖 plan；testplan 未完成时给质量风险提示
- *
- * 状态变更持久化到 localStorage（二期切换为 POST /api/... 由 CLI 写回 .wpw.yaml）。
+ *   - apply 没有独立落盘状态，由 Plan 任务完成度派生（见服务端 deriveApply）
  */
 import { computed, reactive, ref } from 'vue'
-import { getChanges, getChangeDetail, type ChangeItem, type ChangeDetail, type PhaseState } from '@/api'
+import {
+  archiveChange,
+  getChangeDetail,
+  getChanges,
+  getEvents,
+  rollback,
+  setDecision,
+  setPhase,
+  setTaskState,
+  type ChangeDetail,
+  type ChangeItem,
+  type HistoryEvent,
+  type PhaseState,
+} from '@/api'
 
 export interface PhaseDef {
   id: string
@@ -38,99 +53,65 @@ export interface PhaseCheck {
   warnings: string[]
 }
 
-/** 历史事件：每次状态变更都带快照，支持回退到任意节点（二期由 CLI 事件日志提供） */
-export interface HistoryEvent {
-  id: string
-  ts: number
-  change: string
-  type: 'done' | 'skip' | 'reset' | 'decide' | 'task' | 'revise' | 'rollback'
-  label: string
-  snapshot: { phases: Record<string, PhaseState>; exploreDecision?: string }
-}
-
-const STORAGE_KEY = 'wpw-viz-workflow-state'
-
 const changes = ref<ChangeItem[]>([])
 const detail = ref<ChangeDetail | null>(null)
 const loaded = ref(false)
-const history = ref<HistoryEvent[]>([])
-
-function snapshotOf(c: ChangeItem): HistoryEvent['snapshot'] {
-  return JSON.parse(JSON.stringify({ phases: c.phases, exploreDecision: c.exploreDecision }))
-}
-
-function persist() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ changes: changes.value, detail: detail.value, history: history.value }))
-}
-
-function restore(): boolean {
-  const raw = localStorage.getItem(STORAGE_KEY)
-  if (!raw) return false
-  try {
-    const saved = JSON.parse(raw)
-    changes.value = saved.changes
-    detail.value = saved.detail
-    history.value = saved.history ?? []
-    return true
-  } catch {
-    return false
-  }
-}
+const loading = ref(false)
+const error = ref('')
+/** 历史事件按需求缓存，按需从 /events 拉取 */
+const eventsByChange = reactive<Record<string, HistoryEvent[]>>({})
 
 export function useWorkflowStore() {
   async function load(force = false) {
+    if (loading.value) return
     if (loaded.value && !force) return
-    const [mockChanges, mockDetail] = await Promise.all([getChanges(), getChangeDetail()])
-    if (!restore()) {
-      changes.value = mockChanges
-      detail.value = mockDetail
-    } else {
-      // 状态以本地持久化为准，mock 新增的展示字段（description/tag 等）按名合并补齐
-      changes.value = changes.value.map((c) => ({ ...mockChanges.find((m) => m.name === c.name), ...c }))
+
+    loading.value = true
+    error.value = ''
+    try {
+      changes.value = await getChanges()
+      loaded.value = true
+    } catch (e) {
+      error.value = (e as Error).message
+      throw e
+    } finally {
+      loading.value = false
     }
-    if (!history.value.length) seedHistory()
-    loaded.value = true
   }
 
-  /** 首次进入时按当前阶段状态反推一条可信的演进历史（mock 演示用） */
-  function seedHistory() {
-    const seq: HistoryEvent[] = []
-    for (const c of changes.value) {
-      const phases: Record<string, PhaseState> = Object.fromEntries(PHASE_DEFS.map((p) => [p.id, 'pending']))
-      let decided: string | undefined
-      let i = 0
-      for (const def of PHASE_DEFS) {
-        const st = c.phases[def.id]
-        if (st !== 'done' && st !== 'skipped') continue
-        phases[def.id] = st
-        const ts = c.createdAt + ++i * 26 * 3600 * 1000 // 每个阶段约间隔一天
-        seq.push({
-          id: `${c.name}-${def.id}-${ts}`,
-          ts,
-          change: c.name,
-          type: st === 'done' ? 'done' : 'skip',
-          label: st === 'done' ? `完成 ${def.label}` : `跳过 ${def.label}`,
-          snapshot: JSON.parse(JSON.stringify({ phases, exploreDecision: decided })),
-        })
-        if (def.id === 'explore' && st === 'done' && c.exploreDecision) {
-          decided = c.exploreDecision
-          seq.push({
-            id: `${c.name}-decide-${ts + 1}`,
-            ts: ts + 3600 * 1000,
-            change: c.name,
-            type: 'decide',
-            label: `Explore 拍板：${decided}`,
-            snapshot: JSON.parse(JSON.stringify({ phases, exploreDecision: decided })),
-          })
-        }
-      }
+  async function loadDetail(name: string): Promise<ChangeDetail | null> {
+    try {
+      detail.value = await getChangeDetail(name)
+      return detail.value
+    } catch (e) {
+      error.value = (e as Error).message
+      return null
     }
-    history.value = seq.sort((a, b) => a.ts - b.ts)
-    persist()
+  }
+
+  async function loadEvents(name: string, force = false): Promise<HistoryEvent[]> {
+    if (eventsByChange[name] && !force) return eventsByChange[name]
+    eventsByChange[name] = await getEvents(name)
+    return eventsByChange[name]
+  }
+
+  function historyOf(changeName: string) {
+    return eventsByChange[changeName] ?? []
   }
 
   function find(name: string) {
     return changes.value.find((c) => c.name === name)
+  }
+
+  /** 用后端返回的最新状态覆盖本地缓存（写操作后调用，避免整表刷新） */
+  function applyUpdated(updated: ChangeItem) {
+    const idx = changes.value.findIndex((c) => c.name === updated.name)
+    if (idx >= 0) changes.value[idx] = updated
+    else changes.value.push(updated)
+
+    if (detail.value?.name === updated.name) {
+      detail.value = { ...detail.value, ...updated }
+    }
   }
 
   /** 依赖检查：镜像 CLI check 命令的判定规则 */
@@ -157,88 +138,54 @@ export function useWorkflowStore() {
     return null
   }
 
-  /** 记录一条历史事件（快照取变更后的状态） */
-  function recordEvent(changeName: string, type: HistoryEvent['type'], label: string) {
-    const c = find(changeName)
-    if (!c) return
-    history.value.push({
-      id: `${changeName}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      ts: Date.now(),
-      change: changeName,
-      type,
-      label,
-      snapshot: snapshotOf(c),
-    })
-    persist()
+  async function updatePhase(changeName: string, phaseId: string, state: PhaseState) {
+    applyUpdated(await setPhase(changeName, phaseId, state))
+    await loadEvents(changeName, true)
   }
 
-  /** 回退到某条历史事件的快照，并记录回溯动作本身 */
-  function rollbackTo(eventId: string) {
-    const ev = history.value.find((e) => e.id === eventId)
-    if (!ev) return
-    const c = find(ev.change)
-    if (!c) return
-    c.phases = JSON.parse(JSON.stringify(ev.snapshot.phases))
-    if (ev.snapshot.exploreDecision) c.exploreDecision = ev.snapshot.exploreDecision
-    else delete c.exploreDecision
-    if (detail.value?.name === ev.change) {
-      detail.value.phases = JSON.parse(JSON.stringify(ev.snapshot.phases))
-    }
-    recordEvent(ev.change, 'rollback', `回退到「${ev.label}」`)
-    persist()
+  async function decide(changeName: string, option: string) {
+    applyUpdated(await setDecision(changeName, option))
+    await loadEvents(changeName, true)
   }
 
-  function historyOf(changeName: string) {
-    return history.value.filter((e) => e.change === changeName).sort((a, b) => a.ts - b.ts)
+  async function toggleTask(changeName: string, taskId: string, currentState: string) {
+    const next = currentState === 'done' ? 'pending' : 'done'
+    applyUpdated(await setTaskState(changeName, taskId, next))
+    await loadDetail(changeName)
+    await loadEvents(changeName, true)
   }
 
-  function setPhase(changeName: string, phaseId: string, state: PhaseState) {
-    const c = find(changeName)
-    if (!c) return
-    c.phases[phaseId] = state
-    if (detail.value?.name === changeName) detail.value.phases[phaseId] = state
-    const def = PHASE_DEFS.find((p) => p.id === phaseId)
-    const type = state === 'done' ? 'done' : state === 'skipped' ? 'skip' : 'reset'
-    const verb = state === 'done' ? '完成' : state === 'skipped' ? '跳过' : '重置'
-    recordEvent(changeName, type, `${verb} ${def?.label ?? phaseId}`)
-    persist()
+  /** 回退到某条历史事件（服务端按事件快照还原并追加一条 rollback 记录） */
+  async function rollbackTo(changeName: string, eventId: string) {
+    applyUpdated(await rollback(changeName, eventId))
+    await loadDetail(changeName)
+    await loadEvents(changeName, true)
   }
 
-  function decide(changeName: string, option: string) {
-    const c = find(changeName)
-    if (!c) return
-    c.exploreDecision = option
-    recordEvent(changeName, 'decide', `Explore 拍板：${option}`)
-    persist()
-  }
-
-  function toggleTask(taskId: string) {
-    if (!detail.value) return
-    const t = detail.value.planTasks.find((x) => x.id === taskId)
-    if (!t) return
-    t.state = t.state === 'done' ? 'pending' : 'done'
-    const done = detail.value.planTasks.filter((x) => x.state === 'done').length
-    detail.value.tasks.done = done
-    const c = find(detail.value.name)
-    if (c) c.tasks.done = done
-    recordEvent(detail.value.name, 'task', `${t.state === 'done' ? '勾选' : '取消勾选'}任务「${t.title}」`)
-    persist()
+  async function archive(changeName: string) {
+    const result = await archiveChange(changeName)
+    changes.value = changes.value.filter((c) => c.name !== changeName)
+    if (detail.value?.name === changeName) detail.value = null
+    return result
   }
 
   return {
     changes,
     detail,
-    history,
+    error,
     loaded: computed(() => loaded.value),
+    loading: computed(() => loading.value),
     load,
+    loadDetail,
+    loadEvents,
+    historyOf,
     find,
     checkPhase,
     nextActionable,
-    setPhase,
+    updatePhase,
     decide,
     toggleTask,
-    recordEvent,
     rollbackTo,
-    historyOf,
+    archive,
   }
 }

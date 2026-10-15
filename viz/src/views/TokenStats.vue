@@ -12,6 +12,11 @@
         </div>
       </template>
       <div ref="chartRef" style="height: 380px"></div>
+      <el-empty
+        v-if="!hasData"
+        description="还没有真实调用记录——对话或 AI 修订制品后，用量会记录到 <工作区>/.wpw-console/usage.jsonl"
+        :image-size="70"
+      />
     </el-card>
 
     <el-row :gutter="16">
@@ -46,6 +51,9 @@ const total = computed(() => {
   }
 })
 const ratio = computed(() => (total.value.output ? (total.value.input / total.value.output).toFixed(1) + ' : 1' : '-'))
+
+/** 用量来自真实大模型调用的记录，未产生调用时为空 */
+const hasData = computed(() => Boolean(stats.value?.byTime.length))
 
 function render() {
   if (!chart || !stats.value) return

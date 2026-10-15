@@ -1,0 +1,6 @@
+version: 1.0.0
+project:
+  name: ''
+  type: auto
+inputSkillRoot: .claude/skills/modules
+outputTemplateRoot: .claude/skills/wpw-workflow/templates

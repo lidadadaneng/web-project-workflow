@@ -10,6 +10,7 @@
 /dataSources.local.xml
 
 /dist
+/dist-test
 /node_modules
 /.idea
 # 知识图谱构建产物（不入库，本地构建）

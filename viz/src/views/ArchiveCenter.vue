@@ -63,7 +63,8 @@ function open(c: ArchivedChange) {
 }
 
 onMounted(async () => {
-  archived.value = await getArchived()
+  // 尚无归档属于正常空态（wpw/archived 可能不存在）
+  archived.value = (await getArchived().catch(() => [])) ?? []
 })
 </script>
 

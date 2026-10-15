@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getGraph, type GraphData, type GraphNode } from '@/api'
+import { getGraph, getMeta, type GraphData, type GraphNode } from '@/api'
 import GraphCanvas from '@/components/GraphCanvas.vue'
 import { LEVEL_COLORS } from '@/components/graph-theme'
 
@@ -112,7 +112,13 @@ function showDetail(n: GraphNode) {
 }
 
 onMounted(async () => {
-  raw.value = await getGraph()
+  // 图谱名以工作区配置为准（多图谱工作区可能是非 default 的名字）
+  try {
+    const meta = await getMeta()
+    raw.value = await getGraph(meta.graph)
+  } catch {
+    raw.value = await getGraph()
+  }
 })
 </script>
 

@@ -49,8 +49,9 @@ const data = ref<KnowledgeData | null>(null)
 const current = ref<CapabilitySpec | null>(null)
 
 onMounted(async () => {
-  data.value = await getSpecs()
-  current.value = data.value.specs[0] ?? null
+  // 工作区未建知识库时 specs 为空，属于正常空态
+  data.value = await getSpecs().catch(() => null)
+  current.value = data.value?.specs[0] ?? null
 })
 </script>
 

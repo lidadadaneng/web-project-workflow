@@ -1,0 +1,12 @@
+{
+  "elapsed_seconds": 206.40081763267517,
+  "stdout_tail": "[迁移] 检测到旧式单图谱，正在迁移到 default/ ...\n[迁移] 完成，已迁移 3 个文件到 default/\n[迁移] 迁移前文件: graph.jsonl, meta.json, index/vector-mapping.json, index/vector.index\n[迁移] 迁移后文件: graph.jsonl, meta.json, index/vector-mapping.json, index/vector.index\n{\n  \"success\": true,\n  \"nodesByLevel\": {\n    \"C\": 25,\n    \"L1\": 12,\n    \"L2\": 393,\n    \"L3\": 1369\n  },\n  \"edgesByType\": {\n    \"contain\": 1599,\n    \"import\": 535,\n    \"business_map\": 300\n  },\n  \"vectorCount\": 1794,\n  \"totalTimeMs\": 205966,\n  \"phaseTimes\": {\n    \"capabilities\": 16,\n    \"modules\": 0,\n    \"source-parse\": 859,\n    \"edges\": 234,\n    \"vectors\": 201379,\n    \"business-map\": 3422,\n    \"validation\": 3,\n    \"save\": 46\n  },\n  \"validation\": {\n    \"passed\": true,\n    \"errors\": [],\n    \"warnings\": [\n      \"4 个节点没有任何关联边\"\n    ]\n  },\n  \"graphName\": \"default\",\n  \"scanRoot\": \".\"\n}\n",
+  "stderr_tail": "",
+  "meta": {
+    "schemaVersion": "3.1.0",
+    "builtAt": 1788656676985,
+    "totalNodes": 1799,
+    "totalEdges": 2434,
+    "totalVectors": 1794
+  }
+}

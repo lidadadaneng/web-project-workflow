@@ -63,7 +63,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from 'vue'
 import * as echarts from 'echarts'
-import { getGraphStat, type GraphStat } from '@/api'
+import { getGraphStat, getMeta, type GraphStat } from '@/api'
 import { LEVEL_COLORS } from '@/components/graph-theme'
 
 const stat = ref<GraphStat | null>(null)
@@ -81,7 +81,13 @@ const modPercent = computed(() => {
 })
 
 onMounted(async () => {
-  stat.value = await getGraphStat()
+  // 图谱名以工作区配置为准（多图谱工作区可能是非 default 的名字）
+  try {
+    const meta = await getMeta()
+    stat.value = await getGraphStat(meta.graph)
+  } catch {
+    stat.value = await getGraphStat()
+  }
   await nextTick() // v-if="stat" 渲染后再取图表容器 ref
 
   echarts.init(levelRef.value!).setOption({

@@ -1,0 +1,25 @@
+graph:
+  build:
+    ignore: [node_modules, dist, build, .git, wpw, .next, .nuxt, coverage, target, h5, static]
+    languages: [typescript, javascript, vue, java]
+  modules:
+    - {name: controller-layer, side: backend, dir: src/main/java/com/controller, description: HTTP 控制器}
+    - {name: service-layer, side: backend, dir: src/main/java/com/service, description: 业务服务}
+    - {name: dao-layer, side: backend, dir: src/main/java/com/dao, description: 数据访问}
+    - {name: entity-layer, side: backend, dir: src/main/java/com/entity, description: 领域实体}
+    - {name: config-layer, side: backend, dir: src/main/java/com/config, description: 应用配置}
+    - {name: interceptor-layer, side: backend, dir: src/main/java/com/interceptor, description: 请求鉴权}
+    - {name: annotation-layer, side: backend, dir: src/main/java/com/annotation, description: 自定义注解}
+    - {name: utils-layer, side: backend, dir: src/main/java/com/utils, description: 通用工具}
+    - {name: mapper-layer, side: backend, dir: src/main/resources/mapper, description: MyBatis 映射}
+    - {name: admin-source, side: frontend, dir: src/main/resources/admin/admin/src, description: 管理端源码}
+    - {name: front-pages, side: frontend, dir: src/main/resources/front/front/pages, description: 用户端页面源码}
+    - {name: front-api, side: frontend, dir: src/main/resources/front/front/api, description: 用户端 API 封装}
+  mapping:
+    semanticThreshold: 0.5
+    semanticTopK: 12
+    gitHistory: true
+    gitMaxCommits: 1000
+    gitMinFreq: 2
+  search:
+    decayAlpha: 3.0

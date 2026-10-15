@@ -67,7 +67,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, shallowRef } from 'vue'
 import * as echarts from 'echarts'
-import { getGraphStat, getTokenStats, type ChangeItem, type GraphStat, type TokenStats } from '@/api'
+import { getGraphStat, getMeta, getTokenStats, type ChangeItem, type GraphStat, type TokenStats } from '@/api'
 import { useWorkflowStore } from '@/store/workflow'
 
 const store = useWorkflowStore()
@@ -97,8 +97,14 @@ const totalTokens = computed(() => {
 const formatTime = (t: number) => new Date(t).toLocaleDateString('zh-CN')
 
 onMounted(async () => {
-  await store.load()
-  ;[graphStat.value, tokenStats.value] = await Promise.all([getGraphStat(), getTokenStats()])
+  // 工作区可能为空（尚无需求 / 尚未归档），失败不应打断整页渲染
+  await store.load().catch(() => {})
+
+  const meta = await getMeta().catch(() => null)
+  ;[graphStat.value, tokenStats.value] = await Promise.all([
+    getGraphStat(meta?.graph).catch(() => null),
+    getTokenStats().catch(() => null),
+  ])
 
   const phaseChart = echarts.init(phaseChartRef.value!)
   phaseChart.setOption({
@@ -114,16 +120,18 @@ onMounted(async () => {
     }],
   })
 
+  // Token 用量来自真实大模型调用记录，未产生调用时序列为空
+  const byTime = tokenStats.value?.byTime ?? []
   const tokenChart = echarts.init(tokenChartRef.value!)
   tokenChart.setOption({
     tooltip: { trigger: 'axis' },
     legend: { data: ['输入', '输出'] },
     grid: { left: 50, right: 20, top: 40, bottom: 30 },
-    xAxis: { type: 'category', data: tokenStats.value.byTime.map((d) => d.date) },
+    xAxis: { type: 'category', data: byTime.map((d) => d.date) },
     yAxis: { type: 'value' },
     series: [
-      { name: '输入', type: 'line', smooth: true, areaStyle: { opacity: 0.15 }, data: tokenStats.value.byTime.map((d) => d.input) },
-      { name: '输出', type: 'line', smooth: true, areaStyle: { opacity: 0.15 }, data: tokenStats.value.byTime.map((d) => d.output) },
+      { name: '输入', type: 'line', smooth: true, areaStyle: { opacity: 0.15 }, data: byTime.map((d) => d.input) },
+      { name: '输出', type: 'line', smooth: true, areaStyle: { opacity: 0.15 }, data: byTime.map((d) => d.output) },
     ],
   })
   charts.value = [phaseChart, tokenChart]

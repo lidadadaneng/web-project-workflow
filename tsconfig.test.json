@@ -1,0 +1,27 @@
+{
+  // 测试专用编译配置：把 src（含 src/test）编到 dist-test/，供 `npm test` 用 node:test 运行。
+  // 主 tsconfig.json 排除了 src/test，是为了不把测试混进 npm 包；测试另有自己的出口目录。
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-test",
+    "declaration": false,
+    "sourceMap": false
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "dist-test",
+    "test",
+    "ai-layer",
+    // 以下测试改用 vitest 编写，但本仓库未安装 vitest，无法编译；保持排除以免阻断其余测试
+    "src/test/graph-commands.test.ts",
+    "src/test/multi-graph-build.test.ts",
+    "src/test/multi-graph-storage.test.ts",
+    "src/test/vector-builder.test.ts",
+    "src/test/uniapp-parser.test.ts",
+    "src/test/miniprogram-parser.test.ts",
+    "src/test/redux-parser.test.ts",
+    "src/test/vuex-parser.test.ts"
+  ]
+}

@@ -3,6 +3,9 @@
  *
  * 每个需求一个 .wpw.yaml，记录各阶段 status、拍板决策、任务进度。
  * 依赖检查引擎（dependency.ts）消费此状态。
+ *
+ * 每次状态变更都会往同目录的 .wpw-events.jsonl 追加一条带前后快照的事件
+ * （见 events.ts），使推进过程可回溯、可回退。
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -14,6 +17,7 @@ import {
   listArtifactIds,
   sixPhaseSchema,
 } from '../schema/six-phase';
+import { appendEvent, makeEvent, snapshotOf, type StateSnapshot } from './events';
 
 export interface ExploreDecision {
   chosenOption: string | null;
@@ -135,8 +139,16 @@ export function setStatus(
   status: ArtifactStatus,
 ): ChangeState {
   const state = loadStateOrThrow(root, name);
+  const before = snapshotOf(state);
   state.status[id] = status;
   saveState(root, state);
+  appendEvent(
+    getChangeDir(root, name),
+    makeEvent('phase', `阶段 ${id} → ${status}`, before, snapshotOf(state), {
+      phase: id,
+      status,
+    }),
+  );
   return state;
 }
 
@@ -148,14 +160,22 @@ export function setDecision(
 ): ChangeState {
   const state = loadStateOrThrow(root, name);
   if (id === 'explore') {
+    const before = snapshotOf(state);
     state.decisions.explore = {
       chosenOption: option,
       chosenAt: new Date().toISOString(),
     };
+    saveState(root, state);
+    appendEvent(
+      getChangeDir(root, name),
+      makeEvent('decide', `Explore 拍板：${option}`, before, snapshotOf(state), {
+        phase: id,
+        option,
+      }),
+    );
   } else {
     throw new Error(`阶段 ${id} 不支持 decision 记录`);
   }
-  saveState(root, state);
   return state;
 }
 
@@ -166,10 +186,52 @@ export function setProgress(
   completedTasks: number,
 ): ChangeState {
   const state = loadStateOrThrow(root, name);
+  const before = snapshotOf(state);
   state.progress.totalTasks = totalTasks;
   state.progress.completedTasks = completedTasks;
   saveState(root, state);
+  appendEvent(
+    getChangeDir(root, name),
+    makeEvent('task', `任务进度 ${completedTasks}/${totalTasks}`, before, snapshotOf(state), {
+      totalTasks,
+      completedTasks,
+    }),
+  );
   return state;
+}
+
+/**
+ * 回退到某个历史快照：把 status / decisions / progress 还原，并记一条 rollback 事件。
+ *
+ * 非破坏性——被回退掉的那些历史事件仍留在日志里，可以再回退到它们。
+ */
+export function restoreSnapshot(
+  root: string,
+  name: string,
+  snapshot: StateSnapshot,
+  label = '回退到历史快照',
+): ChangeState {
+  const state = loadStateOrThrow(root, name);
+  const before = snapshotOf(state);
+  state.status = { ...state.status, ...(snapshot.status as Record<ArtifactId, ArtifactStatus>) };
+  state.decisions = snapshot.decisions ?? {};
+  if (snapshot.progress) state.progress = snapshot.progress;
+  saveState(root, state);
+  appendEvent(
+    getChangeDir(root, name),
+    makeEvent('rollback', label, before, snapshotOf(state)),
+  );
+  return state;
+}
+
+/**
+ * 定位需求的目录（先查 active，再查 archived 的月份子目录）。
+ * 找不到返回 null——归档后的需求依然可以被可视化控制台读取。
+ */
+export function resolveChangeDir(root: string, name: string): string | null {
+  const active = getChangeDir(root, name);
+  if (fs.existsSync(active)) return active;
+  return findArchivedChangeDir(root, name);
 }
 
 /** 列出 wpw/active/ 下所有需求名 */
@@ -263,6 +325,46 @@ export function findArchivedChangeDir(root: string, name: string): string | null
   }
 
   return null;
+}
+
+export interface ArchiveResult {
+  /** 归档目标绝对路径 */
+  dest: string;
+  /** 相对工作区根的路径（展示用） */
+  relative: string;
+  /** 归档月份 YYYY-MM */
+  month: string;
+}
+
+/**
+ * 把 active 下的需求目录整体移入 wpw/archived/YYYY-MM/，并补一条 archive 事件。
+ *
+ * `wpw archive` 与 viz 控制台的归档按钮共用此实现，避免两处各写一遍搬运逻辑。
+ * 调用方负责在搬运前校验需求是否存在。
+ */
+export function archiveChange(root: string, name: string): ArchiveResult {
+  const src = getChangeDir(root, name);
+  if (!fs.existsSync(src)) {
+    throw new Error(`需求不存在: ${name}`);
+  }
+
+  const state = loadState(root, name);
+  const month = new Date().toISOString().slice(0, 7);
+  const destDir = path.join(getArchivedDir(root), month);
+  const dest = path.join(destDir, name);
+
+  fs.mkdirSync(destDir, { recursive: true });
+  fs.renameSync(src, dest);
+
+  // 事件日志随目录一起搬走，这里往新位置补一条归档事件（保留归档前的状态快照）
+  appendEvent(
+    dest,
+    makeEvent('archive', `归档到 ${month}`, state ? snapshotOf(state) : undefined, undefined, {
+      month,
+    }),
+  );
+
+  return { dest, relative: path.relative(root, dest), month };
 }
 
 /**

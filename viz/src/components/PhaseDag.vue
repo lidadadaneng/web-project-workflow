@@ -24,7 +24,7 @@
     <g v-for="n in layout" :key="n.id"
        :transform="`translate(${n.x - n.w / 2}, ${n.y - n.h / 2})`"
        class="node-g" @click="$emit('phaseClick', n.id)">
-      <rect :width="n.w" :height="n.h" rx="6" :class="['node', stateOf(n.id), { active: n.id === actionableId }]" />
+      <rect :width="n.w" :height="n.h" rx="6" :class="['node', stateOf(n.id), { active: n.id === actionableId, draft: isDraft(n.id) }]" />
 
       <!-- 状态图标：统一 12px，左对齐，与文字间距 8px -->
       <g :transform="`translate(11, ${n.h / 2})`" class="state-icon">
@@ -32,6 +32,11 @@
         <g v-if="stateOf(n.id) === 'done'">
           <circle r="5.2" class="icon-done-bg" />
           <path d="M -2.6 0.4 L -0.8 2.2 L 2.8 -1.8" class="icon-check" />
+        </g>
+        <!-- drafting：琥珀半环，表示已产出草稿/待确认（CLI 的 outlining / confirmed） -->
+        <g v-else-if="isDraft(n.id)">
+          <circle r="4.6" class="icon-draft" />
+          <path d="M 0 -4.6 A 4.6 4.6 0 0 1 0 4.6" class="icon-draft-fill" />
         </g>
         <!-- active：靶心圆点 -->
         <g v-else-if="n.id === actionableId">
@@ -93,6 +98,12 @@ const edges: EdgeDef[] = [
 
 const stateOf = (id: string): PhaseState => props.phases[id] ?? 'pending'
 
+/** CLI 真实状态里的中途态（outlining / confirmed）：已有产物但未落盘完成 */
+const isDraft = (id: string) => {
+  const s = stateOf(id)
+  return s === 'outlining' || s === 'confirmed'
+}
+
 /** 连线颜色跟随状态：双 done→浅绿，源 done 且目标可推进→浅蓝，其余→灰；弱依赖恒为灰虚线 */
 function edgeColor(e: EdgeDef): 'green' | 'blue' | 'grey' {
   if (e.weak) return 'grey'
@@ -146,12 +157,18 @@ const edgePaths = computed(() =>
 .node.pending:not(.active) { fill: #ffffff; stroke: #dcdfe6; }
 /* skipped：白底灰虚线，存在感弱化 */
 .node.skipped { fill: #ffffff; stroke: #c9cdd4; stroke-dasharray: 4 3; }
+/* draft：琥珀描边，表示已产出草稿但未完成 */
+.node.draft { fill: #fffaf0; stroke: #e6a23c; }
 
 .node-label { text-anchor: middle; dominant-baseline: middle; font-size: 11.5px; font-weight: 500; }
 .node-label.done { fill: #529b2e; font-weight: 600; }
 .node-label.pending { fill: #86909c; }
 .node-label.pending.active { fill: #165dff; font-weight: 600; }
 .node-label.skipped { fill: #a8abb2; opacity: 0.8; text-decoration: line-through; }
+.node-label.outlining, .node-label.confirmed { fill: #b88230; font-weight: 600; }
+
+.state-icon .icon-draft { stroke: #e6a23c; stroke-width: 1.4; fill: none; }
+.state-icon .icon-draft-fill { fill: #f3d19e; stroke: none; }
 
 .state-icon .icon-done-bg { fill: #67c23a; }
 .state-icon .icon-check { stroke: #fff; stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }

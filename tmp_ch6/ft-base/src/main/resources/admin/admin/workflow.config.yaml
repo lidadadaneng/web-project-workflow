@@ -1,0 +1,78 @@
+version: 1.0.0
+project:
+  name: ''
+  type: auto
+inputSkillRoot: .claude/skills/modules
+outputTemplateRoot: .claude/skills/wpw-workflow/templates
+
+# 知识图谱模块定义（L1 层）
+# 管理后台前端 - 美食信息系统
+graph:
+  modules:
+    # ===== 业务模块（src/views/modules/） =====
+    - name: food-info
+      side: frontend
+      dir: src/views/modules/meishixinxi
+      description: 美食信息管理（列表、增删改查）
+    - name: food-category
+      side: frontend
+      dir: src/views/modules/meishifenlei
+      description: 美食分类管理
+    - name: order-mgmt
+      side: frontend
+      dir: src/views/modules/orders
+      description: 订单管理
+    - name: cart-mgmt
+      side: frontend
+      dir: src/views/modules/cart
+      description: 购物车管理
+    - name: address-mgmt
+      side: frontend
+      dir: src/views/modules/address
+      description: 收货地址管理
+    - name: food-comment
+      side: frontend
+      dir: src/views/modules/discussmeishixinxi
+      description: 美食评论管理
+    - name: favorite-mgmt
+      side: frontend
+      dir: src/views/modules/storeup
+      description: 收藏管理
+    - name: news-mgmt
+      side: frontend
+      dir: src/views/modules/news
+      description: 资讯/新闻管理
+    - name: chat-mgmt
+      side: frontend
+      dir: src/views/modules/chat
+      description: 聊天/消息管理
+    - name: admin-user
+      side: frontend
+      dir: src/views/modules/users
+      description: 管理员用户管理
+    - name: member-user
+      side: frontend
+      dir: src/views/modules/yonghu
+      description: 普通会员用户管理
+    - name: system-config
+      side: frontend
+      dir: src/views/modules/config
+      description: 系统配置管理
+
+    # ===== 框架与通用模块 =====
+    - name: layout
+      side: frontend
+      dir: src/components/index
+      description: 后台布局组件（侧边栏、顶栏、主区域）
+    - name: common-components
+      side: frontend
+      dir: src/components/common
+      description: 通用业务组件（面包屑、编辑器、文件上传等）
+    - name: utils
+      side: frontend
+      dir: src/utils
+      description: 工具函数（HTTP请求、存储、校验、国际化等）
+    - name: router-store
+      side: frontend
+      dir: src/router
+      description: 路由与状态管理

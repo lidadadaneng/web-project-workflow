@@ -8,6 +8,7 @@ import {
   validateChangeName,
 } from '../lib/state';
 import { getProjectType } from '../lib/config';
+import { appendEvent, makeEvent } from '../lib/events';
 
 export function registerNew(program: Command): void {
   program
@@ -43,6 +44,14 @@ export function registerNew(program: Command): void {
       const projectType = getProjectType(root);
       const state = initState(name, projectType, opts.schema);
       saveState(root, state);
+      appendEvent(
+        getChangeDir(root, name),
+        makeEvent('create', `创建需求 ${name}`, undefined, {
+          status: state.status,
+          decisions: state.decisions,
+          progress: state.progress,
+        }),
+      );
       console.log(`已创建需求: ${name}`);
       console.log(`  目录: ${getChangeDir(root, name)}`);
     });

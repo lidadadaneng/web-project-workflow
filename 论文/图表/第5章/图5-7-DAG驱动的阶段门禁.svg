@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="860" viewBox="0 0 1900 860" role="img"><title>强依赖构成工作流主链，可选阶段提供探索与测试输入</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="erArrow" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L18,10 L0,20 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="1900" height="860" fill="#fff"/>
+<text x="950" y="55" font-size="38" font-weight="600" text-anchor="middle" dominant-baseline="central">强依赖主链</text>
+<rect x="70" y="205" width="280" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="210" y="257.5" font-size="38" font-weight="400" text-anchor="middle" dominant-baseline="central">BRD</text>
+<rect x="410" y="205" width="280" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="550" y="257.5" font-size="38" font-weight="400" text-anchor="middle" dominant-baseline="central">PRD</text>
+<rect x="790" y="205" width="280" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="930" y="257.5" font-size="38" font-weight="400" text-anchor="middle" dominant-baseline="central">Design</text>
+<rect x="1170" y="205" width="280" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1310" y="257.5" font-size="38" font-weight="400" text-anchor="middle" dominant-baseline="central">Plan</text>
+<rect x="1550" y="205" width="280" height="105" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
+<text x="1690" y="257.5" font-size="38" font-weight="400" text-anchor="middle" dominant-baseline="central">Apply</text>
+<polyline points="350,257 410,257" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="690,257 790,257" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1070,257 1170,257" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1450,257 1550,257" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="500" y="505" width="280" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="640" y="534.75" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">Explore</text>
+<text x="640" y="580.25" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">可跳过</text>
+<polygon points="930,495.5 1025,558 930,620.5 835,558" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="930" y="558" font-size="30" font-weight="600" text-anchor="middle" dominant-baseline="central">已拍板？</text>
+<rect x="1220" y="505" width="280" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1360" y="534.75" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">Test</text>
+<text x="1360" y="580.25" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">可跳过</text>
+<polyline points="550,310 600,505" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="780,558 835,558" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="930,495 930,400 930,310" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<text x="1015" y="410" font-size="29" font-weight="400" text-anchor="middle" dominant-baseline="central">可选输入</text>
+<polyline points="1070,310 1280,505" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1310,310 1360,505" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1500,558 1690,558 1690,310" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<text x="1590" y="525" font-size="29" font-weight="400" text-anchor="middle" dominant-baseline="central">测试输入</text>
+<rect x="165" y="705" width="360" height="80" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="345" y="745" font-size="30" font-weight="400" text-anchor="middle" dominant-baseline="central">实线：强依赖</text>
+<rect x="770" y="705" width="360" height="80" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="950" y="745" font-size="30" font-weight="400" text-anchor="middle" dominant-baseline="central">虚线：可选输入</text>
+<rect x="1375" y="705" width="360" height="80" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1555" y="745" font-size="30" font-weight="400" text-anchor="middle" dominant-baseline="central">缺失时告警但不阻塞</text>
+</svg>

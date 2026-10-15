@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1080" viewBox="0 0 1900 1080" role="img"><title>从多个锚点沿入边和出边扩展，并裁除低权重或超深度节点</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="erArrow" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L18,10 L0,20 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="1900" height="1080" fill="#fff"/>
+<ellipse cx="950" cy="535" rx="680" ry="390" fill="#f8fafc" stroke="#303840" stroke-width="3" stroke-dasharray="12 8"/>
+<text x="950" y="105" font-size="40" font-weight="600" text-anchor="middle" dominant-baseline="central">裁剪后保留的任务子图</text>
+<polyline points="570.7044641826067,336.40298765719103 682.4214906885288,314.9189440983598" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<polyline points="824.3987577519939,332.19937887599696 900.3959800010075,370.19799000050375" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<polyline points="1055.9395735011028,379.06165524029143 1176.8387035782057,329.80645409776804" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<polyline points="1313.748649004332,333.4680407272743 1380.0535656758025,368.2781219797963" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<polyline points="527.6923076923077,416.46153846153845 569.6153846153846,517.0769230769231" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<polyline points="670.5067502045114,604.5876034905885 812.6384268589388,633.9941572811598" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<polyline points="960.3566982024416,634.7050656081649 1033.0313036108707,618.9062383454628" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<polyline points="1197.1527677732356,627.7749963983648 1295.6698944623706,663.2411620064534" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<polyline points="1028.6423211200877,476.0145786629762 1067.2052856135633,528.3500304755503" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<polyline points="785.0694301314611,367.4946195847031 862.4932641613135,575.9434035112286" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<polyline points="1430.5415399107683,474.3207640678879 1391.3502548201293,613.9397172032897" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<circle cx="500" cy="350" r="68" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="500" y="350" font-size="30" font-weight="500" text-anchor="middle" dominant-baseline="central">上游</text>
+<circle cx="760" cy="300" r="72" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="760" y="300" font-size="30" font-weight="500" text-anchor="middle" dominant-baseline="central">L2</text>
+<circle cx="980" cy="410" r="82" fill="#f1f5f8" stroke="#303840" stroke-width="4"/>
+<circle cx="980" cy="410" r="73" fill="none" stroke="#303840" stroke-width="2"/>
+<text x="980" y="410" font-size="31" font-weight="600" text-anchor="middle" dominant-baseline="central">锚点 A</text>
+<circle cx="1250" cy="300" r="72" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1250" y="300" font-size="30" font-weight="500" text-anchor="middle" dominant-baseline="central">L3</text>
+<circle cx="1450" cy="405" r="68" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1450" y="405" font-size="30" font-weight="500" text-anchor="middle" dominant-baseline="central">下游</text>
+<circle cx="600" cy="590" r="72" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="600" y="590" font-size="30" font-weight="500" text-anchor="middle" dominant-baseline="central">L1</text>
+<circle cx="890" cy="650" r="72" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="890" y="650" font-size="30" font-weight="500" text-anchor="middle" dominant-baseline="central">L2</text>
+<circle cx="1120" cy="600" r="82" fill="#f1f5f8" stroke="#303840" stroke-width="4"/>
+<circle cx="1120" cy="600" r="73" fill="none" stroke="#303840" stroke-width="2"/>
+<text x="1120" y="600" font-size="31" font-weight="600" text-anchor="middle" dominant-baseline="central">锚点 B</text>
+<circle cx="1370" cy="690" r="72" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1370" y="690" font-size="30" font-weight="500" text-anchor="middle" dominant-baseline="central">L3</text>
+<polyline points="438.0176561613502,377.9676429515859 146.5133134999454,509.50009025002464" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<circle cx="90" cy="535" r="55" fill="#fff" stroke="#737d86" stroke-width="2"/>
+<text x="90" y="535" font-size="30" font-weight="500" text-anchor="middle" dominant-baseline="central">X</text>
+<text x="155" y="601.8" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">边权低于阈值</text>
+<text x="155" y="638.1999999999999" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">不再扩展</text>
+<polyline points="1509.4026223872995,371.90425324136174 1745.8387854704035,240.17553380934663" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<circle cx="1800" cy="210" r="55" fill="#fff" stroke="#737d86" stroke-width="2"/>
+<text x="1800" y="210" font-size="30" font-weight="500" text-anchor="middle" dominant-baseline="central">X</text>
+<text x="1690" y="91.8" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">超过最大深度</text>
+<text x="1690" y="128.2" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">予以裁除</text>
+<text x="950" y="969.85" font-size="31" font-weight="500" text-anchor="middle" dominant-baseline="central">双向扩展：同时访问入边与出边</text>
+<text x="950" y="1010.15" font-size="31" font-weight="500" text-anchor="middle" dominant-baseline="central">合并规则：到最近锚点的距离</text>
+</svg>

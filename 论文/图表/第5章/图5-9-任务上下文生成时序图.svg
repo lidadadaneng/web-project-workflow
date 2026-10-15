@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1770" height="1515" viewBox="0 0 1770 1515" role="img"><title>锚点经双向扩展、相关性裁剪和预算压缩后形成任务上下文</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="erArrow" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L18,10 L0,20 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="1770" height="1515" fill="#fff"/>
+<polyline points="180,135 180,1485" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<polyline points="650,135 650,1485" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<polyline points="1120,135 1120,1485" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<polyline points="1590,135 1590,1485" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="415" y="180" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">提交任务与 Token 预算</text>
+<polyline points="180,207 650,207" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="30" y="240" width="1710" height="429" fill="none" stroke="#737d86" stroke-width="2"/>
+<rect x="30" y="240" width="76" height="42" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="68" y="261" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">alt</text>
+<text x="135" y="268" font-size="29" font-weight="600" text-anchor="start" dominant-baseline="central">[自然语言任务]</text>
+<text x="885" y="308" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">检索候选锚点</text>
+<polyline points="650,335 1120,335" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="885" y="384" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回锚点与得分</text>
+<polyline points="1120,411 650,411" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<polyline points="30,465 1740,465" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="135" y="524" font-size="29" font-weight="600" text-anchor="start" dominant-baseline="central">[已指定锚点]</text>
+<text x="765" y="564" font-size="31" font-weight="400" text-anchor="start" dominant-baseline="central">采用给定锚点</text>
+<polyline points="650,591 740,591 740,625 650,625" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<text x="1355" y="702" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">读取入边与出边邻域</text>
+<polyline points="650,729 1590,729" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1355" y="778" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回候选子图</text>
+<polyline points="1590,805 650,805" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<text x="765" y="854" font-size="31" font-weight="400" text-anchor="start" dominant-baseline="central">评分裁剪并抽取骨架</text>
+<polyline points="650,881 740,881 740,915 650,915" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<rect x="30" y="938" width="1710" height="173" fill="none" stroke="#737d86" stroke-width="2"/>
+<rect x="30" y="938" width="92" height="42" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="76" y="959" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">loop</text>
+<text x="145" y="966" font-size="29" font-weight="600" text-anchor="start" dominant-baseline="central">[结果超过预算]</text>
+<text x="765" y="1006" font-size="31" font-weight="400" text-anchor="start" dominant-baseline="central">收紧规模、深度和阈值</text>
+<polyline points="650,1033 740,1033 740,1067 650,1067" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<rect x="30" y="1128" width="1710" height="329" fill="none" stroke="#737d86" stroke-width="2"/>
+<rect x="30" y="1128" width="76" height="42" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="68" y="1149" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">alt</text>
+<text x="135" y="1156" font-size="29" font-weight="600" text-anchor="start" dominant-baseline="central">[满足预算]</text>
+<text x="415" y="1196" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回结构化上下文</text>
+<polyline points="650,1223 180,1223" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<polyline points="30,1277 1740,1277" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="135" y="1336" font-size="29" font-weight="600" text-anchor="start" dominant-baseline="central">[最小结果仍超预算]</text>
+<text x="415" y="1376" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回预算不足提示</text>
+<polyline points="650,1403 180,1403" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<rect x="20" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="180" y="57.25" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">调用方</text>
+<text x="180" y="102.75" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">AI / 控制台</text>
+<rect x="490" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="650" y="57.25" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">上下文流水线</text>
+<text x="650" y="102.75" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">CLI context</text>
+<rect x="960" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1120" y="80" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">向量索引</text>
+<rect x="1430" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1590" y="80" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">图谱存储</text>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1770" height="1401" viewBox="0 0 1770 1401" role="img"><title>依赖检查通过后生成并确认阶段制品，最后由 CLI 更新状态</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="erArrow" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L18,10 L0,20 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="1770" height="1401" fill="#fff"/>
+<polyline points="180,135 180,1371" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<polyline points="650,135 650,1371" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<polyline points="1120,135 1120,1371" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<polyline points="1590,135 1590,1371" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="415" y="180" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">提出阶段目标</text>
+<polyline points="180,207 650,207" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="885" y="256" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">检查阶段门禁</text>
+<polyline points="650,283 1120,283" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1355" y="332" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">读取状态与前序制品</text>
+<polyline points="1120,359 1590,359" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1355" y="408" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回阶段输入</text>
+<polyline points="1590,435 1120,435" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<rect x="30" y="468" width="1710" height="875" fill="none" stroke="#737d86" stroke-width="2"/>
+<rect x="30" y="468" width="76" height="42" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="68" y="489" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">alt</text>
+<text x="135" y="496" font-size="29" font-weight="600" text-anchor="start" dominant-baseline="central">[依赖未满足]</text>
+<text x="885" y="536" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回缺失前置</text>
+<polyline points="1120,563 650,563" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<polyline points="30,617 1740,617" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="135" y="676" font-size="29" font-weight="600" text-anchor="start" dominant-baseline="central">[依赖满足]</text>
+<text x="885" y="716" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回模板、输入与警告</text>
+<polyline points="1120,743 650,743" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<rect x="30" y="776" width="1710" height="225" fill="none" stroke="#737d86" stroke-width="2"/>
+<rect x="30" y="776" width="92" height="42" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="76" y="797" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">loop</text>
+<text x="145" y="804" font-size="29" font-weight="600" text-anchor="start" dominant-baseline="central">[草稿尚未确认]</text>
+<text x="415" y="844" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">提交草稿</text>
+<polyline points="650,871 180,871" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="415" y="920" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">确认或提出修改</text>
+<polyline points="180,947 650,947" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1355" y="1034" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">保存确认后的文档</text>
+<polyline points="650,1061 1590,1061" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="885" y="1110" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">标记阶段完成</text>
+<polyline points="650,1137 1120,1137" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1355" y="1186" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">原子更新状态</text>
+<polyline points="1120,1213 1590,1213" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="885" y="1262" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回新状态</text>
+<polyline points="1120,1289 650,1289" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<rect x="20" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="180" y="80" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">开发者</text>
+<rect x="490" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="650" y="80" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">AI 编程智能体</text>
+<rect x="960" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1120" y="80" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">CLI</text>
+<rect x="1430" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1590" y="57.25" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">文件系统</text>
+<text x="1590" y="102.75" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">工作区与状态</text>
+</svg>

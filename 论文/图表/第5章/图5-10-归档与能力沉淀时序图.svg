@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1770" height="1411" viewBox="0 0 1770 1411" role="img"><title>人工确认能力沉淀后归档工作区，并更新项目知识图谱</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="erArrow" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L18,10 L0,20 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="1770" height="1411" fill="#fff"/>
+<polyline points="180,135 180,1381" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<polyline points="650,135 650,1381" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<polyline points="1120,135 1120,1381" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<polyline points="1590,135 1590,1381" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="415" y="180" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">确认需求已交付</text>
+<polyline points="180,207 650,207" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1355" y="256" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">读取已确认制品</text>
+<polyline points="650,283 1590,283" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1355" y="332" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回 PRD、设计与实施记录</text>
+<polyline points="1590,359 650,359" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<text x="765" y="408" font-size="31" font-weight="400" text-anchor="start" dominant-baseline="central">合并或新建能力规范</text>
+<polyline points="650,435 740,435 740,469 650,469" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)"/>
+<text x="415" y="508" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">提交沉淀结果</text>
+<polyline points="650,535 180,535" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="415" y="584" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">确认沉淀内容</text>
+<polyline points="180,611 650,611" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="885" y="660" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">执行归档命令</text>
+<polyline points="650,687 1120,687" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1355" y="736" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">迁移工作区并检查图谱</text>
+<polyline points="1120,763 1590,763" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="30" y="796" width="1710" height="329" fill="none" stroke="#737d86" stroke-width="2"/>
+<rect x="30" y="796" width="76" height="42" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="68" y="817" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">alt</text>
+<text x="135" y="824" font-size="29" font-weight="600" text-anchor="start" dominant-baseline="central">[历史图谱兼容]</text>
+<text x="1355" y="864" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">增量更新节点、边与映射</text>
+<polyline points="1120,891 1590,891" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="30,945 1740,945" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="135" y="1004" font-size="29" font-weight="600" text-anchor="start" dominant-baseline="central">[图谱缺失或不兼容]</text>
+<text x="1355" y="1044" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">执行全量构建</text>
+<polyline points="1120,1071 1590,1071" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1355" y="1158" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回知识更新结果</text>
+<polyline points="1590,1185 1120,1185" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<text x="885" y="1234" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回归档摘要</text>
+<polyline points="1120,1261 650,1261" fill="none" stroke="#303840" stroke-width="2" stroke-dasharray="9 6" marker-end="url(#open)"/>
+<text x="415" y="1310" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">报告归档位置与结果</text>
+<polyline points="650,1337 180,1337" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="20" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="180" y="80" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">开发者</text>
+<rect x="490" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="650" y="80" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">AI 编程智能体</text>
+<rect x="960" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1120" y="80" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">CLI</text>
+<rect x="1430" y="25" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1590" y="57.25" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">知识存储</text>
+<text x="1590" y="102.75" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">工作区与图谱</text>
+</svg>

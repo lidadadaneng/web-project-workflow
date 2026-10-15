@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1910" height="1090" viewBox="0 0 1910 1090" role="img"><title>wpw 系统及五个模块的功能分解</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="erArrow" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L18,10 L0,20 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="1910" height="1090" fill="#fff"/>
+<rect x="730" y="35" width="450" height="105" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
+<text x="955" y="87.5" font-size="43" font-weight="400" text-anchor="middle" dominant-baseline="central">wpw 系统</text>
+<polyline points="955,140 955,212" fill="none" stroke="#303840" stroke-width="2"/>
+<polyline points="225,212 1705,212" fill="none" stroke="#303840" stroke-width="2"/>
+<polyline points="225,212 225,255" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="75" y="255" width="300" height="96" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
+<text x="225" y="303" font-size="36" font-weight="400" text-anchor="middle" dominant-baseline="central">工作流管理</text>
+<polyline points="75,303 60,303 60,997" fill="none" stroke="#303840" stroke-width="2"/>
+<polyline points="60,447 75,447" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="75" y="400" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="225" y="447" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">需求创建与初始化</text>
+<polyline points="60,557 75,557" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="75" y="510" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="225" y="536.85" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">阶段门禁与</text>
+<text x="225" y="577.15" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">依赖检查</text>
+<polyline points="60,667 75,667" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="75" y="620" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="225" y="667" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">阶段制品模板下发</text>
+<polyline points="60,777 75,777" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="75" y="730" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="225" y="777" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">阶段状态更新与恢复</text>
+<polyline points="60,887 75,887" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="75" y="840" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="225" y="887" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">任务实施与进度同步</text>
+<polyline points="60,997 75,997" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="75" y="950" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="225" y="997" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">归档与工作区迁移</text>
+<polyline points="595,212 595,255" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="445" y="255" width="300" height="96" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
+<text x="595" y="303" font-size="36" font-weight="400" text-anchor="middle" dominant-baseline="central">图谱构建</text>
+<polyline points="445,303 430,303 430,887" fill="none" stroke="#303840" stroke-width="2"/>
+<polyline points="430,447 445,447" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="445" y="400" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="595" y="447" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">能力规范解析</text>
+<polyline points="430,557 445,557" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="445" y="510" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="595" y="557" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">源码结构解析</text>
+<polyline points="430,667 445,667" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="445" y="620" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="595" y="667" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">业务映射合成</text>
+<polyline points="430,777 445,777" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="445" y="730" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="595" y="777" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">图谱本地存储</text>
+<polyline points="430,887 445,887" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="445" y="840" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="595" y="887" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">向量索引构建</text>
+<polyline points="965,212 965,255" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="815" y="255" width="300" height="96" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
+<text x="965" y="303" font-size="36" font-weight="400" text-anchor="middle" dominant-baseline="central">上下文生成</text>
+<polyline points="815,303 800,303 800,777" fill="none" stroke="#303840" stroke-width="2"/>
+<polyline points="800,447 815,447" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="815" y="400" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="965" y="447" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">锚点检索与选择</text>
+<polyline points="800,557 815,557" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="815" y="510" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="965" y="557" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">子图扩展与裁剪</text>
+<polyline points="800,667 815,667" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="815" y="620" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="965" y="667" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">骨架抽取与序列化</text>
+<polyline points="800,777 815,777" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="815" y="730" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="965" y="756.85" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">Token 预算控制</text>
+<text x="965" y="797.15" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">与分档压缩</text>
+<polyline points="1335,212 1335,255" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1185" y="255" width="300" height="96" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
+<text x="1335" y="303" font-size="36" font-weight="400" text-anchor="middle" dominant-baseline="central">增量维护</text>
+<polyline points="1185,303 1170,303 1170,887" fill="none" stroke="#303840" stroke-width="2"/>
+<polyline points="1170,447 1185,447" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1185" y="400" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1335" y="447" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">文件哈希差异识别</text>
+<polyline points="1170,557 1185,557" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1185" y="510" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1335" y="557" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">变更局部重建</text>
+<polyline points="1170,667 1185,667" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1185" y="620" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1335" y="667" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">能力规范增量更新</text>
+<polyline points="1170,777 1185,777" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1185" y="730" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1335" y="756.85" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">归档驱动的</text>
+<text x="1335" y="797.15" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">能力沉淀</text>
+<polyline points="1170,887 1185,887" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1185" y="840" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1335" y="866.85" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">版本兼容检查</text>
+<text x="1335" y="907.15" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">与全量回退</text>
+<polyline points="1705,212 1705,255" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1555" y="255" width="300" height="96" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
+<text x="1705" y="303" font-size="36" font-weight="400" text-anchor="middle" dominant-baseline="central">可视化控制台</text>
+<polyline points="1555,303 1540,303 1540,887" fill="none" stroke="#303840" stroke-width="2"/>
+<polyline points="1540,447 1555,447" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1555" y="400" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1705" y="426.85" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">工作流看板与</text>
+<text x="1705" y="467.15000000000003" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">阶段操作</text>
+<polyline points="1540,557 1555,557" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1555" y="510" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1705" y="557" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">图谱可视化与统计</text>
+<polyline points="1540,667 1555,667" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1555" y="620" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1705" y="667" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">上下文生成演示</text>
+<polyline points="1540,777 1555,777" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1555" y="730" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1705" y="777" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">知识库与归档浏览</text>
+<polyline points="1540,887 1555,887" fill="none" stroke="#303840" stroke-width="2"/>
+<rect x="1555" y="840" width="300" height="94" fill="#fff" stroke="#303840" stroke-width="2"/>
+<text x="1705" y="866.85" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">Token 统计与</text>
+<text x="1705" y="907.15" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">模型对话</text>
+</svg>

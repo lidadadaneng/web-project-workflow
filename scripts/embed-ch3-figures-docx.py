@@ -1,74 +1,133 @@
 from pathlib import Path
+import os
+import re
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.image.image import Image
-from docx.shared import Pt
+from docx.oxml import OxmlElement
+from docx.shared import Inches, Pt
 from docx.oxml.ns import qn
+from docx.text.paragraph import Paragraph
 
 
 WORKSPACE = Path(__file__).resolve().parents[1]
-DOCX_PATH = WORKSPACE / "论文" / "面向AI辅助软件开发的图谱驱动上下文工程方法研究与系统实现.docx"
-FIGURES = {
-    "!图1-1": ("第1章", "图1-1-现有研究覆盖范围与本文定位.png", "图1-1 现有研究覆盖范围与本文定位", "Figure 1-1 Coverage of Existing Research and the Position of This Thesis"),
-    "!图1-2": ("第1章", "图1-2-核心研究内容.png", "图1-2 核心研究内容", "Figure 1-2 Core Research Content"),
-    "!图3-1": ("第3章", "图3-1-方法总体框架.png", "图3-1 方法总体框架", "Figure 3-1 Overall Framework of the Method"),
-    "!图3-2": ("第3章", "图3-2-能力代码双层本体模型.png", "图3-2 能力-代码双层本体模型", "Figure 3-2 Capability-Code Two-Layer Ontology Model"),
-    "!图3-3": ("第3章", "图3-3-business_map生成流程.png", "图3-3 business_map 生成流程", "Figure 3-3 business_map Generation Process"),
-    "!图3-4": ("第3章", "图3-4-图谱驱动任务上下文生成流水线.png", "图3-4 图谱驱动的任务上下文生成流水线", "Figure 3-4 Graph-Driven Task-Context Generation Pipeline"),
-    "!图3-5": ("第3章", "图3-5-加权双向BFS子图扩展示意.png", "图3-5 加权双向 BFS 子图扩展示意", "Figure 3-5 Weighted Bidirectional BFS Subgraph Expansion"),
-    "!图3-6": ("第3章", "图3-6-三档压缩对比.png", "图3-6 三档压缩对比", "Figure 3-6 Comparison of Three Compression Levels"),
-    "!图3-7": ("第3章", "图3-7-六阶段流程约束架构.png", "图3-7 六阶段流程约束架构", "Figure 3-7 Six-Stage Process-Constrained Architecture"),
-    "!图5-1": ("第5章", "图5-1-wpw系统三层架构.png", "图5-1 wpw 系统三层架构"),
-    "!图5-2": ("第5章", "图5-2-工作流引擎实现架构.png", "图5-2 工作流引擎实现架构"),
-    "!图5-3": ("第5章", "图5-3-阶段制品生成与确认流程.png", "图5-3 阶段制品生成与确认流程"),
-    "!图5-4": ("第5章", "图5-4-DAG驱动的阶段门禁.png", "图5-4 DAG 驱动的阶段门禁"),
-    "!图5-5": ("第5章", "图5-5-加权双向BFS子图扩展示意.png", "图5-5 加权双向 BFS 子图扩展示意"),
-}
+PAPER_DIR = WORKSPACE / "论文"
+DOCX_PATH = Path(os.environ.get(
+    "WPW_THESIS_DOCX",
+    PAPER_DIR / "面向AI辅助软件开发的图谱驱动上下文工程方法研究与系统实现.docx",
+))
+IMAGE_RE = re.compile(r"^!\[([^\]]+)\]\(([^)]+)\)\s*$", re.MULTILINE)
+FIGURE_RE = re.compile(r"图\s*(\d+-\d+)")
+
+
+def collect_figures():
+    figures = {}
+    for chapter in range(1, 6):
+        candidates = list(PAPER_DIR.glob(f"{chapter}.*.md"))
+        if not candidates:
+            continue
+        source = candidates[0]
+        text = source.read_text(encoding="utf-8")
+        for alt, target in IMAGE_RE.findall(text):
+            parts = [part.strip() for part in alt.split("|", 1)]
+            match = FIGURE_RE.search(parts[0])
+            if not match:
+                continue
+            figure_id = match.group(1)
+            if not target.lower().endswith(".png"):
+                raise ValueError(f"Figure {figure_id} is not referenced as PNG: {target}")
+
+            image_path = PAPER_DIR / target
+            if not image_path.exists():
+                image_path = source.parent / target
+            if not image_path.is_file() or image_path.stat().st_size == 0:
+                raise FileNotFoundError(f"Missing or empty PNG for figure {figure_id}: {image_path}")
+            if len(parts) < 2 or not parts[1]:
+                raise ValueError(f"Figure {figure_id} has no English caption in its alt text")
+            if figure_id in figures:
+                raise ValueError(f"Duplicate figure id in Markdown: {figure_id}")
+
+            figures[f"!图{figure_id}"] = {
+                "path": image_path,
+                "caption_cn": parts[0],
+                "caption_en": parts[1],
+            }
+    return figures
 
 
 def insert_after(anchor, paragraph):
     anchor._p.addnext(paragraph._p)
 
 
+def disable_style_numbering(paragraph):
+    ppr = paragraph._p.get_or_add_pPr()
+    num_pr = OxmlElement("w:numPr")
+    ilvl = OxmlElement("w:ilvl")
+    ilvl.set(qn("w:val"), "0")
+    num_id = OxmlElement("w:numId")
+    num_id.set(qn("w:val"), "0")
+    num_pr.append(ilvl)
+    num_pr.append(num_id)
+    style = ppr.find(qn("w:pStyle"))
+    ppr.insert(1 if style is not None else 0, num_pr)
+
+
+figures = collect_figures()
 document = Document(str(DOCX_PATH))
-max_text_width = min(
-    section.page_width - section.left_margin - section.right_margin
-    for section in document.sections
-)
 placeholders = [
-    p for p in document.paragraphs
-    if p.text.strip().split("||", 1)[0] in FIGURES
+    paragraph
+    for paragraph in document.paragraphs
+    if paragraph.text.strip().split("||", 1)[0] in figures
 ]
+unknown = [
+    paragraph.text.strip()
+    for paragraph in document.paragraphs
+    if paragraph.text.strip().startswith("!图")
+    and paragraph.text.strip().split("||", 1)[0] not in figures
+]
+if unknown:
+    raise ValueError("Image placeholders have no matching Markdown PNG: " + ", ".join(unknown))
 if not placeholders:
     print("No figure placeholders found; document may already be synchronized.")
     raise SystemExit(0)
 
+max_text_width = min(
+    section.page_width - section.left_margin - section.right_margin
+    for section in document.sections
+)
+max_text_height = min(
+    section.page_height - section.top_margin - section.bottom_margin - Inches(0.6)
+    for section in document.sections
+)
+
 for placeholder in placeholders:
-    raw_placeholder = placeholder.text.strip()
-    key, _, caption_text_en = raw_placeholder.partition("||")
-    figure_dir, image_name, caption_text = FIGURES[key][:3]
-    image_path = WORKSPACE / "论文" / "图表" / figure_dir / image_name
-    if not image_path.exists():
-        raise FileNotFoundError(image_path)
+    key = placeholder.text.strip().split("||", 1)[0]
+    figure_info = figures[key]
+    image_path = figure_info["path"]
 
     figure = document.add_paragraph()
     figure.alignment = WD_ALIGN_PARAGRAPH.CENTER
     figure.paragraph_format.space_before = 0
     figure.paragraph_format.space_after = 0
     figure.paragraph_format.keep_with_next = True
-    native_width = Image.from_file(str(image_path)).width
-    figure.add_run().add_picture(str(image_path), width=min(native_width, max_text_width))
+    figure.paragraph_format.keep_together = True
+
+    native = Image.from_file(str(image_path))
+    ratio_width = round(max_text_height * native.width / native.height)
+    display_width = min(native.width, max_text_width, ratio_width)
+    figure.add_run().add_picture(str(image_path), width=display_width)
 
     caption = document.add_paragraph(style="u图标题")
     caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
     caption.paragraph_format.space_before = Pt(1.2)
     caption.paragraph_format.space_after = Pt(12)
     caption.paragraph_format.line_spacing = 1.0
-    caption.add_run(caption_text)
-    if caption_text_en:
-        caption.add_run().add_break()
-        caption.add_run(caption_text_en)
+    caption.paragraph_format.keep_together = True
+    disable_style_numbering(caption)
+    caption.add_run(figure_info["caption_cn"])
+    caption.add_run().add_break()
+    caption.add_run(figure_info["caption_en"])
     for run in caption.runs:
         run.font.name = "Times New Roman"
         run._element.get_or_add_rPr().rFonts.set(qn("w:eastAsia"), "黑体")
@@ -77,9 +136,19 @@ for placeholder in placeholders:
 
     anchor = placeholder._p
     parent = anchor.getparent()
+    following = anchor.getnext()
+    for expected_caption in (figure_info["caption_cn"], figure_info["caption_en"]):
+        if following is None or following.tag != qn("w:p"):
+            break
+        next_paragraph = Paragraph(following, document)
+        if next_paragraph.text.strip() != expected_caption:
+            break
+        next_element = following.getnext()
+        parent.remove(following)
+        following = next_element
     insert_after(placeholder, figure)
     insert_after(figure, caption)
     parent.remove(anchor)
 
 document.save(str(DOCX_PATH))
-print(f"Embedded {len(placeholders)} chapter figures in {DOCX_PATH}")
+print(f"Embedded {len(placeholders)} figures in {DOCX_PATH}")

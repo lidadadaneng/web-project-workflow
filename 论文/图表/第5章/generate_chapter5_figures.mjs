@@ -356,8 +356,34 @@ box(770,705,360,80,'虚线：可选输入',30);
 box(1375,705,360,80,'缺失时告警但不阻塞',30);
 end();
 
-// Figure 5-8: actual graph nodes, with the retained subgraph visibly enclosed.
-begin('图5-8-加权双向BFS子图扩展示意',1900,1080,'从多个锚点沿入边和出边扩展，并裁除低权重或超深度节点');
+// Figure 5-8: a concrete L3 node instance, kept separate from the field definition tables.
+begin('图5-8-L3节点JSON实例',1900,970,'Java 服务方法对应的 L3 节点 JSON 实例');
+rect(55,35,1790,900,{fill:'#f8fafc'});
+const l3JsonExample = [
+  '{',
+  '  "id": "elem:a17c9e2d4f80",',
+  '  "level": "L3",',
+  '  "type": "function",',
+  '  "name": "OrderService.createOrder",',
+  '  "attrs": {',
+  '    "filePath": "src/main/java/com/example/order/OrderService.java",',
+  '    "signature": "OrderResult createOrder(CreateOrderRequest request)",',
+  '    "params": [{ "name": "request", "type": "CreateOrderRequest" }],',
+  '    "returnType": "OrderResult",',
+  '    "parentName": "OrderService",',
+  '    "annotations": ["@Transactional"],',
+  '    "lineStart": 42,',
+  '    "lineEnd": 67',
+  '  },',
+  '  "createdAt": 1787483793182,',
+  '  "updatedAt": 1787483793182',
+  '}'
+];
+l3JsonExample.forEach((line,index)=>f.svg.push(`<text x="100" y="${82+index*48}" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">${esc(line)}</text>`));
+end();
+
+// Figure 5-9: actual graph nodes, with the retained subgraph visibly enclosed.
+begin('图5-9-加权双向BFS子图扩展示意',1900,1080,'从多个锚点沿入边和出边扩展，并裁除低权重或超深度节点');
 f.svg.push(`<ellipse cx="950" cy="535" rx="680" ry="390" fill="#f8fafc" stroke="${ink}" stroke-width="3" stroke-dasharray="12 8"/>`);
 text(950,105,'裁剪后保留的任务子图',40,{weight:600});
 const edges=[
@@ -377,7 +403,7 @@ text(1690,110,['超过最大深度','予以裁除'],28,{width:300});
 text(950,990,['双向扩展：同时访问入边与出边','合并规则：到最近锚点的距离'],31,{weight:500});
 end();
 
-sequence('图5-9-任务上下文生成时序图',[
+sequence('图5-10-任务上下文生成时序图',[
   ['调用方','AI / 控制台'],['上下文流水线','CLI context'],'向量索引','图谱存储'],
   '锚点经双向扩展、相关性裁剪和预算压缩后形成任务上下文',s=>{
     s.msg(0,1,'提交任务与 Token 预算');
@@ -394,7 +420,7 @@ sequence('图5-9-任务上下文生成时序图',[
     ]);
   });
 
-sequence('图5-10-归档与能力沉淀时序图',['开发者','AI 编程智能体','CLI',['知识存储','工作区与图谱']],
+sequence('图5-11-归档与能力沉淀时序图',['开发者','AI 编程智能体','CLI',['知识存储','工作区与图谱']],
   '人工确认能力沉淀后归档工作区，并更新项目知识图谱',s=>{
     s.msg(0,1,'确认需求已交付');s.msg(1,3,'读取已确认制品');s.msg(3,1,'返回 PRD、设计与实施记录',{ret:true});
     s.msg(1,1,'合并或新建能力规范');s.msg(1,0,'提交沉淀结果');s.msg(0,1,'确认沉淀内容');
@@ -406,8 +432,8 @@ sequence('图5-10-归档与能力沉淀时序图',['开发者','AI 编程智能�
     s.msg(3,2,'返回知识更新结果',{ret:true});s.msg(2,1,'返回归档摘要',{ret:true});s.msg(1,0,'报告归档位置与结果');
   });
 
-// Figure 5-11: a compact vertical architecture sized for a thesis page.
-begin('图5-11-可视化控制台模块架构',1800,1240,'控制台通过统一数据访问层切换同构 mock 与本地数据服务');
+// Figure 5-12: a compact vertical architecture sized for a thesis page.
+begin('图5-12-可视化控制台模块架构',1800,1240,'控制台通过统一数据访问层切换同构 mock 与本地数据服务');
 frame(40,30,1720,220,'页面层',36);
 [['过程\n总览 · 看板 · 归档',80],['知识\n图谱 · 统计 · 知识库',500],['洞察\n上下文 · Token',920],['交互\n对话 · API 配置',1340]].forEach(([v,x])=>box(x,95,380,115,v.split('\n'),31));
 arrow(900,250,900,315);
@@ -425,7 +451,7 @@ box(1055,1070,560,85,'本地数据服务  /api',33);
 arrow(745,1113,1055,1113,{startArrow:true,open:true});text(900,1070,'契约一致',29);
 end();
 
-sequence('图5-15-工作流看板阶段操作时序图',['开发者',['工作流看板','阶段操作抽屉'],['数据访问层','fetcher'],['数据源','mock / 本地服务']],
+sequence('图5-16-工作流看板阶段操作时序图',['开发者',['工作流看板','阶段操作抽屉'],['数据访问层','fetcher'],['数据源','mock / 本地服务']],
   '看板加载同构数据，复用阶段门禁并通过当前数据源持久化状态',s=>{
     s.msg(0,1,'打开工作流看板');s.msg(1,2,'请求需求列表与详情');s.msg(2,3,'按配置读取 mock 或 API');s.msg(3,1,'返回需求状态',{ret:true});
     s.msg(0,1,'点击阶段节点');s.msg(1,1,'按 Schema 判定门禁');

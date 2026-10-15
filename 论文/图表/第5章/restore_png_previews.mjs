@@ -10,8 +10,8 @@ const svgNames = entries
   .map((entry) => entry.name)
   .sort((a, b) => a.localeCompare(b, 'zh-CN'));
 
-if (svgNames.length !== 12) {
-  throw new Error(`Expected 12 SVG files, found ${svgNames.length}. No PNG files were changed.`);
+if (svgNames.length !== 13) {
+  throw new Error(`Expected 13 SVG files, found ${svgNames.length}. No PNG files were changed.`);
 }
 
 const pending = [];

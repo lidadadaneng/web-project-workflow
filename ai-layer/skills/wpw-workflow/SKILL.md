@@ -103,15 +103,18 @@ commands:
 
 ## 知识图谱上下文（降 Token、提准）
 
-各阶段命令在需要理解代码时，优先调用 `wpw graph` 获取结构化上下文，替代手动 grep/读文件。
+各阶段命令在需要理解代码时按下面的条件调用 `wpw graph`；已有上下文时直接读文件，图谱只用来解决"找不到"和"看不清关系"这两件事。
 
-**统一前置**：相关命令开始时先增量更新图谱
+> **上下文优先，图谱定位其次。** 图谱只在两种情况介入：**不知道代码在哪**（改动落在新模块、陌生区域）时用来代替对该模块做一轮检索（RAG / 大范围 grep）；**已知文件但要看关系**（依赖、影响面、模块边界）时用来取关系。任务或 Plan 已指明文件、本会话已经读过这个模块、制品里写了路径时，**直接读那几份文件**，不要绕图谱。
+
+**统一前置**：需要图谱时先增量更新
 ```bash
 wpw graph update   # 约 100ms，保证代码上下文最新
 ```
 
 **核心能力**：
-- `wpw graph context "<english-keywords>" --token-budget N` - 生成压缩后的结构化代码上下文（检索+裁剪+压缩，直接喂给 LLM，检索词必须为英文）
+- `wpw graph context "<english-keywords>" --mode nav` - **导航**（定位用）：返回锚点、候选文件路径（按相关度排序，并标出每条路径是从锚点、包含、导入、调用还是业务映射关系够到的）以及同一子图里的其他相关能力。不含代码内容，体积约为正文形态的三分之一，读哪些文件由你自己决定，可反复调用。用于"不知道代码在哪"时，检索词必须为英文
+- `wpw graph context "<english-keywords>" --token-budget N` - **上下文正文**：把子图组织成层级 + 元素 + 依赖的压缩文本，适合要建立全局认知、写设计/文档时通读；不要拿它替代自己读代码
 - `wpw graph query --upstream/--downstream <节点ID>` - 查依赖关系（影响面/回归范围）
 - `wpw graph query --level L1` - 查模块节点 ID
 
@@ -124,7 +127,7 @@ wpw graph update   # 约 100ms，保证代码上下文最新
 
 | 阶段 | 集成方式 | 收益 |
 |------|---------|------|
-| `/wpw:apply` | 每任务前 `context` 取代码上下文 | Token 降 60-80% |
+| `/wpw:apply` | 位置不明时 `context --mode nav` 定位；已知文件直接读 | Token 降 60-80% |
 | `/wpw:cr` | `query --upstream` 分析影响面 | 审查更全面 |
 | `/wpw:explore` | `context` + `query` 了解现有架构 | 探索更快更准 |
 | `/wpw:design` | `context --level L1,L2,L3` 了解模块边界 | 设计不脱节 |
@@ -133,7 +136,7 @@ wpw graph update   # 约 100ms，保证代码上下文最新
 | `/wpw:plan` | `context --level L1,L2` 了解模块边界 | 任务切分更合理 |
 | `/wpw:brd` | `context --level L1` 参考模块规模估成本 | 估算更准（仅 AI 内部参考） |
 
-> 上表各读代码阶段（apply/cr/explore/design/test/sync/plan）的图谱前置为**必做步骤**（非"推荐"）；图谱缺失时降级回退手动读文件，不阻断流程。brd 仅 AI 内部参考、不向业务方输出技术文件。
+> 上表各读代码阶段（apply/cr/explore/design/test/sync/plan）在**位置不明或要看关系**时，图谱为必做步骤（非"推荐"）；已有上下文时直接读文件即可，图谱不是每个任务都要过的一道关。图谱缺失时降级回退手动读文件，不阻断流程。brd 仅 AI 内部参考、不向业务方输出技术文件。
 
 > 详见 `/wpw:map` 命令文档。
 
@@ -143,10 +146,10 @@ wpw graph update   # 约 100ms，保证代码上下文最新
 
 | 场景 | 典型说法 | 推荐命令 | 为什么 |
 |------|---------|---------|--------|
-| 需求刚进来，不知道从哪下手 | "注册功能怎么做的"、"登录相关的代码在哪" | `wpw graph context "user registration"`（英文关键词） | 语义检索+依赖扩展一步定位，比漫无目的 grep 快 |
+| 需求刚进来，不知道从哪下手 | "注册功能怎么做的"、"登录相关的代码在哪" | `wpw graph context "user registration" --mode nav`（英文关键词） | 对着新模块做一轮图谱定位，代替语义 RAG / 漫无目的 grep；读哪些文件仍由你定 |
 | 改之前查影响面 | "改这个函数会不会影响别的地方"、"回归范围有多大" | `wpw graph query --upstream <节点ID> --depth 2` | 手动 grep import 链容易漏间接依赖 |
-| 需要全链路视角 | "登录完整流程"、"数据从 view 到 store 的调用链" | `wpw graph context "login flow" --depth 3 --compression loose`（英文关键词） | context 子图直接呈现完整依赖关系 |
-| 编码前快速取上下文 | Apply 每任务开始前、CR 前 | `wpw graph update` → `wpw graph context "<module-name>"`（英文） | Token 消耗降 60-80%，结构化输出更易建立全局认知 |
+| 需要全链路视角 | "登录完整流程"、"数据从 view 到 store 的调用链" | `wpw graph context "login flow" --depth 3 --mode nav`（英文关键词） | 导航里每条路径都标出由哪种关系够到，链路一眼可见 |
+| 编码前位置不明 | Apply 任务落在新模块时 | `wpw graph update` → `wpw graph context "<module-name>" --mode nav`（英文） | 先定位到候选路径，再按需读，Token 花在真正要读的那几个文件上；已知文件则直接读 |
 | 新人上手 / 项目陌生 | 刚接手项目想快速了解架构 | `wpw graph stat` → `wpw graph query --level C,L1` | C 层能力 + L1 模块清单，比读 README + 翻目录更立体 |
 | 模糊需求 / 技术探索 | Explore / Design 阶段，先看现有实现 | `wpw graph search "<technical-concept>" --limit 20`（英文） | 按概念召回代码，比纯关键词全，能发现不知道存在的模块 |
 
@@ -195,7 +198,7 @@ wpw graph search "<business-keywords>" --level L1 --limit 10 --threshold 0.45 --
 #   技术术语/代码命名风格 × 1-2
 #   缩写形式 × 1（如果适用）
 
-wpw graph context "shopping cart,cart item,basket,add to cart,cart total" --multi --token-budget 4000
+wpw graph context "shopping cart,cart item,basket,add to cart,cart total" --multi --mode nav
 ```
 
 **③ 锚点优先法**
@@ -204,10 +207,10 @@ wpw graph context "shopping cart,cart item,basket,add to cart,cart total" --mult
 
 ```bash
 # 已知文件路径 → 直接锚定
-wpw graph context --anchors "file:src/auth/login.ts,file:src/auth/register.ts" --depth 2
+wpw graph context --anchors "file:src/auth/login.ts,file:src/auth/register.ts" --mode nav --depth 2
 
 # 已知模块 → 以模块为锚点扩展
-wpw graph context --anchors "mod:user-auth" --depth 2 --token-budget 4000
+wpw graph context --anchors "mod:user-auth" --mode nav --depth 2
 ```
 
 适用场景：Apply 阶段（task 已明确文件）、二次检索（上次结果里记下了 ID）、知道模块名想了解全貌。
@@ -280,16 +283,16 @@ wpw graph context --anchors "mod:user-auth" --depth 2 --token-budget 4000
 | 不知道功能在哪，想找 | ❌ | ✅ | L1 优先 + 多词扩展 | `wpw graph search "<biz-keyword>" --level L1` → `context --anchors <mod-id>` |
 | 已经知道文件名，想看实现 | ✅ | ❌ | - | `Read <文件>` |
 | 改之前想知道影响面 | ❌ | ✅ | 结构化查询 | `wpw graph query --upstream <id>` |
-| 想了解模块间调用关系 | ❌ | ✅ | 模块锚点 + 扩展 | `wpw graph context --anchors <mod-id> --depth 3` |
+| 想了解模块间调用关系 | ❌ | ✅ | 模块锚点 + 扩展 | `wpw graph context --anchors <mod-id> --mode nav --depth 3` |
 | 搜精确函数名/变量名 | ✅ | ❌ | - | `Grep` |
-| 按概念/语义模糊搜索 | ❌ | ✅ | 多词扩展 + 降级 | `wpw graph context "<kw1>,<kw2>,<kw3>" --multi`（英文） |
+| 按概念/语义模糊搜索 | ❌ | ✅ | 多词扩展 + 降级 | `wpw graph context "<kw1>,<kw2>,<kw3>" --multi --mode nav`（英文） |
 | 项目很小（<10 文件） | ✅ | ❌ | - | `Glob` + `Read` |
-| 新人上手陌生项目 | ❌ | ✅ | 自上而下浏览 | `stat` → `query --level C,L1` → `context` |
+| 新人上手陌生项目 | ❌ | ✅ | 自上而下浏览 | `stat` → `query --level C,L1` → `context --mode nav` |
 | 微小改动（文案/常量） | ✅ | ❌ | - | 直接改 |
-| 编码前取上下文（已知文件） | 辅助 | ✅ | 锚点优先 | `update` → `context --anchors file:xxx` |
-| 编码前取上下文（未知位置） | 辅助 | ✅ | L1 优先 + 多词 | `update` → `context "<biz-keyword>" --level L1` → 下钻 |
+| 编码前取上下文（已知文件） | ✅ | 辅助（要看关系时） | 锚点定位 | 直接 `Read`；要看依赖再 `update` → `context --anchors file:xxx --mode nav` |
+| 编码前取上下文（未知位置） | ❌ | ✅ | L1 优先 + 多词 | `update` → `context "<biz-keyword>" --level L1` → 下钻 |
 
-> **一句话：图谱是"导航"，不是"地图详情"。定位用它，读代码直接上。L1 优先、多词扩展、锚点兜底、三级降级——四招用好，召回率翻倍。**
+> **一句话：图谱是"导航"，不是"地图详情"。已有上下文就直接读文件；不知道代码在哪，才用导航定位（这是对新模块检索的替代），然后读代码。L1 优先、多词扩展、锚点兜底、三级降级——四招用好，召回率翻倍。**
 
 ## 联动 Skill
 

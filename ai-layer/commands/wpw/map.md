@@ -73,20 +73,46 @@ wpw graph stat --json
 
 ### 3. 生成上下文（最常用）
 
-用自然语言查询，输出直接可用于编码的上下文：
+**先用上下文，再用图谱定位。** 图谱不是每次读代码都要过的一道关，它只在两种情况介入：
+
+- **不知道代码在哪**（改动落在新模块、陌生区域）→ 用导航形态把搜索空间缩到若干条路径，**代替对该模块做一轮检索**（RAG / 大范围 grep）；读哪些文件仍由你定。
+- **已知文件但要看关系**（依赖、影响面、模块边界）→ 用 `--anchors` 锚定已知文件取导航，或直接 `wpw graph query --upstream/--downstream`。
+
+其余情况——任务或 Plan 已指明文件、本会话已经读过这个模块、制品里写了路径——**直接读那几份文件**，不要再绕图谱。
+
+| 形态 | 命令 | 输出什么 | 用在什么时候 |
+|------|------|---------|------------|
+| **导航**（定位用） | `--mode nav` | 锚点 + 候选文件路径（按相关度排序，标出每条路径是从锚点/包含/导入/调用/业务映射够到的）+ 同一子图里的其他相关能力。**不含代码内容** | 不知道代码在哪时定位候选路径（代替对新模块的检索）；已知锚点、要看它们的关系时 |
+| 上下文正文 | 默认 | 子图的层级树 + 元素 + 跨节点依赖的压缩文本 | 要建立全局认知、写设计/文档时通读 |
 
 ```bash
-# 基本用法（检索词必须为英文）
-wpw graph context "user login authentication"
+# 导航定位（不知道代码在哪时；检索词必须为英文）
+wpw graph context "user login authentication" --mode nav
 
-# 指定 Token 预算（默认 8000）
+# 上下文正文：指定 Token 预算（默认 8000）
 wpw graph context "login" --token-budget 4000
 
-# 指定压缩等级：loose / standard / extreme
+# 指定压缩等级：loose / standard / extreme（仅正文形态）
 wpw graph context "login" --compression standard
 
 # JSON 输出（供程序解析）
-wpw graph context "login" --json
+wpw graph context "login" --mode nav --json
+```
+
+导航形态的输出（文本模式）：
+
+```
+=== 项目导航（图谱检索结果，不含代码内容）===
+
+锚点（2 个，按相关度降序）：
+  ◉ [C] user-login  (相关度 1.00)
+  ◉ [L1] user-module  (相关度 0.72)  src/main/java/com/controller
+
+候选位置（18 个，按相关度降序；前 25 个标出够到它的关系）：
+  1. src/main/java/com/controller/YonghuController.java  [文件｜6 个相关元素]  ◉ 锚点所在
+  2. src/main/java/com/service/impl/TokenServiceImpl.java  [文件｜7 个相关元素]
+       ← 业务映射 0.37 ← C:user-login
+  ...
 ```
 
 输出格式（文本模式）：
@@ -291,17 +317,18 @@ CLI 读取 `graph.modules`，以 AI 指定的模块划分为准重建图谱（�
 
 ```bash
 wpw graph query --level L1          # 确认模块列表正确
-wpw graph context "<keywords>"      # 抽查上下文质量
+wpw graph context "<keywords>" --mode nav   # 抽查导航质量（漏掉的路径就是没搜到）
 ```
 
 ## 在 Apply 阶段的使用流程
 
 ```
-1. wpw graph update                                    # 确保图谱最新（增量，快）
-2. wpw graph context "<english-keywords-from-task>"    # 生成上下文（英文检索词）
-3. 根据上下文理解相关代码结构
-4. 实施编码
-5. 编码完成后再 update 一次
+1. 任务/Plan 已指明文件、或本会话已读过该模块 → 直接读那几份文件，本节以下步骤跳过
+2. wpw graph update                                    # 不确定位置时，先确保图谱最新（增量，快）
+3. wpw graph context "<english-keywords-from-task>" --mode nav   # 导航定位候选路径（英文检索词）
+4. 按候选路径读你要改的那几个文件
+5. 实施编码
+6. 编码完成后再 update 一次
 ```
 
 > 上下文生成是 **纯本地计算**，不消耗任何 API Token。

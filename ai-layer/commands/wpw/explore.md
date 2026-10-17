@@ -50,12 +50,19 @@ wpw graph search "<biz-keyword-1>,<biz-keyword-2>,<synonym-1>,<synonym-2>" --lev
 # 命中 <1 → 执行低召回降级（见下方）
 
 # ==================== 第二步：模块下钻 + 多词扩展 ====================
-# 用 --multi 并行查询多个角度的检索词，生成综合上下文
+# 用 --multi 并行查询多个角度的检索词，拿到一张「往哪里看」的地图
 # 检索词构成：核心业务概念 + 同义词 + 技术术语
-wpw graph context "<keyword-1>,<keyword-2>,<keyword-3>,<keyword-4>,<keyword-5>" --multi --token-budget 3000 --depth 2 --json
+# --mode nav = 导航：只给锚点、候选文件路径与它们之间的关系，不含代码内容。
+#   用在"不知道代码在哪"（新模块、陌生区域）时，代替对该模块做一轮检索；
+#   探索阶段正是这种情况，因此这里的定位步骤默认取导航。图谱只把搜索空间缩小到若干条路径，
+#   读哪些文件由你决定；若已有上下文（制品里写了路径、本会话读过），直接读文件。
+wpw graph context "<keyword-1>,<keyword-2>,<keyword-3>,<keyword-4>,<keyword-5>" --multi --mode nav --depth 2 --json
 
 # 也可以直接用模块 ID 做锚点扩展（更准更快）
-wpw graph context --anchors "<module-id-1>,<module-id-2>" --depth 2 --token-budget 3000 --json
+wpw graph context --anchors "<module-id-1>,<module-id-2>" --mode nav --depth 2 --json
+
+# 需要连层级的正文一起看时（例如要建立全局认知、写设计文档），才用默认的上下文形态
+wpw graph context "<keyword-1>,<keyword-2>,<keyword-3>" --multi --token-budget 3000 --depth 2 --json
 
 # ==================== 第三步：上下游依赖 ====================
 # 了解特定模块的上下游依赖

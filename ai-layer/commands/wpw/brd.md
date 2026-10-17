@@ -94,7 +94,7 @@ AI 基于需求自行拆解实现步骤（业务可理解的粒度，如"登录"
 wpw graph update   # 增量更新图谱
 # 了解相关模块规模（节点数），辅助判断改动量级
 # ⚠️ 检索词必须使用英文（从需求描述翻译为英文关键词）
-wpw graph context "<english-keywords>" --token-budget 1000 --level L1 --json
+wpw graph context "<english-keywords>" --mode nav --level L1 --json
 ```
 
 - 图谱不存在 -> 跳过，纯凭 AI 分析估算（不影响流程）

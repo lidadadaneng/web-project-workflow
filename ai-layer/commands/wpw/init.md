@@ -28,7 +28,7 @@ CLI 自动完成：
 wpw graph build
 ```
 
-构建四层知识图谱（需求->模块->文件->代码元素），后续各阶段命令可调用 `wpw graph context` 获取精准代码上下文。国内网络环境建议在 `workflow.config.yaml` 配置 `graph.embedding.mirror: modelscope`。
+构建四层知识图谱（需求->模块->文件->代码元素），后续各阶段命令在**不知道代码在哪**时用 `wpw graph context --mode nav` 做导航定位（只给候选路径、不替你选代码），代替对该模块做一轮检索；已有上下文时各阶段直接读文件。国内网络环境建议在 `workflow.config.yaml` 配置 `graph.embedding.mirror: modelscope`。
 
 ### 3. 确认项目类型
 

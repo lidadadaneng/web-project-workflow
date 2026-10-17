@@ -37,6 +37,13 @@ export interface ContextDemoResult {
   anchors: ContextAnchor[];
   subgraph: VizGraph;
   results: ContextResultItem[];
+  /**
+   * 导航形态（与三档上下文正文并列）
+   *
+   * 图谱在任务里的用法是「辅助搜索」：把搜索空间缩小到若干条路径，由调用方自己决定
+   * 读什么。这一项给的就是那张地图，不含代码内容，体积通常只有正文的三分之一上下。
+   */
+  nav: ContextResultItem;
   /** 非空表示发生了降级（如无向量索引 / 模型不可用），内容为原因 */
   degraded?: string;
 }
@@ -166,6 +173,7 @@ export async function generateContext(
       anchors: [],
       subgraph: { nodes: [], edges: [] },
       results: LEVELS.map((level) => ({ level, nodeCount: 0, tokenEstimate: 0, serialized: '' })),
+      nav: { level: 'standard', nodeCount: 0, tokenEstimate: 0, serialized: '' },
       degraded: degraded ?? '未找到匹配的节点，请换一个关键词',
     };
   }
@@ -178,6 +186,7 @@ export async function generateContext(
 
   const results: ContextResultItem[] = [];
   let subgraph: VizGraph = { nodes: [], edges: [] };
+  let navRunner: ContextPipeline | null = pipeline;
 
   if (pipeline) {
     // 带向量时：三档压缩都走真实管线（子图取中档）
@@ -201,6 +210,7 @@ export async function generateContext(
   } else {
     // 降级：无向量时仍可扩子图 + 三档压缩（跳过语义检索这一步）
     const querierPipeline = new ContextPipeline(data, null, 0, null, config);
+    navRunner = querierPipeline;
     for (const level of LEVELS) {
       const r = await querierPipeline.generate({
         anchors: anchorIds,
@@ -220,9 +230,26 @@ export async function generateContext(
     }
   }
 
+  // 导航形态：同一批锚点、同一张子图，只换输出内容（路径与关系，不含代码）
+  let nav: ContextResultItem = { level: 'standard', nodeCount: 0, tokenEstimate: 0, serialized: '' };
+  if (navRunner) {
+    const r = await navRunner.generate({
+      anchors: anchorIds,
+      mode: 'nav',
+      depth: opts.depth,
+      maxNodes: opts.maxNodes,
+    });
+    nav = {
+      level: 'standard',
+      nodeCount: r.stats.nodeCount,
+      tokenEstimate: r.stats.estimatedTokens,
+      serialized: r.compressedText,
+    };
+  }
+
   // Token 预算：若指定，则只保留不超过预算的结果（前端据此提示超支）
   if (opts.budget && opts.budget > 0) {
-    for (const r of results) {
+    for (const r of [...results, nav]) {
       if (r.tokenEstimate > opts.budget) {
         r.serialized = `[超预算] 该档约 ${r.tokenEstimate} tokens，超出预算 ${opts.budget}。\n\n${r.serialized}`;
       }
@@ -239,6 +266,7 @@ export async function generateContext(
     })),
     subgraph,
     results,
+    nav,
     degraded,
   };
 }

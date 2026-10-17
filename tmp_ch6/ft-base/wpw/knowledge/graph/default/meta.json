@@ -2,7 +2,7 @@
   "schemaVersion": "3.1.0",
   "builtAt": 1788656676985,
   "totalNodes": 1799,
-  "totalEdges": 2434,
+  "totalEdges": 2856,
   "totalVectors": 1794,
   "fileHashes": {
     "src/main/java/com/annotation/APPLoginUser.java": "ce9c51e7bb6f5f53",

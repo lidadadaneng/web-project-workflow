@@ -33,6 +33,8 @@ export class EdgeBuilder {
     type: EdgeType;
     weight: number;
     source: EdgeSource;
+    /** 共享能力名（sibling 边专用） */
+    capability?: string;
   }): void {
     const id = this.edgeId(params.from, params.to, params.type);
 
@@ -43,6 +45,7 @@ export class EdgeBuilder {
         existing.weight = params.weight;
         existing.source = params.source;
       }
+      if (params.capability && !existing.capability) existing.capability = params.capability;
       return;
     }
 
@@ -53,6 +56,7 @@ export class EdgeBuilder {
       type: params.type,
       weight: Math.max(0, Math.min(1, params.weight)),
       source: params.source,
+      ...(params.capability ? { capability: params.capability } : {}),
     });
   }
 

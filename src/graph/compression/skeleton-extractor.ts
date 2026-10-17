@@ -25,6 +25,15 @@ export interface SkeletonResult {
   typeLabel: string;
   /** 节点名称 */
   name: string;
+  /**
+   * 节点在仓库中的位置：文件节点与其下元素为仓库相对文件路径（`attrs.filePath`），
+   * 模块节点为模块目录（`attrs.dir`）。
+   *
+   * 这是定位类任务的答案格式——下游要的是 `src/main/java/com/service/impl/X.java`
+   * 这样的路径，不是一个裸类名。因此路径属于节点身份，任何压缩等级都保留，
+   * 不随 loose/standard/extreme 增减。
+   */
+  path?: string;
   /** 签名（函数签名、类签名等） */
   signature?: string;
   /** 参数列表 */
@@ -52,6 +61,8 @@ export function extractSkeleton(node: GraphNode, level: SkeletonLevel = 'standar
   const result: SkeletonResult = {
     typeLabel,
     name: node.name,
+    // 身份先于细节：路径不受 level 影响
+    path: node.attrs.filePath || node.attrs.dir || undefined,
   };
 
   switch (level) {
@@ -61,7 +72,7 @@ export function extractSkeleton(node: GraphNode, level: SkeletonLevel = 'standar
       return extractStandard(node, result);
     case 'minimal':
     default:
-      return result; // 仅名称 + 类型标签
+      return result; // 仅名称 + 类型标签（+ 路径）
   }
 }
 
@@ -112,6 +123,10 @@ function getTypeLabel(nodeType: string): string {
 
 /**
  * 将骨架结果格式化为单行文本（用于层级序列化）
+ *
+ * 模块与文件节点用路径代替名称：文件节点的名称就是路径的末段，写全路径不丢信息，
+ * 却能让下游直接拿到答案格式。代码元素（类/函数等）仍用名称——它们的路径由
+ * 树状层级（父文件节点）承载，平铺的 C 层关联另在序列化器里补路径。
  */
 export function formatSkeletonLine(skeleton: SkeletonResult): string {
   const parts: string[] = [];
@@ -120,12 +135,18 @@ export function formatSkeletonLine(skeleton: SkeletonResult): string {
 
   if (skeleton.isExported) parts.push('export');
 
-  parts.push(skeleton.name);
+  const usePath = !!skeleton.path && (skeleton.typeLabel === '模块' || skeleton.typeLabel === '文件');
+  parts.push(usePath ? skeleton.path! : skeleton.name);
 
   if (skeleton.signature) {
-    // 用签名代替名称后的详情
-    parts.pop(); // 移除 name
-    parts.push(skeleton.signature);
+    if (usePath) {
+      // 路径是身份、签名是细节，两者都留；不能像代码元素那样把身份替换掉
+      parts.push(skeleton.signature);
+    } else {
+      // 用签名代替名称后的详情（签名本身已含名称）
+      parts.pop(); // 移除 name
+      parts.push(skeleton.signature);
+    }
   } else if (skeleton.params?.length) {
     const paramStr = skeleton.params
       .map((p) => (p.type ? `${p.name}: ${p.type}` : p.name))

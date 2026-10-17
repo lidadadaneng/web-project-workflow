@@ -605,6 +605,7 @@ function registerContext(graph: Command): void {
     .option('--min-weight <f>', '最小边权重')
     .option('--max-nodes <n>', '节点数量上限')
     .option('--compression <level>', '压缩等级: loose/standard/extreme')
+    .option('--mode <mode>', '输出形态: context（上下文正文，默认）/ nav（导航，只给路径与关系，不含代码内容）')
     .option('--level <levels>', '按层级过滤')
     .option('--type <types>', '按节点类型过滤')
     .option('--include-archived', '包含归档需求')
@@ -665,11 +666,13 @@ function registerContext(graph: Command): void {
         includeArchived: !!opts.includeArchived,
         anchorLimit: Number(opts.anchorLimit),
         threshold: opts.threshold ? Number(opts.threshold) : undefined,
+        mode: opts.mode === 'nav' ? 'nav' : 'context',
       });
 
       if (opts.json) {
         // JSON 模式：输出完整结果（含子图数据）
         const output = {
+          mode: opts.mode === 'nav' ? 'nav' : 'context',
           anchors: result.anchors,
           subgraph: {
             nodes: result.subgraph.nodes,
@@ -677,6 +680,9 @@ function registerContext(graph: Command): void {
             anchorIds: result.subgraph.anchors,
           },
           compressedText: result.compressedText,
+          // 导航形态把候选位置的结构化清单一并给出（按相关度降序，含每条独立关系），
+          // 供离线评测与前端按包展示；上下文形态没有这一项
+          ...(result.candidates ? { candidates: result.candidates } : {}),
           stats: result.stats,
         };
         console.log(JSON.stringify(output, null, 2));
@@ -689,7 +695,11 @@ function registerContext(graph: Command): void {
         console.log(`子图节点: ${result.stats.nodeCount}`);
         console.log(`子图边: ${result.stats.edgeCount}`);
         console.log(`预估 Token: ${result.stats.estimatedTokens}`);
-        console.log(`压缩率: ${result.stats.compressionRatio}x`);
+        if (opts.mode === 'nav') {
+          console.log('形态: nav（导航，不含代码内容）');
+        } else {
+          console.log(`压缩率: ${result.stats.compressionRatio}x`);
+        }
         console.log(`总耗时: ${result.stats.totalTimeMs}ms`);
       }
     });

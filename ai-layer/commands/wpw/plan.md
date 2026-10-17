@@ -31,6 +31,8 @@ wpw graph update   # 增量更新图谱，保证代码上下文最新
 
 了解现有模块边界与文件结构，辅助任务粒度切分。
 
+> Design 已经写明涉及模块与文件时，直接按它拆分即可；只有当设计没交代清楚落点、需要摸清现有目录结构时，才用下面的图谱定位。
+
 **检索策略：L1/L2 分层检索 — 先定位模块，再看文件级结构，确保任务拆解贴合实际代码组织。**
 
 ```bash
@@ -43,10 +45,10 @@ wpw graph search "<biz-kw-1>,<biz-kw-2>,<synonym-1>,<synonym-2>" --level L1 --li
 
 # ==================== 第二步：L2 文件级扩展 ====================
 # 以模块为锚点，向下扩展到文件级，了解目录结构和文件分布
-wpw graph context --anchors "<module-id-1>,<module-id-2>" --depth 1 --token-budget 2000 --level L1,L2 --json
+wpw graph context --anchors "<module-id-1>,<module-id-2>" --mode nav --depth 1 --level L1,L2 --json
 
 # 如果模块锚点覆盖不全，补充多词语义检索
-wpw graph context "<kw-1>,<kw-2>,<kw-3>,<kw-4>" --multi --token-budget 1500 --level L1,L2 --json
+wpw graph context "<kw-1>,<kw-2>,<kw-3>,<kw-4>" --multi --mode nav --level L1,L2 --json
 ```
 
 > ⚠️ **强制规范**：`wpw graph context` 和 `wpw graph search` 的检索词必须为英文。

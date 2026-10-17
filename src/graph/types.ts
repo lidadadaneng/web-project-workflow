@@ -213,6 +213,15 @@ export const EDGE_TYPE_IMPORT = 'import';
 export const EDGE_TYPE_INHERIT = 'inherit';
 /** 业务映射边（能力 ↔ 模块/文件/元素） */
 export const EDGE_TYPE_BUSINESS_MAP = 'business_map';
+/**
+ * 共能力边（文件 ↔ 文件）
+ *
+ * 两个文件被同一个 C 层能力够到，说明它们共同承担该能力的一部分，改动时常同进同出。
+ * 这是从 business_map 派生的**弱**关系：它不说明两个文件互相调用或导入，只说明它们
+ * 属于同一能力。权重取两侧 business_map 权重中较弱的一侧——两侧都强才说明这个能力
+ * 确实同时落在两个文件上。
+ */
+export const EDGE_TYPE_SIBLING = 'sibling';
 /** 导航边（页面跳转） */
 export const EDGE_TYPE_NAVIGATE = 'navigate';
 /** 组件引用边（页面/组件 → 子组件） */
@@ -229,6 +238,7 @@ export type EdgeType =
   | typeof EDGE_TYPE_IMPORT
   | typeof EDGE_TYPE_INHERIT
   | typeof EDGE_TYPE_BUSINESS_MAP
+  | typeof EDGE_TYPE_SIBLING
   | typeof EDGE_TYPE_NAVIGATE
   | typeof EDGE_TYPE_USE_COMPONENT
   | typeof EDGE_TYPE_BIND_EVENT
@@ -263,6 +273,14 @@ export interface GraphEdge {
   eventName?: string;
   /** 绑定路径（bind-data 边专用：数据绑定的路径） */
   bindPath?: string;
+  /**
+   * 共享能力名（sibling 边专用）
+   *
+   * 记下这条边的依据是哪个能力：同一能力下 k 个文件两两互连会形成 k−1 条边，
+   * 对下游而言这是**一条**证据而不是 k−1 条，得靠这个字段把同一能力的边认出来。
+   * 存名称而不是能力节点 ID：导航输出要直接展示给人看。
+   */
+  capability?: string;
 }
 
 // ==================== 图谱数据 ====================
@@ -327,6 +345,14 @@ export interface GraphMappingConfig {
   aiApiBase?: string;
   /** 语义匹配最小阈值（未设置时运行时回退 search.threshold） */
   semanticThreshold?: number;
+  /**
+   * 每个能力下参与共能力连边的文件数上限（默认 5）
+   *
+   * 共能力边是两两连接，条数是该值的平方级。取前 K 是取舍：排在前面的文件是该
+   * 能力的主要落点，连成团已覆盖改动集主体；后面的多是语义噪声，连进来会把噪声
+   * 也变成彼此的「证据」。0 表示不生成共能力边。
+   */
+  couplingMaxFilesPerCapability?: number;
   /** 语义匹配每个能力召回的 Top-K 候选目标（默认 5） */
   semanticTopK?: number;
   /** 是否启用 Git 历史追溯 */
@@ -353,6 +379,15 @@ export interface GraphTrimmingConfig {
   defaultDepth: number;
   /** 默认最小边权重 */
   minWeight: number;
+  /**
+   * 按边类型覆盖 minWeight。
+   *
+   * 不同来源的边权重不在同一量纲上：结构边是固定常量（contain 0.9、import 0.75），
+   * 而 business_map 边的权重是语义相似度的融合值（构建时上限 0.7，实测集中
+   * 在 0.33~0.43）。用结构边的量级去卡语义边，会让业务映射边整类不可通行，
+   * C 层锚点因而只能返回自身。这里为这类边单独指定阈值。
+   */
+  minWeightByType?: Record<string, number>;
   /** 默认节点上限 */
   maxNodes: number;
   /** 语义分权重 */
@@ -437,6 +472,54 @@ export interface ContextStats {
   totalTimeMs: number;
 }
 
+/** 候选位置「如何被够到」的一条关系 */
+export interface NavVia {
+  /** 边类型（contain / import / call / inherit / business_map / co-change） */
+  type: string;
+  /** 边权重 */
+  weight: number;
+  /** 来源一端的位置或节点名 */
+  from: string;
+}
+
+/** 导航形态的候选位置条目 */
+export interface NavCandidate {
+  /** 仓库相对路径（L1 模块为目录、L2/L3 为文件） */
+  path: string;
+  /** 是否为目录（模块节点） */
+  isDir: boolean;
+  /** 相关度得分（0~1，锚点所在位置恒为最高） */
+  score: number;
+  /**
+   * 关系支持度：够到该位置的多条关系中，最强的那条的 `来源得分 × 边权重`
+   *
+   * score 回答「这个位置自身有多相关」，support 回答「从已知相关的位置出发有多容易
+   * 走到这里」。自身语义分不高、但被一个高相关位置以高权重关系连着的文件，很可能是
+   * 同一改动集的一部分——这是共能力边要补的那类候选。
+   */
+  support: number;
+  /** 排序分：相关度与支持度的 noisy-OR（1 − (1−score)(1−support)），两者有其一即抬升 */
+  rankScore: number;
+  /** 是否锚点所在位置 */
+  isAnchorSite: boolean;
+  /** 该位置在子图里的元素数 */
+  elementCount: number;
+  /** 够到它的最强一条关系（锚点自身为 null） */
+  via: NavVia | null;
+  /** 够到它的全部独立关系，按权重降序（多证据聚合） */
+  vias: NavVia[];
+  /**
+   * 独立证据条数：有多少条不同的关系把这个位置拉进子图。
+   * 一条路径被越多独立关系支持，它越可能是正解；单条弱关系（如权重 0.3 的
+   * 业务映射）只给 1 条时应当被当作噪声。
+   */
+  evidenceCount: number;
+  /** 归属的业务能力（C 层名称），没有则为 null */
+  capability: string | null;
+  /** 所属改动包编号（按能力/模块聚类后填充，见 NavigationSerializer） */
+  packageId: number | null;
+}
+
 /** 上下文输出结果 */
 export interface ContextResult {
   /** 锚点节点列表 */
@@ -447,6 +530,8 @@ export interface ContextResult {
   compressedText: string;
   /** 统计信息 */
   stats: ContextStats;
+  /** 导航形态的候选位置（按相关度降序；仅 mode=nav 时有值） */
+  candidates?: NavCandidate[];
 }
 
 // ==================== 构建元数据 ====================

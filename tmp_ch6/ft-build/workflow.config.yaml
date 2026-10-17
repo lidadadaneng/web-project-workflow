@@ -1,55 +1,25 @@
-# wpw workflow 配置
-# 知识图谱模块定义（L1 层）
-# 本项目为 Java 分层架构（controller/service/dao/entity），按技术分层定义模块
 graph:
+  build:
+    ignore: [node_modules, dist, build, .git, wpw, .next, .nuxt, coverage, target, h5, static]
+    languages: [typescript, javascript, vue, java]
   modules:
-    - name: controller-layer
-      side: backend
-      dir: src/main/java/com/controller
-      description: 控制层，处理HTTP请求与响应
-    - name: service-layer
-      side: backend
-      dir: src/main/java/com/service
-      description: 业务逻辑层，含接口与实现
-    - name: dao-layer
-      side: backend
-      dir: src/main/java/com/dao
-      description: 数据访问层，MyBatis Plus Mapper
-    - name: entity-layer
-      side: backend
-      dir: src/main/java/com/entity
-      description: 实体层，含 Entity/Model/View/VO
-    - name: config-layer
-      side: backend
-      dir: src/main/java/com/config
-      description: 配置层，拦截器、MyBatis Plus、支付宝等配置
-    - name: interceptor-layer
-      side: backend
-      dir: src/main/java/com/interceptor
-      description: 拦截器层，权限认证拦截
-    - name: annotation-layer
-      side: backend
-      dir: src/main/java/com/annotation
-      description: 自定义注解，登录用户、忽略认证等
-    - name: utils-layer
-      side: backend
-      dir: src/main/java/com/utils
-      description: 工具类，分页、MD5、文件、HTTP客户端等
-    - name: admin-frontend
-      side: frontend
-      dir: src/main/resources/admin
-      description: 管理后台前端页面
-    - name: front-frontend
-      side: frontend
-      dir: src/main/resources/front
-      description: 用户端前端页面
-
+    - {name: controller-layer, side: backend, dir: src/main/java/com/controller, description: HTTP 控制器}
+    - {name: service-layer, side: backend, dir: src/main/java/com/service, description: 业务服务}
+    - {name: dao-layer, side: backend, dir: src/main/java/com/dao, description: 数据访问}
+    - {name: entity-layer, side: backend, dir: src/main/java/com/entity, description: 领域实体}
+    - {name: config-layer, side: backend, dir: src/main/java/com/config, description: 应用配置}
+    - {name: interceptor-layer, side: backend, dir: src/main/java/com/interceptor, description: 请求鉴权}
+    - {name: annotation-layer, side: backend, dir: src/main/java/com/annotation, description: 自定义注解}
+    - {name: utils-layer, side: backend, dir: src/main/java/com/utils, description: 通用工具}
+    - {name: mapper-layer, side: backend, dir: src/main/resources/mapper, description: MyBatis 映射}
+    - {name: admin-source, side: frontend, dir: src/main/resources/admin/admin/src, description: 管理端源码}
+    - {name: front-pages, side: frontend, dir: src/main/resources/front/front/pages, description: 用户端页面源码}
+    - {name: front-api, side: frontend, dir: src/main/resources/front/front/api, description: 用户端 API 封装}
   mapping:
     semanticThreshold: 0.5
-    semanticTopK: 5
+    semanticTopK: 12
     gitHistory: true
     gitMaxCommits: 1000
     gitMinFreq: 2
-
   search:
     decayAlpha: 3.0

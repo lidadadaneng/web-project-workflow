@@ -17,7 +17,7 @@ graph:
     - {name: front-api, side: frontend, dir: src/main/resources/front/front/api, description: 用户端 API 封装}
   mapping:
     semanticThreshold: 0.5
-    semanticTopK: 12
+    semanticTopK: 24
     gitHistory: true
     gitMaxCommits: 1000
     gitMinFreq: 2

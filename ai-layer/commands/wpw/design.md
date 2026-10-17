@@ -39,6 +39,8 @@ wpw graph update   # 增量更新图谱，保证代码上下文最新
 
 了解现有相关模块边界、接口定义、数据结构（确保设计不脱节）。
 
+> Explore/PRD 已经指出改动落在哪些文件、哪些模块时，直接读那几份文件即可；只有当位置不明、或要看模块边界与上下游约束时，才用下面的图谱定位。
+
 **检索策略：分层下钻 — 先 L1 定位模块边界，再 L2/L3 看接口与数据结构细节。**
 
 ```bash
@@ -52,10 +54,10 @@ wpw graph search "<biz-kw-1>,<biz-kw-2>,<synonym-1>,<synonym-2>" --level L1 --li
 
 # ==================== 第二步：模块锚点扩展 ====================
 # 用模块 ID 做锚点，向下扩展到文件和元素层，了解接口与数据结构
-wpw graph context --anchors "<module-id-1>,<module-id-2>" --depth 2 --token-budget 3000 --level L1,L2,L3 --json
+wpw graph context --anchors "<module-id-1>,<module-id-2>" --mode nav --depth 2 --level L1,L2,L3 --json
 
 # 如果模块锚点覆盖不全，补充多词语义检索兜底
-wpw graph context "<tech-kw-1>,<tech-kw-2>,<tech-kw-3>" --multi --token-budget 2000 --level L2,L3 --json
+wpw graph context "<tech-kw-1>,<tech-kw-2>,<tech-kw-3>" --multi --mode nav --level L2,L3 --json
 
 # ==================== 第三步：上下游依赖确认 ====================
 # 模块定位后，查上下游依赖，了解影响范围和约束

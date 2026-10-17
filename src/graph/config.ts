@@ -113,6 +113,11 @@ const DEFAULT_BUILD: GraphBuildConfig = {
 const DEFAULT_MAPPING: GraphMappingConfig = {
   mode: 'local',
   semanticTopK: 5,
+  // 共能力边：每个能力下取前 5 个文件两两相连（最多 10 对 / 能力）。
+  // 5 是扫描出来的：K 从 5 放宽到 12（覆盖该能力全部通过阈值的映射目标）时，
+  // 离线 Recall@10 不再提高，而导航文本 token 从 1574 涨到 2060（+31%），
+  // 边际的几个文件只带来噪声。见 6.4.7 的共能力边小节。
+  couplingMaxFilesPerCapability: 5,
   gitHistory: true,
   gitMaxCommits: 1000,
   gitMinFreq: 2,
@@ -127,7 +132,19 @@ const DEFAULT_SEARCH: GraphSearchConfig = {
 const DEFAULT_TRIMMING: GraphTrimmingConfig = {
   defaultDepth: 3,
   minWeight: 0.7,
-  maxNodes: 100,
+  // 0.7 是按结构边的量级定的（contain 0.9、import 0.75）。business_map 边的权重
+  // 是语义相似度融合值，构建侧上限 0.7、实测集中在 0.33~0.43，全部低于 0.7，
+  // 若沿用同一阈值则业务映射边整类不可通行、C 层锚点只能返回自身。
+  minWeightByType: {
+    business_map: 0.3,
+    // 共能力边的权重取两侧 business_map 的较弱值，量纲与 business_map 相同（实测 0.30~0.55），
+    // 因此沿用同一阈值，不引入新的量纲假设。
+    sibling: 0.3,
+  },
+  // 上限只是防爆量的护栏，真正的约束是 tokenBudget（超预算时管线会依次降压缩、
+  // 减上限、减深度）。100 在允许路径中途换向后会先被撞满，把新够得着的节点又裁掉，
+  // 所以放宽到 200；按 3.1 万 token 的预算，200 节点在 standard 压缩下仍在预算内。
+  maxNodes: 200,
   semanticWeight: 0.6,
   structuralWeight: 0.4,
 };
@@ -188,6 +205,11 @@ export function loadGraphConfig(root: string): GraphConfig {
     trimming: {
       ...DEFAULT_TRIMMING,
       ...(userGraph.trimming || {}),
+      // 按键合并：用户只覆盖 business_map 一类时，其余类型的默认阈值仍生效
+      minWeightByType: {
+        ...DEFAULT_TRIMMING.minWeightByType,
+        ...(userGraph.trimming?.minWeightByType || {}),
+      },
     },
     compression: {
       ...DEFAULT_COMPRESSION,

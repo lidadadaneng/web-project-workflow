@@ -18,16 +18,16 @@ DOCX_PATH = Path(os.environ.get(
     PAPER_DIR / "面向AI辅助软件开发的图谱驱动上下文工程方法研究与系统实现.docx",
 ))
 IMAGE_RE = re.compile(r"^!\[([^\]]+)\]\(([^)]+)\)\s*$", re.MULTILINE)
-FIGURE_RE = re.compile(r"图\s*(\d+-\d+)")
+FIGURE_RE = re.compile(r"图\s*([A-Za-z]?\d*-\d+)")
 
 
 def collect_figures():
     figures = {}
-    for chapter in range(1, 6):
-        candidates = list(PAPER_DIR.glob(f"{chapter}.*.md"))
-        if not candidates:
+    sources = [next(iter(PAPER_DIR.glob(f"{chapter}.*.md")), None) for chapter in range(1, 7)]
+    sources += [PAPER_DIR / "附录.md"]
+    for source in sources:
+        if source is None or not source.is_file():
             continue
-        source = candidates[0]
         text = source.read_text(encoding="utf-8")
         for alt, target in IMAGE_RE.findall(text):
             parts = [part.strip() for part in alt.split("|", 1)]

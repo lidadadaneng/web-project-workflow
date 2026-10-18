@@ -11,15 +11,15 @@ const ch7 = visible('论文/7.总结与展望.md');
 let fail = 0;
 const chk = (name, cond) => { console.log((cond ? '✓ ' : '✗ ') + name); if (!cond) fail++; };
 
-const d = (c) => st.qa.descriptive[c].cumulative_context_tokens;
-chk('表6-11 非KG行', ch6.includes('19,212 [10,361, 32,816] | 39,054'));
-chk('表6-11 WPW-Map行', ch6.includes('7,317 [4,201, 17,188] | 27,286'));
-chk('表6-11 完整行', ch6.includes('15,772 [6,648, 29,988] | 25,270'));
-chk('表D-3 三行', ap.includes('19,212 [10,361, 32,816]') && ap.includes('7,317 [4,201, 17,188]') && ap.includes('15,772 [6,648, 29,988]'));
-
-const nk = d('non_kg').mean, wm = d('wpw_map').mean, fw = d('full_wpw').mean;
-chk('35.30% 一致且写入 ch6/ap/ch7', ((nk - fw) / nk * 100).toFixed(2) === '35.30' && ch6.includes('35.30%') && ap.includes('35.30%') && ch7.includes('35.30%'));
-chk('7.39% 一致且写入 ch6/ap', ((wm - fw) / wm * 100).toFixed(2) === '7.39' && ch6.includes('7.39%') && ap.includes('7.39%'));
+const byCond = (c) => sc.filter((r) => r.condition === c);
+const meanInit = (c) => byCond(c).reduce((s, r) => s + r.context_tokens + r.navigation_tokens, 0) / byCond(c).length;
+const meanInput = (c) => byCond(c).reduce((s, r) => s + r.usage.input_tokens, 0) / byCond(c).length;
+chk('表6-10 非KG行', ch6.includes('2,465 [1,770, 4,773] | 3,698 | 87,207'));
+chk('表6-10 WPW-Map行', ch6.includes('1,763 [1,058, 2,863] | 2,298 | 86,949'));
+chk('表6-10 完整行', ch6.includes('2,091 [1,273, 3,090] | 2,690 | 84,524'));
+chk('表D-3 三行', ap.includes('2,465 [1,770, 4,773]') && ap.includes('1,763 [1,058, 2,863]') && ap.includes('2,091 [1,273, 3,090]'));
+chk('初始上下文均值与表一致', Math.round(meanInit('non_kg')) === 3698 && Math.round(meanInit('wpw_map')) === 2298 && Math.round(meanInit('full_wpw')) === 2690);
+chk('模型输入均值与表一致', Math.round(meanInput('non_kg')) === 87207 && Math.round(meanInput('wpw_map')) === 86949 && Math.round(meanInput('full_wpw')) === 84524);
 
 const cats = {};
 for (const r of sc) { cats[r.category] = cats[r.category] || {}; cats[r.category][r.condition] = 0; }
@@ -28,21 +28,35 @@ const rows = { '现有功能解释': [16, 20, 20], '跨模块调用与数据流'
 for (const [cat, [a, b, c]] of Object.entries(rows)) {
   chk('分类 ' + cat + ' 数据=' + cats[cat].non_kg + '/' + cats[cat].wpw_map + '/' + cats[cat].full_wpw, cats[cat].non_kg === a && cats[cat].wpw_map === b && cats[cat].full_wpw === c);
   const pat = a + '/20（' + Math.round(a / 20 * 100) + '%） | ' + b + '/20（' + Math.round(b / 20 * 100) + '%） | ' + c + '/20（' + Math.round(c / 20 * 100) + '%）';
-  chk('表6-12 ' + cat, ch6.includes(pat));
   chk('表D-4 ' + cat, ap.includes(pat));
 }
+chk('正文分类别内容已移除', !ch6.includes('表6-11 不同问题类型的问答通过率') && !ch6.includes('逐类数据见附录表D-4') && !ch6.includes('按问题类型拆分'));
+chk('正文热力图已移除', !ch6.includes('问题类型 × 条件问答通过率热力图'));
+chk('表6-11 已移除', !ch6.includes('表6-11 场景检索的机制对比结果') && !ch6.includes('| 机制与对比 |'));
+chk('6.3.2 已移除', !ch6.includes('### 6.3.2') && !ch6.includes('统计口径与有效性限制'));
+chk('图6-1 为 T1—T3 对比图', ch6.includes('图6-1 T1—T3 八任务模型总 Token 对比') && !ch6.includes('本章证据链'));
+chk('图6-5 为机制对比图', ch6.includes('图6-5 场景检索的机制对比') && !ch6.includes('场景机制消融关系图'));
+chk('本章 5 幅插图', ch6.includes('本章共 5 幅插图'));
+chk('系统名统一为 WPW', !/完整 wpw|wpw 的|wpw 系统|wpw 与|\| wpw \|/.test(ch6));
+for (const f of ['图6-1-T1-T3八任务模型总Token对比.png', '图6-2-题集与条件配对示意.png', '图6-3-按查询类别的检索结果.png', '图6-4-三条件初始上下文Token箱线图.png', '图6-5-场景检索的机制对比.png']) {
+  chk('图文件存在 ' + f, fs.existsSync('论文/图表/第6章/' + f));
+}
 
-chk('Cochran 4.00 p=0.135', ch6.includes('Q(2)=4.00（p=0.135）'));
-chk('Friedman 16.62', ch6.includes('χ²(2)=16.62'));
-chk('Holm 0.0008', ch6.includes('p=0.0008'));
-chk('Holm 0.039', ch6.includes('p=0.039'));
-chk('Holm 0.239', ch6.includes('p=0.239'));
-chk('Friedman 0.827', ch6.includes('p=0.827'));
+chk('Cochran 公式 6-7', ch6.includes('tag{6-7}') && ch6.includes('Q_{\\mathrm{C}}'));
+chk('Cochran 4.00 p=0.135', ch6.includes('Q_{\\mathrm{C}}(2)=4.00') && ch6.includes('p=0.135'));
+chk('初始上下文 Friedman 20.48', ch6.includes('chi^2(2)=20.48'));
+chk('初始上下文 Holm 0.014', ch6.includes('Holm 校正 $p=0.014$'));
+chk('初始上下文 Holm 0.123', ch6.includes('Holm 校正 $p=0.123$'));
+chk('模型输入 Friedman 0.98 p=0.613', ch6.includes('chi^2(2)=0.98') && ch6.includes('p=0.613'));
+chk('模型总 Token Friedman 0.827', ch6.includes('chi^2(2)=0.38') && ch6.includes('p=0.827'));
 chk('检索 p 0.0023/0.00033/0.00045', ch6.includes('0.0023、0.00033 和 0.00045'));
+chk('检索 WPW-Map vs 非KG p', ch6.includes('0.0032、0.00077 和 0.00045'));
+chk('检索 完整 vs WPW-Map p', ch6.includes('0.238、0.608 和 0.487'));
 chk('检索 rb 0.729/0.844/0.846', ch6.includes('0.729、0.844 和 0.846'));
 chk('表C-4 新值', ap.includes('| 17.034 | <0.001 | 0.0023 | 0.729 |') && ap.includes('| 20.138 |') && ap.includes('| 19.000 |'));
+chk('附录C-4 其余两对', ap.includes('0.0032、0.00077、0.00045') && ap.includes('0.238、0.608、0.487'));
 
-const stale = ['35.44', '7.06%', '0.0020、', '0.00050 和', '0.00028', '16.851', '19.140', '19.271', '0.866', '累计上下文 Token 相对非 KG 减少 35'];
+const stale = ['35.44', '7.06%', '0.0020、', '0.00050 和', '0.00028', '16.851', '19.140', '19.271', '0.866', '累计上下文 Token 相对非 KG 减少 35', '35.30', '7.39', 'χ²(2)=16.62', 'p=0.0008', 'p=0.039', 'p=0.239', '19,212', '7,317', '15,772', '27,286', '25,270', '39,054'];
 for (const s of stale) chk('陈旧数已清除: ' + s, !ch6.includes(s) && !ap.includes(s) && !ch7.includes(s));
 
 // 旧 Token 值只允许出现在 D.1（32 题中间过程表）

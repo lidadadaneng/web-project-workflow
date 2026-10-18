@@ -1,7 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const v4dir = 'E:/project/web-project-workflow/论文/关键词召回实验数据_v4/';
+const v4dir = 'E:/project/web-project-workflow/论文/辅助材料/关键词召回实验数据_v4/';
 const snap = 'E:/project/ch6-rerun/food-viz';
 const v4 = JSON.parse(fs.readFileSync(v4dir + 'qa_runs_autonomous_scored.json', 'utf8'));
 

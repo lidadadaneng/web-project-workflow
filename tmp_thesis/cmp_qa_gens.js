@@ -1,5 +1,5 @@
 const fs = require('fs');
-const base = 'E:/project/web-project-workflow/论文/';
+const base = 'E:/project/web-project-workflow/论文/辅助材料/';
 const sets = [
   ['v1 原始 100 题', base + '关键词召回实验数据/qa_runs_autonomous_scored.json'],
   ['v4 迭代·聚焦前 100 题', base + '关键词召回实验数据_v4/iterations/qa_before_query_focus/qa_runs_autonomous_scored.json'],

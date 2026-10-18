@@ -14,8 +14,8 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const V4 = path.join(ROOT, '论文', '关键词召回实验数据_v4');
-const V5 = path.join(ROOT, '论文', '关键词召回实验数据_v5');
+const V4 = path.join(ROOT, '论文', '辅助材料', '关键词召回实验数据_v4');
+const V5 = path.join(ROOT, '论文', '辅助材料', '关键词召回实验数据_v5');
 
 const readJSON = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 

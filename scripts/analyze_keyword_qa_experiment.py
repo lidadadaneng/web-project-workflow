@@ -9,7 +9,7 @@ from typing import Any, Iterable
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "论文" / "关键词召回实验数据_v4"
+DATA = ROOT / "论文" / "辅助材料" / "关键词召回实验数据_v4"
 RET_CONDITIONS = ["non_kg", "wpw_map", "full_wpw"]
 QA_CONDITIONS = ["non_kg", "wpw_map", "wpw_gen", "full_wpw"]
 

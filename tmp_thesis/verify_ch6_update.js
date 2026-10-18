@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /** verify_ch6_update.js — 第 6 章/附录/第 7 章 v5 更新后的逐数对账 */
 const fs = require('fs');
-const sc = JSON.parse(fs.readFileSync('论文/关键词召回实验数据_v5/qa_runs_autonomous_scored.json', 'utf8'));
-const st = JSON.parse(fs.readFileSync('论文/关键词召回实验数据_v5/statistics.json', 'utf8'));
+const sc = JSON.parse(fs.readFileSync('论文/辅助材料/关键词召回实验数据_v5/qa_runs_autonomous_scored.json', 'utf8'));
+const st = JSON.parse(fs.readFileSync('论文/辅助材料/关键词召回实验数据_v5/statistics.json', 'utf8'));
 // 只校验可见正文：剥掉 HTML 注释（含“旧值→新值”说明）与表格粗体标记
 const visible = (p) => fs.readFileSync(p, 'utf8').replace(/<!--[\s\S]*?-->/g, '').replace(/\*\*/g, '');
 const ch6 = visible('论文/6.系统测试与结果分析.md');
@@ -77,7 +77,7 @@ chk('表D-8 列合计 83/85/91', colCount.non_kg === 83 && colCount.wpw_map === 
 
 chk('表6-2 模型区分', ch6.includes('场景问答用 gpt-5.4-mini'));
 chk('D.2 节存在', ap.includes('### D.2 100 题终版逐题记录'));
-chk('表E-1 目录更新', ap.includes('关键词召回实验数据_v5/（100 题问答终版）') || ap.includes('关键词召回实验数据_v5/' + String.fromCharCode(96) + '（100 题问答终版）'));
+chk('表E-1 目录更新', ap.includes('辅助材料/关键词召回实验数据_v5/（100 题问答终版）') || ap.includes('辅助材料/关键词召回实验数据_v5/' + String.fromCharCode(96) + '（100 题问答终版）'));
 
 console.log(fail ? '\n' + fail + ' 项失败' : '\n全部对账通过');
 process.exit(fail ? 1 : 0);

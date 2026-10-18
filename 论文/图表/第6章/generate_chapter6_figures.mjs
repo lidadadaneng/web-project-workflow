@@ -205,7 +205,7 @@ function line(x1, y1, x2, y2, opts = {}) {
 
 // 6-5: initial context supplied before the agent starts; tool output is excluded.
 {
-  const dataPath = path.resolve(outDir, '../../关键词召回实验数据_v5/qa_runs_autonomous_scored.json');
+  const dataPath = path.resolve(outDir, '../../辅助材料/关键词召回实验数据_v5/qa_runs_autonomous_scored.json');
   const runs = JSON.parse(await fs.readFile(dataPath, 'utf8'));
   const groups = [
     { id: 'non_kg', label: '非 KG', color: neutral },

@@ -1,6 +1,6 @@
 // 生成论文附录（原方向），数据直接取自实验数据目录，避免手抄
 const fs = require('fs');
-const P = 'E:/project/web-project-workflow/论文/关键词召回实验数据_v4/';
+const P = 'E:/project/web-project-workflow/论文/辅助材料/关键词召回实验数据_v4/';
 const OUT = 'E:/project/web-project-workflow/论文/附录.md';
 const B = '\u0060';
 const load = f => JSON.parse(fs.readFileSync(P + f, 'utf8'));
@@ -349,7 +349,7 @@ p('|---|---|---|');
 p('| 源码仓库 | 12 个模块、393 个源文件、1,369 个代码元素（L2/L3 口径） | ' + B + 'afca51b09abd73c619986659a7af34b8d616d9b1' + B + ' |');
 p('| 能力规范 | 25 份能力规范（' + B + 'wpw/specs/<能力名>/spec.md' + B + '） | 与源码仓库同一快照 |');
 p('| 图谱构建产物 | 完整 wpw：1,799 节点、2,434 条边、1,794 条向量，Schema v3.1.0 | 与源码仓库同一快照 |');
-p('| 留档形式 | 压缩包 ' + B + 'snapshot-afca51b09abd.zip' + B + '，各条件从该快照复制独立工作区 | 数据目录 ' + B + '关键词召回实验数据_v4/' + B + ' |');
+p('| 留档形式 | 压缩包 ' + B + 'snapshot-afca51b09abd.zip' + B + '，各条件从该快照复制独立工作区 | 数据目录 ' + B + '辅助材料/关键词召回实验数据_v4/' + B + ' |');
 p('');
 p('表E-2 题集与参数冻结记录');
 p('');

@@ -1,7 +1,7 @@
 'use strict';
 const fs = require('fs');
-const dir = 'E:/project/web-project-workflow/论文/关键词召回实验数据_v5/';
-const v4dir = 'E:/project/web-project-workflow/论文/关键词召回实验数据_v4/';
+const dir = 'E:/project/web-project-workflow/论文/辅助材料/关键词召回实验数据_v5/';
+const v4dir = 'E:/project/web-project-workflow/论文/辅助材料/关键词召回实验数据_v4/';
 const v6 = JSON.parse(fs.readFileSync(dir + 'qa_runs_autonomous_scored.json', 'utf8'));
 const v4 = JSON.parse(fs.readFileSync(v4dir + 'qa_runs_autonomous_scored.json', 'utf8'));
 const tasks = JSON.parse(fs.readFileSync(v4dir + 'qa_tasks.json', 'utf8'));

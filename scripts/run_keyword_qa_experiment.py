@@ -33,7 +33,7 @@ from typing import Any, Iterable
 
 SOURCE = Path(r"F:\project\springboot7tr93")
 WPW_ROOT = Path(r"F:\project\web-project-workflow")
-DATA = WPW_ROOT / "论文" / "关键词召回实验数据_v4"
+DATA = WPW_ROOT / "论文" / "辅助材料" / "关键词召回实验数据_v4"
 WORK = DATA / "workspaces"
 MAP_WORK = WORK / "wpw-map"
 FULL_WORK = WORK / "wpw-full"

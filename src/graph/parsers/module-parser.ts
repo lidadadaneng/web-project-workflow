@@ -55,7 +55,7 @@ function buildManualModules(
 
     const node: GraphNode = {
       id: generateNodeId('mod', [m.name, side]),
-      level: 'L2',
+      level: 'L1',
       type: NODE_TYPE_MODULE,
       name: m.name,
       attrs: {
@@ -73,6 +73,16 @@ function buildManualModules(
   return result;
 }
 
+/** 常见的模块容器目录名——本身不是业务模块，只是用来组织模块的壳目录 */
+const MODULE_CONTAINER_DIRS = new Set([
+  'modules', 'module',
+  'biz', 'business',
+  'pages', 'page',
+  'views', 'view',
+  'features', 'feature',
+  'domains', 'domain',
+]);
+
 // ==================== 自动推断模块 ====================
 
 function autoDetectModules(
@@ -84,42 +94,19 @@ function autoDetectModules(
   const seen = new Set<string>();
   const commonDirs = new Set(config.build.commonDirs.map((d) => d.toLowerCase()));
 
+  // backend-java 项目：Spring Boot 业务包推断
+  if (projectType === 'backend-java') {
+    const javaModules = detectSpringBootModules(root, commonDirs, config);
+    if (javaModules.length > 0) {
+      return javaModules;
+    }
+  }
+
   for (const rootDir of config.build.moduleRoots) {
     const absDir = path.join(root, rootDir);
     if (!fs.existsSync(absDir)) continue;
 
-    const entries = fs.readdirSync(absDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isDirectory()) continue;
-      if (commonDirs.has(entry.name.toLowerCase())) continue;
-      if (entry.name.startsWith('_') || entry.name.startsWith('.')) continue;
-
-      const key = `${rootDir}/${entry.name}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-
-      const relDir = path.join(rootDir, entry.name);
-      const side = detectModuleSide(
-        path.join(root, relDir),
-        entry.name,
-        projectType,
-      );
-
-      const node: GraphNode = {
-        id: generateNodeId('mod', [entry.name, side]),
-        level: 'L2',
-        type: NODE_TYPE_MODULE,
-        name: entry.name,
-        attrs: {
-          side,
-          dir: relDir,
-        },
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      };
-
-      result.push({ node, dir: relDir });
-    }
+    scanModuleDir(result, seen, root, rootDir, absDir, commonDirs, projectType);
   }
 
   // 如果模块根目录没找到，试试 src 下的一级目录
@@ -128,6 +115,209 @@ function autoDetectModules(
   }
 
   return result;
+}
+
+// ==================== Spring Boot 业务包推断 ====================
+
+/**
+ * Spring Boot 项目下按业务包推断 L1 模块
+ *
+ * Maven 标准布局：src/main/java/<groupId反转>/<业务包>/...
+ * 业务包是源根下的直接子目录，技术分包（controller/service/repository 等）不作为模块。
+ */
+function detectSpringBootModules(
+  root: string,
+  commonDirs: Set<string>,
+  _config: GraphConfig,
+): ParsedModule[] {
+  const result: ParsedModule[] = [];
+
+  const srcMainJava = path.join(root, 'src', 'main', 'java');
+  if (!fs.existsSync(srcMainJava)) return result;
+
+  // 找到 groupId 反转包路径的根目录（通常是两级，如 com/example/）
+  const groupIdRoot = findGroupIdRoot(srcMainJava);
+  const srcMainJavaNorm = srcMainJava.replace(/\\/g, '/');
+
+  if (groupIdRoot) {
+    // 业务包 = groupId 根下的直接子目录（排除 commonDirs）
+    let currentRoot = groupIdRoot;
+    let relCurrent = path.relative(root, currentRoot).replace(/\\/g, '/');
+
+    // 如果当前目录下所有子目录都是技术分包（commonDirs），说明当前目录本身就是业务包
+    // 向上回退一级，重新判断
+    const entries = fs.readdirSync(currentRoot, { withFileTypes: true });
+    const subDirs = entries.filter((e) => e.isDirectory() && !e.name.startsWith('_') && !e.name.startsWith('.'));
+    const allTech = subDirs.length > 0 && subDirs.every((d) => commonDirs.has(d.name.toLowerCase()));
+
+    if (allTech && currentRoot.replace(/\\/g, '/') !== srcMainJavaNorm) {
+      // 所有子目录都是技术包，当前目录本身是业务包
+      // 向上回退一级，把当前目录作为一个业务包
+      const parentDir = path.dirname(currentRoot);
+      const parentRel = path.relative(root, parentDir).replace(/\\/g, '/');
+      const parentEntries = fs.readdirSync(parentDir, { withFileTypes: true });
+      const businessPackages = parentEntries.filter((e) =>
+        e.isDirectory() &&
+        !e.name.startsWith('_') &&
+        !e.name.startsWith('.') &&
+        !commonDirs.has(e.name.toLowerCase()),
+      );
+
+      if (businessPackages.length > 0) {
+        currentRoot = parentDir;
+        relCurrent = parentRel;
+      }
+    }
+
+    // 扫描当前根目录下的业务包
+    const finalEntries = fs.readdirSync(currentRoot, { withFileTypes: true });
+    for (const entry of finalEntries) {
+      if (!entry.isDirectory()) continue;
+      const entryLower = entry.name.toLowerCase();
+      if (commonDirs.has(entryLower)) continue;
+      if (entry.name.startsWith('_') || entry.name.startsWith('.')) continue;
+
+      const relDir = path.join(relCurrent, entry.name).replace(/\\/g, '/');
+      const node: GraphNode = {
+        id: generateNodeId('mod', [entry.name, 'backend']),
+        level: 'L1',
+        type: NODE_TYPE_MODULE,
+        name: entry.name,
+        attrs: {
+          side: 'backend',
+          dir: relDir,
+        },
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      };
+      result.push({ node, dir: relDir });
+    }
+  }
+
+  // 扁平包结构降级：整个 src/main/java 作为一个 backend 模块
+  if (result.length === 0) {
+    const relDir = 'src/main/java';
+    const absDir = path.join(root, relDir);
+    // 确认目录下确实有 java 文件
+    const hasJavaFiles = fs.readdirSync(absDir).some((name) =>
+      name.endsWith('.java') ||
+      fs.statSync(path.join(absDir, name)).isDirectory(),
+    );
+    if (hasJavaFiles) {
+      result.push({
+        node: {
+          id: generateNodeId('mod', ['backend', 'backend']),
+          level: 'L1',
+          type: NODE_TYPE_MODULE,
+          name: 'backend',
+          attrs: {
+            side: 'backend',
+            dir: relDir,
+          },
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        },
+        dir: relDir,
+      });
+    }
+  }
+
+  return result;
+}
+
+/**
+ * 找到 groupId 反转包路径的根目录
+ *
+ * 从 src/main/java 往下找，最多找 3 级目录，直到找到一个目录下有多个子目录（业务包），
+ * 或者到达有 .java 文件的层级。
+ */
+function findGroupIdRoot(srcMainJava: string): string | null {
+  let current = srcMainJava;
+  // 最多下钻 3 级（典型 groupId 反转：com/example/demo 是三级）
+  for (let depth = 0; depth < 3; depth++) {
+    let entries: fs.Dirent[];
+    try {
+      entries = fs.readdirSync(current, { withFileTypes: true });
+    } catch {
+      return null;
+    }
+
+    const dirs = entries.filter((e) => e.isDirectory() && !e.name.startsWith('.'));
+    const javaFiles = entries.filter((e) => e.isFile() && e.name.endsWith('.java'));
+
+    // 如果有 Java 文件，说明已经到了业务包内部，当前就是 groupId 根
+    if (javaFiles.length > 0) return current;
+
+    // 如果没有子目录，说明到了尽头
+    if (dirs.length === 0) return null;
+
+    // 如果只有一个子目录，继续下钻（groupId 通常是多级单目录）
+    if (dirs.length === 1) {
+      current = path.join(current, dirs[0].name);
+      continue;
+    }
+
+    // 如果有多个子目录，说明这里就是业务包层级的父目录 = groupId 根
+    return current;
+  }
+
+  return current;
+}
+
+/**
+ * 扫描目录下的子目录，将非通用目录识别为模块。
+ * 如果某个子目录是「模块容器目录」（如 modules / biz），则下钻一层继续扫描。
+ */
+function scanModuleDir(
+  result: ParsedModule[],
+  seen: Set<string>,
+  root: string,
+  parentRel: string,
+  parentAbs: string,
+  commonDirs: Set<string>,
+  projectType: ProjectType,
+): void {
+  const entries = fs.readdirSync(parentAbs, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    if (commonDirs.has(entry.name.toLowerCase())) continue;
+    if (entry.name.startsWith('_') || entry.name.startsWith('.')) continue;
+
+    const entryLower = entry.name.toLowerCase();
+    const relDir = path.join(parentRel, entry.name);
+    const key = relDir.replace(/\\/g, '/');
+    if (seen.has(key)) continue;
+
+    // 如果是模块容器目录（如 modules / biz），下钻一层，把里面的子目录当作模块
+    if (MODULE_CONTAINER_DIRS.has(entryLower)) {
+      const absEntry = path.join(parentAbs, entry.name);
+      scanModuleDir(result, seen, root, relDir, absEntry, commonDirs, projectType);
+      continue;
+    }
+
+    seen.add(key);
+    const side = detectModuleSide(
+      path.join(root, relDir),
+      entry.name,
+      projectType,
+    );
+
+    const node: GraphNode = {
+      id: generateNodeId('mod', [entry.name, side]),
+      level: 'L1',
+      type: NODE_TYPE_MODULE,
+      name: entry.name,
+      attrs: {
+        side,
+        dir: relDir,
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    result.push({ node, dir: relDir });
+  }
 }
 
 function detectFromSrcRoot(
@@ -155,7 +345,7 @@ function detectFromSrcRoot(
 
     const node: GraphNode = {
       id: generateNodeId('mod', [entry.name, side]),
-      level: 'L2',
+      level: 'L1',
       type: NODE_TYPE_MODULE,
       name: entry.name,
       attrs: {

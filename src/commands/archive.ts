@@ -1,28 +1,23 @@
 import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
-import { getChangeDir, getArchivedDir } from '../lib/state';
+import { archiveChange, getChangeDir } from '../lib/state';
 
 export function registerArchive(program: Command): void {
   program
     .command('archive <name>')
-    .description('归档需求到 wpw/archived/YYYY-MM/，并同步更新知识图谱')
+    .description('归档需求到 wpw/archived/YYYY-MM/，并同步更新知识图谱（C 层能力 spec 变更自动检测）')
     .option('--no-graph', '跳过归档后的知识图谱更新')
     .action(async (name: string, opts: { graph?: boolean }) => {
       const root = process.cwd();
-      const src = getChangeDir(root, name);
-      if (!fs.existsSync(src)) {
+      if (!fs.existsSync(getChangeDir(root, name))) {
         console.error(`需求不存在: ${name}`);
         process.exit(1);
       }
-      const ym = new Date().toISOString().slice(0, 7); // YYYY-MM
-      const destDir = path.join(getArchivedDir(root), ym);
-      const dest = path.join(destDir, name);
-      fs.mkdirSync(destDir, { recursive: true });
-      fs.renameSync(src, dest);
-      console.log(`已归档: ${name} -> ${path.relative(root, dest)}`);
+      const { relative } = archiveChange(root, name);
+      console.log(`已归档: ${name} -> ${relative}`);
 
-      // 归档后同步更新知识图谱，使 L1 需求节点正确反映归档状态
+      // 归档后同步更新知识图谱，自动检测 wpw/specs/ 中的能力 spec 变更
       if (opts.graph !== false) {
         const graphDir = path.join(root, 'wpw', 'knowledge', 'graph');
         if (fs.existsSync(path.join(graphDir, 'graph.jsonl'))) {

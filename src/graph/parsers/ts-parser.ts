@@ -2,8 +2,8 @@
  * TypeScript / JavaScript 源码解析器
  *
  * 基于 web-tree-sitter 解析 TS/JS 文件，提取：
- * - 文件节点（L3）
- * - 元素节点（L4）：函数、类、接口、常量
+ * - 文件节点（L2）
+ * - 元素节点（L3）：函数、类、接口、常量
  * - import 信息（用于生成 import 边）
  */
 import * as path from 'path';
@@ -22,8 +22,14 @@ import { setParserLanguage } from './tree-sitter-loader';
 export interface ParseResult {
   /** 文件节点 */
   fileNode: GraphNode;
-  /** 元素节点列表 */
+  /** 元素节点列表（L3） */
   elements: GraphNode[];
+  /** Pinia store 节点列表（L2，可选） */
+  piniaStores?: GraphNode[];
+  /** Vuex store 节点列表（L2，可选） */
+  vuexStores?: GraphNode[];
+  /** Redux slice 节点列表（L2，可选） */
+  reduxSlices?: GraphNode[];
   /** import 目标（相对路径或模块名），用于生成 import 边 */
   imports: string[];
 }
@@ -57,7 +63,7 @@ export async function parseTypeScriptFile(
   // 文件节点
   const fileNode: GraphNode = {
     id: generateNodeId('file', [relPath]),
-    level: 'L3',
+    level: 'L2',
     type: 'file',
     name: fileName,
     attrs: {
@@ -69,6 +75,16 @@ export async function parseTypeScriptFile(
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
+
+  // 元素节点继承所属文件路径（供语义检索 embedding 富化与词汇加权区分同名义函数）
+  const fileBaseName = path.basename(fileName, path.extname(fileName));
+  for (const el of elements) {
+    el.attrs.filePath = relPath;
+    // 顶层元素的 parentName 设为文件名（去重名歧义）；类方法等已在提取时设置了 parentName
+    if (!el.attrs.parentName) {
+      el.attrs.parentName = fileBaseName;
+    }
+  }
 
   return { fileNode, elements, imports };
 }
@@ -195,7 +211,7 @@ function extractFunction(
 
   return {
     id: generateNodeId('elem', [filePath, signature, 'function']),
-    level: 'L4',
+    level: 'L3',
     type: isComponentName(name) ? NODE_TYPE_COMPONENT : NODE_TYPE_FUNCTION,
     name: fullName,
     attrs: {
@@ -273,7 +289,7 @@ function extractClass(node: any, source: string, filePath: string): GraphNode {
 
   return {
     id: generateNodeId('elem', [filePath, name, 'class']),
-    level: 'L4',
+    level: 'L3',
     type: NODE_TYPE_CLASS,
     name,
     attrs: {
@@ -321,7 +337,7 @@ function extractInterface(node: any, source: string, filePath: string): GraphNod
 
   return {
     id: generateNodeId('elem', [filePath, name, 'interface']),
-    level: 'L4',
+    level: 'L3',
     type: NODE_TYPE_INTERFACE,
     name,
     attrs: {
@@ -352,7 +368,7 @@ function extractTypeAlias(node: any, source: string, filePath: string): GraphNod
 
   return {
     id: generateNodeId('elem', [filePath, name, 'type']),
-    level: 'L4',
+    level: 'L3',
     type: NODE_TYPE_INTERFACE,
     name,
     attrs: {
@@ -397,7 +413,7 @@ function extractConstants(
 
   elements.push({
     id: generateNodeId('elem', [filePath, name, 'const']),
-    level: 'L4',
+    level: 'L3',
     type: NODE_TYPE_CONSTANT,
     name,
     attrs: {

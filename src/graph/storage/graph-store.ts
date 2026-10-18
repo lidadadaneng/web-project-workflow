@@ -25,7 +25,10 @@ import {
   EDGE_TYPE_IMPORT,
   EDGE_TYPE_INHERIT,
   EDGE_TYPE_BUSINESS_MAP,
+  EDGE_TYPE_SIBLING,
+  DEFAULT_GRAPH_NAME,
 } from '../types';
+import { resolveGraphDir } from './graph-path';
 
 /**
  * GraphStore 接口
@@ -79,12 +82,24 @@ export function buildGraphIndex(data: GraphData): GraphIndex {
 
 /**
  * JSONL 格式的 GraphStore 实现
+ *
+ * 支持多图谱存储：图谱文件位于 wpw/knowledge/graph/<stack>/graph.jsonl
+ * 构造函数可接受图谱目录绝对路径，或通过 (root, stack) 解析。
  */
 export class JsonlGraphStore implements GraphStore {
   private graphPath: string;
 
-  constructor(private wpfDir: string) {
-    this.graphPath = path.join(wpfDir, 'graph.jsonl');
+  constructor(graphDir: string);
+  constructor(root: string, stack: string);
+  constructor(rootOrDir: string, stack?: string) {
+    if (stack !== undefined) {
+      // (root, stack) 形式
+      const graphDir = resolveGraphDir(rootOrDir, stack || DEFAULT_GRAPH_NAME);
+      this.graphPath = path.join(graphDir, 'graph.jsonl');
+    } else {
+      // 直接传图谱目录（向后兼容）
+      this.graphPath = path.join(rootOrDir, 'graph.jsonl');
+    }
   }
 
   exists(): boolean {
@@ -131,6 +146,10 @@ export class JsonlGraphStore implements GraphStore {
             type: obj.type,
             weight: obj.weight,
             source: obj.source ?? 'structure',
+            ...(obj.method ? { method: obj.method } : {}),
+            ...(obj.eventName ? { eventName: obj.eventName } : {}),
+            ...(obj.bindPath ? { bindPath: obj.bindPath } : {}),
+            ...(obj.capability ? { capability: obj.capability } : {}),
           });
         }
       } catch (e) {
@@ -177,6 +196,12 @@ export class JsonlGraphStore implements GraphStore {
           type: edge.type,
           weight: edge.weight,
           source: edge.source,
+          // 扩展字段必须落盘：navigate 的跳转方式、bind-event 的事件名、bind-data 的绑定
+          // 路径、sibling 的共享能力名都只存在这些字段里，漏写就等于重载后丢信息
+          ...(edge.method ? { method: edge.method } : {}),
+          ...(edge.eventName ? { eventName: edge.eventName } : {}),
+          ...(edge.bindPath ? { bindPath: edge.bindPath } : {}),
+          ...(edge.capability ? { capability: edge.capability } : {}),
         }),
       );
     }
@@ -203,6 +228,7 @@ function isEdgeType(t: string): boolean {
     t === EDGE_TYPE_CALL ||
     t === EDGE_TYPE_IMPORT ||
     t === EDGE_TYPE_INHERIT ||
-    t === EDGE_TYPE_BUSINESS_MAP
+    t === EDGE_TYPE_BUSINESS_MAP ||
+    t === EDGE_TYPE_SIBLING
   );
 }

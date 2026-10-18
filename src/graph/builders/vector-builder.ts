@@ -5,10 +5,10 @@
  * 构建二进制向量索引 + 节点映射关系。
  *
  * 哪些节点生成向量：
- * - L1 需求节点（需求描述文本）
- * - L2 模块节点（模块名 + 职责描述）
- * - L3 文件节点（文件名 + 顶层注释）
- * - L4 函数/类/接口/组件节点（名称 + 签名 + JSDoc）
+ * - C 层能力节点（能力描述 + 需求文本）
+ * - L1 模块节点（模块名 + 职责描述）
+ * - L2 文件节点（文件名 + 顶层注释）
+ * - L3 函数/类/接口/组件节点（名称 + 签名 + JSDoc）
  *
  * 常量节点不生成向量（信息太少）。
  */
@@ -31,11 +31,16 @@ export interface VectorBuildResult {
  */
 export function getNodeVectorText(node: GraphNode): string | null {
   switch (node.type) {
-    case 'requirement': {
-      // 需求：名称 + 描述 + 标签
+    case 'capability': {
+      // 能力：名称 + 描述 + 功能条目
       const parts = [node.name];
       if (node.attrs.description) parts.push(node.attrs.description);
-      if (node.attrs.tags?.length) parts.push(node.attrs.tags.join(', '));
+      if (node.attrs.features?.length) {
+        for (const f of node.attrs.features) {
+          parts.push(f.name);
+          if (f.description) parts.push(f.description);
+        }
+      }
       return parts.join('\n');
     }
 
@@ -48,26 +53,160 @@ export function getNodeVectorText(node: GraphNode): string | null {
     }
 
     case 'file': {
-      // 文件：文件名 + 路径
-      return `${node.attrs.filePath ?? node.name}\n${node.name}`;
+      // 文件：文件名 + 路径 + 有界源码摘要。摘要让中文领域注释也能
+      // 参与能力到代码的匹配，而不再只能比较中文需求与拼音路径。
+      const parts = [node.attrs.filePath ?? node.name, node.name];
+      if (node.attrs.description) parts.push(node.attrs.description);
+      return parts.join('\n');
     }
 
     case 'function':
-    case 'component': {
-      // 函数/组件：名称 + 签名 + JSDoc
+    case 'component':
+    case 'pinia-action':
+    case 'pinia-getter': {
+      // 函数/组件/Pinia action & getter：名称 + 签名 + JSDoc + 所属文件路径（提升同名义函数区分度）
       const parts = [node.name];
       if (node.attrs.signature) parts.push(node.attrs.signature);
       if (node.attrs.jsDoc) parts.push(node.attrs.jsDoc);
       if (node.attrs.parentName) parts.push(`属于: ${node.attrs.parentName}`);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
       return parts.join('\n');
     }
 
     case 'class':
     case 'interface': {
-      // 类/接口：名称 + 签名 + JSDoc
+      // 类/接口：名称 + 签名 + JSDoc + 所属文件
       const parts = [node.name];
       if (node.attrs.signature) parts.push(node.attrs.signature);
       if (node.attrs.jsDoc) parts.push(node.attrs.jsDoc);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    case 'pinia-store': {
+      // Pinia Store：名称 + 描述 + 路径
+      const parts = [node.name, 'Pinia 状态管理'];
+      if (node.attrs.description) parts.push(node.attrs.description);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    case 'pinia-state': {
+      // Pinia state：名称 + 所属 store + 路径
+      const parts = [node.name];
+      if (node.attrs.parentName) parts.push(`store: ${node.attrs.parentName}`);
+      if (node.attrs.jsDoc) parts.push(node.attrs.jsDoc);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    // ==================== Vuex 节点 ====================
+
+    case 'vuex-store': {
+      const parts = [node.name, 'Vuex 状态管理 Store'];
+      if (node.attrs.description) parts.push(node.attrs.description);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    case 'vuex-state':
+    case 'vuex-mutation':
+    case 'vuex-action':
+    case 'vuex-getter': {
+      const parts = [node.name];
+      const typeLabel: Record<string, string> = {
+        'vuex-state': 'Vuex state 状态',
+        'vuex-mutation': 'Vuex mutation 变更',
+        'vuex-action': 'Vuex action 动作',
+        'vuex-getter': 'Vuex getter 计算属性',
+      };
+      parts.push(typeLabel[node.type] || node.type);
+      if (node.attrs.parentName) parts.push(`所属 store: ${node.attrs.parentName}`);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    // ==================== Redux 节点 ====================
+
+    case 'redux-slice': {
+      const parts = [node.name, 'Redux Slice 状态切片'];
+      if (node.attrs.description) parts.push(node.attrs.description);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    case 'redux-state':
+    case 'redux-reducer':
+    case 'redux-action':
+    case 'redux-selector': {
+      const parts = [node.name];
+      const typeLabel: Record<string, string> = {
+        'redux-state': 'Redux state 状态',
+        'redux-reducer': 'Redux reducer 归约函数',
+        'redux-action': 'Redux action 动作',
+        'redux-selector': 'Redux selector 选择器',
+      };
+      parts.push(typeLabel[node.type] || node.type);
+      if (node.attrs.parentName) parts.push(`所属 slice: ${node.attrs.parentName}`);
+      if (node.attrs.actionType) parts.push(`actionType: ${node.attrs.actionType}`);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    // ==================== 微信小程序节点 ====================
+
+    case 'mp-app': {
+      const parts = [node.name, '微信小程序 App 实例'];
+      if (node.attrs.description) parts.push(node.attrs.description);
+      if (node.attrs.platform) parts.push(`平台: ${node.attrs.platform}`);
+      return parts.join('\n');
+    }
+
+    case 'mp-page': {
+      const parts = [node.name];
+      if (node.attrs.pageTitle) parts.push(node.attrs.pageTitle);
+      parts.push('微信小程序页面');
+      if (node.attrs.pagePath) parts.push(`路径: ${node.attrs.pagePath}`);
+      if (node.attrs.isTabBar) parts.push('TabBar 页面');
+      if (node.attrs.subPackage) parts.push(`分包: ${node.attrs.subPackage}`);
+      return parts.join('\n');
+    }
+
+    case 'mp-component': {
+      const parts = [node.name, '微信小程序自定义组件'];
+      if (node.attrs.pagePath) parts.push(`路径: ${node.attrs.pagePath}`);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    case 'mp-method':
+    case 'mp-lifecycle':
+    case 'mp-data':
+    case 'mp-property': {
+      const parts = [node.name];
+      const typeLabel: Record<string, string> = {
+        'mp-method': '小程序方法',
+        'mp-lifecycle': '小程序生命周期',
+        'mp-data': '小程序 data 数据',
+        'mp-property': '小程序组件属性',
+      };
+      parts.push(typeLabel[node.type] || node.type);
+      if (node.attrs.parentName) parts.push(`所属: ${node.attrs.parentName}`);
+      if (node.attrs.lifecycleType) parts.push(`类型: ${node.attrs.lifecycleType}`);
+      if (node.attrs.filePath) parts.push(node.attrs.filePath);
+      return parts.join('\n');
+    }
+
+    // ==================== uni-app 节点 ====================
+
+    case 'uni-page': {
+      const parts = [node.name];
+      if (node.attrs.pageTitle) parts.push(node.attrs.pageTitle);
+      parts.push('uni-app 页面');
+      if (node.attrs.pagePath) parts.push(`路径: ${node.attrs.pagePath}`);
+      if (node.attrs.isTabBar) parts.push('TabBar 页面');
+      if (node.attrs.subPackage) parts.push(`分包: ${node.attrs.subPackage}`);
+      if (node.attrs.platform) parts.push(`平台: ${node.attrs.platform}`);
       return parts.join('\n');
     }
 
@@ -189,9 +328,16 @@ export function cosineSimilarity(a: Float32Array, b: Float32Array): number {
  * @param modelName 模型名称
  * @returns 向量矩阵（一维数组，按行存储）+ 维度数
  */
+/** 向量构建进度回调 */
+export type VectorProgressCallback = (done: number, total: number) => void;
+
+/** 向量构建批次大小 */
+const VECTOR_BATCH_SIZE = 32;
+
 export async function buildVectors(
   texts: string[],
   modelName?: string,
+  onProgress?: VectorProgressCallback,
 ): Promise<{ vectors: Float32Array; dimensions: number }> {
   if (texts.length === 0) {
     return { vectors: new Float32Array(), dimensions: 384 };
@@ -203,17 +349,35 @@ export async function buildVectors(
 
   const extractor = await getPipeline();
 
-  // 批量生成
-  const output = await extractor(texts, {
-    pooling: 'mean',
-    normalize: true,
-  });
+  // 分批生成，便于汇报进度
+  const total = texts.length;
+  let allData: Float32Array | null = null;
+  let dimensions = 384;
+  let offset = 0;
 
-  // 输出是 Tensor，转成 Float32Array
-  const data: Float32Array = output.data;
-  const dimensions = output.dims[output.dims.length - 1];
+  for (let i = 0; i < total; i += VECTOR_BATCH_SIZE) {
+    const batch = texts.slice(i, i + VECTOR_BATCH_SIZE);
+    const output = await extractor(batch, {
+      pooling: 'mean',
+      normalize: true,
+    });
 
-  return { vectors: data, dimensions };
+    const batchData: Float32Array = output.data;
+    const batchDim = output.dims[output.dims.length - 1];
+    dimensions = batchDim;
+
+    if (!allData) {
+      allData = new Float32Array(total * dimensions);
+    }
+    allData.set(batchData, offset);
+    offset += batchData.length;
+
+    if (onProgress) {
+      onProgress(Math.min(i + VECTOR_BATCH_SIZE, total), total);
+    }
+  }
+
+  return { vectors: allData ?? new Float32Array(), dimensions };
 }
 
 /**
@@ -222,17 +386,19 @@ export async function buildVectors(
  * @param nodes 节点列表
  * @param modelName 模型名称（可选，覆盖默认值）
  * @param mirror 镜像源（可选，huggingface / modelscope）
+ * @param onProgress 进度回调
  */
 export async function buildNodeVectors(
   nodes: GraphNode[],
   modelName?: string,
   mirror?: 'huggingface' | 'modelscope',
+  onProgress?: VectorProgressCallback,
 ): Promise<VectorBuildResult> {
   if (mirror) {
     setEmbeddingMirror(mirror);
   }
   const { nodeIds, texts } = prepareVectorTexts(nodes);
-  const { vectors, dimensions } = await buildVectors(texts, modelName);
+  const { vectors, dimensions } = await buildVectors(texts, modelName, onProgress);
 
   const indexToNodeId = nodeIds;
   const nodeIdToIndex = new Map<string, number>();

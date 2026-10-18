@@ -32,6 +32,21 @@ export {
 export { BinaryVectorStore, type VectorStore } from './storage/vector-store';
 export { VectorMappingStore } from './storage/mapping-store';
 export { JsonMetaStore, createEmptyMeta } from './storage/meta-store';
+export {
+  resolveGraphDir,
+  getGraphBaseDir,
+  isValidGraphName,
+  isReservedGraphName,
+  graphExists,
+  GRAPH_NAME_RULES,
+} from './storage/graph-path';
+export {
+  listGraphs,
+  removeGraph,
+  needsLegacyMigration,
+  migrateLegacyGraph,
+  type MigrationResult,
+} from './storage/graph-manager';
 
 // ==================== 构建引擎 ====================
 

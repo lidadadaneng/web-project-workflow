@@ -1,19 +1,8 @@
 import { Command } from 'commander';
-import * as fs from 'fs';
 import * as path from 'path';
 import { getChangeDir, loadState } from '../lib/state';
-import {
-  getArtifact,
-  getSchema,
-  resolveFileName,
-  ArtifactId,
-} from '../schema/six-phase';
-
-interface Task {
-  id: string;
-  text: string;
-  state: 'pending' | 'in-progress' | 'done';
-}
+import { getArtifact, getSchema, resolveFileName } from '../schema/six-phase';
+import { parsePlanTasks, summarizeTasks, type PlanTask } from '../lib/artifact';
 
 export function registerApply(program: Command): void {
   program
@@ -74,8 +63,7 @@ export function registerApply(program: Command): void {
         resolveFileName(planArtifact, name),
       );
       const allTasks = parseTasks(planPath);
-      const total = allTasks.length;
-      const completed = allTasks.filter((t) => t.state === 'done').length;
+      const { total, completed } = summarizeTasks(allTasks);
 
       const tasks =
         opts.from && opts.from !== '1'
@@ -104,22 +92,7 @@ export function registerApply(program: Command): void {
     });
 }
 
-function parseTasks(planPath: string): Task[] {
-  if (!fs.existsSync(planPath)) return [];
-  const content = fs.readFileSync(planPath, 'utf8');
-  const tasks: Task[] = [];
-  let id = 0;
-  for (const line of content.split('\n')) {
-    // 匹配 - [ ] / - [x] / - [🔄]
-    const m = line.match(/^-\s*\[([ x]|🔄)\]\s*(.+)$/);
-    if (m) {
-      id++;
-      const mark = m[1];
-      const taskState: Task['state'] =
-        mark === 'x' ? 'done' : mark === '🔄' ? 'in-progress' : 'pending';
-      const text = m[2].replace(/^\d+\.\s*/, '');
-      tasks.push({ id: String(id), text, state: taskState });
-    }
-  }
-  return tasks;
+/** Plan 任务解析统一走 lib/artifact，与 `wpw task`、viz 服务共用同一套正则 */
+function parseTasks(planPath: string): PlanTask[] {
+  return parsePlanTasks(planPath);
 }

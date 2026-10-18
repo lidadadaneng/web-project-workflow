@@ -19,8 +19,10 @@ import type {
   Subgraph,
   ContextResult,
   ContextStats,
+  NavCandidate,
   VectorMapping,
 } from '../types';
+import { EDGE_TYPE_SIBLING } from '../types';
 import { GraphQuerier } from '../search/graph-query';
 import { SemanticSearcher } from '../search/semantic-search';
 import { SubgraphTrimmer } from '../trimming/subgraph-trimmer';
@@ -30,7 +32,16 @@ import {
   type CompressionLevel,
   estimateTokens,
 } from '../compression/hierarchical-serializer';
+import { NavigationSerializer } from '../compression/navigation-serializer';
 import { buildGraphIndex } from '../storage/graph-store';
+
+/**
+ * 输出形态
+ *   context — 把子图组织成一段上下文正文（层级树 + 元素 + 依赖），直接交给下游使用；
+ *   nav     — 只输出导航（锚点、候选文件路径、够到它的关系），不含代码内容，
+ *             由下游自己决定打开哪些文件、读多少。
+ */
+export type OutputMode = 'context' | 'nav';
 
 /** 上下文生成选项 */
 export interface ContextOptions {
@@ -60,6 +71,8 @@ export interface ContextOptions {
   anchorLimit?: number;
   /** 语义检索相似度阈值（覆盖配置） */
   threshold?: number;
+  /** 输出形态：context（默认，上下文正文）或 nav（导航） */
+  mode?: OutputMode;
 }
 
 /**
@@ -130,14 +143,22 @@ export class ContextPipeline {
 
   // ==================== 锚点解析 ====================
 
+  /**
+   * 解析锚点
+   *
+   * 只返回节点 ID，不保留各锚点的语义相似度。曾经试过把相似度带出来、让锚点之间
+   * 按相似度排序（而不是都记满分后落到路径字母序），离线测得排序质量反而下降
+   * （MRR 0.594 → 0.341、候选前 5 精度 0.19 → 0.16，见 6.4.7 的度量）：多关键词
+   * 检索的相似度分布集中在 0.70~0.94 的窄带内，区分度不足，不足以支撑细排；
+   * 锚点集合本身是有效的，锚点内部的次序不是。故此处不再外传相似度。
+   */
   private async resolveAnchors(options: ContextOptions): Promise<string[]> {
-    // 直接指定锚点
+    // 直接指定锚点 → 跳过语义检索和置信度衰减
     if (options.anchors && options.anchors.length > 0) {
-      // 过滤掉不存在的节点
       return options.anchors.filter((id) => this.querier.getNode(id) !== null);
     }
 
-    // 语义检索
+    // 语义检索 + 置信度衰减加权锚点选择
     if (options.query && this.searcher) {
       const queries = options.multi
         ? options.query.split(/[,，]/).map((q) => q.trim()).filter(Boolean)
@@ -147,12 +168,14 @@ export class ContextPipeline {
       const limit = options.anchorLimit ?? 5;
 
       for (const q of queries) {
+        // 启用置信度衰减加权（decay: true）
+        // L1 层得分会根据 C 层置信度动态调整
         const results = await this.searcher.search(q, {
           limit,
           threshold: options.threshold ?? this.config.search.threshold,
-          excludeArchived: !options.includeArchived,
           level: options.level,
           type: options.type,
+          decay: true, // 启用置信度衰减加权锚点选择
         });
         for (const r of results) {
           if (!allAnchors.includes(r.node.id)) {
@@ -187,19 +210,27 @@ export class ContextPipeline {
     const subgraph = trimmer.buildSubgraph(anchorIds, {
       depth,
       minWeight,
+      // 业务映射边的权重是语义量纲，与结构边不同，按类型单独给阈值
+      minWeightByType: config.trimming.minWeightByType,
       maxNodes,
       semanticWeight: config.trimming.semanticWeight,
       structuralWeight: config.trimming.structuralWeight,
+      // 共能力边是低优先边：节点上限一紧，它就只占剩余槽位，不挤掉结构边本来够得的节点。
+      // 离线实测（6.4.8）：上限 100 时，任其竞争会把可达性从 52/62 压到 49/62。
+      lowPriorityEdgeTypes: [EDGE_TYPE_SIBLING],
+      // 不给 anchorScores：锚点一律记满分。曾试过按各自相似度排序，离线测得反而更差，
+      // 原因见 resolveAnchors 的注释。
     });
     const trimTime = Date.now() - trimStart;
 
     // 层级过滤（后处理）
     const filteredSubgraph = this.filterSubgraphByLevel(subgraph, options);
 
-    // 压缩序列化
+    // 序列化：导航形态只给「往哪里看」，上下文形态给完整的层级与依赖
     const compStart = Date.now();
-    const serializer = new HierarchicalSerializer(filteredSubgraph, { level: compression });
-    const serialized = serializer.serialize({ showStats: false });
+    const navResult = options.mode === 'nav' ? this.navigate(filteredSubgraph) : null;
+    const serialized = navResult
+      ?? new HierarchicalSerializer(filteredSubgraph, { level: compression }).serialize({ showStats: false });
     const compTime = Date.now() - compStart;
 
     // 锚点节点列表
@@ -227,6 +258,31 @@ export class ContextPipeline {
       subgraph: filteredSubgraph,
       compressedText: serialized.text,
       stats,
+      candidates: navResult?.candidates,
+    };
+  }
+
+  /**
+   * 导航形态：输出「往哪里看」，不含代码内容
+   *
+   * 与上下文形态的差别不在压缩等级，而在语义——导航是搜索辅助件，由调用方决定读什么；
+   * 上下文正文是材料，假定调用方会直接用。两者的字段仍走同一套 ContextResult，
+   * 便于命令行与前端复用同一条通路。
+   */
+  private navigate(subgraph: Subgraph): {
+    text: string;
+    estimatedTokens: number;
+    nodeCount: number;
+    edgeCount: number;
+    candidates: NavCandidate[];
+  } {
+    const nav = new NavigationSerializer(subgraph).serialize();
+    return {
+      text: nav.text,
+      estimatedTokens: nav.estimatedTokens,
+      nodeCount: subgraph.nodes.length,
+      edgeCount: subgraph.edges.length,
+      candidates: nav.candidates,
     };
   }
 
@@ -348,8 +404,9 @@ export class ContextPipeline {
     };
 
     const compStart = Date.now();
-    const serializer = new HierarchicalSerializer(subgraph, { level: 'extreme' });
-    const serialized = serializer.serialize({ showStats: false });
+    const navResult = options.mode === 'nav' ? this.navigate(subgraph) : null;
+    const serialized = navResult
+      ?? new HierarchicalSerializer(subgraph, { level: 'extreme' }).serialize({ showStats: false });
     const compTime = Date.now() - compStart;
 
     const totalTime = Date.now() - startTime;
@@ -358,6 +415,7 @@ export class ContextPipeline {
       anchors: anchorNodes,
       subgraph,
       compressedText: serialized.text,
+      candidates: navResult?.candidates,
       stats: {
         anchorCount: anchorIds.length,
         nodeCount: anchorNodes.length,

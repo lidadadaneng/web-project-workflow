@@ -60,6 +60,14 @@ export async function parseVueFile(
   // 元素节点沿用内部解析结果
   const elements = innerResult.elements;
 
+  // Vue 组件内的函数/方法 parentName 统一为组件名（去重名歧义）
+  for (const el of elements) {
+    // 组件节点自身保持原来的 parentName（文件名）
+    if (el.type !== NODE_TYPE_COMPONENT) {
+      el.attrs.parentName = componentName;
+    }
+  }
+
   // 如果文件是一个默认导出的组件，添加一个组件节点
   // （这里简单处理：所有 .vue 文件都视为一个组件）
   const hasDefaultExport = elements.some(
@@ -153,7 +161,7 @@ function createVueFileNode(
 
   return {
     id: generateNodeId('file', [relPath]),
-    level: 'L3',
+    level: 'L2',
     type: NODE_TYPE_FILE,
     name: fileName,
     attrs,
@@ -171,10 +179,11 @@ function createVueComponentNode(
 
   return {
     id: generateNodeId('component', [relPath, componentName]),
-    level: 'L4',
+    level: 'L3',
     type: NODE_TYPE_COMPONENT,
     name: componentName,
     attrs: {
+      filePath: relPath,
       parentName: path.basename(filePath),
       isExported: true,
       description: 'Vue 单文件组件',

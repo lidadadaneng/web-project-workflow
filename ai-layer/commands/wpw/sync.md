@@ -19,7 +19,7 @@ tags: [workflow, sync]
 
 检查 `wpw/active/<需求名>/` 下与本次变更相关的 BRD / PRD / Design / Plan / Test。
 
-**知识图谱关联查询**（推荐，定位更准不漏同步）：
+**知识图谱关联查询**（必做，定位更准不漏同步）：
 
 ```bash
 wpw graph update   # 增量更新图谱

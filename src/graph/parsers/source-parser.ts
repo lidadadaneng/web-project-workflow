@@ -19,9 +19,13 @@ import {
   ParseResult,
 } from './ts-parser';
 import { parseVueFile } from './vue-parser';
+import { isPiniaStoreFile, parsePiniaStores } from './pinia-parser';
+import { isVuexStoreFile, parseVuexStores } from './vuex-parser';
+import { isReduxFile, parseReduxFile } from './redux-parser';
+import { parseJavaFile } from './java-parser';
 
 /** 支持的语言 */
-export type SupportedLanguage = 'typescript' | 'tsx' | 'javascript' | 'vue';
+export type SupportedLanguage = 'typescript' | 'tsx' | 'javascript' | 'vue' | 'java';
 
 /**
  * 判断文件是否为支持的源码文件
@@ -42,6 +46,7 @@ export function isSupportedFile(
   // javascript 配置包含 .js/.jsx/.mjs/.cjs
   if (lang === 'tsx') return languages.includes('typescript');
   if (lang === 'vue') return languages.includes('vue');
+  if (lang === 'java') return languages.includes('java');
   // typescript 和 javascript 直接匹配
   return languages.includes(lang);
 }
@@ -66,19 +71,115 @@ export async function parseSourceFile(
 
   const source = fs.readFileSync(filePath, 'utf-8');
 
+  let result: ParseResult;
+
   switch (lang) {
     case 'typescript':
     case 'tsx':
     case 'javascript':
-      return parseTypeScriptFile(filePath, root, source, lang);
+      result = await parseTypeScriptFile(filePath, root, source, lang);
+      break;
 
     case 'vue':
-      return parseVueFile(filePath, root, source);
+      result = await parseVueFile(filePath, root, source);
+      break;
+
+    case 'java':
+      result = await parseJavaFile(filePath, root, source);
+      break;
 
     default:
       return { fileNode: createFileNode(filePath, root, lang), elements: [], imports: [] };
   }
+
+  // L2 文件节点过去只携带文件名和路径，导致中文业务能力无法与
+  // MeishixinxiController 这类拼音文件建立可靠的语义映射。保存一段
+  // 有界源码摘要，使文件级向量能看到类注释、路由和主要标识符。
+  result.fileNode.attrs.description = buildSourceSearchSummary(source);
+
+  // Pinia store 解析（仅当文件疑似 store 时）
+  if (isPiniaStoreFile(filePath, source)) {
+    try {
+      const piniaLang = lang === 'vue' ? 'javascript' : lang;
+      const piniaResult = await parsePiniaStores(
+        filePath,
+        root,
+        source,
+        piniaLang as 'typescript' | 'javascript',
+      );
+      if (piniaResult.stores.length > 0) {
+        result.piniaStores = piniaResult.stores;
+        // Pinia 的 L3 元素（action/getter/state）并入 elements
+        result.elements.push(...piniaResult.elements);
+      }
+    } catch (e) {
+      console.warn(
+        `[source-parser] Pinia 解析失败: ${path.relative(root, filePath)} - ${(e as Error).message}`,
+      );
+    }
+  }
+
+  // Vuex store 解析（仅当文件疑似 Vuex store 时）
+  if (isVuexStoreFile(filePath, source)) {
+    try {
+      const vuexLang = lang === 'vue' ? 'javascript' : lang;
+      const vuexResult = await parseVuexStores(
+        filePath,
+        root,
+        source,
+        vuexLang as 'typescript' | 'javascript',
+      );
+      if (vuexResult.stores.length > 0) {
+        result.vuexStores = vuexResult.stores;
+        // Vuex 的 L3 元素（state/mutation/action/getter）并入 elements
+        result.elements.push(...vuexResult.elements);
+      }
+    } catch (e) {
+      console.warn(
+        `[source-parser] Vuex 解析失败: ${path.relative(root, filePath)} - ${(e as Error).message}`,
+      );
+    }
+  }
+
+  // Redux 解析（仅当文件疑似 Redux 相关时）
+  if (isReduxFile(filePath, source)) {
+    try {
+      const reduxLang = lang === 'vue' ? 'javascript' : lang;
+      const reduxResult = await parseReduxFile(
+        filePath,
+        root,
+        source,
+        reduxLang as 'typescript' | 'javascript',
+      );
+      if (reduxResult.slices.length > 0 || reduxResult.elements.length > 0) {
+        result.reduxSlices = reduxResult.slices;
+        // Redux 的 L3 元素并入 elements
+        result.elements.push(...reduxResult.elements);
+      }
+    } catch (e) {
+      console.warn(
+        `[source-parser] Redux 解析失败: ${path.relative(root, filePath)} - ${(e as Error).message}`,
+      );
+    }
+  }
+
+  return result;
 }
+
+/** 为文件级语义检索生成短摘要，不改变源码内容或 AST 结构。 */
+function buildSourceSearchSummary(source: string): string {
+  return source
+    .replace(/\r/g, '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, 90)
+    .join(' ')
+    .slice(0, 2400);
+}
+
+/** 源码解析进度回调 */
+export type ParseProgressCallback = (done: number, total: number, fileName: string) => void;
 
 /**
  * 批量解析文件
@@ -86,9 +187,14 @@ export async function parseSourceFile(
 export async function parseSourceFiles(
   filePaths: string[],
   root: string,
+  onProgress?: ParseProgressCallback,
 ): Promise<ParseResult[]> {
   const results: ParseResult[] = [];
-  for (const fp of filePaths) {
+  const total = filePaths.length;
+  for (let i = 0; i < filePaths.length; i++) {
+    const fp = filePaths[i];
+    const fileName = path.basename(fp);
+    if (onProgress) onProgress(i, total, fileName);
     try {
       const result = await parseSourceFile(fp, root);
       results.push(result);
@@ -120,6 +226,8 @@ function extToLanguage(ext: string): SupportedLanguage | null {
       return 'javascript';
     case '.vue':
       return 'vue';
+    case '.java':
+      return 'java';
     default:
       return null;
   }
@@ -136,7 +244,7 @@ function createFileNode(
 
   return {
     id: generateNodeId('file', [relPath]),
-    level: 'L3',
+    level: 'L2',
     type: 'file',
     name: fileName,
     attrs: {

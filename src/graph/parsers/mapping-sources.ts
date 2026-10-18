@@ -76,43 +76,123 @@ export interface NameMatchResult {
 
 /** 中英文关键词映射词典（用于需求名 → 代码名匹配） */
 const CN_EN_MAP: Record<string, string[]> = {
-  用户: ['user', 'account', 'member'],
-  认证: ['auth', 'authentication', 'login'],
-  登录: ['login', 'signin', 'auth'],
-  注册: ['register', 'signup', 'register'],
+  // ===== 用户与认证 =====
+  用户: ['user', 'account', 'member', 'profile'],
+  账号: ['account', 'user', 'username'],
+  账户: ['account', 'user', 'username'],
+  会员: ['member', 'vip', 'user'],
+  认证: ['auth', 'authentication', 'login', 'verify'],
+  登录: ['login', 'signin', 'auth', 'sign-in'],
+  注册: ['register', 'signup', 'sign-up', 'enroll'],
+  登出: ['logout', 'signout', 'sign-out'],
+  退出: ['logout', 'signout', 'exit', 'quit'],
   密码: ['password', 'pwd', 'passwd'],
-  订单: ['order', 'ordering'],
-  支付: ['pay', 'payment', 'pay'],
-  商品: ['product', 'goods', 'item', 'sku'],
-  购物车: ['cart', 'shopping-cart'],
-  角色: ['role', 'permission'],
-  权限: ['permission', 'auth', 'acl'],
-  消息: ['message', 'msg', 'notification', 'notify'],
-  通知: ['notification', 'notify', 'notice'],
-  文件: ['file', 'upload', 'oss', 'storage'],
-  上传: ['upload', 'file'],
+  验证码: ['captcha', 'verify-code', 'otp', 'code'],
+  令牌: ['token', 'jwt', 'access-token'],
+  权限: ['permission', 'auth', 'acl', 'privilege'],
+  角色: ['role', 'permission', 'position'],
+  身份: ['identity', 'profile', 'credential'],
+
+  // ===== 表单与校验 =====
+  表单: ['form', 'input', 'submit'],
+  提交: ['submit', 'send', 'confirm'],
+  确认: ['confirm', 'submit', 'ok', 'approve'],
+  取消: ['cancel', 'abort', 'dismiss'],
+  保存: ['save', 'store', 'persist'],
+  验证: ['validate', 'verify', 'check'],
+  校验: ['validate', 'verify', 'check', 'validation'],
+  必填: ['required', 'mandatory'],
+  错误: ['error', 'err', 'fail', 'failure'],
+  提示: ['hint', 'tip', 'prompt', 'message'],
+  弹窗: ['modal', 'dialog', 'popup'],
+  对话框: ['dialog', 'modal'],
+
+  // ===== 数据与查询 =====
+  数据: ['data', 'record', 'item'],
+  查询: ['query', 'search', 'find', 'list'],
   搜索: ['search', 'query', 'find'],
-  评论: ['comment', 'review'],
-  收藏: ['favorite', 'collect', 'star'],
-  点赞: ['like', 'thumb', 'vote'],
-  关注: ['follow', 'subscribe'],
-  积分: ['point', 'score', 'credit'],
-  统计: ['stats', 'statistics', 'analytics'],
-  报表: ['report', 'chart'],
-  日志: ['log', 'logger', 'audit'],
-  配置: ['config', 'setting', 'setting'],
-  系统: ['system', 'sys', 'admin'],
-  管理: ['admin', 'manage', 'management'],
-  标签: ['tag', 'label'],
+  筛选: ['filter', 'query', 'search'],
+  过滤: ['filter', 'exclude'],
+  分页: ['page', 'pagination', 'pager'],
+  列表: ['list', 'table', 'data', 'items'],
+  表格: ['table', 'grid', 'list'],
+  详情: ['detail', 'info', 'view', 'show'],
+  新增: ['add', 'create', 'new', 'insert'],
+  创建: ['create', 'add', 'new', 'generate'],
+  编辑: ['edit', 'update', 'modify'],
+  修改: ['update', 'edit', 'modify', 'change'],
+  删除: ['delete', 'remove', 'destroy', 'del'],
+  导出: ['export', 'download'],
+  导入: ['import', 'upload'],
+  下载: ['download', 'export'],
+  上传: ['upload', 'import', 'file'],
+  文件: ['file', 'upload', 'oss', 'storage', 'document'],
+  附件: ['attachment', 'file', 'upload'],
+  图片: ['image', 'img', 'picture', 'photo'],
+  状态: ['status', 'state', 'condition'],
+
+  // ===== 商品与订单 =====
+  商品: ['product', 'goods', 'item', 'sku'],
+  产品: ['product', 'item', 'goods'],
+  订单: ['order', 'ordering'],
+  购物车: ['cart', 'shopping-cart', 'basket'],
+  支付: ['pay', 'payment', 'checkout'],
+  付款: ['pay', 'payment', 'pay'],
+  退款: ['refund', 'return', 'money-back'],
+  价格: ['price', 'amount', 'cost'],
+  金额: ['amount', 'price', 'money', 'total'],
+  库存: ['stock', 'inventory', 'quantity'],
   分类: ['category', 'classify', 'catalog'],
-  字典: ['dict', 'dictionary'],
-  地区: ['region', 'area', 'district', 'location'],
-  地址: ['address', 'location'],
-  优惠券: ['coupon', 'voucher'],
-  营销: ['marketing', 'promotion'],
+  品牌: ['brand', 'trademark'],
+  规格: ['spec', 'specification', 'sku'],
+
+  // ===== 营销与活动 =====
+  营销: ['marketing', 'promotion', 'promo'],
   活动: ['activity', 'campaign', 'event'],
-  秒杀: ['seckill', 'flash'],
-  团购: ['group', 'groupon'],
+  优惠券: ['coupon', 'voucher'],
+  秒杀: ['seckill', 'flash', 'flash-sale'],
+  团购: ['group', 'groupon', 'group-buy'],
+  折扣: ['discount', 'sale', 'off'],
+  积分: ['point', 'score', 'credit', 'bonus'],
+  等级: ['level', 'grade', 'rank', 'tier'],
+  会员等级: ['vip', 'member-level', 'tier'],
+
+  // ===== 社交与互动 =====
+  评论: ['comment', 'review', 'reply'],
+  回复: ['reply', 'comment', 'respond'],
+  收藏: ['favorite', 'collect', 'star', 'bookmark'],
+  点赞: ['like', 'thumb', 'vote', 'praise'],
+  关注: ['follow', 'subscribe', 'watch'],
+  粉丝: ['follower', 'fan'],
+  消息: ['message', 'msg', 'notification', 'notify', 'chat'],
+  通知: ['notification', 'notify', 'notice', 'alert'],
+  推送: ['push', 'notification', 'notify'],
+  聊天: ['chat', 'message', 'im', 'conversation'],
+  分享: ['share', 'forward'],
+
+  // ===== 系统与管理 =====
+  管理: ['admin', 'manage', 'management'],
+  管理员: ['admin', 'administrator', 'manager'],
+  系统: ['system', 'sys', 'platform'],
+  平台: ['platform', 'system'],
+  配置: ['config', 'setting', 'setting', 'configuration'],
+  设置: ['setting', 'config', 'preference'],
+  参数: ['param', 'parameter', 'config', 'option'],
+  选项: ['option', 'config', 'setting'],
+  日志: ['log', 'logger', 'audit', 'record'],
+  审计: ['audit', 'log', 'review'],
+  统计: ['stats', 'statistics', 'analytics', 'analysis'],
+  报表: ['report', 'chart', 'dashboard'],
+  仪表盘: ['dashboard', 'chart', 'stats'],
+  字典: ['dict', 'dictionary', 'enum'],
+  枚举: ['enum', 'dict', 'dictionary'],
+  标签: ['tag', 'label', 'badge'],
+  地区: ['region', 'area', 'district', 'location'],
+  地址: ['address', 'location', 'position'],
+  部门: ['department', 'dept', 'org', 'organization'],
+  组织: ['org', 'organization', 'group'],
+  岗位: ['position', 'post', 'job'],
+  员工: ['employee', 'staff', 'worker'],
 };
 
 /**
@@ -169,20 +249,18 @@ export function matchByName(
   return { matches };
 }
 
+/** 从字符串中提取命中的中文词典 key（CN_EN_MAP） */
+function findChineseKeys(s: string): string[] {
+  const keys: string[] = [];
+  for (const cnKey of Object.keys(CN_EN_MAP)) {
+    if (s.includes(cnKey)) keys.push(cnKey);
+  }
+  return keys;
+}
+
 /** 从需求名中提取关键词 */
 function extractKeywords(name: string): string[] {
-  const keywords: string[] = [];
-
-  // 直接用原名作为一个关键词
-  keywords.push(name);
-
-  // 中文需求：按常见词拆分
-  // （简单的基于词典的拆分，不做复杂分词）
-  for (const cnKey of Object.keys(CN_EN_MAP)) {
-    if (name.includes(cnKey)) {
-      keywords.push(cnKey);
-    }
-  }
+  const keywords: string[] = [name, ...findChineseKeys(name)];
 
   // 英文/数字：按分隔符拆分
   const parts = name.split(/[-_\s./]+/).filter((p) => p.length > 1);
@@ -191,6 +269,31 @@ function extractKeywords(name: string): string[] {
   }
 
   return Array.from(new Set(keywords)).slice(0, 10); // 最多 10 个关键词
+}
+
+/**
+ * 将查询词展开为英文等价词集合（跨语言桥接：中文查询 -> 英文代码标识符）
+ *
+ * 包含：原词 + 命中的中文词典 key + 其英文等价词 + 英文 token。
+ * 供语义检索的词汇加权（lexBoost）复用，避免维护两套词典。
+ */
+export function expandQueryToEnglish(query: string): string[] {
+  const result = new Set<string>();
+  result.add(query);
+
+  // 中文词 + 英文等价词
+  for (const cnKey of findChineseKeys(query)) {
+    result.add(cnKey);
+    for (const en of CN_EN_MAP[cnKey]) {
+      result.add(en);
+    }
+  }
+
+  // 英文 token 原样保留
+  const parts = query.split(/[-_\s./]+/).filter((p) => p.length > 1);
+  for (const p of parts) result.add(p);
+
+  return Array.from(result).slice(0, 20);
 }
 
 /**

@@ -1,53 +1,135 @@
 /**
  * 知识图谱核心类型定义
  *
- * 四层节点模型：L1 业务需求 → L2 业务模块 → L3 文件 → L4 代码元素
+ * 业务能力层 + 三层结构模型：
+ *   C 层（Capability 业务能力） →  L1（模块） →  L2（文件） →  L3（代码元素）
+ *   C 层与结构层之间为 business_map 边，不是 contain 层级包含
  */
 
 // ==================== 节点类型 ====================
 
 /** 节点层级 */
-export type NodeLevel = 'L1' | 'L2' | 'L3' | 'L4';
+export type NodeLevel = 'C' | 'L1' | 'L2' | 'L3';
 
-/** L1 需求节点类型 */
-export const NODE_TYPE_REQUIREMENT = 'requirement';
-/** L2 模块节点类型 */
+/** C 层能力节点类型 */
+export const NODE_TYPE_CAPABILITY = 'capability';
+/** L1 模块节点类型 */
 export const NODE_TYPE_MODULE = 'module';
-/** L3 文件节点类型 */
+/** L2 文件节点类型 */
 export const NODE_TYPE_FILE = 'file';
-/** L4 函数节点类型 */
+/** L3 函数节点类型 */
 export const NODE_TYPE_FUNCTION = 'function';
-/** L4 类节点类型 */
+/** L3 类节点类型 */
 export const NODE_TYPE_CLASS = 'class';
-/** L4 接口节点类型 */
+/** L3 接口节点类型 */
 export const NODE_TYPE_INTERFACE = 'interface';
-/** L4 常量节点类型 */
+/** L3 常量节点类型 */
 export const NODE_TYPE_CONSTANT = 'constant';
-/** L4 组件节点类型 */
+/** L3 组件节点类型 */
 export const NODE_TYPE_COMPONENT = 'component';
+/** L2 Pinia Store 节点类型 */
+export const NODE_TYPE_PINIA_STORE = 'pinia-store';
+/** L3 Pinia Action 节点类型 */
+export const NODE_TYPE_PINIA_ACTION = 'pinia-action';
+/** L3 Pinia Getter 节点类型 */
+export const NODE_TYPE_PINIA_GETTER = 'pinia-getter';
+/** L3 Pinia State 节点类型 */
+export const NODE_TYPE_PINIA_STATE = 'pinia-state';
+
+// ==================== Vuex 节点类型 ====================
+
+/** L2 Vuex Store 节点类型 */
+export const NODE_TYPE_VUEX_STORE = 'vuex-store';
+/** L3 Vuex State 节点类型 */
+export const NODE_TYPE_VUEX_STATE = 'vuex-state';
+/** L3 Vuex Mutation 节点类型 */
+export const NODE_TYPE_VUEX_MUTATION = 'vuex-mutation';
+/** L3 Vuex Action 节点类型 */
+export const NODE_TYPE_VUEX_ACTION = 'vuex-action';
+/** L3 Vuex Getter 节点类型 */
+export const NODE_TYPE_VUEX_GETTER = 'vuex-getter';
+
+// ==================== Redux 节点类型 ====================
+
+/** L2 Redux Slice 节点类型 */
+export const NODE_TYPE_REDUX_SLICE = 'redux-slice';
+/** L3 Redux State 节点类型 */
+export const NODE_TYPE_REDUX_STATE = 'redux-state';
+/** L3 Redux Reducer 节点类型 */
+export const NODE_TYPE_REDUX_REDUCER = 'redux-reducer';
+/** L3 Redux Action 节点类型 */
+export const NODE_TYPE_REDUX_ACTION = 'redux-action';
+/** L3 Redux Selector 节点类型 */
+export const NODE_TYPE_REDUX_SELECTOR = 'redux-selector';
+
+// ==================== 微信小程序节点类型 ====================
+
+/** L1 小程序 App 节点类型 */
+export const NODE_TYPE_MP_APP = 'mp-app';
+/** L2 小程序页面节点类型 */
+export const NODE_TYPE_MP_PAGE = 'mp-page';
+/** L2 小程序自定义组件节点类型 */
+export const NODE_TYPE_MP_COMPONENT = 'mp-component';
+/** L3 小程序方法节点类型 */
+export const NODE_TYPE_MP_METHOD = 'mp-method';
+/** L3 小程序生命周期节点类型 */
+export const NODE_TYPE_MP_LIFECYCLE = 'mp-lifecycle';
+/** L3 小程序 data 属性节点类型 */
+export const NODE_TYPE_MP_DATA = 'mp-data';
+/** L3 小程序组件 property 节点类型 */
+export const NODE_TYPE_MP_PROPERTY = 'mp-property';
+
+// ==================== uni-app 节点类型 ====================
+
+/** L2 uni-app 页面节点类型 */
+export const NODE_TYPE_UNI_PAGE = 'uni-page';
 
 /** 所有节点类型 */
 export type NodeType =
-  | typeof NODE_TYPE_REQUIREMENT
+  | typeof NODE_TYPE_CAPABILITY
   | typeof NODE_TYPE_MODULE
   | typeof NODE_TYPE_FILE
   | typeof NODE_TYPE_FUNCTION
   | typeof NODE_TYPE_CLASS
   | typeof NODE_TYPE_INTERFACE
   | typeof NODE_TYPE_CONSTANT
-  | typeof NODE_TYPE_COMPONENT;
+  | typeof NODE_TYPE_COMPONENT
+  | typeof NODE_TYPE_PINIA_STORE
+  | typeof NODE_TYPE_PINIA_ACTION
+  | typeof NODE_TYPE_PINIA_GETTER
+  | typeof NODE_TYPE_PINIA_STATE
+  | typeof NODE_TYPE_VUEX_STORE
+  | typeof NODE_TYPE_VUEX_STATE
+  | typeof NODE_TYPE_VUEX_MUTATION
+  | typeof NODE_TYPE_VUEX_ACTION
+  | typeof NODE_TYPE_VUEX_GETTER
+  | typeof NODE_TYPE_REDUX_SLICE
+  | typeof NODE_TYPE_REDUX_STATE
+  | typeof NODE_TYPE_REDUX_REDUCER
+  | typeof NODE_TYPE_REDUX_ACTION
+  | typeof NODE_TYPE_REDUX_SELECTOR
+  | typeof NODE_TYPE_MP_APP
+  | typeof NODE_TYPE_MP_PAGE
+  | typeof NODE_TYPE_MP_COMPONENT
+  | typeof NODE_TYPE_MP_METHOD
+  | typeof NODE_TYPE_MP_LIFECYCLE
+  | typeof NODE_TYPE_MP_DATA
+  | typeof NODE_TYPE_MP_PROPERTY
+  | typeof NODE_TYPE_UNI_PAGE;
 
 /** 模块所属端 */
 export type ModuleSide = 'frontend' | 'backend' | 'shared' | 'unknown';
 
-/** 需求状态 */
-export interface RequirementStatus {
-  /** 是否归档 */
-  archived: boolean;
-  /** 各 artifact 状态（brd/prd/explore/design/plan/testplan） */
-  artifacts: Record<string, string>;
-  /** Schema 名称 */
-  schema: string;
+/** 需求功能条目（从 PRD/能力 spec 结构化提取） */
+export interface RequirementFeature {
+  /** 功能编号，如 F1、F2 */
+  id: string;
+  /** 功能名称 */
+  name: string;
+  /** 优先级，如 P0、P1 */
+  priority?: string;
+  /** 功能描述（含验收标准） */
+  description?: string;
 }
 
 /** 节点扩展属性（JSON 存储，不同节点类型有不同字段） */
@@ -56,21 +138,19 @@ export interface NodeAttributes {
   description?: string;
   tags?: string[];
 
-  // L1 需求
-  status?: RequirementStatus;
-  docPath?: string;          // 需求文档目录路径
-  projectType?: string;
+  // C 层能力
+  features?: RequirementFeature[];  // 结构化功能条目（从 spec 提取）
 
-  // L2 模块
+  // L1 模块
   side?: ModuleSide;
   dir?: string;             // 模块根目录
 
-  // L3 文件
+  // L2 文件
   filePath?: string;
   language?: string;        // typescript / javascript / ...
   fileHash?: string;
 
-  // L4 元素
+  // L3 元素
   signature?: string;       // 函数/方法签名
   params?: Array<{ name: string; type?: string }>;
   returnType?: string;
@@ -80,6 +160,27 @@ export interface NodeAttributes {
   isExported?: boolean;
   annotations?: string[];   // 装饰器/注解
   jsDoc?: string;           // JSDoc 注释摘要
+
+  // REST 端点（Java Spring Boot）
+  endpoint?: { method: string; path: string };
+
+  // 状态管理（Vuex / Redux / Pinia 通用）
+  namespaced?: boolean;     // 是否命名空间模块
+  storeName?: string;       // 所属 store 名
+  actionType?: string;      // Redux action type（如 user/setUser）
+
+  // 小程序 / uni-app
+  platform?: string;        // 平台标识（mp-weixin / h5 / app-plus 等）
+  subPackage?: string;      // 所属分包名
+  isTabBar?: boolean;       // 是否 TabBar 页面
+  pageTitle?: string;       // 页面标题（navigationBarTitleText）
+  pagePath?: string;        // 页面路由路径
+  lifecycleType?: string;   // 生命周期类型（onLoad / onShow / onLaunch 等）
+  isUniLifecycle?: boolean; // 是否为 uni-app 生命周期
+  builtinComponents?: string[]; // 页面/组件使用的内置组件列表
+  componentJsonPath?: string;   // 组件配置 json 路径
+  storageKeys?: string[];      // 使用的 storage key 列表
+  requestUrls?: string[];      // 发起的网络请求 URL
 }
 
 /** 图谱节点 */
@@ -110,8 +211,25 @@ export const EDGE_TYPE_CALL = 'call';
 export const EDGE_TYPE_IMPORT = 'import';
 /** 继承边（类继承/接口实现） */
 export const EDGE_TYPE_INHERIT = 'inherit';
-/** 业务映射边（需求 ↔ 模块/文件/元素） */
+/** 业务映射边（能力 ↔ 模块/文件/元素） */
 export const EDGE_TYPE_BUSINESS_MAP = 'business_map';
+/**
+ * 共能力边（文件 ↔ 文件）
+ *
+ * 两个文件被同一个 C 层能力够到，说明它们共同承担该能力的一部分，改动时常同进同出。
+ * 这是从 business_map 派生的**弱**关系：它不说明两个文件互相调用或导入，只说明它们
+ * 属于同一能力。权重取两侧 business_map 权重中较弱的一侧——两侧都强才说明这个能力
+ * 确实同时落在两个文件上。
+ */
+export const EDGE_TYPE_SIBLING = 'sibling';
+/** 导航边（页面跳转） */
+export const EDGE_TYPE_NAVIGATE = 'navigate';
+/** 组件引用边（页面/组件 → 子组件） */
+export const EDGE_TYPE_USE_COMPONENT = 'use-component';
+/** 事件绑定边（模板 → 处理函数） */
+export const EDGE_TYPE_BIND_EVENT = 'bind-event';
+/** 数据绑定边（模板 → data/property） */
+export const EDGE_TYPE_BIND_DATA = 'bind-data';
 
 /** 所有边类型 */
 export type EdgeType =
@@ -119,7 +237,12 @@ export type EdgeType =
   | typeof EDGE_TYPE_CALL
   | typeof EDGE_TYPE_IMPORT
   | typeof EDGE_TYPE_INHERIT
-  | typeof EDGE_TYPE_BUSINESS_MAP;
+  | typeof EDGE_TYPE_BUSINESS_MAP
+  | typeof EDGE_TYPE_SIBLING
+  | typeof EDGE_TYPE_NAVIGATE
+  | typeof EDGE_TYPE_USE_COMPONENT
+  | typeof EDGE_TYPE_BIND_EVENT
+  | typeof EDGE_TYPE_BIND_DATA;
 
 /** 边的来源（用于追溯映射证据） */
 export type EdgeSource =
@@ -144,6 +267,20 @@ export interface GraphEdge {
   weight: number;
   /** 生成来源 */
   source: EdgeSource;
+  /** 跳转方式（navigate 边专用：navigateTo / redirectTo / switchTab / reLaunch / navigateBack） */
+  method?: string;
+  /** 事件名（bind-event 边专用：tap / change / input 等） */
+  eventName?: string;
+  /** 绑定路径（bind-data 边专用：数据绑定的路径） */
+  bindPath?: string;
+  /**
+   * 共享能力名（sibling 边专用）
+   *
+   * 记下这条边的依据是哪个能力：同一能力下 k 个文件两两互连会形成 k−1 条边，
+   * 对下游而言这是**一条**证据而不是 k−1 条，得靠这个字段把同一能力的边认出来。
+   * 存名称而不是能力节点 ID：导航输出要直接展示给人看。
+   */
+  capability?: string;
 }
 
 // ==================== 图谱数据 ====================
@@ -190,6 +327,10 @@ export interface GraphBuildConfig {
   moduleRoots: string[];
   /** 通用目录（不作为业务模块） */
   commonDirs: string[];
+  /** 启用的状态管理解析器（pinia / vuex / redux），默认 ['pinia']，空数组表示自动嗅探 */
+  stateManagers: string[];
+  /** 启用的框架扩展解析器（miniprogram / uniapp），默认空数组表示自动嗅探 */
+  frameworks: string[];
 }
 
 /** 映射策略配置 */
@@ -202,12 +343,24 @@ export interface GraphMappingConfig {
   aiApiKey?: string;
   /** AI API Base URL */
   aiApiBase?: string;
-  /** 语义匹配最小阈值 */
-  semanticThreshold: number;
+  /** 语义匹配最小阈值（未设置时运行时回退 search.threshold） */
+  semanticThreshold?: number;
+  /**
+   * 每个能力下参与共能力连边的文件数上限（默认 5）
+   *
+   * 共能力边是两两连接，条数是该值的平方级。取前 K 是取舍：排在前面的文件是该
+   * 能力的主要落点，连成团已覆盖改动集主体；后面的多是语义噪声，连进来会把噪声
+   * 也变成彼此的「证据」。0 表示不生成共能力边。
+   */
+  couplingMaxFilesPerCapability?: number;
+  /** 语义匹配每个能力召回的 Top-K 候选目标（默认 5） */
+  semanticTopK?: number;
   /** 是否启用 Git 历史追溯 */
   gitHistory: boolean;
   /** Git 最大回溯 commit 数 */
   gitMaxCommits: number;
+  /** Git 历史文件频次下限，低于此频次不作为证据（默认 2，过滤单次修改噪声） */
+  gitMinFreq?: number;
 }
 
 /** 检索配置 */
@@ -216,8 +369,8 @@ export interface GraphSearchConfig {
   defaultLimit: number;
   /** 相似度阈值 */
   threshold: number;
-  /** 是否排除归档需求 */
-  excludeArchived: boolean;
+  /** 置信度衰减系数 α（默认 3.0） */
+  decayAlpha: number;
 }
 
 /** 子图裁剪配置 */
@@ -226,6 +379,15 @@ export interface GraphTrimmingConfig {
   defaultDepth: number;
   /** 默认最小边权重 */
   minWeight: number;
+  /**
+   * 按边类型覆盖 minWeight。
+   *
+   * 不同来源的边权重不在同一量纲上：结构边是固定常量（contain 0.9、import 0.75），
+   * 而 business_map 边的权重是语义相似度的融合值（构建时上限 0.7，实测集中
+   * 在 0.33~0.43）。用结构边的量级去卡语义边，会让业务映射边整类不可通行，
+   * C 层锚点因而只能返回自身。这里为这类边单独指定阈值。
+   */
+  minWeightByType?: Record<string, number>;
   /** 默认节点上限 */
   maxNodes: number;
   /** 语义分权重 */
@@ -310,6 +472,54 @@ export interface ContextStats {
   totalTimeMs: number;
 }
 
+/** 候选位置「如何被够到」的一条关系 */
+export interface NavVia {
+  /** 边类型（contain / import / call / inherit / business_map / co-change） */
+  type: string;
+  /** 边权重 */
+  weight: number;
+  /** 来源一端的位置或节点名 */
+  from: string;
+}
+
+/** 导航形态的候选位置条目 */
+export interface NavCandidate {
+  /** 仓库相对路径（L1 模块为目录、L2/L3 为文件） */
+  path: string;
+  /** 是否为目录（模块节点） */
+  isDir: boolean;
+  /** 相关度得分（0~1，锚点所在位置恒为最高） */
+  score: number;
+  /**
+   * 关系支持度：够到该位置的多条关系中，最强的那条的 `来源得分 × 边权重`
+   *
+   * score 回答「这个位置自身有多相关」，support 回答「从已知相关的位置出发有多容易
+   * 走到这里」。自身语义分不高、但被一个高相关位置以高权重关系连着的文件，很可能是
+   * 同一改动集的一部分——这是共能力边要补的那类候选。
+   */
+  support: number;
+  /** 排序分：相关度与支持度的 noisy-OR（1 − (1−score)(1−support)），两者有其一即抬升 */
+  rankScore: number;
+  /** 是否锚点所在位置 */
+  isAnchorSite: boolean;
+  /** 该位置在子图里的元素数 */
+  elementCount: number;
+  /** 够到它的最强一条关系（锚点自身为 null） */
+  via: NavVia | null;
+  /** 够到它的全部独立关系，按权重降序（多证据聚合） */
+  vias: NavVia[];
+  /**
+   * 独立证据条数：有多少条不同的关系把这个位置拉进子图。
+   * 一条路径被越多独立关系支持，它越可能是正解；单条弱关系（如权重 0.3 的
+   * 业务映射）只给 1 条时应当被当作噪声。
+   */
+  evidenceCount: number;
+  /** 归属的业务能力（C 层名称），没有则为 null */
+  capability: string | null;
+  /** 所属改动包编号（按能力/模块聚类后填充，见 NavigationSerializer） */
+  packageId: number | null;
+}
+
 /** 上下文输出结果 */
 export interface ContextResult {
   /** 锚点节点列表 */
@@ -320,6 +530,8 @@ export interface ContextResult {
   compressedText: string;
   /** 统计信息 */
   stats: ContextStats;
+  /** 导航形态的候选位置（按相关度降序；仅 mode=nav 时有值） */
+  candidates?: NavCandidate[];
 }
 
 // ==================== 构建元数据 ====================
@@ -340,7 +552,16 @@ export interface GraphMeta {
   fileHashes: Record<string, string>;
   /** 配置版本（用于检测配置变更） */
   configVersion: string;
+  /** 图谱名称（多图谱存储用） */
+  graphName?: string;
+  /** 扫描根目录（相对工作根，多图谱按子目录构建时使用） */
+  scanRoot?: string;
+  /** 项目类型（前端/后端等，供增量更新复用） */
+  projectType?: string;
 }
+
+/** 当前 schema 版本（3.1.0：新增 Java 解析器与后端支持） */
+export const CURRENT_SCHEMA_VERSION = '3.1.0';
 
 // ==================== 构建统计 ====================
 
@@ -363,3 +584,44 @@ export interface BuildStats {
     warnings: string[];
   };
 }
+
+// ==================== 多图谱管理 ====================
+
+/** 图谱注册条目（graph list 输出） */
+export interface GraphRegistryEntry {
+  /** 图谱名 */
+  name: string;
+  /** 节点总数 */
+  totalNodes: number;
+  /** 边总数 */
+  totalEdges: number;
+  /** 向量总数 */
+  totalVectors: number;
+  /** 构建时间戳 */
+  builtAt: number;
+  /** 扫描根目录（相对工作根） */
+  scanRoot?: string;
+  /** 项目类型 */
+  projectType?: string;
+  /** schema 版本 */
+  schemaVersion: string;
+}
+
+/** 默认图谱名 */
+export const DEFAULT_GRAPH_NAME = 'default';
+
+// ==================== 向后兼容 ====================
+
+/**
+ * 旧层级值到新层级值的映射
+ *   旧 L1 (需求)  →  C (能力)
+ *   旧 L2 (模块)  →  L1 (模块)
+ *   旧 L3 (文件)  →  L2 (文件)
+ *   旧 L4 (元素)  →  L3 (元素)
+ */
+export const LEGACY_LEVEL_MAP: Record<string, NodeLevel> = {
+  L1: 'C',
+  L2: 'L1',
+  L3: 'L2',
+  L4: 'L3',
+};

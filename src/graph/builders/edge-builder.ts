@@ -33,6 +33,8 @@ export class EdgeBuilder {
     type: EdgeType;
     weight: number;
     source: EdgeSource;
+    /** 共享能力名（sibling 边专用） */
+    capability?: string;
   }): void {
     const id = this.edgeId(params.from, params.to, params.type);
 
@@ -43,6 +45,7 @@ export class EdgeBuilder {
         existing.weight = params.weight;
         existing.source = params.source;
       }
+      if (params.capability && !existing.capability) existing.capability = params.capability;
       return;
     }
 
@@ -53,10 +56,38 @@ export class EdgeBuilder {
       type: params.type,
       weight: Math.max(0, Math.min(1, params.weight)),
       source: params.source,
+      ...(params.capability ? { capability: params.capability } : {}),
     });
   }
 
-  /** 权重叠加（同一对节点同类型边，多来源命中则权重递增） */
+  /**
+   * 直接添加一条完整边（保留所有扩展属性，如 method / eventName / bindPath 等）
+   *
+   * 用于小程序/uni-app 等场景生成的带扩展属性的边。
+   * 同 from-to-type 去重：已存在则保留权重更高的。
+   */
+  addRawEdge(edge: GraphEdge): void {
+    const id = this.edgeId(edge.from, edge.to, edge.type);
+    const existing = this.edges.get(id);
+    if (existing) {
+      if (edge.weight > existing.weight) {
+        this.edges.set(id, edge);
+      }
+      return;
+    }
+    this.edges.set(id, { ...edge, id });
+  }
+
+  /**
+   * 权重叠加（同一对节点同类型边，多来源命中则权重递增）
+   *
+   * 定位：增量场景专用。当 `updateGraph` 对已存在的边追加新证据（如增量文件
+   * 触发的新 semantic/git 证据）时，用本方法叠加权重而非重建整条边。
+   *
+   * 注意：全量构建（buildGraph）的多源聚合统一走 `aggregateWeights`，
+   * 一次性收集所有证据并计算 noisy-OR 权重后，通过 `addEdge` 写入。
+   * 本方法仅供增量更新场景使用，故全量构建流程中不会被调用（非死代码）。
+   */
   boostEdge(params: {
     from: string;
     to: string;
@@ -141,16 +172,26 @@ export interface MappingEvidence {
   baseWeight: number;
 }
 
+/** 聚合后的证据结果（noisy-OR 权重 + 最权威溯源） */
+export interface AggregatedEvidence {
+  /** 聚合权重（noisy-OR：1 − ∏(1 − wᵢ)，上限 0.95） */
+  weight: number;
+  /** 支撑该权重的最权威证据来源（用于 business_map 边 source 字段溯源） */
+  source: EdgeSource;
+}
+
 /**
  * 多层证据权重叠加
  *
  * 同一目标被多层证据命中时，权重递增。
  * 公式：最终权重 = 1 - ∏(1 - 每层权重)
  * （直观理解：每层证据都有一定把握，多层同时命中把握更大，最高 0.95）
+ *
+ * 返回每个目标的聚合权重与最权威证据来源。调用方应据此设置 business_map 边的
+ * source 字段，而非依赖证据数组的 push 顺序（多源场景下顺序无关性由此保证）。
  */
-export function aggregateWeights(evidences: MappingEvidence[]): Map<string, number> {
-  const weights = new Map<string, number>();
-  const bestSource = new Map<string, EdgeSource>();
+export function aggregateWeights(evidences: MappingEvidence[]): Map<string, AggregatedEvidence> {
+  const result = new Map<string, AggregatedEvidence>();
 
   const sourceRank: Record<EdgeSource, number> = {
     'structure': 10,
@@ -185,9 +226,8 @@ export function aggregateWeights(evidences: MappingEvidence[]): Map<string, numb
     }
 
     const finalWeight = Math.min(0.95, 1 - product);
-    weights.set(targetId, finalWeight);
-    bestSource.set(targetId, bestSrc);
+    result.set(targetId, { weight: finalWeight, source: bestSrc });
   }
 
-  return weights;
+  return result;
 }

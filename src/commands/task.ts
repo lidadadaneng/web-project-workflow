@@ -3,9 +3,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { getChangeDir, loadState, setProgress } from '../lib/state';
 import { getArtifact, getSchema, resolveFileName } from '../schema/six-phase';
+import { markTaskInPlan, PLAN_TASK_STATES, type PlanTaskState } from '../lib/artifact';
 
-const VALID_STATES = ['pending', 'in-progress', 'done'] as const;
-type TaskState = (typeof VALID_STATES)[number];
+const VALID_STATES = PLAN_TASK_STATES;
+type TaskState = PlanTaskState;
 
 export function registerTask(program: Command): void {
   program
@@ -39,40 +40,9 @@ export function registerTask(program: Command): void {
         console.error(`Plan 文件不存在: ${planPath}`);
         process.exit(1);
       }
-      const { content, total, completed } = markTask(planPath, opts.mark, newState);
+      const { content, total, completed } = markTaskInPlan(planPath, opts.mark, newState);
       fs.writeFileSync(planPath, content, 'utf8');
       setProgress(root, name, total, completed);
       console.log(`已标记任务 ${opts.mark} = ${newState}（${completed}/${total}）`);
     });
-}
-
-function markTask(
-  planPath: string,
-  taskId: string,
-  newState: TaskState,
-): { content: string; total: number; completed: number } {
-  const content = fs.readFileSync(planPath, 'utf8');
-  const lines = content.split('\n');
-  let currentId = 0;
-  let total = 0;
-  let completed = 0;
-  const targetId = Number(taskId);
-  const newMark =
-    newState === 'done' ? 'x' : newState === 'in-progress' ? '🔄' : ' ';
-
-  const newLines = lines.map((line) => {
-    // 保留前缀、mark、后缀
-    const m = line.match(/^(-\s*\[)([ x]|🔄)(\]\s*)(.+)$/);
-    if (m) {
-      currentId++;
-      total++;
-      let mark = m[2];
-      if (currentId === targetId) mark = newMark;
-      if (mark === 'x') completed++;
-      return `${m[1]}${mark}${m[3]}${m[4]}`;
-    }
-    return line;
-  });
-
-  return { content: newLines.join('\n'), total, completed };
 }

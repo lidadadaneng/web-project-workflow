@@ -10,6 +10,7 @@ import { registerApply } from './apply';
 import { registerTask } from './task';
 import { registerArchive } from './archive';
 import { registerSkills } from './skills';
+import { registerViz } from './viz';
 import { registerGraph } from '../graph/commands/graph';
 
 /**
@@ -31,5 +32,6 @@ export function registerCommands(program: Command): void {
   registerTask(program);
   registerArchive(program);
   registerSkills(program);
+  registerViz(program);
   registerGraph(program);
 }

@@ -6,8 +6,6 @@
 <marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
 </defs>
 <rect width="1800" height="960" fill="#ffffff"/>
-<text x="900" y="34" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:32px;font-weight:600;fill:#27313a">软件项目知识图谱示例</text>
-<text x="900" y="73" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:21px;fill:#5b6770">能力节点作为语义锚点，沿 business_map 与 contain 关系展开到代码元素</text>
 <rect x="100" y="380" width="265" height="160" rx="10" fill="#eef4f8" stroke="#7396b1" stroke-width="2"/>
 <text x="232.5" y="444.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:27px;font-weight:600;fill:#315f8d">收藏管理</text>
 <text x="232.5" y="488.8" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">能力节点 C</text>

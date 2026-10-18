@@ -6,8 +6,6 @@
 <marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
 </defs>
 <rect width="1800" height="700" fill="#ffffff"/>
-<text x="900" y="42" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:31px;font-weight:600;fill:#27313a">代码上下文的处理链条</text>
-<text x="900" y="82" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">围绕开发任务完成上下文的获取、组织与控制</text>
 <rect x="90" y="150" width="470" height="410" rx="14" fill="#eef4f8" stroke="#7396b1" stroke-width="2"/>
 <text x="325.0" y="198" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:30px;font-weight:600;fill:#315f8d">获取</text>
 <text x="325.0" y="241" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:19px;fill:#5b6770">从仓库中找到候选内容</text>

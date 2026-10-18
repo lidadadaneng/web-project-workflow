@@ -1,12 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1000" viewBox="0 0 1800 1000">
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="930" viewBox="0 0 1800 930">
 <defs>
 <marker id="arrow-gray" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
 <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
 <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
 <marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
 </defs>
-<rect width="1800" height="1000" fill="#ffffff"/>
-<rect x="55" y="70" width="1690" height="860" rx="18" fill="#ffffff" stroke="#8f9aa2" stroke-width="3" stroke-dasharray="12 9"/>
+<rect width="1800" height="930" fill="#ffffff"/>
+<rect x="55" y="70" width="1690" height="810" rx="18" fill="#ffffff" stroke="#8f9aa2" stroke-width="3" stroke-dasharray="12 9"/>
 <text x="95" y="108" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:33px;font-weight:600;fill:#5b6770">Agent Harness（智能体运行框架）</text>
 <text x="95" y="148" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:22px;fill:#5b6770">提供工具调用、状态维护与执行环境接口</text>
 <polyline points="95,178 1705,178" fill="none" stroke="#c3cbd0" stroke-width="2" stroke-linejoin="round"/>
@@ -54,5 +54,4 @@
 <polyline points="1365,350 1435,350 1435,422 1470,422" fill="none" stroke="#315f8d" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
 <polyline points="1650,547 1710,547 1710,750 1385,750 1385,650 1365,650" fill="none" stroke="#5f8178" stroke-width="2" stroke-linejoin="round"/>
 <polyline points="1650,547 1710,547 1710,750 1385,750 1385,650 1365,650" fill="none" stroke="#5f8178" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
-<text x="900" y="890" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;fill:#5b6770">观察—调整—再行动：执行结果持续反馈到下一轮决策</text>
 </svg>

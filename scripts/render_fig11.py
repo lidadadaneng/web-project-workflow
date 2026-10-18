@@ -4,7 +4,7 @@ import math
 from PIL import Image, ImageDraw, ImageFont
 
 
-W, H = 1800, 1060
+W, H = 1800, 990
 ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = ROOT / "论文" / "图表" / "第1章"
 PNG_OUT = OUT_DIR / "图1-1-现有研究覆盖范围与本文定位.png"
@@ -79,7 +79,7 @@ arrow([(613, 565), (700, 565), (724, 580), (780, 660)], width=4)
 arrow([(1187, 565), (1100, 565), (1076, 580), (1020, 660)], width=4)
 
 # Proposed method: one Chinese heading and the durable knowledge chain.
-d.rounded_rectangle((110, 670, 1690, 1010), radius=18, fill="#eaf2fb", outline="#315f8d", width=4)
+d.rounded_rectangle((110, 670, 1690, 940), radius=18, fill="#eaf2fb", outline="#315f8d", width=4)
 center("本文方法：以业务能力连接需求与代码", (900, 725), 35, fill="#244e79", bold=True)
 d.line((156, 770, 1644, 770), fill="#9bb6d1", width=2)
 
@@ -96,7 +96,6 @@ for x1, y1, x2, y2, label in chain:
 
 for start, end in [((397, 857), (455, 857)), ((727, 857), (785, 857)), ((1037, 857), (1095, 857)), ((1342, 857), (1400, 857))]:
     arrow([start, end], fill="#315f8d", width=4, head=13)
-center("持续维护项目知识，按任务生成所需上下文", (900, 955), 27, fill="#4d6984")
 
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 img.save(PNG_OUT, "PNG", optimize=True)
@@ -110,9 +109,9 @@ def svg_text(text, x, y, size, weight="400", fill=None):
 
 
 svg = [
-    '<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1060" viewBox="0 0 1800 1060">',
+    '<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="990" viewBox="0 0 1800 990">',
     '<defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker><style>.cn{font-family:"Microsoft YaHei","Noto Sans CJK SC","SimSun",sans-serif;fill:#27313a}</style></defs>',
-    '<rect width="1800" height="1060" fill="#ffffff"/>',
+    '<rect width="1800" height="990" fill="#ffffff"/>',
     '<rect x="70" y="70" width="585" height="550" rx="18" fill="#f1f5f8" stroke="#91a0ad" stroke-width="3"/>',
     '<rect x="1145" y="70" width="585" height="550" rx="18" fill="#f0f6f5" stroke="#8da6a4" stroke-width="3"/>',
     svg_text("需求侧（规格与追踪）", 362, 136, 32, weight="600"),
@@ -129,7 +128,7 @@ svg += [
     '<line x1="775" y1="290" x2="1025" y2="290" stroke="#c0c5c8" stroke-width="2"/>',
     svg_text("需求语义与代码结构", 900, 360, 28), svg_text("缺少稳定的连接", 900, 400, 28), svg_text("知识难以持续复用", 900, 475, 27, fill="#59636c"),
     '<path d="M613 565 C700 565,724 580,780 660" fill="none" stroke="#59636c" stroke-width="4" marker-end="url(#arrow)"/><path d="M1187 565 C1100 565,1076 580,1020 660" fill="none" stroke="#59636c" stroke-width="4" marker-end="url(#arrow)"/>',
-    '<rect x="110" y="670" width="1580" height="340" rx="18" fill="#eaf2fb" stroke="#315f8d" stroke-width="4"/>',
+    '<rect x="110" y="670" width="1580" height="270" rx="18" fill="#eaf2fb" stroke="#315f8d" stroke-width="4"/>',
     svg_text("本文方法：以业务能力连接需求与代码", 900, 737, 35, weight="600", fill="#244e79"),
     '<line x1="156" y1="770" x2="1644" y2="770" stroke="#9bb6d1" stroke-width="2"/>',
 ]
@@ -137,7 +136,7 @@ for x1, y1, x2, y2, label in chain:
     svg += [f'<rect x="{x1}" y="{y1}" width="{x2-x1}" height="{y2-y1}" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>', svg_text(label, (x1 + x2) // 2, 866, 29, weight="600", fill="#244e79")]
 for x1, x2 in [(397, 455), (727, 785), (1037, 1095), (1342, 1400)]:
     svg.append(f'<line x1="{x1}" y1="857" x2="{x2}" y2="857" stroke="#315f8d" stroke-width="4" marker-end="url(#arrow)"/>')
-svg += [svg_text("持续维护项目知识，按任务生成所需上下文", 900, 965, 27, fill="#4d6984"), '</svg>']
+svg.append('</svg>')
 SVG_OUT.write_text("\n".join(svg), encoding="utf-8")
 print(PNG_OUT)
 print(SVG_OUT)

@@ -236,8 +236,8 @@ def card(
 
 
 def render_fig21() -> None:
-    fig = Figure(1800, 1000)
-    fig.rounded_rect((55, 70, 1745, 930), fill="#ffffff", outline="#8f9aa2", width=3, radius=18, dashed=True)
+    fig = Figure(1800, 930)
+    fig.rounded_rect((55, 70, 1745, 880), fill="#ffffff", outline="#8f9aa2", width=3, radius=18, dashed=True)
     fig.text(95, 108, "Agent Harness（智能体运行框架）", 33, True, MUTED, "start")
     fig.text(95, 148, "提供工具调用、状态维护与执行环境接口", 22, False, MUTED, "start")
     fig.line([(95, 178), (1705, 178)], color="#c3cbd0", width=2)
@@ -267,14 +267,11 @@ def render_fig21() -> None:
     card(fig, (1470, 630, 1650, 715), "状态维护", None, "#ffffff", "#b6c1c7", TEXT, 24)
     fig.arrow([(1365, 350), (1435, 350), (1435, 422), (1470, 422)], color=BLUE, marker="blue", width=2)
     fig.arrow([(1650, 547), (1710, 547), (1710, 750), (1385, 750), (1385, 650), (1365, 650)], color=GREEN, marker="green", width=2)
-    fig.text(900, 890, "观察—调整—再行动：执行结果持续反馈到下一轮决策", 25, False, MUTED)
     fig.save("图2-1-AI编程智能体的执行循环")
 
 
 def render_fig22_context_chain() -> None:
     fig = Figure(1800, 700)
-    fig.text(900, 42, "代码上下文的处理链条", 31, True, TEXT)
-    fig.text(900, 82, "围绕开发任务完成上下文的获取、组织与控制", 20, False, MUTED)
 
     stages = [
         (90, 150, 560, 560, "获取", "从仓库中找到候选内容", BLUE_LIGHT, "#7396b1", BLUE),
@@ -309,11 +306,11 @@ def render_fig22_context_chain() -> None:
 
 
 def render_fig23_rag_comparison() -> None:
-    fig = Figure(1800, 650)
-    fig.rounded_rect((55, 35, 865, 615), fill="#ffffff", outline="#aab4bb", width=2, radius=14)
-    fig.rounded_rect((935, 35, 1745, 615), fill="#ffffff", outline="#8da6a4", width=2, radius=14)
+    fig = Figure(1800, 440)
+    fig.rounded_rect((55, 35, 865, 405), fill="#ffffff", outline="#aab4bb", width=2, radius=14)
+    fig.rounded_rect((935, 35, 1745, 405), fill="#ffffff", outline="#8da6a4", width=2, radius=14)
     fig.text(460, 80, "RAG：基于片段的检索增强生成", 31, True, BLUE)
-    fig.text(1340, 80, "GraphRAG：基于图结构的检索增强生成", 31, True, GREEN)
+    fig.text(1340, 80, "图结构检索：基于图结构的检索增强生成", 31, True, GREEN)
     fig.line([(90, 125), (830, 125)], color="#c1ccd3", width=2)
     fig.line([(970, 125), (1710, 125)], color="#bed0cb", width=2)
 
@@ -327,8 +324,6 @@ def render_fig23_rag_comparison() -> None:
         card(fig, box[:4], box[4], box[5], "#ffffff", "#aab6bf", TEXT, 25, 18)
     for start, end in [((255, 290), (300, 290)), ((460, 290), (505, 290)), ((665, 290), (710, 290))]:
         fig.arrow([start, end], width=3, marker="blue", color=BLUE)
-    fig.text(460, 450, "检索结果是彼此独立的文本片段", 23, False, MUTED)
-    fig.text(460, 490, "片段之间的结构关系不在检索对象中", 21, False, MUTED)
 
     right_boxes = [
         (975, 220, 1125, 360, "语料", "原始文档"),
@@ -340,15 +335,11 @@ def render_fig23_rag_comparison() -> None:
         card(fig, box[:4], box[4], box[5], "#ffffff", "#a8bab8", TEXT, 25, 18)
     for start, end in [((1125, 290), (1170, 290)), ((1355, 290), (1400, 290)), ((1575, 290), (1620, 290))]:
         fig.arrow([start, end], width=3, marker="green", color=GREEN)
-    fig.text(1340, 450, "图结构保留实体之间的关系与路径", 23, False, MUTED)
-    fig.text(1340, 490, "适合跨文档综合与全局性问题回答", 21, False, MUTED)
-    fig.save("图2-3-RAG与GraphRAG的检索方式对比")
+    fig.save("图2-3-RAG与图结构检索的检索方式对比")
 
 
 def render_fig24_knowledge_graph() -> None:
     fig = Figure(1800, 960)
-    fig.text(900, 34, "软件项目知识图谱示例", 32, True, TEXT)
-    fig.text(900, 73, "能力节点作为语义锚点，沿 business_map 与 contain 关系展开到代码元素", 21, False, MUTED)
 
     cap = (100, 380, 365, 540)
     module = (485, 380, 755, 540)
@@ -412,11 +403,10 @@ def render_fig24_knowledge_graph() -> None:
 
 
 def render_fig25_embedding_space() -> None:
-    fig = Figure(1500, 900)
+    fig = Figure(1500, 790)
     fig.text(750, 55, "二维投影空间（示意）", 29, True, TEXT)
     fig.line([(160, 730), (1340, 730)], color="#d0d6da", width=2)
     fig.line([(160, 730), (160, 145)], color="#d0d6da", width=2)
-    fig.text(750, 785, "向量空间中的相对位置", 22, False, MUTED)
     fig.text(102, 430, "语义维度 2", 20, False, MUTED)
     fig.text(1270, 760, "语义维度 1", 20, False, MUTED)
 
@@ -433,7 +423,6 @@ def render_fig25_embedding_space() -> None:
     fig.text(1210, 570, "订单结算", 24, True, GREEN)
     fig.text(640, 385, "距离较小 / 语义相近", 20, False, BLUE)
     fig.text(1135, 675, "距离较大", 20, False, GREEN)
-    fig.text(750, 850, "任务描述与能力规范在嵌入空间中形成近邻，便于语义匹配", 21, False, MUTED)
     fig.save("图2-5-嵌入向量空间中的语义邻近关系")
 
 

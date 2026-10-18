@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1060" viewBox="0 0 1800 1060">
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="990" viewBox="0 0 1800 990">
 <defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker><style>.cn{font-family:"Microsoft YaHei","Noto Sans CJK SC","SimSun",sans-serif;fill:#27313a}</style></defs>
-<rect width="1800" height="1060" fill="#ffffff"/>
+<rect width="1800" height="990" fill="#ffffff"/>
 <rect x="70" y="70" width="585" height="550" rx="18" fill="#f1f5f8" stroke="#91a0ad" stroke-width="3"/>
 <rect x="1145" y="70" width="585" height="550" rx="18" fill="#f0f6f5" stroke="#8da6a4" stroke-width="3"/>
 <text x="362" y="136" text-anchor="middle" class="cn" font-size="32px" font-weight="600">需求侧（规格与追踪）</text>
@@ -25,7 +25,7 @@
 <text x="900" y="400" text-anchor="middle" class="cn" font-size="28px" font-weight="400">缺少稳定的连接</text>
 <text x="900" y="475" text-anchor="middle" class="cn" font-size="27px" font-weight="400" fill="#59636c">知识难以持续复用</text>
 <path d="M613 565 C700 565,724 580,780 660" fill="none" stroke="#59636c" stroke-width="4" marker-end="url(#arrow)"/><path d="M1187 565 C1100 565,1076 580,1020 660" fill="none" stroke="#59636c" stroke-width="4" marker-end="url(#arrow)"/>
-<rect x="110" y="670" width="1580" height="340" rx="18" fill="#eaf2fb" stroke="#315f8d" stroke-width="4"/>
+<rect x="110" y="670" width="1580" height="270" rx="18" fill="#eaf2fb" stroke="#315f8d" stroke-width="4"/>
 <text x="900" y="737" text-anchor="middle" class="cn" font-size="35px" font-weight="600" fill="#244e79">本文方法：以业务能力连接需求与代码</text>
 <line x1="156" y1="770" x2="1644" y2="770" stroke="#9bb6d1" stroke-width="2"/>
 <rect x="165" y="820" width="225" height="75" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
@@ -42,5 +42,4 @@
 <line x1="727" y1="857" x2="785" y2="857" stroke="#315f8d" stroke-width="4" marker-end="url(#arrow)"/>
 <line x1="1037" y1="857" x2="1095" y2="857" stroke="#315f8d" stroke-width="4" marker-end="url(#arrow)"/>
 <line x1="1342" y1="857" x2="1400" y2="857" stroke="#315f8d" stroke-width="4" marker-end="url(#arrow)"/>
-<text x="900" y="965" text-anchor="middle" class="cn" font-size="27px" font-weight="400" fill="#4d6984">持续维护项目知识，按任务生成所需上下文</text>
 </svg>

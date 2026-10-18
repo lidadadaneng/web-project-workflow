@@ -89,7 +89,6 @@ function fig32() {
 function fig33() {
   const w = 1700, h = 900;
   let s = header('3-3', w, h);
-  s += lines(850, 42, ['能力-代码双层四层本体'], { size: 36, fill: C.ink, weight: 650 });
   s += frame(80, 95, 1540, 190, 'C 层：业务能力');
   s += frame(80, 325, 1540, 480, '');
   s += lines(110, 352, ['L1–L3 层：代码结构'], { size: 28, fill: C.muted, weight: 650, anchor: 'start' });
@@ -112,7 +111,6 @@ function fig33() {
 function fig34() {
   const w = 1200, h = 1380;
   let s = header('3-4', w, h);
-  s += lines(600, 44, ['business_map 生成流程'], { size: 36, fill: C.ink, weight: 650 });
   s += card(385, 85, 430, 90, '能力规范', [], { titleSize: 32, fill: C.blueFill, stroke: '#7396b1', titleFill: C.blue });
   s += line(600, 175, 600, 220, { sw: 2.6 });
   s += card(385, 220, 430, 90, '候选召回', [], { titleSize: 32 });
@@ -149,7 +147,6 @@ function fig34() {
 function fig35() {
   const w = 1050, h = 1120;
   let s = header('3-5', w, h);
-  s += lines(525, 42, ['图谱驱动的任务上下文生成流水线'], { size: 40, fill: C.ink, weight: 650 });
 
   const flow = [
     ['任务描述 q', 'Token 预算 B'],

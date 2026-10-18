@@ -40,7 +40,4 @@
 <polyline points="1860,338 1905,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
 <polyline points="630,338 775,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
 <polyline points="1335,338 1475,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<text x="390" y="670" font-size="29" font-weight="400" text-anchor="middle" dominant-baseline="central">CLI 负责确定性检查</text>
-<text x="1050" y="670" font-size="29" font-weight="400" text-anchor="middle" dominant-baseline="central">AI 生成 · 开发者确认</text>
-<text x="1755" y="670" font-size="29" font-weight="400" text-anchor="middle" dominant-baseline="central">保存后才记录完成</text>
 </svg>

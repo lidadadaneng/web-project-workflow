@@ -1,15 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900">
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="790" viewBox="0 0 1500 790">
 <defs>
 <marker id="arrow-gray" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
 <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
 <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
 <marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
 </defs>
-<rect width="1500" height="900" fill="#ffffff"/>
+<rect width="1500" height="790" fill="#ffffff"/>
 <text x="750" y="55" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:29px;font-weight:600;fill:#27313a">二维投影空间（示意）</text>
 <polyline points="160,730 1340,730" fill="none" stroke="#d0d6da" stroke-width="2" stroke-linejoin="round"/>
 <polyline points="160,730 160,145" fill="none" stroke="#d0d6da" stroke-width="2" stroke-linejoin="round"/>
-<text x="750" y="785" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:22px;fill:#5b6770">向量空间中的相对位置</text>
 <text x="102" y="430" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">语义维度 2</text>
 <text x="1270" y="760" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">语义维度 1</text>
 <polyline points="545,405 735,445" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="10 8"/>
@@ -22,5 +21,4 @@
 <text x="1210" y="570" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:24px;font-weight:600;fill:#5f8178">订单结算</text>
 <text x="640" y="385" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#315f8d">距离较小 / 语义相近</text>
 <text x="1135" y="675" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5f8178">距离较大</text>
-<text x="750" y="850" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:21px;fill:#5b6770">任务描述与能力规范在嵌入空间中形成近邻，便于语义匹配</text>
 </svg>

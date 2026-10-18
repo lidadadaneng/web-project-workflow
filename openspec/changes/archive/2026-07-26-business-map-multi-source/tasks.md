@@ -41,7 +41,7 @@
 - [x] 6.2 `config.ts` 默认值：`semanticThreshold` 默认 `null`（运行时回退 `search.threshold`）、`semanticTopK` 默认 5、`gitMinFreq` 默认 2
 - [x] 6.3 `workflow.config.yaml` graph 配置文档补充三项说明（README + map.md）
 
-## 7. 映射质量评估脚手架（论文消融素材）
+## 7. 映射质量评估脚手架（消融素材）
 
 - [x] 7.1 新增 `src/graph/__mapping_eval__.ts`：加载人工标注的 ground-truth（`业务-代码` 关联对，JSON 格式），与图谱 `business_map` 边比对，输出 precision/recall/F1
 - [x] 7.2 实现源消融开关：通过环境变量或参数控制启用哪些源（如 `--no-semantic --no-git`），分别重建并统计指标
@@ -52,6 +52,6 @@
 
 - [x] 8.1 更新 `edge-builder.ts` 文件头注释：明确 5 源中已实现 4 源、AI 校准为未来工作
 - [x] 8.2 更新 README "知识图谱子系统" 段：五层混合映射描述补"AI 校准为可选未来工作"
-- [x] 8.3 更新 `毕业论文核心创新点.md` 创新点六：由"⚠️ 部分实现"改为"✅ 4 源已验证 + AI 校准为未来工作"，移除相关边界警告
+- [x] 8.3 更新多源映射的能力说明：明确 4 源已验证、AI 校准为未来工作，并移除相关边界警告
 - [x] 8.4 `npx tsc --noEmit` 编译通过
 - [x] 8.5 `__verify__.ts` 12 阶段全通过；新增映射评估脚手架可运行

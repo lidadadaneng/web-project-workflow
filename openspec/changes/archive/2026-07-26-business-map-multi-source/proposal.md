@@ -15,7 +15,7 @@
 - `aggregateWeights`（`edge-builder.ts:151`）内部计算了 `bestSource`，但 line 192 `return weights` **丢弃了 bestSource**；`buildBusinessMapEdges:342` 改用 `evidences.find()` 取数组第一个匹配。当前 2 源下碰巧返回排名更高的 doc-extract，**补多源后 push 顺序一变溯源标签即错**——隐藏 bug。
 - `boostEdge`（`edge-builder.ts:60`）为多源后增强权重设计，当前**零调用**，是死代码。
 
-**后果**：noisy-OR 聚合（`1 − ∏(1 − wᵢ)`）只喂入 2 个证据，"多源复合增强"的威力未体现，创新点六在论文中只能作为"⚠️ 部分实现"呈现，且无法支撑 2 源 vs 5 源的消融实验。
+**后果**：noisy-OR 聚合（`1 − ∏(1 − wᵢ)`）只喂入 2 个证据，"多源复合增强"的威力未体现，且无法支撑 2 源 vs 5 源的消融实验。
 
 本 change 补全前 4 项可落地的源（语义 + Git + 命名匹配升级 + bestSource 修复），使 noisy-OR 五源聚合名副其实，并补齐缺失的正式 spec。AI 校准（Layer 5）需接 LLM 调用，归入未来工作。
 
@@ -28,7 +28,7 @@
 - **激活/裁剪 boostEdge**：明确 `boostEdge` 与 `aggregateWeights` 的职责边界（见 design.md），消除死代码歧义。
 - **补正式 spec**：向 `graph-build` 能力新增"业务-代码多源证据映射"Requirement（含 5 源、noisy-OR 聚合、EdgeSource 溯源场景），填补此前无 spec 约束的缺口。
 - **收敛 Claim**：更新 `edge-builder.ts` 文件头注释与 README，明确 5 源中已实现 4 源、AI 校准为未来工作。
-- **新增映射质量评估**：提供 ground-truth 标注脚手架与 2 源/4 源消融开关，为论文创新点六的实验验证提供素材。
+- **新增映射质量评估**：提供 ground-truth 标注脚手架与 2 源/4 源消融开关，为多源映射的实验验证提供素材。
 
 ## Capabilities
 
@@ -53,4 +53,4 @@
 - **配置兼容**：新增配置项均有默认值，`gitHistory` 默认 `true`、`semanticThreshold` 默认复用 `search.threshold`，向后兼容。
 - **非破坏性**：不改变 `business_map` 边的字段结构，仅扩展证据来源与修正溯源；既有图谱重建后边集可能增多、权重可能变化（多源复合增强），属预期改进。
 - **AI 使用边界**：本 change 全程纯本地（向量已建、Git 本地命令），**不引入 LLM 调用**，零付费 Token；AI 校准仍是未来工作。
-- **论文影响**：创新点六由"⚠️ 部分实现"转为"✅ 4 源已验证 + AI 校准为未来工作"，并具备消融实验素材。
+- **能力影响**：4 源已验证，AI 校准列为未来工作，并具备消融评估素材。

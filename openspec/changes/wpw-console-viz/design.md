@@ -22,7 +22,7 @@
 ### D1: 技术栈 Vue3 + Vite + Element Plus + ECharts
 中后台组件现成（表格/表单/菜单/描述列表），10 个页面出活快；ECharts 同时覆盖统计图（柱状/饼图/折线）与力导向图（`series.type: 'graph'`）。
 - 备选 AntV G6：图谱交互更强，但其余图表仍需 ECharts，一期图谱页需求（力导向 + 过滤 + 高亮 + 详情）ECharts graph 足够；若二期交互升级可页面级替换为 G6，不动架构。
-- 备选 React + AntD：无技术对错，纯熟练度选择，Vue 生态对论文系统截图场景同等胜任。
+- 备选 React + AntD：无技术对错，纯熟练度选择，Vue 生态对系统演示与截图场景同等胜任。
 
 ### D2: 独立子工程 `viz/`，不纳入 CLI 发布
 ```
@@ -69,7 +69,7 @@ web-project-workflow/
 对话与 API 配置放顶栏：对话需要「注入上下文」开关全局可达，API 配置失败时任何页面都应能一键跳转修复。
 
 ### D4: 图谱可视化交互模型（ECharts graph）
-- 层级配色：C / L1 / L2 / L3 四色固定；边类型用颜色 + 线型区分（contain 实线灰、import 浅蓝、call 橙、business_map 紫色加粗——这是论文核心创新点，视觉权重最高）
+- 层级配色：C / L1 / L2 / L3 四色固定；边类型用颜色 + 线型区分（contain 实线灰、import 浅蓝、call 橙、business_map 紫色加粗——这是图谱的核心关系，视觉权重最高）
 - 左侧控制栏：层级勾选、边类型勾选、搜索框（命中定位并高亮）、「仅看 business_map」开关
 - 右侧详情抽屉：点击节点展示 GraphNode JSON（id/level/type/name/attrs 表格化）
 - 规模保护：mock 阶段用抽样子图（~300 节点）；页面预留「节点上限」控件，避免二期接真实全量图谱时卡顿
@@ -77,7 +77,7 @@ web-project-workflow/
 ### D5: 上下文演示页的信息架构
 三段式自上而下：
 1. 输入区：任务描述输入框 + Token 预算滑块 + 「生成」按钮
-2. 过程区：锚点列表（含相关度分数）→ BFS 扩展子图（复用 D4 的小型图组件，高亮扩展路径，对应论文图5-5）
+2. 过程区：锚点列表（含相关度分数）→ BFS 扩展子图（复用 D4 的小型图组件，高亮扩展路径，对应上下文生成流程）
 3. 结果区：loose / standard / extreme 三栏并排，各显示节点数、Token 估算、序列化文本预览（等宽字体 + 复制按钮）
 
 ### D6: 对话页 mock 策略
@@ -92,7 +92,7 @@ web-project-workflow/
 - `wpw graph build && wpw graph stat --json` → `mock/graph-stat.json`
 - `wpw graph query --level L1 --json` 等抽样合并 → `mock/graph.json`
 - `wpw graph context "..." --compression <level> --json` × 3 → `mock/context-demo.json`
-这样论文截图即为真实系统数据。
+这样演示截图即为真实系统数据。
 
 ## Risks / Trade-offs
 

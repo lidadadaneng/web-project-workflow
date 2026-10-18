@@ -16,6 +16,11 @@
 # 知识图谱构建产物（不入库，本地构建）
 /wpw/knowledge/graph/
 
+# 本地论文/实验临时目录（不随仓库分发）
+/论文/
+/tmp_ch6/
+/tmp_thesis/
+
 # viz frontend (wpw-console-viz)
 viz/node_modules
 viz/dist

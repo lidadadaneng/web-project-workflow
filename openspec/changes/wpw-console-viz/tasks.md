@@ -35,6 +35,6 @@
 ## 6. 收尾
 - [x] 6.1 全部 10 页走查：导航无死链、交互符合 specs/console-viz/spec.md 场景
 - [x] 6.2 `openspec validate wpw-console-viz` 通过
-- [x] 6.3 导出关键页面截图备用（论文第 5 章素材）
+- [x] 6.3 导出关键页面截图备用（系统演示素材）
 - [x] 3.7 看板 AI 协同：PhaseActionDrawer 升级为四页签协同面板（操作/AI 对话/阶段文档/历史回溯），store/assistant.ts 实现分阶段 mock 会话、流式应答、调整类指令触发文档版本化修订，mock/phase-docs.json 提供真实感制品内容
 - [x] 3.8 历史回溯：store/workflow.ts 记录带快照的历史事件流（done/skip/reset/decide/task/revise/rollback），时间线展示 + 一键回退到任一事件快照，首次进入按当前状态反推演示历史

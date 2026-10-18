@@ -60,7 +60,7 @@ See proposal.md for motivation. Current state:
 - Smooth, differentiable function — no hard threshold jumps
 - Intuitive physical meaning: higher C-confidence → lower L1-weight
 - Single parameter α controls decay speed, easy to tune
-- Suitable for academic presentation (thesis-worthy)
+- Suitable for technical presentation and documentation
 - Can be extended with additional factors (diversity, count) later
 
 **Alternatives considered:**

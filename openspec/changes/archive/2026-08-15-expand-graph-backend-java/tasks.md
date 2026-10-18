@@ -94,4 +94,4 @@
 - [x] 10.1 README.md 知识图谱子系统小节补充 Java / Spring Boot 支持
 - [x] 10.2 README.md 支持语言列表补充 Java（.java）
 - [x] 10.3 在 design.md 决策 6 回填 spike 实际结论
-- [ ] 10.4 论文 index.md / 5.4.1 更新：springboot 后端图谱完整性论证（从"三源兜底"升级为"Java 解析器完整建图"）
+- [ ] 10.4 文档更新：springboot 后端图谱完整性论证（从"三源兜底"升级为"Java 解析器完整建图"）

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from pathlib import Path
+from shutil import copyfile
 import re
 from zipfile import ZIP_DEFLATED, ZipFile
 
@@ -71,7 +72,7 @@ def write_package(path: Path, parts: dict[str, bytes]) -> None:
     with ZipFile(temporary, "w", ZIP_DEFLATED) as archive:
         for name, payload in parts.items():
             archive.writestr(name, payload)
-    temporary.replace(path)
+    copyfile(temporary, path)
 
 
 def ensure_style(styles, style_id: str, based_on: str) -> None:
@@ -194,11 +195,11 @@ def append_tc_field(paragraph, value: str, identifier: str, bookmark_id: int) ->
     escaped = value.replace("\\", "\\\\").replace('"', '\\"')
 
     begin_run = E.SubElement(paragraph, tag("r"))
-    child(begin_run, "rPr")
+    child(child(begin_run, "rPr"), "vanish", val="1")
     E.SubElement(begin_run, tag("fldChar")).set(tag("fldCharType"), "begin")
 
     prefix_run = E.SubElement(paragraph, tag("r"))
-    child(prefix_run, "rPr")
+    child(child(prefix_run, "rPr"), "vanish", val="1")
     prefix = E.SubElement(prefix_run, tag("instrText"))
     prefix.set(XML_SPACE, "preserve")
     prefix.text = ' TC "'
@@ -209,7 +210,7 @@ def append_tc_field(paragraph, value: str, identifier: str, bookmark_id: int) ->
     bookmark_start.set(tag("name"), bookmark_name)
 
     value_run = E.SubElement(paragraph, tag("r"))
-    child(value_run, "rPr")
+    child(child(value_run, "rPr"), "vanish", val="1")
     value_node = E.SubElement(value_run, tag("instrText"))
     value_node.text = escaped
 
@@ -217,13 +218,13 @@ def append_tc_field(paragraph, value: str, identifier: str, bookmark_id: int) ->
     bookmark_end.set(tag("id"), str(bookmark_id))
 
     suffix_run = E.SubElement(paragraph, tag("r"))
-    child(suffix_run, "rPr")
+    child(child(suffix_run, "rPr"), "vanish", val="1")
     suffix = E.SubElement(suffix_run, tag("instrText"))
     suffix.set(XML_SPACE, "preserve")
     suffix.text = f'" \\f {identifier} \\l 1 '
 
     end_run = E.SubElement(paragraph, tag("r"))
-    child(end_run, "rPr")
+    child(child(end_run, "rPr"), "vanish", val="1")
     E.SubElement(end_run, tag("fldChar")).set(tag("fldCharType"), "end")
 
 

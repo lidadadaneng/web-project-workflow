@@ -7,6 +7,7 @@ Run this after Word has refreshed the three navigation fields.
 from __future__ import annotations
 
 from pathlib import Path
+import shutil
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from lxml import etree as E
@@ -220,7 +221,7 @@ def process(path: Path) -> int:
     with ZipFile(temporary, "w", ZIP_DEFLATED) as target:
         for name, payload in parts.items():
             target.writestr(name, payload)
-    temporary.replace(path)
+    shutil.copyfile(temporary, path)
     return compacted
 
 

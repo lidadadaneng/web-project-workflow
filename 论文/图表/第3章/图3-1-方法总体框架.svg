@@ -1,84 +1,99 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1280" viewBox="0 0 1800 1280">
-  <defs>
-    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5.4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#59636c"/></marker>
-    <marker id="blueArrow" markerWidth="6" markerHeight="6" refX="5.4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#315f8d"/></marker>
-    <marker id="blueLeft" markerWidth="6" markerHeight="6" refX="0.6" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M6,0 L0,3 L6,6 Z" fill="#315f8d"/></marker>
-    <marker id="greenArrow" markerWidth="6" markerHeight="6" refX="5.4" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#5f8178"/></marker>
-    <marker id="greenLeft" markerWidth="6" markerHeight="6" refX="0.6" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M6,0 L0,3 L6,6 Z" fill="#5f8178"/></marker>
-    <style>
-      .cn{font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;fill:#27313a}
-      .title{font-size:30px;font-weight:700;fill:#59636c}
-      .subtitle{font-size:23px;font-weight:500;fill:#59636c}
-      .stage{font-size:27px;font-weight:700;fill:#315f8d}
-      .desc{font-size:22px;font-weight:500;fill:#315f8d}
-      .section{font-size:29px;font-weight:700;fill:#315f8d}
-      .small{font-size:22px;font-weight:500;fill:#315f8d}
-      .greenTitle{font-size:29px;font-weight:700;fill:#5f8178}
-      .greenText{font-size:22px;font-weight:500;fill:#5f8178}
-    </style>
-  </defs>
-  <rect width="1800" height="1280" fill="#ffffff"/>
-  <rect x="28" y="24" width="748" height="1232" rx="14" fill="#ffffff" stroke="#7fa8ca" stroke-width="2" stroke-dasharray="12 9"/>
-  <rect x="824" y="24" width="948" height="1232" rx="14" fill="#ffffff" stroke="#84bfae" stroke-width="2" stroke-dasharray="12 9"/>
-
-  <rect x="52" y="48" width="700" height="108" rx="10" fill="#eef4f8" stroke="#5b9de2" stroke-width="2"/>
-  <text x="402" y="84" text-anchor="middle" dominant-baseline="middle" class="cn title" fill="#315f8d">开发流程</text>
-  <text x="402" y="122" text-anchor="middle" dominant-baseline="middle" class="cn subtitle">按阶段推进，逐步产出阶段制品</text>
-  <g stroke="#315f8d" stroke-width="2.4" fill="none" marker-end="url(#blueArrow)">
-    <line x1="402" y1="156" x2="402" y2="183"/><line x1="402" y1="274" x2="402" y2="301"/><line x1="402" y1="392" x2="402" y2="419"/>
-    <line x1="402" y1="510" x2="402" y2="537"/><line x1="402" y1="628" x2="402" y2="655"/><line x1="402" y1="746" x2="402" y2="773"/><line x1="402" y1="864" x2="402" y2="891"/>
-  </g>
-  <g>
-    <rect x="95" y="183" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
-    <text x="402" y="214" text-anchor="middle" dominant-baseline="middle" class="cn stage">BRD</text><text x="402" y="248" text-anchor="middle" dominant-baseline="middle" class="cn desc">业务背景、目标与范围</text>
-    <rect x="95" y="301" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
-    <text x="402" y="332" text-anchor="middle" dominant-baseline="middle" class="cn stage">PRD</text><text x="402" y="366" text-anchor="middle" dominant-baseline="middle" class="cn desc">产品需求与方案</text>
-    <rect x="95" y="419" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
-    <text x="402" y="450" text-anchor="middle" dominant-baseline="middle" class="cn stage">Explore</text><text x="402" y="484" text-anchor="middle" dominant-baseline="middle" class="cn desc">探索与调研（可选）</text>
-    <rect x="95" y="537" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
-    <text x="402" y="568" text-anchor="middle" dominant-baseline="middle" class="cn stage">Design</text><text x="402" y="602" text-anchor="middle" dominant-baseline="middle" class="cn desc">设计方案与技术方案</text>
-    <rect x="95" y="655" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
-    <text x="402" y="686" text-anchor="middle" dominant-baseline="middle" class="cn stage">Plan</text><text x="402" y="720" text-anchor="middle" dominant-baseline="middle" class="cn desc">任务分解与排期</text>
-    <rect x="95" y="773" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
-    <text x="402" y="804" text-anchor="middle" dominant-baseline="middle" class="cn stage">Test</text><text x="402" y="838" text-anchor="middle" dominant-baseline="middle" class="cn desc">测试与验证</text>
-    <rect x="95" y="891" width="614" height="91" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
-    <text x="402" y="922" text-anchor="middle" dominant-baseline="middle" class="cn stage">Apply</text><text x="402" y="956" text-anchor="middle" dominant-baseline="middle" class="cn desc">发布与上线</text>
-    <rect x="95" y="1009" width="614" height="108" rx="10" fill="#fff5e7" stroke="#f08c18" stroke-width="2"/>
-    <text x="402" y="1043" text-anchor="middle" dominant-baseline="middle" class="cn stage" style="fill:#a15e20">Archive</text><text x="402" y="1082" text-anchor="middle" dominant-baseline="middle" class="cn desc" style="fill:#a15e20">阶段制品、需求归档、代码变更</text>
-  </g>
-
-  <rect x="850" y="48" width="896" height="108" rx="10" fill="#eef5f2" stroke="#23a584" stroke-width="2"/>
-  <text x="1298" y="84" text-anchor="middle" dominant-baseline="middle" class="cn title" fill="#287f70">项目知识图谱演进线</text>
-  <text x="1298" y="122" text-anchor="middle" dominant-baseline="middle" class="cn subtitle">持续维护的双层项目知识模型，循环迭代更新</text>
-
-  <rect x="875" y="188" width="846" height="232" rx="12" fill="#f8fbfa" stroke="#239a84" stroke-width="2"/>
-  <text x="1298" y="241" text-anchor="middle" dominant-baseline="middle" class="cn section">双层项目知识模型</text>
-  <rect x="905" y="284" width="310" height="96" rx="10" fill="#eef4f8" stroke="#2f8bf2" stroke-width="2"/>
-  <text x="1060" y="317" text-anchor="middle" dominant-baseline="middle" class="cn stage">业务能力层</text><text x="1060" y="352" text-anchor="middle" dominant-baseline="middle" class="cn small">（由能力规范沉淀）</text>
-  <rect x="1381" y="284" width="310" height="96" rx="10" fill="#f5f0fb" stroke="#7154c7" stroke-width="2"/>
-  <text x="1536" y="317" text-anchor="middle" dominant-baseline="middle" class="cn stage" fill="#5d43a9">代码结构层</text><text x="1536" y="352" text-anchor="middle" dominant-baseline="middle" class="cn small" fill="#5d43a9">（由多语言源码解析）</text>
-  <line x1="1215" y1="332" x2="1381" y2="332" stroke="#315f8d" stroke-width="2.4" marker-start="url(#blueLeft)" marker-end="url(#blueArrow)"/><text x="1298" y="309" text-anchor="middle" dominant-baseline="middle" class="cn small">关联</text>
-
-  <path d="M1298 420 V454" fill="none" stroke="#5f8178" stroke-width="2.8" marker-end="url(#greenArrow)"/>
-  <rect x="875" y="454" width="846" height="238" rx="12" fill="#f8fbfa" stroke="#239a84" stroke-width="2"/>
-  <text x="1298" y="510" text-anchor="middle" dominant-baseline="middle" class="cn section" fill="#287f70">上下文生成流水线</text>
-  <rect x="905" y="548" width="236" height="108" rx="10" fill="#ffffff" stroke="#2f8bf2" stroke-width="2"/>
-  <text x="1023" y="581" text-anchor="middle" dominant-baseline="middle" class="cn stage">锚点选择</text><text x="1023" y="620" text-anchor="middle" dominant-baseline="middle" class="cn small">（定位相关知识）</text>
-  <rect x="1180" y="548" width="236" height="108" rx="10" fill="#ffffff" stroke="#2f8bf2" stroke-width="2"/>
-  <text x="1298" y="581" text-anchor="middle" dominant-baseline="middle" class="cn stage">子图裁剪</text><text x="1298" y="620" text-anchor="middle" dominant-baseline="middle" class="cn small">（提取相关内容）</text>
-  <rect x="1455" y="548" width="236" height="108" rx="10" fill="#ffffff" stroke="#2f8bf2" stroke-width="2"/>
-  <text x="1573" y="581" text-anchor="middle" dominant-baseline="middle" class="cn stage">压缩序列化</text><text x="1573" y="620" text-anchor="middle" dominant-baseline="middle" class="cn small">（生成上下文）</text>
-  <g stroke="#2f8bf2" stroke-width="2.4" fill="none" marker-end="url(#blueArrow)"><line x1="1141" y1="602" x2="1180" y2="602"/><line x1="1416" y1="602" x2="1455" y2="602"/></g>
-
-  <path d="M840 456 V928 M840 600 H875" fill="none" stroke="#315f8d" stroke-width="2.4"/>
-  <g stroke="#315f8d" stroke-width="2.4" fill="none" marker-end="url(#blueArrow)">
-    <line x1="840" y1="456" x2="710" y2="456"/><line x1="840" y1="574" x2="710" y2="574"/><line x1="840" y1="692" x2="710" y2="692"/><line x1="840" y1="810" x2="710" y2="810"/><line x1="840" y1="928" x2="710" y2="928"/>
-  </g>
-  <path d="M709 1063 H905" fill="none" stroke="#5f8178" stroke-width="2.8" marker-end="url(#greenArrow)"/>
-  <rect x="717" y="1025" width="180" height="36" rx="9" fill="#eef8f4"/>
-  <text x="807" y="1043" text-anchor="middle" dominant-baseline="middle" class="cn greenText" style="fill:#000000">归档与代码变更</text>
-  <rect x="905" y="1004" width="570" height="154" rx="12" fill="#eef8f4" stroke="#239a84" stroke-width="2"/>
-  <text x="1190" y="1049" text-anchor="middle" dominant-baseline="middle" class="cn greenTitle">关联知识增量更新</text><text x="1190" y="1091" text-anchor="middle" dominant-baseline="middle" class="cn greenText">解析归档内容，关联相关知识，</text><text x="1190" y="1122" text-anchor="middle" dominant-baseline="middle" class="cn greenText">更新知识图谱</text>
-  <path d="M1475 1080 H1742 V238 H1685" fill="none" stroke="#5f8178" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#greenArrow)"/>
-  <rect x="1524" y="1036" width="158" height="44" rx="22" fill="#eef8f4"/><text x="1603" y="1058" text-anchor="middle" dominant-baseline="middle" class="cn" font-size="24" font-weight="700" fill="#5f8178">回写更新</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="2120" viewBox="0 0 1800 2120">
+<defs>
+<marker id="arrow-gray" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
+<marker id="arrow-blue" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
+<marker id="arrow-green" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
+<marker id="arrow-red" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
+</defs>
+<rect width="1800" height="2120" fill="#ffffff"/>
+<rect x="55" y="40" width="635" height="2010" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="102" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">开发流程</text>
+<rect x="100" y="200" width="540" height="180" rx="12" fill="#eef4f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="370.0" y="254.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">BRD</text>
+<text x="370.0" y="326.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">业务背景、目标与范围</text>
+<polyline points="370,380 370,430" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="370,380 370,430" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="100" y="430" width="540" height="180" rx="12" fill="#eef4f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="370.0" y="484.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">PRD</text>
+<text x="370.0" y="556.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">产品需求与方案</text>
+<polyline points="370,610 370,660" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="370,610 370,660" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="100" y="660" width="540" height="180" rx="12" fill="#eef4f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="370.0" y="714.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">Explore</text>
+<text x="370.0" y="786.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">探索与调研（可选）</text>
+<polyline points="370,840 370,890" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="370,840 370,890" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="100" y="890" width="540" height="180" rx="12" fill="#eef4f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="370.0" y="944.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">Design</text>
+<text x="370.0" y="1016.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">设计方案与技术方案</text>
+<polyline points="370,1070 370,1120" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="370,1070 370,1120" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="100" y="1120" width="540" height="180" rx="12" fill="#eef4f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="370.0" y="1174.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">Plan</text>
+<text x="370.0" y="1246.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">任务分解与排期</text>
+<polyline points="370,1300 370,1350" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="370,1300 370,1350" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="100" y="1350" width="540" height="180" rx="12" fill="#eef4f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="370.0" y="1404.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">Test</text>
+<text x="370.0" y="1476.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">测试与验证</text>
+<polyline points="370,1530 370,1580" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="370,1530 370,1580" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="100" y="1580" width="540" height="180" rx="12" fill="#eef4f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="370.0" y="1634.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">Apply</text>
+<text x="370.0" y="1706.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">发布与上线</text>
+<polyline points="370,1760 370,1810" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="370,1760 370,1810" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="100" y="1810" width="540" height="180" rx="12" fill="#fff5e7" stroke="#aab4bb" stroke-width="2"/>
+<text x="370.0" y="1864.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#a15e50">Archive</text>
+<text x="370.0" y="1936.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">需求归档与代码变更</text>
+<rect x="820" y="40" width="920" height="560" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="860" y="102" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5f8178">项目知识图谱演进线</text>
+<text x="1280" y="180" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">双层项目知识模型</text>
+<rect x="850" y="320" width="395" height="210" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1047.5" y="389.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">业务能力层</text>
+<text x="1047.5" y="461.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">能力规范沉淀</text>
+<rect x="1320" y="320" width="390" height="210" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1515.0" y="389.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">代码结构层</text>
+<text x="1515.0" y="461.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">多语言源码解析</text>
+<polyline points="1245,395 1320,395" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1245,395 1320,395" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<polyline points="1320,455 1245,455" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1320,455 1245,455" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="1220.0" y="230" width="120.0" height="60" rx="4" fill="#ffffff" stroke="#ffffff" stroke-width="2"/>
+<text x="1280" y="260" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#315f8d">关联</text>
+<polyline points="1280,600 1280,740" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1280,600 1280,740" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
+<rect x="820" y="740" width="920" height="770" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="860" y="802" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5f8178">上下文生成流水线</text>
+<rect x="1000" y="940" width="650" height="130" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1325.0" y="1005.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">锚点选择</text>
+<polyline points="1325,1070 1325,1140" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1325,1070 1325,1140" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="1000" y="1140" width="650" height="130" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1325.0" y="1205.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">子图裁剪</text>
+<polyline points="1325,1270 1325,1340" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1325,1270 1325,1340" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="1000" y="1340" width="650" height="130" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1325.0" y="1405.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">压缩序列化</text>
+<polyline points="820,1140 750,1140" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="750,750 750,1670" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="750,750 640,750" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="750,750 640,750" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<polyline points="750,980 640,980" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="750,980 640,980" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<polyline points="750,1210 640,1210" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="750,1210 640,1210" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<polyline points="750,1440 640,1440" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="750,1440 640,1440" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<polyline points="750,1670 640,1670" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="750,1670 640,1670" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="820" y="1770" width="880" height="270" rx="15" fill="#eef8f4" stroke="#9cabb4" stroke-width="2"/>
+<text x="860" y="1832" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5f8178">关联知识增量更新</text>
+<text x="1260" y="1900" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#27313a">解析归档内容，关联相关知识</text>
+<text x="1260" y="1980" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#27313a">更新知识图谱</text>
+<polyline points="640,1900 820,1900" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="640,1900 820,1900" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
+<polyline points="1700,1900 1770,1900 1770,230 1740,230" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1700,1900 1770,1900 1770,230 1740,230" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
+<text x="1510" y="1670" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5f8178">回写更新</text>
 </svg>

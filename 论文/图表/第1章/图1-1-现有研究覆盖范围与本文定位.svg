@@ -1,45 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="990" viewBox="0 0 1800 990">
-<defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker><style>.cn{font-family:"Microsoft YaHei","Noto Sans CJK SC","SimSun",sans-serif;fill:#27313a}</style></defs>
-<rect width="1800" height="990" fill="#ffffff"/>
-<rect x="70" y="70" width="585" height="550" rx="18" fill="#f1f5f8" stroke="#91a0ad" stroke-width="3"/>
-<rect x="1145" y="70" width="585" height="550" rx="18" fill="#f0f6f5" stroke="#8da6a4" stroke-width="3"/>
-<text x="362" y="136" text-anchor="middle" class="cn" font-size="32px" font-weight="600">需求侧（规格与追踪）</text>
-<text x="1437" y="136" text-anchor="middle" class="cn" font-size="32px" font-weight="600">代码侧（图谱与检索）</text>
-<line x1="112" y1="162" x2="613" y2="162" stroke="#91a0ad" stroke-width="2"/><line x1="1187" y1="162" x2="1688" y2="162" stroke="#8da6a4" stroke-width="2"/>
-<rect x="112" y="190" width="501" height="160" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
-<text x="362" y="248" text-anchor="middle" class="cn" font-size="31px" font-weight="600">规格制品</text>
-<text x="362" y="306" text-anchor="middle" class="cn" font-size="27px" font-weight="400">保存需求规格，约束开发流程</text>
-<rect x="112" y="390" width="501" height="160" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
-<text x="362" y="448" text-anchor="middle" class="cn" font-size="31px" font-weight="600">追踪链接</text>
-<text x="362" y="506" text-anchor="middle" class="cn" font-size="27px" font-weight="400">建立需求与代码的对应关系</text>
-<rect x="1187" y="190" width="501" height="160" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
-<text x="1437" y="248" text-anchor="middle" class="cn" font-size="31px" font-weight="600">代码图谱</text>
-<text x="1437" y="306" text-anchor="middle" class="cn" font-size="27px" font-weight="400">描述代码结构和仓库关系</text>
-<rect x="1187" y="390" width="501" height="160" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
-<text x="1437" y="448" text-anchor="middle" class="cn" font-size="31px" font-weight="600">检索片段</text>
-<text x="1437" y="506" text-anchor="middle" class="cn" font-size="27px" font-weight="400">按相似度汇集任务相关上下文</text>
-<rect x="718" y="175" width="364" height="375" rx="16" fill="#ffffff" stroke="#8d959b" stroke-width="3" stroke-dasharray="11 9"/>
-<text x="900" y="266" text-anchor="middle" class="cn" font-size="31px" font-weight="600">业务能力层缺失</text>
-<line x1="775" y1="290" x2="1025" y2="290" stroke="#c0c5c8" stroke-width="2"/>
-<text x="900" y="360" text-anchor="middle" class="cn" font-size="28px" font-weight="400">需求语义与代码结构</text>
-<text x="900" y="400" text-anchor="middle" class="cn" font-size="28px" font-weight="400">缺少稳定的连接</text>
-<text x="900" y="475" text-anchor="middle" class="cn" font-size="27px" font-weight="400" fill="#59636c">知识难以持续复用</text>
-<path d="M613 565 C700 565,724 580,780 660" fill="none" stroke="#59636c" stroke-width="4" marker-end="url(#arrow)"/><path d="M1187 565 C1100 565,1076 580,1020 660" fill="none" stroke="#59636c" stroke-width="4" marker-end="url(#arrow)"/>
-<rect x="110" y="670" width="1580" height="270" rx="18" fill="#eaf2fb" stroke="#315f8d" stroke-width="4"/>
-<text x="900" y="737" text-anchor="middle" class="cn" font-size="35px" font-weight="600" fill="#244e79">本文方法：以业务能力连接需求与代码</text>
-<line x1="156" y1="770" x2="1644" y2="770" stroke="#9bb6d1" stroke-width="2"/>
-<rect x="165" y="820" width="225" height="75" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
-<text x="277" y="866" text-anchor="middle" class="cn" font-size="29px" font-weight="600" fill="#244e79">需求规格</text>
-<rect x="470" y="820" width="250" height="75" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
-<text x="595" y="866" text-anchor="middle" class="cn" font-size="29px" font-weight="600" fill="#244e79">业务能力</text>
-<rect x="800" y="820" width="230" height="75" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
-<text x="915" y="866" text-anchor="middle" class="cn" font-size="29px" font-weight="600" fill="#244e79">代码结构</text>
-<rect x="1110" y="820" width="225" height="75" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
-<text x="1222" y="866" text-anchor="middle" class="cn" font-size="29px" font-weight="600" fill="#244e79">演化记录</text>
-<rect x="1415" y="820" width="220" height="75" rx="9" fill="#ffffff" stroke="#6d95ba" stroke-width="2"/>
-<text x="1525" y="866" text-anchor="middle" class="cn" font-size="29px" font-weight="600" fill="#244e79">任务上下文</text>
-<line x1="397" y1="857" x2="455" y2="857" stroke="#315f8d" stroke-width="4" marker-end="url(#arrow)"/>
-<line x1="727" y1="857" x2="785" y2="857" stroke="#315f8d" stroke-width="4" marker-end="url(#arrow)"/>
-<line x1="1037" y1="857" x2="1095" y2="857" stroke="#315f8d" stroke-width="4" marker-end="url(#arrow)"/>
-<line x1="1342" y1="857" x2="1400" y2="857" stroke="#315f8d" stroke-width="4" marker-end="url(#arrow)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1520" viewBox="0 0 1800 1520">
+<defs>
+<marker id="arrow-gray" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
+<marker id="arrow-blue" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
+<marker id="arrow-green" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
+<marker id="arrow-red" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
+</defs>
+<rect width="1800" height="1520" fill="#ffffff"/>
+<rect x="60" y="40" width="790" height="610" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="100" y="102" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">需求侧（规格与追踪）</text>
+<rect x="100" y="180" width="710" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="455.0" y="234.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">规格制品</text>
+<text x="455.0" y="306.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">需求规格与流程约束</text>
+<rect x="100" y="410" width="710" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="455.0" y="464.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">追踪链接</text>
+<text x="455.0" y="536.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">需求与代码对应关系</text>
+<rect x="950" y="40" width="790" height="610" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="990" y="102" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5f8178">代码侧（图谱与检索）</text>
+<rect x="990" y="180" width="710" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1345.0" y="234.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">代码图谱</text>
+<text x="1345.0" y="306.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">代码结构与仓库关系</text>
+<rect x="990" y="410" width="710" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1345.0" y="464.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">检索片段</text>
+<text x="1345.0" y="536.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">任务相关上下文</text>
+<polyline points="455,650 455,705 1345,705 1345,650" fill="none" stroke="#59636c" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,705 900,760" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,705 900,760" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<rect x="170" y="760" width="1460" height="280" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="828.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">业务能力层缺失</text>
+<text x="900.0" y="900.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">需求语义与代码结构缺少稳定的连接</text>
+<text x="900.0" y="972.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">知识难以持续复用</text>
+<polyline points="900,1040 900,1140" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,1040 900,1140" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="60" y="1140" width="1680" height="330" rx="15" fill="#eef4fb" stroke="#9cabb4" stroke-width="2"/>
+<text x="100" y="1202" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">本文方法：以业务能力连接需求与代码</text>
+<rect x="100" y="1310" width="280" height="120" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="240.0" y="1370.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">需求规格</text>
+<polyline points="380,1370 430,1370" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="380,1370 430,1370" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="430" y="1310" width="280" height="120" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="570.0" y="1370.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">业务能力</text>
+<polyline points="710,1370 760,1370" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="710,1370 760,1370" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="760" y="1310" width="280" height="120" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="1370.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">代码结构</text>
+<polyline points="1040,1370 1090,1370" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1040,1370 1090,1370" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="1090" y="1310" width="280" height="120" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1230.0" y="1370.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">演化记录</text>
+<polyline points="1370,1370 1420,1370" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1370,1370 1420,1370" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="1420" y="1310" width="280" height="120" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1560.0" y="1370.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">任务上下文</text>
 </svg>

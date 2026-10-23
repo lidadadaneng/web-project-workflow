@@ -1,40 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1060" viewBox="0 0 1800 1060" role="img"><title>工作流引擎由统一命令入口调度规则、状态、模板任务和上下文服务</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="erArrow" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L18,10 L0,20 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="1800" height="1060" fill="#fff"/>
-<rect x="610" y="35" width="580" height="95" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
-<text x="900" y="82.5" font-size="40" font-weight="400" text-anchor="middle" dominant-baseline="central">阶段命令与 AI 编排</text>
-<polyline points="900,130 900,230" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="55" y="230" width="1690" height="590" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="81" y="257" font-size="36" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">工作流引擎</text>
-<rect x="625" y="290" width="550" height="90" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
-<text x="900" y="335" font-size="38" font-weight="400" text-anchor="middle" dominant-baseline="central">统一命令入口</text>
-<polyline points="900,380 900,415 250,415 250,465" fill="none" stroke="#303840" stroke-width="2"/>
-<polyline points="900,415 900,465" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<polyline points="900,415 1550,415 1550,465" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="90" y="465" width="320" height="115" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="250" y="500.4" font-size="34" font-weight="400" text-anchor="middle" dominant-baseline="central">Schema 注册表</text>
-<text x="250" y="544.6" font-size="34" font-weight="400" text-anchor="middle" dominant-baseline="central">阶段与依赖规则</text>
-<rect x="740" y="465" width="320" height="115" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="900" y="500.4" font-size="34" font-weight="400" text-anchor="middle" dominant-baseline="central">依赖检查</text>
-<text x="900" y="544.6" font-size="34" font-weight="400" text-anchor="middle" dominant-baseline="central">门禁与警告</text>
-<rect x="1390" y="465" width="320" height="115" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1550" y="501.7" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">状态服务</text>
-<text x="1550" y="543.3" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">完成 · 跳过 · 拍板</text>
-<polyline points="900,415 545,415 545,645" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<polyline points="900,415 1255,415 1255,645" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="350" y="645" width="390" height="115" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="545" y="681.7" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">模板与任务服务</text>
-<text x="545" y="723.3000000000001" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">模板定位 · Plan 解析</text>
-<rect x="1060" y="645" width="390" height="115" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1255" y="681.7" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">上下文适配</text>
-<text x="1255" y="723.3000000000001" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">锚点 · 参数 · 告警</text>
-<rect x="55" y="860" width="1690" height="155" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="81" y="887" font-size="34" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">持久化制品</text>
-<rect x="140" y="915" width="420" height="70" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="350" y="950" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">阶段文档与 Plan 任务</text>
-<rect x="690" y="915" width="420" height="70" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="900" y="950" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">图谱上下文</text>
-<rect x="1240" y="915" width="420" height="70" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1450" y="950" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">状态快照  .wpw.yaml</text>
-<polyline points="545,760 350,915" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<polyline points="1255,760 1255,835 900,835 900,915" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<polyline points="1550,580 1550,835 1450,835 1450,915" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1800" viewBox="0 0 1800 1800">
+<defs>
+<marker id="arrow-gray" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
+<marker id="arrow-blue" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
+<marker id="arrow-green" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
+<marker id="arrow-red" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
+</defs>
+<rect width="1800" height="1800" fill="#ffffff"/>
+<rect x="600" y="40" width="600" height="130" rx="12" fill="#eef4f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="105.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">阶段命令与 AI 编排</text>
+<rect x="55" y="280" width="1690" height="970" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="342" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">工作流引擎</text>
+<rect x="600" y="410" width="600" height="120" rx="12" fill="#eef4f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="470.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">统一命令入口</text>
+<polyline points="900,170 900,410" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,170 900,410" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="900,530 900,600 350,600 350,700" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,530 900,600 350,600 350,700" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="900,600 900,700" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,600 900,700" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="900,600 1450,600 1450,700" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,600 1450,600 1450,700" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<rect x="120" y="700" width="460" height="200" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="350.0" y="764.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">Schema 注册表</text>
+<text x="350.0" y="836.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">阶段与依赖规则</text>
+<rect x="670" y="700" width="460" height="200" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="764.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">依赖检查</text>
+<text x="900.0" y="836.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">门禁与警告</text>
+<rect x="1220" y="700" width="460" height="200" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1450.0" y="764.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">状态服务</text>
+<text x="1450.0" y="836.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">完成 · 跳过 · 拍板</text>
+<polyline points="900,600 625,600 625,950 490,950 490,1010" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,600 625,600 625,950 490,950 490,1010" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="900,600 1175,600 1175,950 1310,950 1310,1010" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,600 1175,600 1175,950 1310,950 1310,1010" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<rect x="200" y="1010" width="580" height="200" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="490.0" y="1074.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">模板与任务服务</text>
+<text x="490.0" y="1146.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">模板定位 · Plan 解析</text>
+<rect x="1020" y="1010" width="580" height="200" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1310.0" y="1074.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">上下文适配</text>
+<text x="1310.0" y="1146.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">锚点 · 参数 · 告警</text>
+<rect x="55" y="1400" width="1690" height="340" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="1462" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">持久化制品</text>
+<rect x="120" y="1520" width="460" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="350.0" y="1574.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">阶段文档与</text>
+<text x="350.0" y="1646.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">Plan 任务</text>
+<rect x="670" y="1520" width="460" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="1610.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">图谱上下文</text>
+<rect x="1220" y="1520" width="460" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1450.0" y="1574.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">状态快照</text>
+<text x="1450.0" y="1646.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">.wpw.yaml</text>
+<polyline points="490,1210 490,1520" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="490,1210 490,1520" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="1310,1210 1310,1350 900,1350 900,1520" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1310,1210 1310,1350 900,1350 900,1520" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="1450,900 1730,900 1730,1320 1450,1320 1450,1520" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1450,900 1730,900 1730,1320 1450,1320 1450,1520" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
 </svg>

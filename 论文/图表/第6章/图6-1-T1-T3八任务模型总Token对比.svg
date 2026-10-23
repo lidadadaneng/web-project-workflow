@@ -1,4 +1,224 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1940" height="980" viewBox="0 0 1940 980" role="img"><title>T1至T3八个开发任务的模型总 Token 对比</title><defs>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L11 6 L0 12 Z" fill="#263238"/></marker>
-    <style>text{font-family:'Microsoft YaHei','SimHei',sans-serif} .muted{fill:#66747a} .small{font-size:23px} .label{font-size:29px} .main{font-size:36px;font-weight:600} .value{font-size:42px;font-weight:600}</style>
-  </defs><rect width="100%" height="100%" fill="#fff"/><line x1="118" y1="745" x2="1818" y2="745" stroke="#d8dfe1" stroke-width="1.5"/><text x="100" y="745" text-anchor="end" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="100" dy="0">0</tspan></text><line x1="118" y1="565" x2="1818" y2="565" stroke="#d8dfe1" stroke-width="1.5"/><text x="100" y="565" text-anchor="end" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="100" dy="0">5</tspan></text><line x1="118" y1="385" x2="1818" y2="385" stroke="#d8dfe1" stroke-width="1.5"/><text x="100" y="385" text-anchor="end" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="100" dy="0">10</tspan></text><line x1="118" y1="205" x2="1818" y2="205" stroke="#d8dfe1" stroke-width="1.5"/><text x="100" y="205" text-anchor="end" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="100" dy="0">15</tspan></text><text x="118" y="163" text-anchor="start" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="118" dy="0">模型总 Token（百万）</tspan></text><rect x="720" y="66" width="24" height="24" rx="2" fill="#9aa5a8" stroke="#9aa5a8" stroke-width="2"/><text x="758" y="79" text-anchor="start" dominant-baseline="central" font-size="25" font-weight="400" fill="#263238"><tspan x="758" dy="0">OpenSpec</tspan></text><rect x="940" y="66" width="24" height="24" rx="2" fill="#5f8888" stroke="#5f8888" stroke-width="2"/><text x="978" y="79" text-anchor="start" dominant-baseline="central" font-size="25" font-weight="400" fill="#263238"><tspan x="978" dy="0">WPW</tspan></text><rect x="179.75" y="487.444228" width="40" height="257.555772" fill="#9aa5a8"/><rect x="228.75" y="588.698296" width="40" height="156.30170399999997" fill="#5f8888"/><text x="224.25" y="459.444228" text-anchor="middle" dominant-baseline="central" font-size="25" font-weight="700" fill="#5f8888"><tspan x="224.25" dy="0">−39.31%</tspan></text><text x="224.25" y="769.5" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="400" fill="#263238"><tspan x="224.25" dy="0">T1-1</tspan><tspan x="224.25" dy="29">注册登录</tspan></text><rect x="392.25" y="343.16054799999995" width="40" height="401.83945200000005" fill="#9aa5a8"/><rect x="441.25" y="617.2084600000001" width="40" height="127.79153999999994" fill="#5f8888"/><text x="436.75" y="315.16054799999995" text-anchor="middle" dominant-baseline="central" font-size="25" font-weight="700" fill="#5f8888"><tspan x="436.75" dy="0">−68.20%</tspan></text><text x="436.75" y="769.5" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="400" fill="#263238"><tspan x="436.75" dy="0">T1-2</tspan><tspan x="436.75" dy="29">分类与美食</tspan></text><rect x="604.75" y="530.665288" width="40" height="214.33471199999997" fill="#9aa5a8"/><rect x="653.75" y="583.393156" width="40" height="161.60684400000002" fill="#5f8888"/><text x="649.25" y="502.66528800000003" text-anchor="middle" dominant-baseline="central" font-size="25" font-weight="700" fill="#5f8888"><tspan x="649.25" dy="0">−24.60%</tspan></text><text x="649.25" y="769.5" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="400" fill="#263238"><tspan x="649.25" dy="0">T2-1</tspan><tspan x="649.25" dy="29">个性推荐</tspan></text><rect x="817.25" y="245.5297" width="40" height="499.4703" fill="#9aa5a8"/><rect x="866.25" y="394.96732000000003" width="40" height="350.03267999999997" fill="#5f8888"/><text x="861.75" y="217.5297" text-anchor="middle" dominant-baseline="central" font-size="25" font-weight="700" fill="#5f8888"><tspan x="861.75" dy="0">−29.92%</tspan></text><text x="861.75" y="769.5" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="400" fill="#263238"><tspan x="861.75" dy="0">T2-2</tspan><tspan x="861.75" dy="29">购物与订单</tspan></text><rect x="1029.75" y="500.051428" width="40" height="244.948572" fill="#9aa5a8"/><rect x="1078.75" y="595.534984" width="40" height="149.465016" fill="#5f8888"/><text x="1074.25" y="472.051428" text-anchor="middle" dominant-baseline="central" font-size="25" font-weight="700" fill="#5f8888"><tspan x="1074.25" dy="0">−38.98%</tspan></text><text x="1074.25" y="769.5" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="400" fill="#263238"><tspan x="1074.25" dy="0">T3-1</tspan><tspan x="1074.25" dy="29">收藏</tspan></text><rect x="1242.25" y="382.54803999999996" width="40" height="362.45196000000004" fill="#9aa5a8"/><rect x="1291.25" y="530.968588" width="40" height="214.03141200000005" fill="#5f8888"/><text x="1286.75" y="354.54803999999996" text-anchor="middle" dominant-baseline="central" font-size="25" font-weight="700" fill="#5f8888"><tspan x="1286.75" dy="0">−40.95%</tspan></text><text x="1286.75" y="769.5" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="400" fill="#263238"><tspan x="1286.75" dy="0">T3-2</tspan><tspan x="1286.75" dy="29">评论</tspan></text><rect x="1454.75" y="502.121176" width="40" height="242.878824" fill="#9aa5a8"/><rect x="1503.75" y="593.037376" width="40" height="151.962624" fill="#5f8888"/><text x="1499.25" y="474.121176" text-anchor="middle" dominant-baseline="central" font-size="25" font-weight="700" fill="#5f8888"><tspan x="1499.25" dy="0">−37.43%</tspan></text><text x="1499.25" y="769.5" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="400" fill="#263238"><tspan x="1499.25" dy="0">T3-3</tspan><tspan x="1499.25" dy="29">美食资讯</tspan></text><rect x="1667.25" y="407.398444" width="40" height="337.601556" fill="#9aa5a8"/><rect x="1716.25" y="528.9810279999999" width="40" height="216.01897200000008" fill="#5f8888"/><text x="1711.75" y="379.398444" text-anchor="middle" dominant-baseline="central" font-size="25" font-weight="700" fill="#5f8888"><tspan x="1711.75" dy="0">−36.01%</tspan></text><text x="1711.75" y="769.5" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="400" fill="#263238"><tspan x="1711.75" dy="0">T3-4</tspan><tspan x="1711.75" dy="29">个人中心</tspan></text><text x="968" y="882" text-anchor="middle" dominant-baseline="central" font-size="25" font-weight="400" fill="#66747a"><tspan x="968" dy="0">柱顶标注为 WPW 相对 OpenSpec 的减少比例</tspan></text></svg>
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns2="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" width="1800" height="1860" viewBox="0 0 1296 1339.2" version="1.1">
+ <metadata>
+  <rdf:RDF>
+   <ns2:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:date>2026-10-23T02:34:37.461591</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <ns2:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </ns2:Agent>
+    </dc:creator>
+   </ns2:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1339.2  L 1296 1339.2  L 1296 0  L 0 0  z " style="fill: #ffffff" />
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 396 32.4  L 420.48 32.4  L 420.48 56.88  L 396 56.88  z " clip-path="url(#p78be876e6a)" style="fill: #9aa5a8; stroke: #9aa5a8; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_3">
+    <path d="M 712.8 32.4  L 737.28 32.4  L 737.28 56.88  L 712.8 56.88  z " clip-path="url(#p78be876e6a)" style="fill: #5f8888; stroke: #5f8888; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="line2d_1">
+    <path d="M 172.8 554.4  L 1252.8 554.4  " clip-path="url(#p78be876e6a)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_2">
+    <path d="M 172.8 429.6  L 1252.8 429.6  " clip-path="url(#p78be876e6a)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_3">
+    <path d="M 172.8 304.8  L 1252.8 304.8  " clip-path="url(#p78be876e6a)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_4">
+    <path d="M 172.8 180  L 1252.8 180  " clip-path="url(#p78be876e6a)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_5">
+    <path d="M 172.8 180  L 172.8 554.4  " clip-path="url(#p78be876e6a)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="patch_4">
+    <path d="M 248.4 375.827998  L 307.44 375.827998  L 307.44 554.4  L 248.4 554.4  z " clip-path="url(#p78be876e6a)" style="fill: #9aa5a8; stroke: #9aa5a8; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_5">
+    <path d="M 326.16 446.030819  L 385.2 446.030819  L 385.2 554.4  L 326.16 554.4  z " clip-path="url(#p78be876e6a)" style="fill: #5f8888; stroke: #5f8888; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_6">
+    <path d="M 507.6 275.791313  L 566.64 275.791313  L 566.64 554.4  L 507.6 554.4  z " clip-path="url(#p78be876e6a)" style="fill: #9aa5a8; stroke: #9aa5a8; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_7">
+    <path d="M 585.36 465.797866  L 644.4 465.797866  L 644.4 554.4  L 585.36 554.4  z " clip-path="url(#p78be876e6a)" style="fill: #5f8888; stroke: #5f8888; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_8">
+    <path d="M 766.8 405.7946  L 825.84 405.7946  L 825.84 554.4  L 766.8 554.4  z " clip-path="url(#p78be876e6a)" style="fill: #9aa5a8; stroke: #9aa5a8; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_9">
+    <path d="M 844.56 442.352588  L 903.6 442.352588  L 903.6 554.4  L 844.56 554.4  z " clip-path="url(#p78be876e6a)" style="fill: #5f8888; stroke: #5f8888; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_10">
+    <path d="M 1026 208.100592  L 1085.04 208.100592  L 1085.04 554.4  L 1026 554.4  z " clip-path="url(#p78be876e6a)" style="fill: #9aa5a8; stroke: #9aa5a8; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_11">
+    <path d="M 1103.76 311.710675  L 1162.8 311.710675  L 1162.8 554.4  L 1103.76 554.4  z " clip-path="url(#p78be876e6a)" style="fill: #5f8888; stroke: #5f8888; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="line2d_6">
+    <path d="M 172.8 1101.6  L 1252.8 1101.6  " clip-path="url(#p78be876e6a)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_7">
+    <path d="M 172.8 976.8  L 1252.8 976.8  " clip-path="url(#p78be876e6a)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_8">
+    <path d="M 172.8 852  L 1252.8 852  " clip-path="url(#p78be876e6a)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_9">
+    <path d="M 172.8 727.2  L 1252.8 727.2  " clip-path="url(#p78be876e6a)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_10">
+    <path d="M 172.8 727.2  L 172.8 1101.6  " clip-path="url(#p78be876e6a)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="patch_12">
+    <path d="M 248.4 931.76899  L 307.44 931.76899  L 307.44 1101.6  L 248.4 1101.6  z " clip-path="url(#p78be876e6a)" style="fill: #9aa5a8; stroke: #9aa5a8; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_13">
+    <path d="M 326.16 997.970922  L 385.2 997.970922  L 385.2 1101.6  L 326.16 1101.6  z " clip-path="url(#p78be876e6a)" style="fill: #5f8888; stroke: #5f8888; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_14">
+    <path d="M 507.6 850.299974  L 566.64 850.299974  L 566.64 1101.6  L 507.6 1101.6  z " clip-path="url(#p78be876e6a)" style="fill: #9aa5a8; stroke: #9aa5a8; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_15">
+    <path d="M 585.36 953.204888  L 644.4 953.204888  L 644.4 1101.6  L 585.36 1101.6  z " clip-path="url(#p78be876e6a)" style="fill: #5f8888; stroke: #5f8888; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_16">
+    <path d="M 766.8 933.204015  L 825.84 933.204015  L 825.84 1101.6  L 766.8 1101.6  z " clip-path="url(#p78be876e6a)" style="fill: #9aa5a8; stroke: #9aa5a8; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_17">
+    <path d="M 844.56 996.239247  L 903.6 996.239247  L 903.6 1101.6  L 844.56 1101.6  z " clip-path="url(#p78be876e6a)" style="fill: #5f8888; stroke: #5f8888; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_18">
+    <path d="M 1026 867.529588  L 1085.04 867.529588  L 1085.04 1101.6  L 1026 1101.6  z " clip-path="url(#p78be876e6a)" style="fill: #9aa5a8; stroke: #9aa5a8; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="patch_19">
+    <path d="M 1103.76 951.826846  L 1162.8 951.826846  L 1162.8 1101.6  L 1103.76 1101.6  z " clip-path="url(#p78be876e6a)" style="fill: #5f8888; stroke: #5f8888; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="text_1">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="437.76" y="53.6337" transform="rotate(-0 437.76 53.6337)">OpenSpec</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="754.56" y="57.7107" transform="rotate(-0 754.56 57.7107)">WPW</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #66747a" x="82.8" y="123.0939" transform="rotate(-0 82.8 123.0939)">百万 Token</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="147.6" y="567.4707" transform="rotate(-0 147.6 567.4707)">0</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="147.6" y="442.4439" transform="rotate(-0 147.6 442.4439)">5</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="147.6" y="317.9382" transform="rotate(-0 147.6 317.9382)">10</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="147.6" y="193.1301" transform="rotate(-0 147.6 193.1301)">15</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #5f8888" x="316.8" y="354.398098" transform="rotate(-0 316.8 354.398098)">39.31%</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="316.8" y="612.3969" transform="rotate(-0 316.8 612.3969)">T1-1</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="316.8" y="661.6251" transform="rotate(-0 316.8 661.6251)">注册登录</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #5f8888" x="576" y="254.293913" transform="rotate(-0 576 254.293913)">68.20%</text>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="576" y="612.3969" transform="rotate(-0 576 612.3969)">T1-2</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="576" y="661.59" transform="rotate(-0 576 661.59)">分类与美食</text>
+   </g>
+   <g id="text_14">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #5f8888" x="835.2" y="384.2972" transform="rotate(-0 835.2 384.2972)">24.60%</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="835.2" y="612.3969" transform="rotate(-0 835.2 612.3969)">T2-1</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="835.2" y="661.4874" transform="rotate(-0 835.2 661.4874)">个性推荐</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #5f8888" x="1094.4" y="186.603192" transform="rotate(-0 1094.4 186.603192)">29.92%</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="1094.4" y="612.3294" transform="rotate(-0 1094.4 612.3294)">T2-2</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="1094.4" y="661.6089" transform="rotate(-0 1094.4 661.6089)">购物与订单</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="147.6" y="1114.6707" transform="rotate(-0 147.6 1114.6707)">0</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="147.6" y="989.6439" transform="rotate(-0 147.6 989.6439)">5</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="147.6" y="865.1382" transform="rotate(-0 147.6 865.1382)">10</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="147.6" y="740.3301" transform="rotate(-0 147.6 740.3301)">15</text>
+   </g>
+   <g id="text_24">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #5f8888" x="316.8" y="910.27159" transform="rotate(-0 316.8 910.27159)">38.98%</text>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="316.8" y="1159.3701" transform="rotate(-0 316.8 1159.3701)">T3-1</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="316.8" y="1208.5875" transform="rotate(-0 316.8 1208.5875)">收藏</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #5f8888" x="576" y="828.802574" transform="rotate(-0 576 828.802574)">40.95%</text>
+   </g>
+   <g id="text_28">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="576" y="1159.3026" transform="rotate(-0 576 1159.3026)">T3-2</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="576" y="1208.6712" transform="rotate(-0 576 1208.6712)">评论</text>
+   </g>
+   <g id="text_30">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #5f8888" x="835.2" y="911.706615" transform="rotate(-0 835.2 911.706615)">37.43%</text>
+   </g>
+   <g id="text_31">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="835.2" y="1159.3026" transform="rotate(-0 835.2 1159.3026)">T3-3</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="835.2" y="1208.8251" transform="rotate(-0 835.2 1208.8251)">美食资讯</text>
+   </g>
+   <g id="text_33">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #5f8888" x="1094.4" y="846.099688" transform="rotate(-0 1094.4 846.099688)">36.01%</text>
+   </g>
+   <g id="text_34">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="1094.4" y="1159.3026" transform="rotate(-0 1094.4 1159.3026)">T3-4</text>
+   </g>
+   <g id="text_35">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263238" x="1094.4" y="1208.8062" transform="rotate(-0 1094.4 1208.8062)">个人中心</text>
+   </g>
+   <g id="text_36">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="648" y="1288.2087" transform="rotate(-0 648 1288.2087)">柱顶标注为 WPW 相对 OpenSpec 的减少比例</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p78be876e6a">
+   <rect x="0" y="0" width="1296" height="1339.2" />
+  </clipPath>
+ </defs>
+</svg>

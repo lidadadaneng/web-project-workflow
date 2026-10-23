@@ -1,21 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="970" viewBox="0 0 1900 970" role="img"><title>Java 服务方法对应的 L3 节点 JSON 实例</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="erArrow" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L18,10 L0,20 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="1900" height="970" fill="#fff"/>
-<rect x="55" y="35" width="1790" height="900" fill="#f8fafc" stroke="#303840" stroke-width="2"/>
-<text x="100" y="82" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">{</text>
-<text x="100" y="130" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">  &quot;id&quot;: &quot;elem:a17c9e2d4f80&quot;,</text>
-<text x="100" y="178" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">  &quot;level&quot;: &quot;L3&quot;,</text>
-<text x="100" y="226" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">  &quot;type&quot;: &quot;function&quot;,</text>
-<text x="100" y="274" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">  &quot;name&quot;: &quot;OrderService.createOrder&quot;,</text>
-<text x="100" y="322" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">  &quot;attrs&quot;: {</text>
-<text x="100" y="370" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">    &quot;filePath&quot;: &quot;src/main/java/com/example/order/OrderService.java&quot;,</text>
-<text x="100" y="418" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">    &quot;signature&quot;: &quot;OrderResult createOrder(CreateOrderRequest request)&quot;,</text>
-<text x="100" y="466" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">    &quot;params&quot;: [{ &quot;name&quot;: &quot;request&quot;, &quot;type&quot;: &quot;CreateOrderRequest&quot; }],</text>
-<text x="100" y="514" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">    &quot;returnType&quot;: &quot;OrderResult&quot;,</text>
-<text x="100" y="562" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">    &quot;parentName&quot;: &quot;OrderService&quot;,</text>
-<text x="100" y="610" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">    &quot;annotations&quot;: [&quot;@Transactional&quot;],</text>
-<text x="100" y="658" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">    &quot;lineStart&quot;: 42,</text>
-<text x="100" y="706" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">    &quot;lineEnd&quot;: 67</text>
-<text x="100" y="754" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">  },</text>
-<text x="100" y="802" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">  &quot;createdAt&quot;: 1787483793182,</text>
-<text x="100" y="850" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">  &quot;updatedAt&quot;: 1787483793182</text>
-<text x="100" y="898" font-family="'Consolas','Courier New',monospace" font-size="36" xml:space="preserve">}</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1988" viewBox="0 0 1800 1988">
+<defs>
+<marker id="arrow-gray" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
+<marker id="arrow-blue" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
+<marker id="arrow-green" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
+<marker id="arrow-red" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
+</defs>
+<rect width="1800" height="1988" fill="#ffffff"/>
+<rect x="55" y="40" width="1690" height="1908" rx="12" fill="#f8fafc" stroke="#aab4bb" stroke-width="2"/>
+<text x="105" y="100" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">{</text>
+<text x="105" y="168" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">  "id": "elem:a17c9e2d4f80",</text>
+<text x="105" y="236" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">  "level": "L3",</text>
+<text x="105" y="304" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">  "type": "function",</text>
+<text x="105" y="372" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">  "name": "OrderService.createOrder",</text>
+<text x="105" y="440" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">  "attrs": {</text>
+<text x="105" y="508" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">    "filePath":</text>
+<text x="105" y="576" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">      "src/main/java/com/example/order/OrderService.java",</text>
+<text x="105" y="644" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">    "signature":</text>
+<text x="105" y="712" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">      "OrderResult createOrder(CreateOrderRequest request)",</text>
+<text x="105" y="780" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">    "params": [</text>
+<text x="105" y="848" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">      {</text>
+<text x="105" y="916" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">        "name": "request",</text>
+<text x="105" y="984" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">        "type": "CreateOrderRequest"</text>
+<text x="105" y="1052" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">      }</text>
+<text x="105" y="1120" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">    ],</text>
+<text x="105" y="1188" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">    "returnType": "OrderResult",</text>
+<text x="105" y="1256" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">    "parentName": "OrderService",</text>
+<text x="105" y="1324" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">    "annotations": [</text>
+<text x="105" y="1392" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">      "@Transactional"</text>
+<text x="105" y="1460" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">    ],</text>
+<text x="105" y="1528" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">    "lineStart": 42,</text>
+<text x="105" y="1596" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">    "lineEnd": 67</text>
+<text x="105" y="1664" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">  },</text>
+<text x="105" y="1732" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">  "createdAt": 1787483793182,</text>
+<text x="105" y="1800" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">  "updatedAt": 1787483793182</text>
+<text x="105" y="1868" dominant-baseline="middle" xml:space="preserve" style="font-family:Consolas,monospace;font-size:48px;fill:#27313a">}</text>
 </svg>

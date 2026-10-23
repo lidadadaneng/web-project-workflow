@@ -306,35 +306,39 @@ def render_fig22_context_chain() -> None:
 
 
 def render_fig23_rag_comparison() -> None:
-    fig = Figure(1800, 440)
-    fig.rounded_rect((55, 35, 865, 405), fill="#ffffff", outline="#aab4bb", width=2, radius=14)
-    fig.rounded_rect((935, 35, 1745, 405), fill="#ffffff", outline="#8da6a4", width=2, radius=14)
-    fig.text(460, 80, "RAG：基于片段的检索增强生成", 31, True, BLUE)
-    fig.text(1340, 80, "图结构检索：基于图结构的检索增强生成", 31, True, GREEN)
-    fig.line([(90, 125), (830, 125)], color="#c1ccd3", width=2)
-    fig.line([(970, 125), (1710, 125)], color="#bed0cb", width=2)
-
-    left_boxes = [
-        (95, 220, 255, 360, "文档", "原始语料"),
-        (300, 220, 460, 360, "文档切块", "平面片段"),
-        (505, 220, 665, 360, "向量检索", "相似度匹配"),
-        (710, 220, 825, 360, "生成", "答案"),
+    # 48 / 1800 = 2.67%: approximately 12 pt at a printed width of 16 cm.
+    # Stack the two comparisons so each four-stage flow has the full width.
+    # All text, including auxiliary labels, retains the same printed size.
+    fig = Figure(1800, 880)
+    size = 48
+    columns = [(120, 450), (530, 860), (940, 1270), (1350, 1680)]
+    flows = [
+        (40, "RAG：基于片段的检索增强生成", BLUE, "#aab4bb", "#aab6bf", "blue", [
+            ("文档", "原始语料"),
+            ("文档切块", "平面片段"),
+            ("向量检索", "相似度匹配"),
+            ("生成", "答案"),
+        ]),
+        (465, "图结构检索：基于图结构的检索增强生成", GREEN, "#8da6a4", "#a8bab8", "green", [
+            ("语料", "原始文档"),
+            ("抽取实体关系", "建立知识图"),
+            ("子图 / 社区", "层级摘要"),
+            ("生成", "答案"),
+        ]),
     ]
-    for box in left_boxes:
-        card(fig, box[:4], box[4], box[5], "#ffffff", "#aab6bf", TEXT, 25, 18)
-    for start, end in [((255, 290), (300, 290)), ((460, 290), (505, 290)), ((665, 290), (710, 290))]:
-        fig.arrow([start, end], width=3, marker="blue", color=BLUE)
-
-    right_boxes = [
-        (975, 220, 1125, 360, "语料", "原始文档"),
-        (1170, 220, 1355, 360, "抽取实体关系", "建立知识图"),
-        (1400, 220, 1575, 360, "子图 / 社区", "层级摘要"),
-        (1620, 220, 1710, 360, "生成", "答案"),
-    ]
-    for box in right_boxes:
-        card(fig, box[:4], box[4], box[5], "#ffffff", "#a8bab8", TEXT, 25, 18)
-    for start, end in [((1125, 290), (1170, 290)), ((1355, 290), (1400, 290)), ((1575, 290), (1620, 290))]:
-        fig.arrow([start, end], width=3, marker="green", color=GREEN)
+    for top, heading, color, panel_border, node_border, marker, stages in flows:
+        fig.rounded_rect((55, top, 1745, top + 375), outline=panel_border, radius=14)
+        fig.text(110, top + 65, heading, size, True, color, "start")
+        fig.line([(110, top + 115), (1690, top + 115)], color="#c1ccd3", width=2)
+        for (x1, x2), (title, detail) in zip(columns, stages):
+            for label, bold in [(title, True), (detail, False)]:
+                assert fig.draw.textlength(label, font=font(size, bold)) <= x2 - x1 - 40, label
+            fig.rounded_rect((x1, top + 170, x2, top + 325), outline=node_border)
+            fig.text((x1 + x2) / 2, top + 216, title, size, True, TEXT)
+            fig.text((x1 + x2) / 2, top + 283, detail, size, False, MUTED)
+        for previous, following in zip(columns, columns[1:]):
+            fig.arrow([(previous[1], top + 247.5), (following[0], top + 247.5)],
+                      width=3, marker=marker, color=color)
     fig.save("图2-3-RAG与图结构检索的检索方式对比")
 
 
@@ -427,11 +431,13 @@ def render_fig25_embedding_space() -> None:
 
 
 def main() -> None:
-    render_fig21()
-    render_fig22_context_chain()
+    # Canonical large-type layouts; Figure and approved Figure 2-3 remain here.
+    from render_thesis_figures import fig21, fig22, fig24, fig25
+    fig21()
+    fig22()
     render_fig23_rag_comparison()
-    render_fig24_knowledge_graph()
-    render_fig25_embedding_space()
+    fig24()
+    fig25()
     print(f"Rendered Chapter 2 figures to {OUT_DIR}")
 
 

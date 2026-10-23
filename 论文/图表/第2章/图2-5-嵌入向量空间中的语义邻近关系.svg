@@ -1,24 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="790" viewBox="0 0 1500 790">
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1020" viewBox="0 0 1800 1020">
 <defs>
-<marker id="arrow-gray" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
-<marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
-<marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
-<marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
+<marker id="arrow-gray" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
+<marker id="arrow-blue" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
+<marker id="arrow-green" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
+<marker id="arrow-red" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
 </defs>
-<rect width="1500" height="790" fill="#ffffff"/>
-<text x="750" y="55" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:29px;font-weight:600;fill:#27313a">二维投影空间（示意）</text>
-<polyline points="160,730 1340,730" fill="none" stroke="#d0d6da" stroke-width="2" stroke-linejoin="round"/>
-<polyline points="160,730 160,145" fill="none" stroke="#d0d6da" stroke-width="2" stroke-linejoin="round"/>
-<text x="102" y="430" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">语义维度 2</text>
-<text x="1270" y="760" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5b6770">语义维度 1</text>
-<polyline points="545,405 735,445" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="10 8"/>
-<ellipse cx="640.0" cy="425.0" rx="175.0" ry="125.0" fill="#f5f8fa" stroke="#b4c5d1" stroke-width="2" stroke-dasharray="10 8"/>
-<circle cx="545" cy="405" r="13" fill="#315f8d"/>
-<circle cx="735" cy="445" r="13" fill="#315f8d"/>
-<circle cx="1160" cy="610" r="13" fill="#5f8178"/>
-<text x="510" y="335" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:24px;font-weight:600;fill:#315f8d">为用户增加收藏功能</text>
-<text x="770" y="490" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:24px;font-weight:600;fill:#315f8d">收藏管理</text>
-<text x="1210" y="570" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:24px;font-weight:600;fill:#5f8178">订单结算</text>
-<text x="640" y="385" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#315f8d">距离较小 / 语义相近</text>
-<text x="1135" y="675" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:20px;fill:#5f8178">距离较大</text>
+<rect width="1800" height="1020" fill="#ffffff"/>
+<text x="900" y="65" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">二维投影空间（示意）</text>
+<polyline points="200,900 1690,900" fill="none" stroke="#c1cbd2" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="200,900 200,190" fill="none" stroke="#c1cbd2" stroke-width="2" stroke-linejoin="round"/>
+<text x="90" y="140" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">语义维度 2</text>
+<text x="1500" y="960" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">语义维度 1</text>
+<ellipse cx="780.0" cy="535.0" rx="440.0" ry="255.0" fill="#f5f8fa" stroke="#b4c5d1" stroke-width="2" stroke-dasharray="10 8"/>
+<polyline points="540,430 900,650" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="10 8"/>
+<circle cx="540" cy="430" r="15" fill="#315f8d"/>
+<circle cx="900" cy="650" r="15" fill="#315f8d"/>
+<circle cx="1430" cy="700" r="15" fill="#5f8178"/>
+<text x="750" y="380" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">为用户增加收藏功能</text>
+<text x="850" y="720" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">收藏管理</text>
+<text x="900" y="480" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#315f8d">距离较小 / 语义相近</text>
+<text x="1430" y="615" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5f8178">订单结算</text>
+<text x="1430" y="820" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5f8178">距离较大</text>
 </svg>

@@ -1,51 +1,67 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1200" viewBox="0 0 1900 1200" role="img"><title>wpw 分层系统架构与层间数据流</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="1900" height="1200" fill="#fff"/>
-<rect x="45" y="30" width="1810" height="210" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="71" y="57" font-size="34" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">应用层</text>
-<rect x="105" y="105" width="500" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="355" y="160" font-size="40" font-weight="600" text-anchor="middle" dominant-baseline="central">AI 编程智能体</text>
-<rect x="700" y="105" width="500" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="950" y="160" font-size="40" font-weight="600" text-anchor="middle" dominant-baseline="central">可视化控制台</text>
-<rect x="1295" y="105" width="500" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1545" y="160" font-size="40" font-weight="600" text-anchor="middle" dominant-baseline="central">开发者</text>
-<rect x="45" y="345" width="1810" height="210" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="71" y="372" font-size="34" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">服务层</text>
-<rect x="75" y="420" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="235" y="475" font-size="35" font-weight="600" text-anchor="middle" dominant-baseline="central">工作流服务</text>
-<rect x="435" y="420" width="320" height="110" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
-<text x="595" y="475" font-size="35" font-weight="600" text-anchor="middle" dominant-baseline="central">知识图谱服务</text>
-<rect x="795" y="420" width="320" height="110" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
-<text x="955" y="475" font-size="35" font-weight="600" text-anchor="middle" dominant-baseline="central">上下文服务</text>
-<rect x="1155" y="420" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1315" y="475" font-size="35" font-weight="600" text-anchor="middle" dominant-baseline="central">知识演化服务</text>
-<rect x="1515" y="420" width="320" height="110" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1675" y="475" font-size="35" font-weight="600" text-anchor="middle" dominant-baseline="central">数据访问服务</text>
-<rect x="45" y="660" width="1810" height="205" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="71" y="687" font-size="34" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">知识与过程数据层</text>
-<rect x="110" y="730" width="360" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="290" y="782.5" font-size="35" font-weight="600" text-anchor="middle" dominant-baseline="central">过程制品</text>
-<rect x="545" y="730" width="360" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="725" y="782.5" font-size="35" font-weight="600" text-anchor="middle" dominant-baseline="central">能力规范</text>
-<rect x="980" y="730" width="360" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1160" y="782.5" font-size="35" font-weight="600" text-anchor="middle" dominant-baseline="central">图谱与向量索引</text>
-<rect x="1415" y="730" width="360" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1595" y="782.5" font-size="35" font-weight="600" text-anchor="middle" dominant-baseline="central">归档与配置</text>
-<rect x="45" y="970" width="1810" height="170" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="71" y="997" font-size="34" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">基础设施层</text>
-<rect x="180" y="1030" width="360" height="82" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="360" y="1071" font-size="33" font-weight="600" text-anchor="middle" dominant-baseline="central">项目源码</text>
-<rect x="620" y="1030" width="360" height="82" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="800" y="1071" font-size="33" font-weight="600" text-anchor="middle" dominant-baseline="central">Git 历史</text>
-<rect x="1060" y="1030" width="360" height="82" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1240" y="1071" font-size="33" font-weight="600" text-anchor="middle" dominant-baseline="central">解析与向量服务</text>
-<rect x="1500" y="1030" width="280" height="82" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1640" y="1071" font-size="30" font-weight="600" text-anchor="middle" dominant-baseline="central">本地运行环境</text>
-<polyline points="950,240 950,345" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
-<text x="1120" y="269.1" font-size="36" font-weight="500" text-anchor="middle" dominant-baseline="central">阶段操作</text>
-<text x="1120" y="315.90000000000003" font-size="36" font-weight="500" text-anchor="middle" dominant-baseline="central">上下文与状态返回</text>
-<polyline points="950,555 950,660" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
-<text x="1120" y="584.1" font-size="36" font-weight="500" text-anchor="middle" dominant-baseline="central">状态与知识数据</text>
-<text x="1120" y="630.9" font-size="36" font-weight="500" text-anchor="middle" dominant-baseline="central">本地文件读写</text>
-<polyline points="950,865 950,970" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
-<text x="1120" y="894.1" font-size="36" font-weight="500" text-anchor="middle" dominant-baseline="central">源码与 Git</text>
-<text x="1120" y="940.9" font-size="36" font-weight="500" text-anchor="middle" dominant-baseline="central">构建图谱与索引</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="2200" viewBox="0 0 1800 2200">
+<defs>
+<marker id="arrow-gray" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
+<marker id="arrow-blue" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
+<marker id="arrow-green" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
+<marker id="arrow-red" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
+</defs>
+<rect width="1800" height="2200" fill="#ffffff"/>
+<rect x="55" y="40" width="1690" height="320" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="102" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">应用层</text>
+<rect x="120" y="180" width="460" height="130" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="350.0" y="245.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">AI 编程智能体</text>
+<rect x="670" y="180" width="460" height="130" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="245.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">可视化控制台</text>
+<rect x="1220" y="180" width="460" height="130" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1450.0" y="245.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">开发者</text>
+<rect x="55" y="520" width="1690" height="470" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="582" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">服务层</text>
+<rect x="120" y="660" width="460" height="120" rx="12" fill="#f1f5f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="350.0" y="720.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">工作流服务</text>
+<rect x="670" y="660" width="460" height="120" rx="12" fill="#f1f5f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="720.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">知识图谱服务</text>
+<rect x="1220" y="660" width="460" height="120" rx="12" fill="#f1f5f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="1450.0" y="720.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">上下文服务</text>
+<rect x="395" y="830" width="460" height="120" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="625.0" y="890.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">知识演化服务</text>
+<rect x="945" y="830" width="460" height="120" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1175.0" y="890.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">数据访问服务</text>
+<rect x="55" y="1150" width="1690" height="410" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="1212" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">知识与过程数据层</text>
+<rect x="120" y="1290" width="680" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="460.0" y="1340.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">过程制品</text>
+<rect x="1000" y="1290" width="680" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1340.0" y="1340.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">能力规范</text>
+<rect x="120" y="1430" width="680" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="460.0" y="1480.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">图谱与向量索引</text>
+<rect x="1000" y="1430" width="680" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1340.0" y="1480.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">归档与配置</text>
+<rect x="55" y="1720" width="1690" height="420" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="1782" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">基础设施层</text>
+<rect x="120" y="1850" width="680" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="460.0" y="1900.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">项目源码</text>
+<rect x="1000" y="1850" width="680" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1340.0" y="1900.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">Git 历史</text>
+<rect x="120" y="1990" width="680" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="460.0" y="2040.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">解析与向量服务</text>
+<rect x="1000" y="1990" width="680" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1340.0" y="2040.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">本地运行环境</text>
+<polyline points="880,360 880,520" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="880,360 880,520" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="920,520 920,360" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="920,520 920,360" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="1030" y="400" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">阶段操作</text>
+<text x="1030" y="472" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">上下文与状态返回</text>
+<polyline points="880,990 880,1150" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="880,990 880,1150" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="920,1150 920,990" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="920,1150 920,990" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="1030" y="1030" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">状态与知识数据</text>
+<text x="1030" y="1102" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">本地文件读写</text>
+<polyline points="880,1560 880,1720" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="880,1560 880,1720" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="920,1720 920,1560" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="920,1720 920,1560" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="1030" y="1600" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">源码与 Git</text>
+<text x="1030" y="1672" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">构建图谱与索引</text>
 </svg>

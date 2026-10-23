@@ -1,4 +1,342 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="920" viewBox="0 0 1900 920" role="img"><title>场景检索的机制对比哑铃图</title><defs>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L11 6 L0 12 Z" fill="#263238"/></marker>
-    <style>text{font-family:'Microsoft YaHei','SimHei',sans-serif} .muted{fill:#66747a} .small{font-size:23px} .label{font-size:29px} .main{font-size:36px;font-weight:600} .value{font-size:42px;font-weight:600}</style>
-  </defs><rect width="100%" height="100%" fill="#fff"/><circle cx="520" cy="43" r="9" fill="#fff" stroke="#263238" stroke-width="3"/><text x="542" y="43" text-anchor="start" dominant-baseline="central" font-size="23" font-weight="400" fill="#263238"><tspan x="542" dy="0">比较前</tspan></text><circle cx="690" cy="43" r="9" fill="#263238" stroke="#263238" stroke-width="2"/><text x="712" y="43" text-anchor="start" dominant-baseline="central" font-size="23" font-weight="400" fill="#263238"><tspan x="712" dy="0">比较后</tspan></text><line x1="875" y1="43" x2="925" y2="43" stroke="#39745b" stroke-width="5"/><text x="938" y="43" text-anchor="start" dominant-baseline="central" font-size="23" font-weight="400" fill="#263238"><tspan x="938" dy="0">Holm p &lt; 0.05</tspan></text><line x1="1115" y1="43" x2="1165" y2="43" stroke="#66747a" stroke-width="5"/><text x="1178" y="43" text-anchor="start" dominant-baseline="central" font-size="23" font-weight="400" fill="#263238"><tspan x="1178" dy="0">Holm p ≥ 0.05</tspan></text><rect x="55" y="88" width="870" height="800" rx="4" fill="#fff" stroke="#d8dfe1" stroke-width="2"/><text x="89" y="145" text-anchor="start" dominant-baseline="central" font-size="30" font-weight="700" fill="#263238"><tspan x="89" dy="0">非 KG（BM25）  →  WPW-Map</tspan></text><text x="87" y="262" text-anchor="start" dominant-baseline="central" font-size="26" font-weight="700" fill="#263238"><tspan x="87" dy="0">Recall@5</tspan></text><line x1="240" y1="358" x2="725" y2="358" stroke="#d8dfe1" stroke-width="1.5"/><line x1="474.255" y1="320" x2="563.01" y2="320" stroke="#39745b" stroke-width="8"/><circle cx="474.255" cy="320" r="10" fill="#fff" stroke="#39745b" stroke-width="4"/><circle cx="563.01" cy="320" r="10" fill="#39745b" stroke="#39745b" stroke-width="3"/><text x="474.255" y="290" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="474.255" dy="0">0.483</tspan></text><text x="563.01" y="290" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="563.01" dy="0">0.666</tspan></text><text x="87" y="386" text-anchor="start" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="87" dy="0">p = 0.0032</tspan></text><text x="891" y="314" text-anchor="end" dominant-baseline="central" font-size="24" font-weight="700" fill="#39745b"><tspan x="891" dy="0">+0.183</tspan></text><text x="87" y="432" text-anchor="start" dominant-baseline="central" font-size="26" font-weight="700" fill="#263238"><tspan x="87" dy="0">Recall@10</tspan></text><line x1="240" y1="528" x2="725" y2="528" stroke="#d8dfe1" stroke-width="1.5"/><line x1="539.245" y1="490" x2="627.03" y2="490" stroke="#39745b" stroke-width="8"/><circle cx="539.245" cy="490" r="10" fill="#fff" stroke="#39745b" stroke-width="4"/><circle cx="627.03" cy="490" r="10" fill="#39745b" stroke="#39745b" stroke-width="3"/><text x="539.245" y="460" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="539.245" dy="0">0.617</tspan></text><text x="627.03" y="460" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="627.03" dy="0">0.798</tspan></text><text x="87" y="556" text-anchor="start" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="87" dy="0">p = 0.00077</tspan></text><text x="891" y="484" text-anchor="end" dominant-baseline="central" font-size="24" font-weight="700" fill="#39745b"><tspan x="891" dy="0">+0.181</tspan></text><text x="87" y="602" text-anchor="start" dominant-baseline="central" font-size="26" font-weight="700" fill="#263238"><tspan x="87" dy="0">Precision@10</tspan></text><line x1="240" y1="698" x2="725" y2="698" stroke="#d8dfe1" stroke-width="1.5"/><line x1="301.11" y1="660" x2="328.27" y2="660" stroke="#39745b" stroke-width="8"/><circle cx="301.11" cy="660" r="10" fill="#fff" stroke="#39745b" stroke-width="4"/><circle cx="328.27" cy="660" r="10" fill="#39745b" stroke="#39745b" stroke-width="3"/><text x="287.11" y="630" text-anchor="end" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="287.11" dy="0">0.126</tspan></text><text x="342.27" y="630" text-anchor="start" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="342.27" dy="0">0.182</tspan></text><text x="87" y="726" text-anchor="start" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="87" dy="0">p = 0.00045</tspan></text><text x="891" y="654" text-anchor="end" dominant-baseline="central" font-size="24" font-weight="700" fill="#39745b"><tspan x="891" dy="0">+0.056</tspan></text><line x1="240" y1="800" x2="240" y2="810" stroke="#66747a" stroke-width="1.5"/><text x="240" y="835" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="400" fill="#66747a"><tspan x="240" dy="0">0.00</tspan></text><line x1="361.25" y1="800" x2="361.25" y2="810" stroke="#66747a" stroke-width="1.5"/><text x="361.25" y="835" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="400" fill="#66747a"><tspan x="361.25" dy="0">0.25</tspan></text><line x1="482.5" y1="800" x2="482.5" y2="810" stroke="#66747a" stroke-width="1.5"/><text x="482.5" y="835" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="400" fill="#66747a"><tspan x="482.5" dy="0">0.50</tspan></text><line x1="603.75" y1="800" x2="603.75" y2="810" stroke="#66747a" stroke-width="1.5"/><text x="603.75" y="835" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="400" fill="#66747a"><tspan x="603.75" dy="0">0.75</tspan></text><line x1="725" y1="800" x2="725" y2="810" stroke="#66747a" stroke-width="1.5"/><text x="725" y="835" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="400" fill="#66747a"><tspan x="725" dy="0">1.00</tspan></text><line x1="240" y1="800" x2="725" y2="800" stroke="#66747a" stroke-width="1.5"/><rect x="975" y="88" width="870" height="800" rx="4" fill="#fff" stroke="#d8dfe1" stroke-width="2"/><text x="1009" y="145" text-anchor="start" dominant-baseline="central" font-size="30" font-weight="700" fill="#263238"><tspan x="1009" dy="0">WPW-Map  →  完整 WPW</tspan></text><text x="1007" y="262" text-anchor="start" dominant-baseline="central" font-size="26" font-weight="700" fill="#263238"><tspan x="1007" dy="0">Recall@5</tspan></text><line x1="1160" y1="358" x2="1645" y2="358" stroke="#d8dfe1" stroke-width="1.5"/><line x1="1483.01" y1="320" x2="1495.62" y2="320" stroke="#66747a" stroke-width="8"/><circle cx="1483.01" cy="320" r="10" fill="#fff" stroke="#66747a" stroke-width="4"/><circle cx="1495.62" cy="320" r="10" fill="#66747a" stroke="#66747a" stroke-width="3"/><text x="1469.01" y="290" text-anchor="end" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="1469.01" dy="0">0.666</tspan></text><text x="1509.62" y="290" text-anchor="start" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="1509.62" dy="0">0.692</tspan></text><text x="1007" y="386" text-anchor="start" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="1007" dy="0">p = 0.238</tspan></text><text x="1811" y="314" text-anchor="end" dominant-baseline="central" font-size="24" font-weight="700" fill="#66747a"><tspan x="1811" dy="0">+0.026</tspan></text><text x="1007" y="432" text-anchor="start" dominant-baseline="central" font-size="26" font-weight="700" fill="#263238"><tspan x="1007" dy="0">Recall@10</tspan></text><line x1="1160" y1="528" x2="1645" y2="528" stroke="#d8dfe1" stroke-width="1.5"/><line x1="1547.03" y1="490" x2="1555.275" y2="490" stroke="#66747a" stroke-width="8"/><circle cx="1547.03" cy="490" r="10" fill="#fff" stroke="#66747a" stroke-width="4"/><circle cx="1555.275" cy="490" r="10" fill="#66747a" stroke="#66747a" stroke-width="3"/><text x="1533.03" y="460" text-anchor="end" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="1533.03" dy="0">0.798</tspan></text><text x="1569.275" y="460" text-anchor="start" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="1569.275" dy="0">0.815</tspan></text><text x="1007" y="556" text-anchor="start" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="1007" dy="0">p = 0.608</tspan></text><text x="1811" y="484" text-anchor="end" dominant-baseline="central" font-size="24" font-weight="700" fill="#66747a"><tspan x="1811" dy="0">+0.017</tspan></text><text x="1007" y="602" text-anchor="start" dominant-baseline="central" font-size="26" font-weight="700" fill="#263238"><tspan x="1007" dy="0">Precision@10</tspan></text><line x1="1160" y1="698" x2="1645" y2="698" stroke="#d8dfe1" stroke-width="1.5"/><line x1="1248.27" y1="660" x2="1249.725" y2="660" stroke="#66747a" stroke-width="8"/><circle cx="1248.27" cy="660" r="10" fill="#fff" stroke="#66747a" stroke-width="4"/><circle cx="1249.725" cy="660" r="10" fill="#66747a" stroke="#66747a" stroke-width="3"/><text x="1234.27" y="630" text-anchor="end" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="1234.27" dy="0">0.182</tspan></text><text x="1263.725" y="630" text-anchor="start" dominant-baseline="central" font-size="22" font-weight="600" fill="#263238"><tspan x="1263.725" dy="0">0.185</tspan></text><text x="1007" y="726" text-anchor="start" dominant-baseline="central" font-size="24" font-weight="400" fill="#66747a"><tspan x="1007" dy="0">p = 0.487</tspan></text><text x="1811" y="654" text-anchor="end" dominant-baseline="central" font-size="24" font-weight="700" fill="#66747a"><tspan x="1811" dy="0">+0.003</tspan></text><line x1="1160" y1="800" x2="1160" y2="810" stroke="#66747a" stroke-width="1.5"/><text x="1160" y="835" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="400" fill="#66747a"><tspan x="1160" dy="0">0.00</tspan></text><line x1="1281.25" y1="800" x2="1281.25" y2="810" stroke="#66747a" stroke-width="1.5"/><text x="1281.25" y="835" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="400" fill="#66747a"><tspan x="1281.25" dy="0">0.25</tspan></text><line x1="1402.5" y1="800" x2="1402.5" y2="810" stroke="#66747a" stroke-width="1.5"/><text x="1402.5" y="835" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="400" fill="#66747a"><tspan x="1402.5" dy="0">0.50</tspan></text><line x1="1523.75" y1="800" x2="1523.75" y2="810" stroke="#66747a" stroke-width="1.5"/><text x="1523.75" y="835" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="400" fill="#66747a"><tspan x="1523.75" dy="0">0.75</tspan></text><line x1="1645" y1="800" x2="1645" y2="810" stroke="#66747a" stroke-width="1.5"/><text x="1645" y="835" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="400" fill="#66747a"><tspan x="1645" dy="0">1.00</tspan></text><line x1="1160" y1="800" x2="1645" y2="800" stroke="#66747a" stroke-width="1.5"/></svg>
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns2="http://creativecommons.org/ns#" xmlns:ns4="http://www.w3.org/1999/xlink" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" width="1800" height="2240" viewBox="0 0 1296 1612.8" version="1.1">
+ <metadata>
+  <rdf:RDF>
+   <ns2:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:date>2026-10-23T02:34:38.948769</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <ns2:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </ns2:Agent>
+    </dc:creator>
+   </ns2:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1612.8  L 1296 1612.8  L 1296 0  L 0 0  z " style="fill: #ffffff" />
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 756 46.8  L 799.2 46.8  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #39745b; stroke-width: 5; stroke-linecap: square" />
+   </g>
+   <g id="line2d_2">
+    <path d="M 756 104.4  L 799.2 104.4  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 5; stroke-linecap: square" />
+   </g>
+   <g id="patch_2">
+    <path d="M 39.6 172.8  L 1256.4 172.8  L 1256.4 835.2  L 39.6 835.2  z " clip-path="url(#pddc9de4d29)" style="fill: #ffffff; stroke: #d8dfe1; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="line2d_3">
+    <path d="M 403.2 388.8  L 1051.2 388.8  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_4">
+    <path d="M 716.184 360  L 834.768 360  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #39745b; stroke-width: 6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_5">
+    <path d="M 403.2 547.2  L 1051.2 547.2  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_6">
+    <path d="M 803.016 518.4  L 920.304 518.4  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #39745b; stroke-width: 6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_7">
+    <path d="M 403.2 705.6  L 1051.2 705.6  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_8">
+    <path d="M 484.848 676.8  L 521.136 676.8  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #39745b; stroke-width: 6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_9">
+    <path d="M 403.2 766.8  L 1051.2 766.8  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_10">
+    <path d="M 403.2 766.8  L 403.2 775.44  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_11">
+    <path d="M 565.2 766.8  L 565.2 775.44  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_12">
+    <path d="M 727.2 766.8  L 727.2 775.44  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_13">
+    <path d="M 889.2 766.8  L 889.2 775.44  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_14">
+    <path d="M 1051.2 766.8  L 1051.2 775.44  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="patch_3">
+    <path d="M 39.6 892.8  L 1256.4 892.8  L 1256.4 1555.2  L 39.6 1555.2  z " clip-path="url(#pddc9de4d29)" style="fill: #ffffff; stroke: #d8dfe1; stroke-width: 1.6; stroke-linejoin: miter" />
+   </g>
+   <g id="line2d_15">
+    <path d="M 403.2 1108.8  L 1051.2 1108.8  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_16">
+    <path d="M 834.768 1080  L 851.616 1080  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_17">
+    <path d="M 403.2 1267.2  L 1051.2 1267.2  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_18">
+    <path d="M 920.304 1238.4  L 931.32 1238.4  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_19">
+    <path d="M 403.2 1425.6  L 1051.2 1425.6  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #d8dfe1; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_20">
+    <path d="M 521.136 1396.8  L 523.08 1396.8  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_21">
+    <path d="M 403.2 1486.8  L 1051.2 1486.8  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_22">
+    <path d="M 403.2 1486.8  L 403.2 1495.44  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_23">
+    <path d="M 565.2 1486.8  L 565.2 1495.44  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_24">
+    <path d="M 727.2 1486.8  L 727.2 1495.44  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_25">
+    <path d="M 889.2 1486.8  L 889.2 1495.44  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="line2d_26">
+    <path d="M 1051.2 1486.8  L 1051.2 1495.44  " clip-path="url(#pddc9de4d29)" style="fill: none; stroke: #66747a; stroke-width: 1.6; stroke-linecap: square" />
+   </g>
+   <g id="text_1">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="259.2" y="58.9986" transform="rotate(-0 259.2 58.9986)">比较前</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="518.4" y="58.9824" transform="rotate(-0 518.4 58.9824)">比较后</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="820.8" y="56.3175" transform="rotate(-0 820.8 56.3175)">Holm p &lt; 0.05</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="820.8" y="113.9175" transform="rotate(-0 820.8 113.9175)">Holm p ≥ 0.05</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="72" y="233.1711" transform="rotate(-0 72 233.1711)">非 KG（BM25） → WPW-Map</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="72" y="339.7014" transform="rotate(-0 72 339.7014)">Recall@5</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #263238" x="705.384" y="328.4226" transform="rotate(-0 705.384 328.4226)">0.483</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="845.568" y="328.4226" transform="rotate(-0 845.568 328.4226)">0.666</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #66747a" x="72" y="419.3937" transform="rotate(-0 72 419.3937)">p = 0.0032</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #39745b" x="1216.8" y="373.1301" transform="rotate(-0 1216.8 373.1301)">+0.183</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="72" y="498.1014" transform="rotate(-0 72 498.1014)">Recall@10</text>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #263238" x="792.216" y="486.8901" transform="rotate(-0 792.216 486.8901)">0.617</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="931.104" y="486.8226" transform="rotate(-0 931.104 486.8226)">0.798</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #66747a" x="72" y="577.7937" transform="rotate(-0 72 577.7937)">p = 0.00077</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #39745b" x="1216.8" y="531.5301" transform="rotate(-0 1216.8 531.5301)">+0.181</text>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="72" y="656.442" transform="rotate(-0 72 656.442)">Precision@10</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #263238" x="474.048" y="645.2901" transform="rotate(-0 474.048 645.2901)">0.126</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="531.936" y="645.2901" transform="rotate(-0 531.936 645.2901)">0.182</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #66747a" x="72" y="736.1937" transform="rotate(-0 72 736.1937)">p = 0.00045</text>
+   </g>
+   <g id="text_20">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #39745b" x="1216.8" y="689.8626" transform="rotate(-0 1216.8 689.8626)">+0.056</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="403.2" y="818.7507" transform="rotate(-0 403.2 818.7507)">0.00</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="565.2" y="818.7426" transform="rotate(-0 565.2 818.7426)">0.25</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="727.2" y="818.7426" transform="rotate(-0 727.2 818.7426)">0.50</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="889.2" y="818.7426" transform="rotate(-0 889.2 818.7426)">0.75</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="1051.2" y="818.8182" transform="rotate(-0 1051.2 818.8182)">1.00</text>
+   </g>
+   <g id="text_26">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="72" y="953.3412" transform="rotate(-0 72 953.3412)">WPW-Map → 完整 WPW</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="72" y="1059.7014" transform="rotate(-0 72 1059.7014)">Recall@5</text>
+   </g>
+   <g id="text_28">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #263238" x="823.968" y="1048.4226" transform="rotate(-0 823.968 1048.4226)">0.666</text>
+   </g>
+   <g id="text_29">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="862.416" y="1048.4226" transform="rotate(-0 862.416 1048.4226)">0.692</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #66747a" x="72" y="1139.3937" transform="rotate(-0 72 1139.3937)">p = 0.238</text>
+   </g>
+   <g id="text_31">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="1216.8" y="1093.0626" transform="rotate(-0 1216.8 1093.0626)">+0.026</text>
+   </g>
+   <g id="text_32">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="72" y="1218.1014" transform="rotate(-0 72 1218.1014)">Recall@10</text>
+   </g>
+   <g id="text_33">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #263238" x="909.504" y="1206.8226" transform="rotate(-0 909.504 1206.8226)">0.798</text>
+   </g>
+   <g id="text_34">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="942.12" y="1206.8901" transform="rotate(-0 942.12 1206.8901)">0.815</text>
+   </g>
+   <g id="text_35">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #66747a" x="72" y="1297.7937" transform="rotate(-0 72 1297.7937)">p = 0.608</text>
+   </g>
+   <g id="text_36">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="1216.8" y="1251.5301" transform="rotate(-0 1216.8 1251.5301)">+0.017</text>
+   </g>
+   <g id="text_37">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="72" y="1376.442" transform="rotate(-0 72 1376.442)">Precision@10</text>
+   </g>
+   <g id="text_38">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #263238" x="510.336" y="1365.2901" transform="rotate(-0 510.336 1365.2901)">0.182</text>
+   </g>
+   <g id="text_39">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263238" x="533.88" y="1365.2901" transform="rotate(-0 533.88 1365.2901)">0.185</text>
+   </g>
+   <g id="text_40">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #66747a" x="72" y="1456.1937" transform="rotate(-0 72 1456.1937)">p = 0.487</text>
+   </g>
+   <g id="text_41">
+    <text style="font-weight: 700; font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: end; fill: #66747a" x="1216.8" y="1409.8626" transform="rotate(-0 1216.8 1409.8626)">+0.003</text>
+   </g>
+   <g id="text_42">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="403.2" y="1538.7507" transform="rotate(-0 403.2 1538.7507)">0.00</text>
+   </g>
+   <g id="text_43">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="565.2" y="1538.7426" transform="rotate(-0 565.2 1538.7426)">0.25</text>
+   </g>
+   <g id="text_44">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="727.2" y="1538.7426" transform="rotate(-0 727.2 1538.7426)">0.50</text>
+   </g>
+   <g id="text_45">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="889.2" y="1538.7426" transform="rotate(-0 889.2 1538.7426)">0.75</text>
+   </g>
+   <g id="text_46">
+    <text style="font-size: 34.56px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #66747a" x="1051.2" y="1538.8182" transform="rotate(-0 1051.2 1538.8182)">1.00</text>
+   </g>
+   <g id="PathCollection_1">
+    <defs>
+     <path id="m1c6e248e90" d="M 0 7.245688  C 1.921579 7.245688 3.764714 6.482237 5.123475 5.123475  C 6.482237 3.764714 7.245688 1.921579 7.245688 0  C 7.245688 -1.921579 6.482237 -3.764714 5.123475 -5.123475  C 3.764714 -6.482237 1.921579 -7.245688 0 -7.245688  C -1.921579 -7.245688 -3.764714 -6.482237 -5.123475 -5.123475  C -6.482237 -3.764714 -7.245688 -1.921579 -7.245688 0  C -7.245688 1.921579 -6.482237 3.764714 -5.123475 5.123475  C -3.764714 6.482237 -1.921579 7.245688 0 7.245688  z " style="stroke: #263238; stroke-width: 2.5" />
+    </defs>
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m1c6e248e90" x="230.4" y="46.8" style="fill: #ffffff; stroke: #263238; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_2">
+    <defs>
+     <path id="m3ad902a559" d="M 0 7.245688  C 1.921579 7.245688 3.764714 6.482237 5.123475 5.123475  C 6.482237 3.764714 7.245688 1.921579 7.245688 0  C 7.245688 -1.921579 6.482237 -3.764714 5.123475 -5.123475  C 3.764714 -6.482237 1.921579 -7.245688 0 -7.245688  C -1.921579 -7.245688 -3.764714 -6.482237 -5.123475 -5.123475  C -6.482237 -3.764714 -7.245688 -1.921579 -7.245688 0  C -7.245688 1.921579 -6.482237 3.764714 -5.123475 5.123475  C -3.764714 6.482237 -1.921579 7.245688 0 7.245688  z " style="stroke: #263238; stroke-width: 2.5" />
+    </defs>
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m3ad902a559" x="489.6" y="46.8" style="fill: #263238; stroke: #263238; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_3">
+    <defs>
+     <path id="mc06bfd95ef" d="M 0 7.245688  C 1.921579 7.245688 3.764714 6.482237 5.123475 5.123475  C 6.482237 3.764714 7.245688 1.921579 7.245688 0  C 7.245688 -1.921579 6.482237 -3.764714 5.123475 -5.123475  C 3.764714 -6.482237 1.921579 -7.245688 0 -7.245688  C -1.921579 -7.245688 -3.764714 -6.482237 -5.123475 -5.123475  C -6.482237 -3.764714 -7.245688 -1.921579 -7.245688 0  C -7.245688 1.921579 -6.482237 3.764714 -5.123475 5.123475  C -3.764714 6.482237 -1.921579 7.245688 0 7.245688  z " style="stroke: #39745b; stroke-width: 2.5" />
+    </defs>
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#mc06bfd95ef" x="716.184" y="360" style="fill: #ffffff; stroke: #39745b; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_4">
+    <defs>
+     <path id="m36b40f50e2" d="M 0 7.245688  C 1.921579 7.245688 3.764714 6.482237 5.123475 5.123475  C 6.482237 3.764714 7.245688 1.921579 7.245688 0  C 7.245688 -1.921579 6.482237 -3.764714 5.123475 -5.123475  C 3.764714 -6.482237 1.921579 -7.245688 0 -7.245688  C -1.921579 -7.245688 -3.764714 -6.482237 -5.123475 -5.123475  C -6.482237 -3.764714 -7.245688 -1.921579 -7.245688 0  C -7.245688 1.921579 -6.482237 3.764714 -5.123475 5.123475  C -3.764714 6.482237 -1.921579 7.245688 0 7.245688  z " style="stroke: #39745b; stroke-width: 2.5" />
+    </defs>
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m36b40f50e2" x="834.768" y="360" style="fill: #39745b; stroke: #39745b; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_5">
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#mc06bfd95ef" x="803.016" y="518.4" style="fill: #ffffff; stroke: #39745b; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_6">
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m36b40f50e2" x="920.304" y="518.4" style="fill: #39745b; stroke: #39745b; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_7">
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#mc06bfd95ef" x="484.848" y="676.8" style="fill: #ffffff; stroke: #39745b; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_8">
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m36b40f50e2" x="521.136" y="676.8" style="fill: #39745b; stroke: #39745b; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_9">
+    <defs>
+     <path id="m520c260897" d="M 0 7.245688  C 1.921579 7.245688 3.764714 6.482237 5.123475 5.123475  C 6.482237 3.764714 7.245688 1.921579 7.245688 0  C 7.245688 -1.921579 6.482237 -3.764714 5.123475 -5.123475  C 3.764714 -6.482237 1.921579 -7.245688 0 -7.245688  C -1.921579 -7.245688 -3.764714 -6.482237 -5.123475 -5.123475  C -6.482237 -3.764714 -7.245688 -1.921579 -7.245688 0  C -7.245688 1.921579 -6.482237 3.764714 -5.123475 5.123475  C -3.764714 6.482237 -1.921579 7.245688 0 7.245688  z " style="stroke: #66747a; stroke-width: 2.5" />
+    </defs>
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m520c260897" x="834.768" y="1080" style="fill: #ffffff; stroke: #66747a; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_10">
+    <defs>
+     <path id="m0ecb4fb076" d="M 0 7.245688  C 1.921579 7.245688 3.764714 6.482237 5.123475 5.123475  C 6.482237 3.764714 7.245688 1.921579 7.245688 0  C 7.245688 -1.921579 6.482237 -3.764714 5.123475 -5.123475  C 3.764714 -6.482237 1.921579 -7.245688 0 -7.245688  C -1.921579 -7.245688 -3.764714 -6.482237 -5.123475 -5.123475  C -6.482237 -3.764714 -7.245688 -1.921579 -7.245688 0  C -7.245688 1.921579 -6.482237 3.764714 -5.123475 5.123475  C -3.764714 6.482237 -1.921579 7.245688 0 7.245688  z " style="stroke: #66747a; stroke-width: 2.5" />
+    </defs>
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m0ecb4fb076" x="851.616" y="1080" style="fill: #66747a; stroke: #66747a; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_11">
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m520c260897" x="920.304" y="1238.4" style="fill: #ffffff; stroke: #66747a; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_12">
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m0ecb4fb076" x="931.32" y="1238.4" style="fill: #66747a; stroke: #66747a; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_13">
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m520c260897" x="521.136" y="1396.8" style="fill: #ffffff; stroke: #66747a; stroke-width: 2.5" />
+    </g>
+   </g>
+   <g id="PathCollection_14">
+    <g clip-path="url(#pddc9de4d29)">
+     <use ns4:href="#m0ecb4fb076" x="523.08" y="1396.8" style="fill: #66747a; stroke: #66747a; stroke-width: 2.5" />
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pddc9de4d29">
+   <rect x="0" y="0" width="1296" height="1612.8" />
+  </clipPath>
+ </defs>
+</svg>

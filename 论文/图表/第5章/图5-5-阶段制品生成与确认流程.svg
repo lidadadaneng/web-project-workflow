@@ -1,43 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2100" height="780" viewBox="0 0 2100 780" role="img"><title>阶段制品依次经过准备、生成和收尾三个阶段</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="erArrow" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L18,10 L0,20 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="2100" height="780" fill="#fff"/>
-<rect x="30" y="35" width="630" height="680" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="56" y="62" font-size="38" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">准备</text>
-<rect x="735" y="35" width="630" height="680" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="761" y="62" font-size="38" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">生成</text>
-<rect x="1440" y="35" width="630" height="680" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="1466" y="62" font-size="38" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">收尾</text>
-<rect x="70" y="285" width="215" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="177.5" y="337.5" font-size="34" font-weight="400" text-anchor="middle" dominant-baseline="central">检查依赖</text>
-<polygon points="390,278 472.5,338 390,398 307.5,338" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="390" y="338" font-size="29" font-weight="600" text-anchor="middle" dominant-baseline="central">可继续？</text>
-<rect x="490" y="285" width="140" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="560" y="318" font-size="30" font-weight="400" text-anchor="middle" dominant-baseline="central">模板与</text>
-<text x="560" y="357" font-size="30" font-weight="400" text-anchor="middle" dominant-baseline="central">前序制品</text>
-<polyline points="285,338 307,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<polyline points="473,338 490,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<text x="480" y="303" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central" class="label">是</text>
-<rect x="245" y="535" width="290" height="95" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="390" y="582.5" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">提示缺失前置</text>
-<polyline points="390,398 390,535" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<text x="425" y="465" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central">否</text>
-<rect x="775" y="285" width="220" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="885" y="337.5" font-size="34" font-weight="400" text-anchor="middle" dominant-baseline="central">生成草稿</text>
-<polygon points="1090,278 1172.5,338 1090,398 1007.5,338" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1090" y="338" font-size="30" font-weight="600" text-anchor="middle" dominant-baseline="central">确认？</text>
-<rect x="1190" y="285" width="145" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1262.5" y="337.5" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">确认制品</text>
-<polyline points="995,338 1007,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<polyline points="1173,338 1190,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<text x="1182" y="303" font-size="28" font-weight="400" text-anchor="middle" dominant-baseline="central" class="label">是</text>
-<polyline points="1090,398 1090,535 885,535 885,390" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<text x="985" y="568" font-size="29" font-weight="400" text-anchor="middle" dominant-baseline="central">修改意见</text>
-<rect x="1475" y="285" width="170" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1560" y="337.5" font-size="33" font-weight="400" text-anchor="middle" dominant-baseline="central">保存文档</text>
-<rect x="1690" y="285" width="170" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1775" y="337.5" font-size="33" font-weight="400" text-anchor="middle" dominant-baseline="central">更新状态</text>
-<rect x="1905" y="285" width="130" height="105" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1970" y="337.5" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">返回结果</text>
-<polyline points="1645,338 1690,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<polyline points="1860,338 1905,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<polyline points="630,338 775,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<polyline points="1335,338 1475,338" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="2000" viewBox="0 0 1800 2000">
+<defs>
+<marker id="arrow-gray" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
+<marker id="arrow-blue" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
+<marker id="arrow-green" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
+<marker id="arrow-red" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
+</defs>
+<rect width="1800" height="2000" fill="#ffffff"/>
+<rect x="55" y="40" width="1690" height="680" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="102" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">准备</text>
+<text x="650" y="102" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">CLI 负责确定性检查</text>
+<rect x="120" y="250" width="420" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="330.0" y="340.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">检查依赖</text>
+<polygon points="900,210 1080,340 900,470 720,340" fill="white" stroke="#aab4bb" stroke-width="2"/>
+<text x="900" y="340.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">可继续？</text>
+<rect x="1250" y="250" width="430" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1465.0" y="304.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">模板与</text>
+<text x="1465.0" y="376.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">前序制品</text>
+<polyline points="540,340 720,340" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="540,340 720,340" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="1080,340 1250,340" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1080,340 1250,340" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="1165" y="275" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#27313a">是</text>
+<rect x="600" y="550" width="600" height="120" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="610.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">提示缺失前置</text>
+<polyline points="900,470 900,550" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,470 900,550" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="980" y="510" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#27313a">否</text>
+<rect x="55" y="820" width="1690" height="620" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="882" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">生成</text>
+<text x="650" y="882" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">AI 生成 · 开发者确认</text>
+<rect x="120" y="1010" width="420" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="330.0" y="1100.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">生成草稿</text>
+<polygon points="900,970 1080,1100 900,1230 720,1100" fill="white" stroke="#aab4bb" stroke-width="2"/>
+<text x="900" y="1100.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">确认？</text>
+<rect x="1250" y="1010" width="430" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1465.0" y="1100.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">确认制品</text>
+<polyline points="540,1100 720,1100" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="540,1100 720,1100" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="1080,1100 1250,1100" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1080,1100 1250,1100" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="1165" y="1035" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#27313a">是</text>
+<polyline points="900,1230 900,1320 330,1320 330,1190" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,1230 900,1320 330,1320 330,1190" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="600" y="1380" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#27313a">修改意见</text>
+<polyline points="1680,340 1765,340 1765,770 330,770 330,1010" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1680,340 1765,340 1765,770 330,770 330,1010" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<rect x="55" y="1540" width="1690" height="400" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="1602" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">收尾</text>
+<text x="950" y="1602" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">保存后才记录完成</text>
+<rect x="120" y="1710" width="460" height="170" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="350.0" y="1795.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">保存文档</text>
+<rect x="670" y="1710" width="460" height="170" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="1795.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">更新状态</text>
+<rect x="1220" y="1710" width="460" height="170" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1450.0" y="1795.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">返回结果</text>
+<polyline points="580,1795 670,1795" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="580,1795 670,1795" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="1130,1795 1220,1795" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1130,1795 1220,1795" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="1680,1100 1765,1100 1765,1490 350,1490 350,1710" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1680,1100 1765,1100 1765,1490 350,1490 350,1710" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
 </svg>

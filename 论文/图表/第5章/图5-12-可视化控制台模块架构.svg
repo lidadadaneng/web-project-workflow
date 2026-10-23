@@ -1,48 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1240" viewBox="0 0 1800 1240" role="img"><title>控制台通过统一数据访问层切换同构 mock 与本地数据服务</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L11,6 L0,12 Z" fill="#303840"/></marker><marker id="erArrow" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L18,10 L0,20 Z" fill="#303840"/></marker><marker id="open" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M1,1 L11,6 L1,11" fill="none" stroke="#303840" stroke-width="2"/></marker><style>text{font-family:'Microsoft YaHei',sans-serif;fill:#303840;font-weight:400} .label{paint-order:stroke;stroke:#fff;stroke-width:9px;stroke-linejoin:round}</style></defs><rect width="1800" height="1240" fill="#fff"/>
-<rect x="40" y="30" width="1720" height="220" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="66" y="57" font-size="36" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">页面层</text>
-<rect x="80" y="95" width="380" height="115" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="270" y="132.35" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">过程</text>
-<text x="270" y="172.65" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">总览 · 看板 · 归档</text>
-<rect x="500" y="95" width="380" height="115" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="690" y="132.35" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">知识</text>
-<text x="690" y="172.65" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">图谱 · 统计 · 知识库</text>
-<rect x="920" y="95" width="380" height="115" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1110" y="132.35" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">洞察</text>
-<text x="1110" y="172.65" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">上下文 · Token</text>
-<rect x="1340" y="95" width="380" height="115" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1530" y="132.35" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">交互</text>
-<text x="1530" y="172.65" font-size="31" font-weight="400" text-anchor="middle" dominant-baseline="central">对话 · API 配置</text>
-<polyline points="900,250 900,315" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="40" y="315" width="1720" height="190" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="66" y="342" font-size="36" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">组件层</text>
-<rect x="80" y="380" width="380" height="85" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="270" y="422.5" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">图谱画布</text>
-<rect x="500" y="380" width="380" height="85" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="690" y="422.5" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">阶段 DAG</text>
-<rect x="920" y="380" width="380" height="85" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1110" y="422.5" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">阶段操作抽屉</text>
-<rect x="1340" y="380" width="380" height="85" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1530" y="422.5" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">文档渲染</text>
-<polyline points="900,505 900,570" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="40" y="570" width="1720" height="150" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="66" y="597" font-size="36" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">状态层 · Pinia</text>
-<rect x="270" y="625" width="500" height="65" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="520" y="657.5" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">工作流状态</text>
-<rect x="1030" y="625" width="500" height="65" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1280" y="657.5" font-size="32" font-weight="400" text-anchor="middle" dominant-baseline="central">对话状态</text>
-<polyline points="900,720 900,785" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="255" y="785" width="1290" height="105" fill="#f1f5f8" stroke="#303840" stroke-width="2"/>
-<text x="900" y="814.75" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">统一数据访问层  fetcher</text>
-<text x="900" y="860.25" font-size="35" font-weight="400" text-anchor="middle" dominant-baseline="central">数据结构与 CLI JSON 输出一致</text>
-<polyline points="650,890 650,1010" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<polyline points="1150,890 1150,1010" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#arrow)"/>
-<rect x="40" y="1010" width="1720" height="190" fill="none" stroke="#737d86" stroke-width="2" stroke-dasharray="10 7"/>
-<text x="66" y="1037" font-size="36" font-weight="600" text-anchor="start" dominant-baseline="central" class="label">数据源</text>
-<rect x="185" y="1070" width="560" height="85" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="465" y="1112.5" font-size="33" font-weight="400" text-anchor="middle" dominant-baseline="central">同构 mock 数据</text>
-<rect x="1055" y="1070" width="560" height="85" fill="#fff" stroke="#303840" stroke-width="2"/>
-<text x="1335" y="1112.5" font-size="33" font-weight="400" text-anchor="middle" dominant-baseline="central">本地数据服务  /api</text>
-<polyline points="745,1113 1055,1113" fill="none" stroke="#303840" stroke-width="2" marker-end="url(#open)" marker-start="url(#arrow)"/>
-<text x="900" y="1070" font-size="29" font-weight="400" text-anchor="middle" dominant-baseline="central">契约一致</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="2080" viewBox="0 0 1800 2080">
+<defs>
+<marker id="arrow-gray" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
+<marker id="arrow-blue" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
+<marker id="arrow-green" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
+<marker id="arrow-red" markerWidth="16" markerHeight="16" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
+</defs>
+<rect width="1800" height="2080" fill="#ffffff"/>
+<rect x="55" y="40" width="1690" height="570" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="102" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">页面层</text>
+<rect x="120" y="180" width="680" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="460.0" y="234.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">过程</text>
+<text x="460.0" y="306.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">总览 · 看板 · 归档</text>
+<rect x="1000" y="180" width="680" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1340.0" y="234.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">知识</text>
+<text x="1340.0" y="306.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">图谱 · 统计 · 知识库</text>
+<rect x="120" y="400" width="680" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="460.0" y="454.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">洞察</text>
+<text x="460.0" y="526.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">上下文 · Token</text>
+<rect x="1000" y="400" width="680" height="180" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1340.0" y="454.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">交互</text>
+<text x="1340.0" y="526.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">对话 · API 配置</text>
+<polyline points="900,610 900,700" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,610 900,700" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<rect x="55" y="700" width="1690" height="300" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="762" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">组件层</text>
+<rect x="120" y="850" width="300" height="110" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="270.0" y="905.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">图谱画布</text>
+<rect x="500" y="850" width="300" height="110" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="650.0" y="905.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">阶段 DAG</text>
+<rect x="880" y="850" width="420" height="110" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1090.0" y="905.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">阶段操作抽屉</text>
+<rect x="1380" y="850" width="300" height="110" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1530.0" y="905.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">文档渲染</text>
+<polyline points="900,1000 900,1090" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,1000 900,1090" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<rect x="55" y="1090" width="1690" height="280" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="1152" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">状态层 · Pinia</text>
+<rect x="230" y="1230" width="570" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="515.0" y="1280.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">工作流状态</text>
+<rect x="1000" y="1230" width="570" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1285.0" y="1280.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">对话状态</text>
+<polyline points="900,1370 900,1460" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="900,1370 900,1460" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<rect x="230" y="1460" width="1340" height="200" rx="12" fill="#eef4f8" stroke="#aab4bb" stroke-width="2"/>
+<text x="900.0" y="1524.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">统一数据访问层 fetcher</text>
+<text x="900.0" y="1596.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">数据结构与 CLI JSON 输出一致</text>
+<rect x="55" y="1770" width="1690" height="250" rx="15" fill="#ffffff" stroke="#9cabb4" stroke-width="2"/>
+<text x="95" y="1832" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5b6770">数据源</text>
+<rect x="120" y="1880" width="640" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="440.0" y="1930.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">同构 mock 数据</text>
+<rect x="1040" y="1880" width="640" height="100" rx="12" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="1360.0" y="1930.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">本地数据服务 /api</text>
+<polyline points="580,1660 580,1880" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="580,1660 580,1880" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="1220,1660 1220,1880" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1220,1660 1220,1880" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="760,1910 1040,1910" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="760,1910 1040,1910" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<polyline points="1040,1950 760,1950" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1040,1950 760,1950" fill="none" stroke="#5b6770" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-gray)"/>
+<text x="900" y="1820" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#27313a">契约一致</text>
 </svg>

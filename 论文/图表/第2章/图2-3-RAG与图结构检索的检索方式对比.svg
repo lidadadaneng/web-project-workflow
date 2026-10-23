@@ -1,51 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="440" viewBox="0 0 1800 440">
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="880" viewBox="0 0 1800 880">
 <defs>
 <marker id="arrow-gray" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#59636c"/></marker>
 <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#315f8d"/></marker>
 <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#5f8178"/></marker>
 <marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 Z" fill="#a15e50"/></marker>
 </defs>
-<rect width="1800" height="440" fill="#ffffff"/>
-<rect x="55" y="35" width="810" height="370" rx="14" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
-<rect x="935" y="35" width="810" height="370" rx="14" fill="#ffffff" stroke="#8da6a4" stroke-width="2"/>
-<text x="460" y="80" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:31px;font-weight:600;fill:#315f8d">RAG：基于片段的检索增强生成</text>
-<text x="1340" y="80" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:31px;font-weight:600;fill:#5f8178">图结构检索：基于图结构的检索增强生成</text>
-<polyline points="90,125 830,125" fill="none" stroke="#c1ccd3" stroke-width="2" stroke-linejoin="round"/>
-<polyline points="970,125 1710,125" fill="none" stroke="#bed0cb" stroke-width="2" stroke-linejoin="round"/>
-<rect x="95" y="220" width="160" height="140" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
-<text x="175.0" y="276.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">文档</text>
-<text x="175.0" y="315.2" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:18px;fill:#5b6770">原始语料</text>
-<rect x="300" y="220" width="160" height="140" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
-<text x="380.0" y="276.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">文档切块</text>
-<text x="380.0" y="315.2" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:18px;fill:#5b6770">平面片段</text>
-<rect x="505" y="220" width="160" height="140" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
-<text x="585.0" y="276.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">向量检索</text>
-<text x="585.0" y="315.2" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:18px;fill:#5b6770">相似度匹配</text>
-<rect x="710" y="220" width="115" height="140" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
-<text x="767.5" y="276.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">生成</text>
-<text x="767.5" y="315.2" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:18px;fill:#5b6770">答案</text>
-<polyline points="255,290 300,290" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
-<polyline points="255,290 300,290" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
-<polyline points="460,290 505,290" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
-<polyline points="460,290 505,290" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
-<polyline points="665,290 710,290" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
-<polyline points="665,290 710,290" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
-<rect x="975" y="220" width="150" height="140" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
-<text x="1050.0" y="276.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">语料</text>
-<text x="1050.0" y="315.2" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:18px;fill:#5b6770">原始文档</text>
-<rect x="1170" y="220" width="185" height="140" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
-<text x="1262.5" y="276.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">抽取实体关系</text>
-<text x="1262.5" y="315.2" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:18px;fill:#5b6770">建立知识图</text>
-<rect x="1400" y="220" width="175" height="140" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
-<text x="1487.5" y="276.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">子图 / 社区</text>
-<text x="1487.5" y="315.2" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:18px;fill:#5b6770">层级摘要</text>
-<rect x="1620" y="220" width="90" height="140" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
-<text x="1665.0" y="276.0" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:25px;font-weight:600;fill:#27313a">生成</text>
-<text x="1665.0" y="315.2" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:18px;fill:#5b6770">答案</text>
-<polyline points="1125,290 1170,290" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round"/>
-<polyline points="1125,290 1170,290" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
-<polyline points="1355,290 1400,290" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round"/>
-<polyline points="1355,290 1400,290" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
-<polyline points="1575,290 1620,290" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round"/>
-<polyline points="1575,290 1620,290" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
+<rect width="1800" height="880" fill="#ffffff"/>
+<rect x="55" y="40" width="1690" height="375" rx="14" fill="#ffffff" stroke="#aab4bb" stroke-width="2"/>
+<text x="110" y="105" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#315f8d">RAG：基于片段的检索增强生成</text>
+<polyline points="110,155 1690,155" fill="none" stroke="#c1ccd3" stroke-width="2" stroke-linejoin="round"/>
+<rect x="120" y="210" width="330" height="155" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
+<text x="285.0" y="256" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">文档</text>
+<text x="285.0" y="323" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">原始语料</text>
+<rect x="530" y="210" width="330" height="155" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
+<text x="695.0" y="256" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">文档切块</text>
+<text x="695.0" y="323" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">平面片段</text>
+<rect x="940" y="210" width="330" height="155" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
+<text x="1105.0" y="256" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">向量检索</text>
+<text x="1105.0" y="323" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">相似度匹配</text>
+<rect x="1350" y="210" width="330" height="155" rx="10" fill="#ffffff" stroke="#aab6bf" stroke-width="2"/>
+<text x="1515.0" y="256" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">生成</text>
+<text x="1515.0" y="323" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">答案</text>
+<polyline points="450,287.5 530,287.5" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="450,287.5 530,287.5" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<polyline points="860,287.5 940,287.5" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="860,287.5 940,287.5" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<polyline points="1270,287.5 1350,287.5" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1270,287.5 1350,287.5" fill="none" stroke="#315f8d" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="55" y="465" width="1690" height="375" rx="14" fill="#ffffff" stroke="#8da6a4" stroke-width="2"/>
+<text x="110" y="530" text-anchor="start" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#5f8178">图结构检索：基于图结构的检索增强生成</text>
+<polyline points="110,580 1690,580" fill="none" stroke="#c1ccd3" stroke-width="2" stroke-linejoin="round"/>
+<rect x="120" y="635" width="330" height="155" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
+<text x="285.0" y="681" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">语料</text>
+<text x="285.0" y="748" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">原始文档</text>
+<rect x="530" y="635" width="330" height="155" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
+<text x="695.0" y="681" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">抽取实体关系</text>
+<text x="695.0" y="748" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">建立知识图</text>
+<rect x="940" y="635" width="330" height="155" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
+<text x="1105.0" y="681" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">子图 / 社区</text>
+<text x="1105.0" y="748" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">层级摘要</text>
+<rect x="1350" y="635" width="330" height="155" rx="10" fill="#ffffff" stroke="#a8bab8" stroke-width="2"/>
+<text x="1515.0" y="681" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;font-weight:600;fill:#27313a">生成</text>
+<text x="1515.0" y="748" text-anchor="middle" dominant-baseline="middle" style="font-family:Microsoft YaHei,Noto Sans CJK SC,SimSun,sans-serif;font-size:48px;fill:#5b6770">答案</text>
+<polyline points="450,712.5 530,712.5" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="450,712.5 530,712.5" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
+<polyline points="860,712.5 940,712.5" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="860,712.5 940,712.5" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
+<polyline points="1270,712.5 1350,712.5" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1270,712.5 1350,712.5" fill="none" stroke="#5f8178" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-green)"/>
 </svg>
